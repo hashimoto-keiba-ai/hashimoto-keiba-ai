@@ -298,6 +298,178 @@ h1 {
   line-height: 1.8;
 }
 
+
+.card__lead {
+  max-width: 760px;
+}
+
+.data-card {
+  padding-bottom: 74px;
+}
+
+.race-meta,
+.generated-summary {
+  align-items: stretch;
+}
+
+.race-meta span,
+.generated-summary span {
+  color: var(--gold-light);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.table-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: 18px;
+  overflow-x: auto;
+  border: 1px solid rgba(248, 196, 79, 0.2);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.data-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  color: var(--text);
+  font-size: 0.93rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 13px 14px;
+  text-align: left;
+  border-bottom: 1px solid rgba(248, 196, 79, 0.14);
+}
+
+.data-table th {
+  color: var(--gold-light);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(248, 196, 79, 0.1);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.data-table strong {
+  color: var(--gold-light);
+}
+
+.data-table--compact {
+  min-width: 560px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 5px 9px;
+  color: var(--gold-light);
+  font-size: 0.8rem;
+  font-weight: 900;
+  border: 1px solid rgba(248, 196, 79, 0.32);
+  border-radius: 999px;
+  background: rgba(248, 196, 79, 0.1);
+}
+
+.badge--gold {
+  color: #120d04;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+}
+
+.stacked-ranking,
+.danger-list {
+  gap: 12px;
+  padding: 0;
+  margin: 20px 0 48px;
+  list-style: none;
+}
+
+.stacked-ranking li,
+.danger-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 18px;
+}
+
+.rank-mark,
+.danger-score {
+  display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #100b04;
+  font-weight: 900;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+}
+
+.danger-score {
+  color: #ffd0cc;
+  background: rgba(255, 107, 95, 0.18);
+  border: 1px solid rgba(255, 107, 95, 0.42);
+}
+
+.stacked-ranking strong,
+.danger-list strong {
+  display: block;
+  color: var(--text);
+}
+
+.stacked-ranking small,
+.danger-list small,
+.win5-ticket small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.win5-ticket {
+  grid-template-columns: repeat(5, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.win5-ticket section {
+  padding: 14px;
+  border-radius: 18px;
+}
+
+.win5-ticket span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.win5-ticket strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--gold-light);
+  font-size: 1.45rem;
+}
+
+.generated-summary {
+  margin-bottom: 48px;
+}
+
+.generated-summary strong {
+  color: var(--gold-light);
+}
+
 .card__link {
   position: absolute;
   right: 24px;
@@ -313,29 +485,41 @@ h1 {
 
 .metric-list,
 .course-links,
-.win5-steps {
+.win5-steps,
+.race-meta,
+.generated-summary {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 20px;
 }
 
 .win5-steps,
-.ranking-list {
+.ranking-list,
+.stacked-ranking,
+.danger-list,
+.win5-ticket {
   display: grid;
 }
 
 .metric-list span,
 .course-links a,
 .win5-steps span,
+.race-meta span,
+.generated-summary span,
 .alert-box,
-.ranking-list li {
+.ranking-list li,
+.stacked-ranking li,
+.danger-list li,
+.win5-ticket section {
   border: 1px solid var(--border);
   background: rgba(255, 233, 163, 0.07);
 }
 
 .metric-list span,
 .course-links a,
-.win5-steps span {
+.win5-steps span,
+.race-meta span,
+.generated-summary span {
   padding: 10px 12px;
   border-radius: 14px;
 }
@@ -455,6 +639,10 @@ h1 {
   .win5-steps {
     grid-template-columns: repeat(3, minmax(92px, 1fr));
   }
+
+  .win5-ticket {
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+  }
 }
 
 @media (max-width: 860px) {
@@ -525,7 +713,67 @@ h1 {
     align-items: flex-start;
   }
 
-  .win5-steps {
+  .win5-steps,
+  .win5-ticket {
     grid-template-columns: 1fr;
+  }
+
+  .data-card {
+    padding-bottom: 20px;
+  }
+
+  .table-wrap {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .data-table,
+  .data-table thead,
+  .data-table tbody,
+  .data-table tr,
+  .data-table th,
+  .data-table td {
+    display: block;
+  }
+
+  .data-table {
+    min-width: 0;
+  }
+
+  .data-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .data-table tr {
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: rgba(255, 233, 163, 0.07);
+  }
+
+  .data-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(248, 196, 79, 0.12);
+    text-align: right;
+  }
+
+  .data-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .data-table td::before {
+    color: var(--muted);
+    font-weight: 900;
+    content: attr(data-label);
+    text-align: left;
   }
 }
