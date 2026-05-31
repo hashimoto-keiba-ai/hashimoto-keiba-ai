@@ -6,7 +6,7 @@
     <title>橋本競馬AIダッシュボード</title>
     <meta
       name="description"
-      content="AI指数、WIN5、神レース、万馬券候補、競馬場別AIを一覧できる橋本競馬AIのトップ画面。"
+      content="AI指数ランキング、神レース、万馬券候補、危険人気馬、WIN5、競馬場別AI、騎手ランキングを黒×金で一覧できる橋本競馬AIのトップ画面。"
     />
     <link rel="stylesheet" href="./src/dashboard.css" />
   </head>
@@ -18,24 +18,26 @@
           <span class="brand__text">橋本競馬AI</span>
         </a>
         <div class="nav-links">
-          <a href="#ai-index">AI指数</a>
-          <a href="#win5">WIN5</a>
-          <a href="#god-race">神レース</a>
-          <a href="#longshot">万馬券候補</a>
+          <a href="#ai-index-ranking">AI指数</a>
+          <a href="#god-race-ranking">神レース</a>
+          <a href="#longshot-ranking">万馬券</a>
+          <a href="#danger-popular">危険人気馬</a>
+          <a href="#win5-generator">WIN5生成</a>
           <a href="#course-ai">競馬場別AI</a>
+          <a href="#jockey-ranking">騎手</a>
         </div>
       </nav>
 
       <section id="top" class="hero__content">
         <p class="eyebrow">Hashimoto Keiba AI Dashboard</p>
-        <h1>勝負レースを一画面で見抜く、競馬AI司令塔。</h1>
+        <h1>黒×金のAI司令塔で、今日の勝負所を一瞬で掴む。</h1>
         <p class="hero__lead">
-          AI指数・WIN5・神レース・万馬券候補・競馬場別AIをトップ画面に集約。
-          今日の狙い目とリスクを素早く確認できます。
+          AI指数ランキング・神レース・万馬券候補・危険人気馬・WIN5生成・競馬場別AI・騎手ランキングをカード形式で集約。
+          スマホでも狙い目とリスクを迷わず確認できます。
         </p>
         <div class="hero__actions" aria-label="主要メニュー">
           <a class="button button--primary" href="#dashboard">ダッシュボードを見る</a>
-          <a class="button button--ghost" href="#course-ai">競馬場別AIへ</a>
+          <a class="button button--ghost" href="#win5-generator">WIN5を組み立てる</a>
         </div>
       </section>
     </header>
@@ -43,88 +45,108 @@
     <main>
       <section class="summary" aria-label="本日のAIサマリー">
         <article>
-          <span class="summary__label">本命安定度</span>
-          <strong>82</strong>
-          <span>指数上位の信頼度</span>
+          <span class="summary__label">AI総合信頼度</span>
+          <strong>92</strong>
+          <span>指数・展開・馬場を総合判定</span>
         </article>
         <article>
-          <span class="summary__label">穴馬警戒</span>
-          <strong>High</strong>
+          <span class="summary__label">波乱シグナル</span>
+          <strong>Gold</strong>
           <span>高配当条件が複数点灯</span>
         </article>
         <article>
-          <span class="summary__label">WIN5難度</span>
-          <strong>B+</strong>
-          <span>波乱候補を2レース抽出</span>
+          <span class="summary__label">WIN5推奨点数</span>
+          <strong>48</strong>
+          <span>堅軸2、波乱候補3で生成</span>
         </article>
       </section>
 
       <section id="dashboard" class="dashboard-grid" aria-label="橋本競馬AI トップメニュー">
-        <article id="ai-index" class="card card--featured">
+        <article id="ai-index-ranking" class="card card--featured">
           <div class="card__icon" aria-hidden="true">📈</div>
           <div class="card__body">
-            <p class="card__kicker">AI INDEX</p>
-            <h2>AI指数</h2>
+            <p class="card__kicker">AI INDEX RANKING</p>
+            <h2>AI指数ランキング</h2>
             <p>
-              スピード・展開・馬場・騎手・血統・直近成績を統合し、レースごとの総合評価を表示します。
+              スピード・展開・馬場・騎手・血統・直近成績を統合し、本日の指数上位馬をランキング表示します。
             </p>
-            <div class="metric-list">
-              <span>指数1位: 91</span>
-              <span>妙味馬: 76</span>
-              <span>危険人気: 1頭</span>
-            </div>
+            <ol class="ranking-list ranking-list--gold" aria-label="AI指数ランキング上位">
+              <li><span>東京11R 7番 ゴールドブリッツ</span><strong>96</strong></li>
+              <li><span>京都10R 3番 キングロード</span><strong>93</strong></li>
+              <li><span>阪神9R 12番 ナイトセイバー</span><strong>91</strong></li>
+            </ol>
           </div>
           <a class="card__link" href="./AI研究所/README.md">AI指数ロジックを見る</a>
         </article>
 
-        <article id="win5" class="card">
-          <div class="card__icon" aria-hidden="true">🏆</div>
-          <div class="card__body">
-            <p class="card__kicker">WIN5</p>
-            <h2>WIN5</h2>
-            <p>
-              WIN5対象レースを難度別に整理し、堅軸・広げるレース・大穴投入ポイントを確認できます。
-            </p>
-            <ul class="check-list">
-              <li>鉄板軸レース</li>
-              <li>波乱警戒レース</li>
-              <li>点数配分メモ</li>
-            </ul>
-          </div>
-          <a class="card__link" href="./WIN5/WIN5_AI.md">WIN5 AIを見る</a>
-        </article>
-
-        <article id="god-race" class="card card--accent">
+        <article id="god-race-ranking" class="card card--accent">
           <div class="card__icon" aria-hidden="true">⚡</div>
           <div class="card__body">
-            <p class="card__kicker">GOD RACE</p>
-            <h2>神レース</h2>
+            <p class="card__kicker">GOD RACE RANKING</p>
+            <h2>神レースランキング</h2>
             <p>
-              AI指数とオッズ妙味が同時に噛み合う、勝負度の高いレースを優先表示します。
+              AI指数とオッズ妙味が同時に噛み合う、勝負度の高いレースをS〜Bで優先表示します。
             </p>
-            <div class="race-pick">
-              <span class="race-pick__label">勝負度</span>
-              <strong>S</strong>
-            </div>
+            <ol class="ranking-list" aria-label="神レースランキング">
+              <li><span>東京11R 芝1600m</span><strong>S</strong></li>
+              <li><span>京都10R ダ1800m</span><strong>A+</strong></li>
+              <li><span>中山12R 芝1200m</span><strong>A</strong></li>
+            </ol>
           </div>
           <a class="card__link" href="./AI研究所/README.md">神穴AIを確認</a>
         </article>
 
-        <article id="longshot" class="card">
+        <article id="longshot-ranking" class="card">
           <div class="card__icon" aria-hidden="true">💎</div>
           <div class="card__body">
-            <p class="card__kicker">LONGSHOT</p>
-            <h2>万馬券候補</h2>
+            <p class="card__kicker">LONGSHOT RANKING</p>
+            <h2>万馬券候補ランキング</h2>
             <p>
               荒れやすい条件、人気の盲点、過去の万馬券パターンから高配当候補を抽出します。
             </p>
-            <ul class="check-list">
-              <li>差し・追込有利</li>
-              <li>人気割れレース</li>
-              <li>馬場変化あり</li>
-            </ul>
+            <ol class="ranking-list" aria-label="万馬券候補ランキング">
+              <li><span>福島8R 三連単フォーメーション</span><strong>穴S</strong></li>
+              <li><span>小倉11R 差し決着シナリオ</span><strong>穴A</strong></li>
+              <li><span>新潟7R 外枠一撃パターン</span><strong>穴A</strong></li>
+            </ol>
           </div>
           <a class="card__link" href="./万馬券DB/README.md">万馬券DBを見る</a>
+        </article>
+
+        <article id="danger-popular" class="card card--danger">
+          <div class="card__icon" aria-hidden="true">⚠️</div>
+          <div class="card__body">
+            <p class="card__kicker">DANGER POPULAR</p>
+            <h2>危険人気馬</h2>
+            <p>
+              過剰人気、展開不利、馬場ミスマッチ、騎手替わりの不安を検知し、買い下げ候補を可視化します。
+            </p>
+            <div class="alert-box">
+              <span class="alert-box__label">警戒度</span>
+              <strong>Very High</strong>
+              <small>東京10R 1番人気に展開逆風</small>
+            </div>
+          </div>
+          <a class="card__link" href="./AI研究所/README.md">危険人気馬AIを見る</a>
+        </article>
+
+        <article id="win5-generator" class="card card--featured">
+          <div class="card__icon" aria-hidden="true">🏆</div>
+          <div class="card__body">
+            <p class="card__kicker">WIN5 GENERATOR</p>
+            <h2>WIN5生成</h2>
+            <p>
+              WIN5対象レースを難度別に整理し、堅軸・広げるレース・大穴投入ポイントから買い目候補を生成します。
+            </p>
+            <div class="win5-steps" aria-label="WIN5生成ステップ">
+              <span>1R: 1点突破</span>
+              <span>2R: 3点</span>
+              <span>3R: 2点</span>
+              <span>4R: 4点</span>
+              <span>5R: 2点</span>
+            </div>
+          </div>
+          <a class="card__link" href="./WIN5/WIN5_AI.md">WIN5 AIを見る</a>
         </article>
 
         <article id="course-ai" class="card card--wide">
@@ -147,6 +169,23 @@
               <a href="./小倉競馬場/README.md">小倉</a>
             </div>
           </div>
+        </article>
+
+        <article id="jockey-ranking" class="card">
+          <div class="card__icon" aria-hidden="true">🏇</div>
+          <div class="card__body">
+            <p class="card__kicker">JOCKEY RANKING</p>
+            <h2>騎手ランキング</h2>
+            <p>
+              当日馬場、コース適性、直近騎乗成績、人気別の信頼度を加味して騎手評価を並べます。
+            </p>
+            <ol class="ranking-list" aria-label="騎手ランキング">
+              <li><span>1位 ルメール</span><strong>98</strong></li>
+              <li><span>2位 川田将雅</span><strong>95</strong></li>
+              <li><span>3位 坂井瑠星</span><strong>91</strong></li>
+            </ol>
+          </div>
+          <a class="card__link" href="./AI研究所/README.md">騎手評価を見る</a>
         </article>
       </section>
     </main>
