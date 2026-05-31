@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>橋本競馬AIダッシュボード</title>
+    <meta
+      name="description"
+      content="AI指数、WIN5、神レース、万馬券候補、競馬場別AIを一覧できる橋本競馬AIのトップ画面。"
+    />
+    <link rel="stylesheet" href="./src/dashboard.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="topbar" aria-label="メインナビゲーション">
+        <a class="brand" href="#top" aria-label="橋本競馬AI トップへ戻る">
+          <span class="brand__mark">橋</span>
+          <span class="brand__text">橋本競馬AI</span>
+        </a>
+        <div class="nav-links">
+          <a href="#ai-index">AI指数</a>
+          <a href="#win5">WIN5</a>
+          <a href="#god-race">神レース</a>
+          <a href="#longshot">万馬券候補</a>
+          <a href="#course-ai">競馬場別AI</a>
+        </div>
+      </nav>
+
+      <section id="top" class="hero__content">
+        <p class="eyebrow">Hashimoto Keiba AI Dashboard</p>
+        <h1>勝負レースを一画面で見抜く、競馬AI司令塔。</h1>
+        <p class="hero__lead">
+          AI指数・WIN5・神レース・万馬券候補・競馬場別AIをトップ画面に集約。
+          今日の狙い目とリスクを素早く確認できます。
+        </p>
+        <div class="hero__actions" aria-label="主要メニュー">
+          <a class="button button--primary" href="#dashboard">ダッシュボードを見る</a>
+          <a class="button button--ghost" href="#course-ai">競馬場別AIへ</a>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section class="summary" aria-label="本日のAIサマリー">
+        <article>
+          <span class="summary__label">本命安定度</span>
+          <strong>82</strong>
+          <span>指数上位の信頼度</span>
+        </article>
+        <article>
+          <span class="summary__label">穴馬警戒</span>
+          <strong>High</strong>
+          <span>高配当条件が複数点灯</span>
+        </article>
+        <article>
+          <span class="summary__label">WIN5難度</span>
+          <strong>B+</strong>
+          <span>波乱候補を2レース抽出</span>
+        </article>
+      </section>
+
+      <section id="dashboard" class="dashboard-grid" aria-label="橋本競馬AI トップメニュー">
+        <article id="ai-index" class="card card--featured">
+          <div class="card__icon" aria-hidden="true">📈</div>
+          <div class="card__body">
+            <p class="card__kicker">AI INDEX</p>
+            <h2>AI指数</h2>
+            <p>
+              スピード・展開・馬場・騎手・血統・直近成績を統合し、レースごとの総合評価を表示します。
+            </p>
+            <div class="metric-list">
+              <span>指数1位: 91</span>
+              <span>妙味馬: 76</span>
+              <span>危険人気: 1頭</span>
+            </div>
+          </div>
+          <a class="card__link" href="./AI研究所/README.md">AI指数ロジックを見る</a>
+        </article>
+
+        <article id="win5" class="card">
+          <div class="card__icon" aria-hidden="true">🏆</div>
+          <div class="card__body">
+            <p class="card__kicker">WIN5</p>
+            <h2>WIN5</h2>
+            <p>
+              WIN5対象レースを難度別に整理し、堅軸・広げるレース・大穴投入ポイントを確認できます。
+            </p>
+            <ul class="check-list">
+              <li>鉄板軸レース</li>
+              <li>波乱警戒レース</li>
+              <li>点数配分メモ</li>
+            </ul>
+          </div>
+          <a class="card__link" href="./WIN5/WIN5_AI.md">WIN5 AIを見る</a>
+        </article>
+
+        <article id="god-race" class="card card--accent">
+          <div class="card__icon" aria-hidden="true">⚡</div>
+          <div class="card__body">
+            <p class="card__kicker">GOD RACE</p>
+            <h2>神レース</h2>
+            <p>
+              AI指数とオッズ妙味が同時に噛み合う、勝負度の高いレースを優先表示します。
+            </p>
+            <div class="race-pick">
+              <span class="race-pick__label">勝負度</span>
+              <strong>S</strong>
+            </div>
+          </div>
+          <a class="card__link" href="./AI研究所/README.md">神穴AIを確認</a>
+        </article>
+
+        <article id="longshot" class="card">
+          <div class="card__icon" aria-hidden="true">💎</div>
+          <div class="card__body">
+            <p class="card__kicker">LONGSHOT</p>
+            <h2>万馬券候補</h2>
+            <p>
+              荒れやすい条件、人気の盲点、過去の万馬券パターンから高配当候補を抽出します。
+            </p>
+            <ul class="check-list">
+              <li>差し・追込有利</li>
+              <li>人気割れレース</li>
+              <li>馬場変化あり</li>
+            </ul>
+          </div>
+          <a class="card__link" href="./万馬券DB/README.md">万馬券DBを見る</a>
+        </article>
+
+        <article id="course-ai" class="card card--wide">
+          <div class="card__icon" aria-hidden="true">🏟️</div>
+          <div class="card__body">
+            <p class="card__kicker">COURSE AI</p>
+            <h2>競馬場別AI</h2>
+            <p>
+              競馬場ごとのコース傾向、脚質、枠順、馬場バイアスを横断して確認できます。
+            </p>
+            <div class="course-links" aria-label="競馬場別リンク">
+              <a href="./札幌競馬場/README.md">札幌</a>
+              <a href="./函館競馬場/README.md">函館</a>
+              <a href="./福島競馬場/README.md">福島</a>
+              <a href="./新潟競馬場/README.md">新潟</a>
+              <a href="./東京競馬場/README.md">東京</a>
+              <a href="./中山競馬場/README.md">中山</a>
+              <a href="./京都競馬場/README.md">京都</a>
+              <a href="./阪神競馬場/README.md">阪神</a>
+              <a href="./小倉競馬場/README.md">小倉</a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>橋本競馬AI — 予想、検証、学習ログをつなぐ競馬AIダッシュボード</p>
+    </footer>
+  </body>
+</html>

@@ -1,16 +1,21 @@
-## Hi there 👋
+# 橋本競馬AI
 
-<!--
-**hashimoto-keiba-ai/hashimoto-keiba-ai** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+橋本競馬AIは、AI指数・WIN5・神レース・万馬券候補・競馬場別AIを管理する競馬予想プロジェクトです。
 
-Here are some ideas to get you started:
+## ダッシュボード
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+トップ画面は `index.html` から開けます。
+
+- AI指数
+- WIN5
+- 神レース
+- 万馬券候補
+- 競馬場別AI
+
+## フォルダ構成
+
+- `AI研究所/`: 予想モデル、特徴量、評価指標、改善案、仮説検証メモ
+- `WIN5/`: WIN5 AI の設計・運用メモ
+- `万馬券DB/`: 高配当レースの共通点を蓄積するデータベース
+- `*競馬場/`: 競馬場ごとのコース傾向、馬場、脚質、枠順の分析メモ
+- `src/`: ダッシュボードのスタイルや今後の分析プログラム
