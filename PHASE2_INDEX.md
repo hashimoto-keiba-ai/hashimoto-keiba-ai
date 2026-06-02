@@ -25,6 +25,7 @@ Phase2関連ドキュメントは以下を入口に確認します。
 | ドキュメント | 役割 | 見るタイミング |
 | --- | --- | --- |
 | [`PHASE2_ROADMAP.md`](PHASE2_ROADMAP.md) | Phase2全体の目的、段階、優先順位、完了条件を管理するロードマップ | Phase2全体の方向性を確認するとき |
+| [`PHASE2_IMPLEMENTATION_CHECKLIST.md`](PHASE2_IMPLEMENTATION_CHECKLIST.md) | Phase2の実装開始順、各フェーズの未完了タスク、優先順位を管理するチェックリスト | 実装着手前、進捗確認、次に実装する項目を決めるとき |
 | [`DATA_IMPORT_DESIGN.md`](DATA_IMPORT_DESIGN.md) | 出馬表CSV、オッズCSV、結果CSV、将来のnetkeiba/JRA取込に関する設計 | CSV取込強化や実データ連携を実装するとき |
 | [`AI_SCORE_ENGINE_DESIGN.md`](AI_SCORE_ENGINE_DESIGN.md) | AI指数、神穴指数、危険人気馬指数の計算ロジックと連動先を定義 | 指数自動計算や買い目生成精度を改善するとき |
 | [`GITHUB_JSON_STORAGE_DESIGN.md`](GITHUB_JSON_STORAGE_DESIGN.md) | `data/*.json` 保存、GitHub API保存、差分更新、バックアップ方針を定義 | 保存方式をlocalStorageからJSON/GitHubへ広げるとき |
@@ -155,6 +156,7 @@ v1.0完成版を安全な基盤として維持しながら、以下の順にPhas
 | やりたいこと | 最初に見るドキュメント |
 | --- | --- |
 | Phase2の全体計画を確認したい | [`PHASE2_ROADMAP.md`](PHASE2_ROADMAP.md) |
+| Phase2の実装順と未完了タスクを確認したい | [`PHASE2_IMPLEMENTATION_CHECKLIST.md`](PHASE2_IMPLEMENTATION_CHECKLIST.md) |
 | CSV取込や結果CSVを整えたい | [`DATA_IMPORT_DESIGN.md`](DATA_IMPORT_DESIGN.md) |
 | AI指数や神穴指数の計算を実装したい | [`AI_SCORE_ENGINE_DESIGN.md`](AI_SCORE_ENGINE_DESIGN.md) |
 | 保存先をJSON/GitHubへ移したい | [`GITHUB_JSON_STORAGE_DESIGN.md`](GITHUB_JSON_STORAGE_DESIGN.md) |
