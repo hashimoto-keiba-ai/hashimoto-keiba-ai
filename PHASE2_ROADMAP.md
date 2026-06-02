@@ -134,6 +134,8 @@ localStorage中心の保存から、JSONファイル保存とGitHub API保存へ
 
 結果検証とバックテストをもとに、AIの重み・条件・競馬場OSを継続的に改善する仕組みを強化します。
 
+自己進化AIの目的、入力データ、改善対象AI、改善ロジック、自己進化ログ形式、実装順の詳細は [`SELF_EVOLUTION_AI_DESIGN.md`](SELF_EVOLUTION_AI_DESIGN.md) に整理します。
+
 ### 実施項目
 
 - **バックテスト結果から重み調整**
