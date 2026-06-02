@@ -18,12 +18,16 @@
           <span class="brand__text">橋本競馬AI</span>
         </a>
         <div class="nav-links">
+          <a href="#course-selector">競馬場選択</a>
           <a href="#ai-index-ranking">AI指数</a>
+          <a href="#race-score">レーススコア</a>
+          <a href="#kami-race-top10">神レースTOP10</a>
           <a href="#kami-ana-ranking">神穴</a>
           <a href="#danger-popular">危険人気馬</a>
           <a href="#save-log-search">保存ログ検索</a>
           <a href="#latest-save-log">保存ログ</a>
-          <a href="#win5-corner">WIN5</a>
+          <a href="#win5-ai-screen">WIN5 AI</a>
+          <a href="#trifecta-prophet">万馬券予言</a>
           <a href="#operations-board">運用ボード</a>
         </div>
       </nav>
@@ -32,12 +36,12 @@
         <p class="eyebrow">Hashimoto Keiba AI Command Center</p>
         <h1>実データ形式で、今日の勝負馬・消し馬・WIN5を統合管理。</h1>
         <p class="hero__lead">
-          AI指数、神穴、危険人気馬、保存ログ、WIN5生成結果を同じ画面で監視できる、競馬AI運用者向けの黒×金ダッシュボードです。
-          レース条件、馬番、人気、想定オッズ、指数、根拠、保存ステータスまで管理画面らしく整理しました。
+          主要8場の競馬場OS、AIレーススコア、神レースTOP10、WIN5 AI予想、万馬券予言エンジンまで同じ画面で監視できる、競馬AI運用者向けの黒×金ダッシュボードです。
+          レース条件、馬番、人気、想定オッズ、指数、根拠、勝負度、保存ステータスまで管理画面らしく整理しました。
         </p>
         <div class="hero__actions" aria-label="主要メニュー">
-          <a class="button button--primary" href="#ai-index-ranking">本日のランキングを見る</a>
-          <a class="button button--ghost" href="#save-log-search">保存ログを検索</a>
+          <a class="button button--primary" href="#course-selector">競馬場OSを選択</a>
+          <a class="button button--ghost" href="#win5-ai-screen">WIN5 AI予想を見る</a>
         </div>
       </section>
     </header>
@@ -46,8 +50,8 @@
       <section class="summary" aria-label="本日のAIサマリー">
         <article>
           <span class="summary__label">対象開催</span>
-          <strong>東京・京都・阪神</strong>
-          <span>2026/06/02 09:30 JST 更新 / 36R同期済み</span>
+          <strong>主要8場</strong>
+          <span>2026/06/02 09:30 JST 更新 / 8場・72R監視</span>
         </article>
         <article>
           <span class="summary__label">AI総合信頼度</span>
@@ -66,6 +70,34 @@
         <span><b>オッズ</b> 09:28時点</span>
         <span><b>馬場補正</b> 東京芝+2 / 京都ダ+1</span>
         <span><b>保存先</b> 各競馬場/保存ログ</span>
+      </section>
+
+      <section id="course-selector" class="course-console" aria-label="競馬場選択メニュー">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">COURSE OS SELECTOR</p>
+            <h2>競馬場選択メニュー</h2>
+            <p>中山・東京・京都・阪神・中京・新潟・福島・小倉の主要8場をワンタップで切り替え、馬場バイアス、勝負度、穴発生率、WIN5対象を確認します。</p>
+          </div>
+          <span class="status-pill status-pill--live">8 COURSE ONLINE</span>
+        </div>
+        <div class="course-grid" role="list">
+          <button class="course-chip is-active" type="button" data-course="中山" data-bias="急坂×内回り。先行力とコーナー加速を重視" data-score="91" data-bet="勝負レース 4R" data-longshot="万馬券警戒 11R">中山</button>
+          <button class="course-chip" type="button" data-course="東京" data-bias="長い直線。上がり性能と外差し補正を強化" data-score="94" data-bet="勝負レース 5R" data-longshot="万馬券警戒 10R">東京</button>
+          <button class="course-chip" type="button" data-course="京都" data-bias="平坦持続。内外回りと立ち回りを分岐判定" data-score="89" data-bet="回収レース 3R" data-longshot="万馬券警戒 12R">京都</button>
+          <button class="course-chip" type="button" data-course="阪神" data-bias="坂適性とパワー型持続ラップを加点" data-score="92" data-bet="勝負レース 3R" data-longshot="万馬券警戒 10R">阪神</button>
+          <button class="course-chip" type="button" data-course="中京" data-bias="左回り急坂。直線性能と差し届き率を監視" data-score="87" data-bet="回収レース 2R" data-longshot="万馬券警戒 9R">中京</button>
+          <button class="course-chip" type="button" data-course="新潟" data-bias="外回り・直線競馬。瞬発指数を最大補正" data-score="86" data-bet="見送り 2R" data-longshot="万馬券警戒 11R">新潟</button>
+          <button class="course-chip" type="button" data-course="福島" data-bias="小回り先行。内枠・機動力・穴馬条件を重視" data-score="88" data-bet="回収レース 4R" data-longshot="万馬券警戒 8R">福島</button>
+          <button class="course-chip" type="button" data-course="小倉" data-bias="平坦小回り。先行粘りと開催後半馬場を補正" data-score="85" data-bet="見送り 1R" data-longshot="万馬券警戒 12R">小倉</button>
+        </div>
+        <div class="course-readout" aria-live="polite">
+          <article><span>選択中</span><strong id="selected-course">中山</strong></article>
+          <article><span>競馬場OS</span><strong id="selected-bias">急坂×内回り。先行力とコーナー加速を重視</strong></article>
+          <article><span>AI信頼度</span><strong id="selected-score">91</strong></article>
+          <article><span>本日判定</span><strong id="selected-bet">勝負レース 4R</strong></article>
+          <article><span>穴警戒</span><strong id="selected-longshot">万馬券警戒 11R</strong></article>
+        </div>
       </section>
 
       <section id="dashboard" class="dashboard-grid" aria-label="橋本競馬AI 実データ形式ダッシュボード">
@@ -180,6 +212,71 @@
           <a class="card__link" href="./AI研究所/危険人気馬AI/README.md">危険人気馬AIを見る</a>
         </article>
 
+        <article id="race-score" class="card card--featured data-card control-card score-card">
+          <div class="card__icon" aria-hidden="true">🎯</div>
+          <div class="card__body">
+            <div class="card-heading">
+              <div>
+                <p class="card__kicker">AI RACE SCORE</p>
+                <h2>AIレーススコア</h2>
+              </div>
+              <span class="status-pill status-pill--live">全72R採点</span>
+            </div>
+            <p class="card__lead">全レースを「勝負レース」「回収レース」「見送り」に自動分類。軸信頼、荒れ指数、期待回収率、資金投入レベルを運用判断に直結させます。</p>
+            <div class="score-lanes" aria-label="AIレーススコア分類">
+              <section class="score-lane score-lane--hot">
+                <span>勝負レース</span>
+                <strong>東京11R 安田記念</strong>
+                <small>AIスコア 96 / 軸信頼 82% / 推奨資金レベル S</small>
+              </section>
+              <section class="score-lane score-lane--return">
+                <span>回収レース</span>
+                <strong>阪神10R 灘ステークス</strong>
+                <small>AIスコア 89 / 穴期待 74% / 三連複フォーメーション推奨</small>
+              </section>
+              <section class="score-lane score-lane--skip">
+                <span>見送り</span>
+                <strong>新潟7R 3歳上1勝クラス</strong>
+                <small>AIスコア 54 / 展開不確定 / オッズ妙味不足</small>
+              </section>
+            </div>
+          </div>
+        </article>
+
+        <article id="kami-race-top10" class="card card--featured data-card control-card top10-card">
+          <div class="card__icon" aria-hidden="true">👑</div>
+          <div class="card__body">
+            <div class="card-heading">
+              <div>
+                <p class="card__kicker">KAMI RACE TOP10</p>
+                <h2>神レースランキングTOP10</h2>
+              </div>
+              <span class="status-pill">期待値順</span>
+            </div>
+            <p class="card__lead">勝負度、妙味、軸信頼、荒れ指数、券種適性を合成して「今日買うべきレース」をTOP10化します。</p>
+            <div class="table-wrap">
+              <table class="data-table data-table--compact">
+                <thead>
+                  <tr><th scope="col">順位</th><th scope="col">レース</th><th scope="col">分類</th><th scope="col">AI勝負度</th><th scope="col">推奨券種</th><th scope="col">一言メモ</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td data-label="順位">1</td><td data-label="レース">東京11R 安田記念</td><td data-label="分類"><span class="badge badge--gold">勝負</span></td><td data-label="AI勝負度"><strong>96</strong></td><td data-label="推奨券種">馬連・三連複</td><td data-label="一言メモ">本命軸が抜け、相手穴まで明確。</td></tr>
+                  <tr><td data-label="順位">2</td><td data-label="レース">阪神10R 灘S</td><td data-label="分類"><span class="badge badge--gold">回収</span></td><td data-label="AI勝負度"><strong>93</strong></td><td data-label="推奨券種">三連複</td><td data-label="一言メモ">外差し補正で6番が急浮上。</td></tr>
+                  <tr><td data-label="順位">3</td><td data-label="レース">京都10R 水無月S</td><td data-label="分類"><span class="badge">堅軸</span></td><td data-label="AI勝負度"><strong>91</strong></td><td data-label="推奨券種">単勝・WIN5</td><td data-label="一言メモ">3番の先行指数が安定。</td></tr>
+                  <tr><td data-label="順位">4</td><td data-label="レース">福島8R 1勝クラス</td><td data-label="分類"><span class="badge">回収</span></td><td data-label="AI勝負度"><strong>88</strong></td><td data-label="推奨券種">ワイド</td><td data-label="一言メモ">小回り先行の穴馬条件一致。</td></tr>
+                  <tr><td data-label="順位">5</td><td data-label="レース">中山9R 房総特別</td><td data-label="分類"><span class="badge">勝負</span></td><td data-label="AI勝負度"><strong>87</strong></td><td data-label="推奨券種">馬単</td><td data-label="一言メモ">急坂適性Aの2頭で決着想定。</td></tr>
+                  <tr><td data-label="順位">6</td><td data-label="レース">中京11R 左京S</td><td data-label="分類"><span class="badge">回収</span></td><td data-label="AI勝負度"><strong>85</strong></td><td data-label="推奨券種">三連単</td><td data-label="一言メモ">差し届き率が直前で上昇。</td></tr>
+                  <tr><td data-label="順位">7</td><td data-label="レース">小倉12R 1勝クラス</td><td data-label="分類"><span class="badge">穴</span></td><td data-label="AI勝負度"><strong>83</strong></td><td data-label="推奨券種">複勝・ワイド</td><td data-label="一言メモ">平坦替わりで人気薄が上昇。</td></tr>
+                  <tr><td data-label="順位">8</td><td data-label="レース">新潟11R 直線特別</td><td data-label="分類"><span class="badge">回収</span></td><td data-label="AI勝負度"><strong>82</strong></td><td data-label="推奨券種">馬連</td><td data-label="一言メモ">外枠バイアス継続なら妙味。</td></tr>
+                  <tr><td data-label="順位">9</td><td data-label="レース">東京8R 1勝クラス</td><td data-label="分類"><span class="badge">穴</span></td><td data-label="AI勝負度"><strong>80</strong></td><td data-label="推奨券種">ワイド</td><td data-label="一言メモ">距離短縮組を拾う局面。</td></tr>
+                  <tr><td data-label="順位">10</td><td data-label="レース">京都12R 2勝クラス</td><td data-label="分類"><span class="badge">見極め</span></td><td data-label="AI勝負度"><strong>78</strong></td><td data-label="推奨券種">三連複</td><td data-label="一言メモ">道悪なら穴14番を追加。</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <a class="card__link" href="./神レースDB/README.md">神レースDBを見る</a>
+        </article>
+
         <article id="save-log-search" class="card card--featured data-card control-card search-card">
           <div class="card__icon" aria-hidden="true">🔎</div>
           <div class="card__body">
@@ -203,6 +300,8 @@
                   <option value="阪神競馬場">阪神競馬場</option>
                   <option value="中山競馬場">中山競馬場</option>
                   <option value="中京競馬場">中京競馬場</option>
+                  <option value="新潟競馬場">新潟競馬場</option>
+                  <option value="福島競馬場">福島競馬場</option>
                   <option value="小倉競馬場">小倉競馬場</option>
                 </select>
               </label>
@@ -326,17 +425,17 @@
           <a class="card__link" href="./東京競馬場/保存ログ/README.md">保存ログを開く</a>
         </article>
 
-        <article id="win5-corner" class="card card--featured data-card win5-card control-card">
+        <article id="win5-ai-screen" class="card card--featured data-card win5-card control-card">
           <div class="card__icon" aria-hidden="true">🏆</div>
           <div class="card__body">
             <div class="card-heading">
               <div>
-                <p class="card__kicker">WIN5 CORNER</p>
-                <h2>WIN5コーナー</h2>
+                <p class="card__kicker">WIN5 AI PREDICTION</p>
+                <h2>WIN5 AI予想画面</h2>
               </div>
               <span class="status-pill">48点生成</span>
             </div>
-            <p class="card__lead">対象5レースの難度、軸信頼、穴投入ポイントをもとに買い目フォーメーションを生成します。</p>
+            <p class="card__lead">対象5レースの難度、軸信頼、穴投入ポイント、買い目点数、資金配分をAI予想画面として表示します。</p>
             <div class="win5-ticket" aria-label="WIN5 買い目フォーメーション">
               <section><span>WIN1 東京9R</span><strong>2, 7</strong><small>難度B / 先行決着 / 軸信頼76%</small></section>
               <section><span>WIN2 京都10R</span><strong>3</strong><small>堅軸 / AI指数94.1 / 1点突破</small></section>
@@ -352,6 +451,26 @@
             </div>
           </div>
           <a class="card__link" href="./WIN5/WIN5_AI.md">WIN5 AIを見る</a>
+        </article>
+
+        <article id="trifecta-prophet" class="card card--accent data-card control-card prophet-card">
+          <div class="card__icon" aria-hidden="true">🔮</div>
+          <div class="card__body">
+            <div class="card-heading">
+              <div>
+                <p class="card__kicker">MAMBAKEN PROPHET ENGINE</p>
+                <h2>AI万馬券予言エンジン</h2>
+              </div>
+              <span class="status-pill status-pill--danger">高配当監視</span>
+            </div>
+            <p class="card__lead">荒れ指数、人気断層、展開崩壊、血統バイアスを統合し、三連系で万馬券化しやすいレースと買い目の入口を予言します。</p>
+            <div class="prophet-panel" aria-label="AI万馬券予言一覧">
+              <article><span>予言A</span><strong>阪神10R 6-12-1</strong><small>想定配当 18,600円 / 外差し崩壊パターン / 的中警戒度 81</small></article>
+              <article><span>予言B</span><strong>福島8R 9-3-14</strong><small>想定配当 42,300円 / 小回り先行穴 / 的中警戒度 76</small></article>
+              <article><span>予言C</span><strong>京都12R 14-6-2</strong><small>想定配当 31,900円 / 道悪血統A / 的中警戒度 72</small></article>
+            </div>
+          </div>
+          <a class="card__link" href="./万馬券DB/README.md">万馬券DBを見る</a>
         </article>
 
         <article id="operations-board" class="card card--wide operations-card">
@@ -378,6 +497,25 @@
     </footer>
 
     <script>
+      const courseChips = Array.from(document.querySelectorAll(".course-chip"));
+      const selectedCourse = document.querySelector("#selected-course");
+      const selectedBias = document.querySelector("#selected-bias");
+      const selectedScore = document.querySelector("#selected-score");
+      const selectedBet = document.querySelector("#selected-bet");
+      const selectedLongshot = document.querySelector("#selected-longshot");
+
+      courseChips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+          courseChips.forEach((item) => item.classList.remove("is-active"));
+          chip.classList.add("is-active");
+          selectedCourse.textContent = chip.dataset.course;
+          selectedBias.textContent = chip.dataset.bias;
+          selectedScore.textContent = chip.dataset.score;
+          selectedBet.textContent = chip.dataset.bet;
+          selectedLongshot.textContent = chip.dataset.longshot;
+        });
+      });
+
       const searchForm = document.querySelector(".log-search");
       const courseFilter = document.querySelector("#course-filter");
       const monthFilter = document.querySelector("#month-filter");
