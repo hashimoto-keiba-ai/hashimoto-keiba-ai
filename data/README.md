@@ -22,5 +22,6 @@
 | `roiRecords` | `roiRecords.json` | 回収率・資金管理データ |
 | `betTickets` | `betTickets.json` | 三連単など自動買い目 |
 | `backupData` | `backupData.json` | バックアップpayload |
+| `selfEvolutionLogs` | `selfEvolutionLogs.json` | AI自己進化ループ（結果検証・バックテスト・改善提案） |
 
 GitHub API接続はまだ行わず、`src/storage/githubAdapter.js` に雛形だけを用意しています。

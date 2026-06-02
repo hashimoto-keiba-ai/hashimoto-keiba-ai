@@ -1,0 +1,11 @@
+{
+  "storageVersion": 1,
+  "type": "selfEvolutionLogs",
+  "provider": "github-ready-placeholder",
+  "description": "GitHub JSON保存連携時に橋本競馬AIの自己進化ループ（結果検証、バックテスト結果、改善提案）を保存する想定ファイルです。現在はlocalStorageを使用します。",
+  "logs": {
+    "resultVerifications": [],
+    "backtests": [],
+    "improvementProposals": []
+  }
+}
