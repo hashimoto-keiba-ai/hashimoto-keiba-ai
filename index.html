@@ -6,7 +6,7 @@
     <title>橋本競馬AIダッシュボード</title>
     <meta
       name="description"
-      content="AI指数ランキング、神穴ランキング、危険人気馬ランキング、保存ログ検索、WIN5コーナーを実データ形式で管理する黒×金の橋本競馬AIダッシュボード。"
+      content="競馬場選択、AIレーススコア、神レースTOP10、WIN5 AI、AI万馬券予言エンジンを実データ形式で管理する黒×金の橋本競馬AIダッシュボード。"
     />
     <link rel="stylesheet" href="./src/dashboard.css" />
   </head>
@@ -42,6 +42,12 @@
         <div class="hero__actions" aria-label="主要メニュー">
           <a class="button button--primary" href="#course-selector">競馬場OSを選択</a>
           <a class="button button--ghost" href="#win5-ai-screen">WIN5 AI予想を見る</a>
+        </div>
+        <div class="command-metrics" aria-label="AIオペレーション即時指標">
+          <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
+          <article><span>回収レース</span><strong>18R</strong><small>期待回収率120%超</small></article>
+          <article><span>見送り</span><strong>43R</strong><small>妙味不足・展開不確定</small></article>
+          <article><span>万馬券警戒</span><strong>7R</strong><small>荒れ指数75以上</small></article>
         </div>
       </section>
     </header>
@@ -81,6 +87,19 @@
           </div>
           <span class="status-pill status-pill--live">8 COURSE ONLINE</span>
         </div>
+        <label class="course-select-label" for="course-select">
+          <span>競馬場メニュー</span>
+          <select id="course-select" class="course-select" aria-label="競馬場を選択">
+            <option value="中山">中山</option>
+            <option value="東京">東京</option>
+            <option value="京都">京都</option>
+            <option value="阪神">阪神</option>
+            <option value="中京">中京</option>
+            <option value="新潟">新潟</option>
+            <option value="福島">福島</option>
+            <option value="小倉">小倉</option>
+          </select>
+        </label>
         <div class="course-grid" role="list">
           <button class="course-chip is-active" type="button" data-course="中山" data-bias="急坂×内回り。先行力とコーナー加速を重視" data-score="91" data-bet="勝負レース 4R" data-longshot="万馬券警戒 11R">中山</button>
           <button class="course-chip" type="button" data-course="東京" data-bias="長い直線。上がり性能と外差し補正を強化" data-score="94" data-bet="勝負レース 5R" data-longshot="万馬券警戒 10R">東京</button>
@@ -239,6 +258,12 @@
                 <strong>新潟7R 3歳上1勝クラス</strong>
                 <small>AIスコア 54 / 展開不確定 / オッズ妙味不足</small>
               </section>
+            </div>
+            <div class="score-ops" aria-label="レーススコア運用内訳">
+              <article><span>勝負レース条件</span><strong>スコア90以上</strong><small>軸信頼75%以上、指数差2.5以上、馬場一致A</small></article>
+              <article><span>回収レース条件</span><strong>期待回収率120%+</strong><small>穴期待65%以上、人気断層、相手荒れの再現性</small></article>
+              <article><span>見送り条件</span><strong>不確定要素優先</strong><small>展開割れ、直前馬場未確定、オッズ妙味不足</small></article>
+              <article><span>自動保存</span><strong>神レースDB連携</strong><small>買い目・根拠・検証メモを保存ログへ送信</small></article>
             </div>
           </div>
         </article>
@@ -443,6 +468,12 @@
               <section><span>WIN4 東京10R</span><strong>4, 9</strong><small>危険人気1番を消し / 差し重視</small></section>
               <section><span>WIN5 東京11R</span><strong>7, 14, 16, 18</strong><small>指数1位＋高配当カバー</small></section>
             </div>
+            <div class="win5-candidate-board" aria-label="WIN5 AI候補ゾーン">
+              <article class="candidate candidate--a"><span>A固定候補</span><strong>京都10R 3 キングロード</strong><small>単勝突破率74% / WIN5軸固定 / 点数圧縮</small></article>
+              <article class="candidate candidate--b"><span>B本線候補</span><strong>東京11R 7・14</strong><small>指数上位＋展開一致 / 本線2頭構成</small></article>
+              <article class="candidate candidate--c"><span>Cゾーン候補</span><strong>阪神10R 1・6・12</strong><small>荒れ許容ゾーン / 神穴6番を保険投入</small></article>
+              <article class="candidate candidate--d"><span>D爆発候補</span><strong>東京10R 9 / 福島8R 11</strong><small>人気断層×差し決着なら高配当爆発</small></article>
+            </div>
             <div class="generated-summary">
               <span>生成点数 <strong>48点</strong></span>
               <span>推奨資金 <strong>4,800円</strong></span>
@@ -464,10 +495,11 @@
               <span class="status-pill status-pill--danger">高配当監視</span>
             </div>
             <p class="card__lead">荒れ指数、人気断層、展開崩壊、血統バイアスを統合し、三連系で万馬券化しやすいレースと買い目の入口を予言します。</p>
-            <div class="prophet-panel" aria-label="AI万馬券予言一覧">
-              <article><span>予言A</span><strong>阪神10R 6-12-1</strong><small>想定配当 18,600円 / 外差し崩壊パターン / 的中警戒度 81</small></article>
-              <article><span>予言B</span><strong>福島8R 9-3-14</strong><small>想定配当 42,300円 / 小回り先行穴 / 的中警戒度 76</small></article>
-              <article><span>予言C</span><strong>京都12R 14-6-2</strong><small>想定配当 31,900円 / 道悪血統A / 的中警戒度 72</small></article>
+            <div class="prophet-panel prophet-panel--engine" aria-label="AI万馬券予言エンジン詳細">
+              <article><span>万馬券確率</span><strong>阪神10R 64%</strong><small>荒れ指数83 / 人気断層2.8 / 三連複万馬券ラインを突破</small></article>
+              <article><span>爆穴候補</span><strong>6 レッドオービット</strong><small>9人気 28.4倍 / 外差し馬場×上がり最速候補</small></article>
+              <article><span>危険人気馬</span><strong>1 サンライズノヴァ</strong><small>1人気 2.4倍 / 逃げ過多で内枠揉まれリスク</small></article>
+              <article><span>推奨買い目</span><strong>三連複 6-7,12-1,3,7,12,14</strong><small>12点 / 推奨資金1,200円 / 想定最大42,300円</small></article>
             </div>
           </div>
           <a class="card__link" href="./万馬券DB/README.md">万馬券DBを見る</a>
@@ -503,17 +535,26 @@
       const selectedScore = document.querySelector("#selected-score");
       const selectedBet = document.querySelector("#selected-bet");
       const selectedLongshot = document.querySelector("#selected-longshot");
+      const courseSelect = document.querySelector("#course-select");
+
+      const activateCourse = (chip) => {
+        courseChips.forEach((item) => item.classList.remove("is-active"));
+        chip.classList.add("is-active");
+        selectedCourse.textContent = chip.dataset.course;
+        selectedBias.textContent = chip.dataset.bias;
+        selectedScore.textContent = chip.dataset.score;
+        selectedBet.textContent = chip.dataset.bet;
+        selectedLongshot.textContent = chip.dataset.longshot;
+        courseSelect.value = chip.dataset.course;
+      };
 
       courseChips.forEach((chip) => {
-        chip.addEventListener("click", () => {
-          courseChips.forEach((item) => item.classList.remove("is-active"));
-          chip.classList.add("is-active");
-          selectedCourse.textContent = chip.dataset.course;
-          selectedBias.textContent = chip.dataset.bias;
-          selectedScore.textContent = chip.dataset.score;
-          selectedBet.textContent = chip.dataset.bet;
-          selectedLongshot.textContent = chip.dataset.longshot;
-        });
+        chip.addEventListener("click", () => activateCourse(chip));
+      });
+
+      courseSelect.addEventListener("change", () => {
+        const chip = courseChips.find((item) => item.dataset.course === courseSelect.value);
+        if (chip) activateCourse(chip);
       });
 
       const searchForm = document.querySelector(".log-search");
