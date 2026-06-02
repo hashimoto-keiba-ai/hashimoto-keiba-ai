@@ -17,6 +17,7 @@
 | `horseEntries` | `horseEntries.json` | 出走馬データ |
 | `predictions` | `predictions.json` | 事前予想ログ |
 | `results` | `results.json` | 結果検証ログ |
+| `raceResults` | `raceResults.json` | 結果CSV取込データ（着順・払戻・通過順・上がり） |
 | `osUpdates` | `osUpdates.json` | OSアップデートログ |
 | `win5Tickets` | `win5Tickets.json` | WIN5買い目 |
 | `roiRecords` | `roiRecords.json` | 回収率・資金管理データ |

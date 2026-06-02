@@ -1533,6 +1533,19 @@ h1 {
   align-items: end;
 }
 
+.csv-validation-controls--triple {
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+}
+
+.result-csv-panel {
+  border-color: rgba(248, 196, 79, 0.38);
+  background: linear-gradient(135deg, rgba(248, 196, 79, 0.12), rgba(0, 0, 0, 0.3));
+}
+
+.result-csv-panel code {
+  color: var(--gold-light);
+}
+
 .csv-validation-controls label {
   display: grid;
   gap: 8px;
@@ -1902,6 +1915,7 @@ h1 {
 @media (max-width: 980px) {
   .entry-layout,
   .csv-validation-controls,
+  .csv-validation-controls--triple,
   .ranking-grid,
   .bet-grid,
   .trifecta-candidate-output,
