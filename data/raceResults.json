@@ -1,0 +1,8 @@
+{
+  "storageVersion": 1,
+  "type": "raceResults",
+  "provider": "github-ready-placeholder",
+  "description": "GitHub JSON保存連携時に橋本競馬AIの結果CSV取込データを保存する想定ファイルです。現在はlocalStorageを使用します。",
+  "items": [],
+  "races": []
+}

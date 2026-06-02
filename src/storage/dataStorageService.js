@@ -32,6 +32,13 @@
       repositoryPath: "data/results.json",
       description: "結果検証ログ",
     },
+    raceResults: {
+      type: "raceResults",
+      storageKey: "raceResults",
+      fileName: "raceResults.json",
+      repositoryPath: "data/raceResults.json",
+      description: "結果CSV取込データ",
+    },
     osUpdates: {
       type: "osUpdates",
       storageKey: "hashimoto-keiba-ai:os-update-rules:v1",

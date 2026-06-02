@@ -278,7 +278,7 @@ GitHub Pages公開後は、Safariからホーム画面へ追加すると、`mani
 - **将来のGitHub保存**: `src/storage/githubAdapter.js` は未接続の雛形です。将来、GitHub Contents APIへ接続し、`/data/*.json` を読み書きする実装を追加します。未接続状態では保存・読込・エクスポート・インポートをエラーにして、誤送信を防ぎます。
 - **保存先マッピング確認**: `HashimotoDataStorage.getRepositoryFileMap()` で `raceEntries` → `/data/raceEntries.json` のようなタイプ別保存先を取得できるため、GitHub連携実装時も対象ファイルを共通定義から参照できます。
 - **アダプター切り替え**: `HashimotoDataStorage.setActiveAdapter("localStorage")` / `HashimotoDataStorage.setActiveAdapter("github")` の形で保存先を切り替えられる構造にしています。GitHub側は現在エラーを返し、誤って未実装APIへ送信しないようにしています。
-- **対象タイプ**: `raceEntries`、`horseEntries`、`predictions`、`results`、`osUpdates`、`win5Tickets`、`roiRecords`、`betTickets`、`backupData` を共通タイプとして定義しています。
+- **対象タイプ**: `raceEntries`、`horseEntries`、`predictions`、`results`、`raceResults`、`osUpdates`、`win5Tickets`、`roiRecords`、`betTickets`、`backupData`、`selfEvolutionLogs` を共通タイプとして定義しています。
 
 保存先JSONは将来的に以下の対応を想定します。
 
@@ -288,17 +288,19 @@ GitHub Pages公開後は、Safariからホーム画面へ追加すると、`mani
 ├─ horseEntries.json
 ├─ predictions.json
 ├─ results.json
+├─ raceResults.json
 ├─ osUpdates.json
 ├─ win5Tickets.json
 ├─ roiRecords.json
 ├─ betTickets.json
-└─ backupData.json
+├─ backupData.json
+└─ selfEvolutionLogs.json
 ```
 
 ## バックアップ／復元機能の使い方
 
 1. ダッシュボードの「バックアップ」または「バックアップ／復元」へ移動します。黒×金デザインの操作パネルで、スマホではバックアップ欄と復元欄が1カラム表示になります。
-2. **全データをバックアップ**: `localStorage` に保存済みのレース登録データ、出走馬データ、事前予想ログ、結果検証ログ、OSアップデートログ、WIN5買い目、回収率データ、自動買い目データをまとめてJSONダウンロードします。
+2. **全データをバックアップ**: `localStorage` に保存済みのレース登録データ、出走馬データ、事前予想ログ、結果検証ログ、結果CSV取込データ、OSアップデートログ、WIN5買い目、回収率データ、自動買い目データをまとめてJSONダウンロードします。
 3. **競馬場別バックアップ**: 競馬場セレクトで東京・中山などを選び、その競馬場に一致するレース登録、検証ログ、OSルール、回収率、WIN5内レース、自動買い目を抽出してJSON化します。競馬場名は「東京」と「東京競馬場」のどちらの形式でも照合できるようにしています。
 4. **WIN5のみバックアップ**: `hashimoto-keiba-ai:win5-ticket:v1` のWIN5対象5レース、候補ゾーン、採用フォーメーション、点数、推奨資金をJSONで保存します。
 5. **回収率のみバックアップ**: `hashimoto-keiba-ai:investment-results:v1` の投資結果、払戻、ROI、損益、的中率集計に使うデータをJSONで保存します。
@@ -341,6 +343,55 @@ GitHub Pages公開後は、Safariからホーム画面へ追加すると、`mani
 6. 「買い目保存」を押すと `hashimoto-keiba-ai:win5-ticket:v1` にlocalStorage保存します。保存JSONは `races`、`formation`、`summary`、`repositoryPath` を分けたGitHub保存拡張対応構造です。将来GitHubへ保存する場合は、`win5StorageAdapters.github` の `save/load` をGitHub APIに接続します。
 7. 黒×金デザインのまま、スマホではレース基本情報、候補馬入力、生成サマリーが1カラムへ切り替わるため、現場入力でも利用できます。
 
+## 結果CSV取込（Phase2-1）
+
+Phase2-1では、既存の出馬表CSV取込とは別に、レース後の実結果を取り込む「結果CSV取込」セクションをダッシュボードへ追加しています。目的は、着順・払戻・4角位置・上がり3F・馬場状態・実ペース・メモを正規化して、結果検証フォーム、バックテスト、AI自己進化ログで同じデータを再利用できるようにすることです。
+
+### 使い方
+
+1. `index.html` の「レース登録・出走馬入力フォーム」内にある「結果CSV取込」へ移動します。既存の「CSV取込バリデーション」は出馬表用で、結果CSVは別セクションとして扱います。
+2. 「結果CSVテンプレート」ボタンでテンプレートをダウンロードし、必要カラムを入力します。
+3. 結果CSVファイルを選択すると、取り込み前にプレビュー表へ行ごとの `OK` / `注意` / `エラー` が表示されます。
+4. 必須カラム不足、必須値の空欄、数値カラムの型エラーがある場合は取り込みボタンを無効化します。任意カラム不足や任意値の空欄は「注意」として表示し、取り込みは可能です。
+5. 「結果CSVを取り込む」を押すと、正規化payloadを `raceResults` に保存します。payloadの `type` は `raceResults`、GitHub保存拡張時の想定ファイルは `data/raceResults.json` です。
+6. 取り込んだ各レースは結果検証ログ互換の構造へ変換され、`hashimoto-keiba-ai:result-verification-logs:v1` にも連動します。先頭レースは結果検証フォームへ自動反映され、バックテスト集計とAI自己進化ログの材料にもなります。
+
+### カラム定義
+
+| カラム | 必須 | 型/形式 | 用途 |
+| --- | --- | --- | --- |
+| 開催日 | 必須 | `YYYY-MM-DD`推奨 | レース識別、期間フィルター、バックテスト対象選択 |
+| 競馬場 | 必須 | 例: `東京競馬場` / `東京` | 競馬場別検証、ROI弱点分析、自己進化ログ根拠 |
+| レース番号 | 必須 | 数値 | レース識別、結果検証フォーム反映 |
+| レース名 | 任意 | 文字列 | 結果検証ログの表示名。未入力時は「結果CSV取込レース」で補完 |
+| 着順 | 必須 | 数値 | 1〜3着を結果検証フォームの着順欄へ反映 |
+| 馬番 | 必須 | 数値 | 着順馬の馬番 |
+| 馬名 | 必須 | 文字列 | 着順馬名 |
+| 騎手 | 任意 | 文字列 | 1〜3着の騎手欄、検証ログ詳細 |
+| 人気 | 任意 | 数値 | 人気帯別の弱点分析、結果フォームの人気欄 |
+| オッズ | 任意 | 数値 | 高配当・妙味検証用の生データ |
+| 4角位置 | 任意 | 数値 | 通過順サマリー、展開/位置取りの検証 |
+| 上がり3F | 任意 | 数値 | 末脚・上がり性能の検証 |
+| 三連単配当 | 任意 | 数値 | 払戻検証、ROI/三連単検証の補助値 |
+| 馬場状態 | 任意 | `良` / `稍重` / `重` / `不良` など | 馬場別バックテスト、OSルール反映 |
+| 実ペース | 任意 | `超スロー` / `スロー` / `平均` / `ハイ` / `超ハイ` など | ペース別弱点分析、自己進化ログ |
+| メモ | 任意 | 文字列 | 結果検証フォームの学習点、自己進化ログ補助メモ |
+
+### 保存構造
+
+`raceResults` payloadは、CSV行単位の `items` と、開催日・競馬場・レース番号・レース名で束ねた `races` を持ちます。`races` から1〜3着を抽出して結果検証ログ互換データを作るため、バックテストや自己進化ログの読み込み口を壊さずに拡張できます。
+
+```json
+{
+  "storageVersion": 1,
+  "type": "raceResults",
+  "provider": "localStorage",
+  "storageKey": "raceResults",
+  "items": [],
+  "races": []
+}
+```
+
 ## AI精度テスト・バックテスト機能の使い方
 
 1. `index.html` を開き、トップメニューから「AI精度テスト・バックテスト」へ移動します。黒×金デザインのカードとして表示され、スマホでは対象選択、集計表、弱点分析、改善提案が1カラムに切り替わります。
@@ -349,7 +400,7 @@ GitHub Pages公開後は、Safariからホーム画面へ追加すると、`mani
 4. バックテスト対象選択で、期間、競馬場、距離帯（短距離・マイル・中距離・長距離）、芝/ダート、馬場状態、券種を選び、「バックテスト集計」を押します。フォーム入力中も即時再集計されます。
 5. 的中率集計では、本命的中率、対抗的中率、神穴的中率、危険人気馬判定成功率、三連単的中率、WIN5的中率を表示します。
 6. 弱点分析では、苦手競馬場、苦手距離、苦手馬場、苦手ペース、外れやすい人気ゾーンを抽出します。改善提案では、AI指数補正、展開AI補正、危険人気馬AI補正、神穴AI補正、WIN5補正の候補を表示します。
-7. 現在の集計対象は `hashimoto-keiba-ai:result-verification-logs:v1` と `hashimoto-keiba-ai:investment-results:v1` のlocalStorage保存ログです。実装は `backtestSourceAdapters.local/github` として読み込み口を分けているため、将来 `data/results.json` や `data/roiRecords.json` のGitHub JSON保存データへ切り替えやすい構造です。
+7. 現在の集計対象は `hashimoto-keiba-ai:result-verification-logs:v1`、結果CSV取込の `raceResults`、`hashimoto-keiba-ai:investment-results:v1` のlocalStorage保存ログです。実装は `backtestSourceAdapters.local/github` として読み込み口を分けているため、将来 `data/results.json` や `data/roiRecords.json` のGitHub JSON保存データへ切り替えやすい構造です。
 
 ## GitHub API保存設定（準備実装）
 

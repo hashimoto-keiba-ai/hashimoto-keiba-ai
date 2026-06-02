@@ -31,6 +31,7 @@
           <a href="#command-dashboard">司令塔</a>
           <a href="#today-races">今日のレース</a>
           <a href="#real-data-entry">実データ入力</a>
+          <a href="#result-csv-import">結果CSV取込</a>
           <a href="#kami-race-top10">神レースTOP10</a>
           <a href="#ai-index-auto-input">AI指数自動入力</a>
           <a href="#danger-popular">危険人気馬</a>
@@ -67,6 +68,7 @@
           <a href="#command-dashboard"><span>①</span>総合司令塔UI</a>
           <a href="#today-races"><span>②</span>今日のレース一覧</a>
           <a href="#real-data-entry"><span>③</span>実データ入力フォーム</a>
+          <a href="#result-csv-import"><span>③-2</span>結果CSV取込</a>
           <a href="#kami-race-top10"><span>④</span>神レースTOP10</a>
           <a href="#ai-index-auto-input"><span>⑤</span>AI指数自動入力</a>
           <a href="#danger-popular"><span>⑥</span>危険人気馬自動判定</a>
@@ -396,6 +398,27 @@
               <table class="data-table data-table--compact csv-validation-preview">
                 <thead><tr><th>検証</th><th>行</th><th>馬番</th><th>馬名</th><th>人気</th><th>オッズ</th><th>内容</th></tr></thead>
                 <tbody id="csv-validation-preview-body"><tr><td data-label="状態" colspan="7">CSVを選択すると、各行のOK・注意・エラーを表示します。</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+
+          <div id="result-csv-import" class="csv-validation-panel result-csv-panel" aria-label="結果CSV取込">
+            <div class="entry-heading">
+              <span>④ 結果CSV取込</span>
+              <small id="result-csv-validation-status">結果CSV未選択</small>
+            </div>
+            <p class="csv-validation-lead">レース結果・払戻・通過順・上がりをCSVで取り込み、<code>raceResults</code>としてlocalStorageへ保存します。取り込み後は結果検証フォーム、バックテスト、自己進化ログへ同じ正規化構造を連動します。</p>
+            <div class="csv-validation-controls csv-validation-controls--triple">
+              <label><span>結果CSVファイル</span><input id="result-csv-file" type="file" accept=".csv,text/csv" aria-label="結果CSVを取り込む" /></label>
+              <button class="button button--ghost" id="download-result-csv-template" type="button">結果CSVテンプレート</button>
+              <button class="button button--primary" id="import-result-csv" type="button" disabled>結果CSVを取り込む</button>
+            </div>
+            <div id="result-csv-validation-alerts" class="csv-validation-alerts" aria-live="polite"></div>
+            <div class="table-wrap csv-validation-preview-wrap">
+              <table class="data-table data-table--compact csv-validation-preview">
+                <thead><tr><th>検証</th><th>行</th><th>着順</th><th>馬番</th><th>馬名</th><th>4角</th><th>上がり3F</th><th>内容</th></tr></thead>
+                <tbody id="result-csv-validation-preview-body"><tr><td data-label="状態" colspan="8">結果CSVを選択すると、各行のOK・注意・エラーを表示します。</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -1501,10 +1524,21 @@
       const csvValidationAlerts = document.querySelector("#csv-validation-alerts");
       const csvValidationPreviewBody = document.querySelector("#csv-validation-preview-body");
       let latestCsvValidation = null;
+      const resultCsvFileInput = document.querySelector("#result-csv-file");
+      const importResultCsvButton = document.querySelector("#import-result-csv");
+      const downloadResultCsvTemplateButton = document.querySelector("#download-result-csv-template");
+      const resultCsvValidationStatus = document.querySelector("#result-csv-validation-status");
+      const resultCsvValidationAlerts = document.querySelector("#result-csv-validation-alerts");
+      const resultCsvValidationPreviewBody = document.querySelector("#result-csv-validation-preview-body");
+      let latestResultCsvValidation = null;
 
       const CSV_REQUIRED_COLUMNS = ["開催日", "競馬場", "レース番号", "レース名", "馬番", "馬名", "騎手", "人気", "オッズ", "脚質", "距離", "芝ダート", "馬場状態"];
       const CSV_OPTIONAL_COLUMNS = ["調教師", "調教評価", "AI指数", "神穴指数", "危険人気馬指数", "想定4角位置"];
       const CSV_NUMERIC_COLUMNS = ["馬番", "人気", "オッズ", "AI指数", "神穴指数", "危険人気馬指数"];
+      const RACE_RESULT_STORAGE_KEY = dataStorage.getDefinition("raceResults").storageKey;
+      const RESULT_CSV_REQUIRED_COLUMNS = ["開催日", "競馬場", "レース番号", "着順", "馬番", "馬名"];
+      const RESULT_CSV_OPTIONAL_COLUMNS = ["レース名", "騎手", "人気", "オッズ", "4角位置", "上がり3F", "三連単配当", "馬場状態", "実ペース", "メモ"];
+      const RESULT_CSV_NUMERIC_COLUMNS = ["レース番号", "着順", "馬番", "人気", "オッズ", "4角位置", "上がり3F", "三連単配当"];
 
       const TRIFECTA_STORAGE_KEY = dataStorage.getDefinition("betTickets").storageKey;
       const trifectaStorageAdapters = {
@@ -2082,6 +2116,7 @@
         { type: "horseEntries", key: HORSE_ENTRY_STORAGE_KEY, label: "出走馬データ", category: "race", optional: true, listPath: "horses", coursePaths: [["race", "course"], ["course"]] },
         { type: "predictions", key: PREDICTION_LOG_STORAGE_KEY, label: "事前予想ログ", category: "prediction", optional: true, listPath: "logs", coursePaths: [["course"], ["race", "course"]] },
         { type: "results", key: RESULT_LOG_STORAGE_KEY, label: "結果検証ログ", category: "result", listPath: "logs", coursePaths: [["race", "course"]] },
+        { type: "raceResults", key: RACE_RESULT_STORAGE_KEY, label: "結果CSV取込データ", category: "result", optional: true, listPath: "items", coursePaths: [["course"], ["race", "course"], ["races", "*", "race", "course"]] },
         { type: "osUpdates", key: OS_RULE_STORAGE_KEY, label: "OSアップデートログ", category: "os", listPath: "rules", coursePaths: [["course"]] },
         { type: "win5Tickets", key: WIN5_STORAGE_KEY, label: "WIN5買い目", category: "win5", coursePaths: [["races", "*", "course"], ["formation", "*", "course"]] },
         { type: "roiRecords", key: INVESTMENT_STORAGE_KEY, label: "回収率データ", category: "roi", listPath: "results", coursePaths: [["course"]] },
@@ -2801,12 +2836,63 @@
         return "long";
       };
       const distanceBandLabels = { sprint: "短距離", mile: "マイル", middle: "中距離", long: "長距離", unknown: "未設定" };
+      const toResultLogNumber = (value) => (value === "" || value === undefined || value === null ? "" : Number(value));
+      const findImportedFinisher = (race, finishOrder) => (race.results || []).find((item) => Number(item.finishOrder) === finishOrder) || {};
+      const createResultLogFromImportedRace = (race) => {
+        if (!race?.race?.date || !race?.race?.course || !race?.race?.raceNumber) return null;
+        const first = findImportedFinisher(race, 1);
+        const second = findImportedFinisher(race, 2);
+        const third = findImportedFinisher(race, 3);
+        if (!first.horseName || !second.horseName || !third.horseName) return null;
+        const raceName = race.race.raceName || "結果CSV取込レース";
+        return {
+          id: `raceResultCsv:${race.race.date}:${race.race.course}:${race.race.raceNumber}:${raceName}`,
+          savedAt: race.importedAt || new Date().toISOString(),
+          storageVersion: 1,
+          source: { type: "raceResultsCsv", raceResultId: race.id },
+          race: {
+            date: race.race.date,
+            course: race.race.course,
+            raceNumber: toResultLogNumber(race.race.raceNumber),
+            raceName,
+            distance: "",
+            surface: "",
+          },
+          result: {
+            first: { number: toResultLogNumber(first.horseNumber), name: first.horseName || "", jockey: first.jockey || "", popularity: toResultLogNumber(first.popularity) },
+            second: { number: toResultLogNumber(second.horseNumber), name: second.horseName || "", jockey: second.jockey || "", popularity: toResultLogNumber(second.popularity) },
+            third: { number: toResultLogNumber(third.horseNumber), name: third.horseName || "", jockey: third.jockey || "", popularity: toResultLogNumber(third.popularity) },
+            trifectaPayout: toResultLogNumber(race.summary?.trifectaPayout),
+            trackCondition: race.summary?.trackCondition || "",
+            actualPace: race.summary?.actualPace || "",
+            passingOrder: race.summary?.passingOrder || "",
+          },
+          predictionCheck: {
+            mainHit: false,
+            rivalHit: false,
+            longshotHit: false,
+            kamianaHit: false,
+            dangerPopularSuccess: false,
+            trifectaHit: false,
+            win5Hit: false,
+          },
+          osUpdate: {
+            learningPoint: race.summary?.memo ? `結果CSVメモ: ${race.summary.memo}` : "結果CSV取込から検証",
+            adoptRule: "",
+            pendingRule: "",
+            deleteRule: "",
+          },
+        };
+      };
       const backtestSourceAdapters = {
         local: {
           load() {
+            const raceResultsPayload = dataStorage.loadData("raceResults", "localStorage");
+            const importedLogs = (raceResultsPayload?.races || []).map(createResultLogFromImportedRace).filter(Boolean);
+            const currentResultLogs = Array.isArray(resultLogs) ? resultLogs : [];
             return {
               provider: "localStorage",
-              resultLogs: Array.isArray(resultLogs) ? resultLogs : [],
+              resultLogs: [...currentResultLogs, ...importedLogs.filter((log) => !currentResultLogs.some((item) => item.id === log.id))],
               roiRecords: Array.isArray(investmentResults) ? investmentResults : [],
             };
           },
@@ -2815,9 +2901,11 @@
           load() {
             const resultsPayload = dataStorage.loadData("results", "github");
             const roiPayload = dataStorage.loadData("roiRecords", "github");
+            const raceResultsPayload = dataStorage.loadData("raceResults", "github");
+            const importedLogs = (raceResultsPayload?.races || []).map(createResultLogFromImportedRace).filter(Boolean);
             return {
               provider: "github",
-              resultLogs: Array.isArray(resultsPayload) ? resultsPayload : resultsPayload?.logs || [],
+              resultLogs: [...(Array.isArray(resultsPayload) ? resultsPayload : resultsPayload?.logs || []), ...importedLogs],
               roiRecords: Array.isArray(roiPayload?.results) ? roiPayload.results : [],
             };
           },
@@ -3264,6 +3352,230 @@
         reader.readAsText(file, "utf-8");
       };
 
+      const validateResultCsv = (text) => {
+        const rows = parseCsvText(text);
+        if (!rows.length) {
+          return { headers: [], missingRequired: RESULT_CSV_REQUIRED_COLUMNS, missingOptional: RESULT_CSV_OPTIONAL_COLUMNS, rowResults: [], importableRows: [], hasErrors: true };
+        }
+        const headers = rows[0].map((header) => header.trim());
+        const missingRequired = RESULT_CSV_REQUIRED_COLUMNS.filter((column) => !headers.includes(column));
+        const missingOptional = RESULT_CSV_OPTIONAL_COLUMNS.filter((column) => !headers.includes(column));
+        const rowResults = rows.slice(1).map((values, rowIndex) => {
+          const record = headers.reduce((accumulator, header, index) => ({ ...accumulator, [header]: values[index] ?? "" }), {});
+          const errors = [];
+          const warnings = [];
+          RESULT_CSV_REQUIRED_COLUMNS.forEach((column) => {
+            if (headers.includes(column) && String(record[column] || "").trim() === "") errors.push(`${column}が空欄`);
+          });
+          RESULT_CSV_NUMERIC_COLUMNS.forEach((column) => {
+            if (!headers.includes(column)) return;
+            const value = String(record[column] || "").trim();
+            if (value === "") return;
+            if (!isCsvNumeric(value)) errors.push(`${column}が数値ではありません`);
+          });
+          RESULT_CSV_OPTIONAL_COLUMNS.forEach((column) => {
+            if (headers.includes(column) && column !== "メモ" && String(record[column] || "").trim() === "") warnings.push(`${column}が空欄`);
+          });
+          const status = errors.length ? "エラー" : warnings.length || missingOptional.length ? "注意" : "OK";
+          return { rowNumber: rowIndex + 2, record, status, errors, warnings };
+        });
+        const hasErrors = missingRequired.length > 0 || rowResults.some((row) => row.errors.length);
+        return { headers, missingRequired, missingOptional, rowResults, importableRows: rowResults.filter((row) => !row.errors.length), hasErrors };
+      };
+
+      const renderResultCsvValidation = (validation) => {
+        latestResultCsvValidation = validation;
+        const errorMessages = [];
+        const warningMessages = [];
+        if (validation.missingRequired.length) errorMessages.push(`必須カラム不足: ${validation.missingRequired.join("、")}`);
+        if (validation.rowResults.some((row) => row.errors.length)) errorMessages.push(`データ型・空欄エラー: ${validation.rowResults.filter((row) => row.errors.length).length}行`);
+        if (validation.missingOptional.length) warningMessages.push(`任意カラム未検出: ${validation.missingOptional.join("、")}`);
+        if (validation.rowResults.some((row) => row.warnings.length)) warningMessages.push(`任意項目の空欄注意: ${validation.rowResults.filter((row) => row.warnings.length).length}行`);
+
+        resultCsvValidationStatus.textContent = validation.hasErrors
+          ? `エラー ${errorMessages.length}件`
+          : warningMessages.length ? `注意 ${warningMessages.length}件 / 取込可能` : `OK ${validation.rowResults.length}行 / 取込可能`;
+        importResultCsvButton.disabled = validation.hasErrors || !validation.rowResults.length;
+        resultCsvValidationAlerts.innerHTML = [
+          ...errorMessages.map((message) => `<div class="csv-validation-alert csv-validation-alert--error"><strong>エラー</strong><span>${escapeHtml(message)}</span></div>`),
+          ...warningMessages.map((message) => `<div class="csv-validation-alert csv-validation-alert--warning"><strong>注意</strong><span>${escapeHtml(message)}</span></div>`),
+          !errorMessages.length && !warningMessages.length ? '<div class="csv-validation-alert csv-validation-alert--ok"><strong>OK</strong><span>結果CSVの必須カラム・数値形式ともに問題ありません。</span></div>' : "",
+        ].join("");
+
+        resultCsvValidationPreviewBody.innerHTML = validation.rowResults.length ? validation.rowResults.map((row) => {
+          const detail = [...row.errors, ...row.warnings].join(" / ") || "検証OK";
+          return `<tr class="csv-validation-row csv-validation-row--${row.status}">
+            <td data-label="検証"><span class="badge ${csvBadgeClass(row.status)}">${row.status}</span></td>
+            <td data-label="行">${row.rowNumber}</td>
+            <td data-label="着順">${escapeHtml(row.record["着順"] || "-")}</td>
+            <td data-label="馬番">${escapeHtml(row.record["馬番"] || "-")}</td>
+            <td data-label="馬名"><strong>${escapeHtml(row.record["馬名"] || "-")}</strong></td>
+            <td data-label="4角">${escapeHtml(row.record["4角位置"] || "-")}</td>
+            <td data-label="上がり3F">${escapeHtml(row.record["上がり3F"] || "-")}</td>
+            <td data-label="内容">${escapeHtml(detail)}</td>
+          </tr>`;
+        }).join("") : '<tr><td data-label="状態" colspan="8">検証できる結果データ行がありません。</td></tr>';
+      };
+
+      const normalizeResultCourse = (value) => {
+        const name = normalizeCourseName(value);
+        return name ? `${name}競馬場` : "未選択";
+      };
+
+      const createRaceResultPayload = (validation, fileName = "result.csv") => {
+        const importedAt = new Date().toISOString();
+        const items = validation.importableRows.map(({ record, rowNumber, status, warnings }) => ({
+          id: `raceResultRow:${importedAt}:${rowNumber}`,
+          rowNumber,
+          status,
+          warnings,
+          importedAt,
+          date: record["開催日"] || "",
+          course: normalizeResultCourse(record["競馬場"]),
+          raceNumber: toCsvNumber(record["レース番号"], ""),
+          raceName: record["レース名"] || "",
+          finishOrder: toCsvNumber(record["着順"], ""),
+          horseNumber: toCsvNumber(record["馬番"], ""),
+          horseName: record["馬名"] || "",
+          jockey: record["騎手"] || "",
+          popularity: toCsvNumber(record["人気"], ""),
+          odds: toCsvNumber(record["オッズ"], ""),
+          corner4Position: toCsvNumber(record["4角位置"], ""),
+          final3F: toCsvNumber(record["上がり3F"], ""),
+          trifectaPayout: toCsvNumber(record["三連単配当"], ""),
+          trackCondition: record["馬場状態"] || "",
+          actualPace: record["実ペース"] || "",
+          memo: record["メモ"] || "",
+          raw: record,
+        }));
+        const raceMap = items.reduce((accumulator, item) => {
+          const key = `${item.date}:${item.course}:${item.raceNumber}:${item.raceName || ""}`;
+          accumulator[key] = accumulator[key] || {
+            id: `raceResult:${key}`,
+            importedAt,
+            race: { date: item.date, course: item.course, raceNumber: item.raceNumber, raceName: item.raceName },
+            results: [],
+            summary: { trifectaPayout: "", trackCondition: "", actualPace: "", passingOrder: "", memo: "" },
+          };
+          accumulator[key].results.push(item);
+          if (item.trifectaPayout !== "") accumulator[key].summary.trifectaPayout = item.trifectaPayout;
+          if (item.trackCondition) accumulator[key].summary.trackCondition = item.trackCondition;
+          if (item.actualPace) accumulator[key].summary.actualPace = item.actualPace;
+          if (item.memo) accumulator[key].summary.memo = [accumulator[key].summary.memo, item.memo].filter(Boolean).join(" / ");
+          return accumulator;
+        }, {});
+        const races = Object.values(raceMap).map((race) => {
+          race.results.sort((a, b) => Number(a.finishOrder) - Number(b.finishOrder));
+          race.summary.passingOrder = race.results
+            .map((item) => `${item.finishOrder}着:${item.horseNumber}番 4角${item.corner4Position || "-"} 上がり${item.final3F || "-"}`)
+            .join(" / ");
+          return race;
+        });
+        return {
+          storageVersion: 1,
+          type: "raceResults",
+          provider: "localStorage",
+          storageKey: RACE_RESULT_STORAGE_KEY,
+          description: "結果CSV取込データ。結果検証フォーム、バックテスト、自己進化ログで再利用します。",
+          updatedAt: importedAt,
+          source: { fileName, rowCount: items.length, requiredColumns: RESULT_CSV_REQUIRED_COLUMNS, optionalColumns: RESULT_CSV_OPTIONAL_COLUMNS },
+          items,
+          races,
+        };
+      };
+
+      const setResultFormValue = (name, value) => {
+        const field = resultVerificationForm.elements[name];
+        if (!field || value === undefined || value === null || value === "") return;
+        field.value = String(value);
+      };
+
+      const applyImportedRaceToResultForm = (race) => {
+        const log = createResultLogFromImportedRace(race);
+        if (!log) return false;
+        setResultFormValue("date", log.race.date);
+        setResultFormValue("course", log.race.course);
+        setResultFormValue("raceNumber", log.race.raceNumber);
+        setResultFormValue("raceName", log.race.raceName);
+        setResultFormValue("firstNumber", log.result.first.number);
+        setResultFormValue("firstName", log.result.first.name);
+        setResultFormValue("firstJockey", log.result.first.jockey || "未入力");
+        setResultFormValue("firstPopularity", log.result.first.popularity || 1);
+        setResultFormValue("secondNumber", log.result.second.number);
+        setResultFormValue("secondName", log.result.second.name);
+        setResultFormValue("secondJockey", log.result.second.jockey || "未入力");
+        setResultFormValue("secondPopularity", log.result.second.popularity || 1);
+        setResultFormValue("thirdNumber", log.result.third.number);
+        setResultFormValue("thirdName", log.result.third.name);
+        setResultFormValue("thirdJockey", log.result.third.jockey || "未入力");
+        setResultFormValue("thirdPopularity", log.result.third.popularity || 1);
+        setResultFormValue("trifectaPayout", log.result.trifectaPayout);
+        setResultFormValue("trackCondition", log.result.trackCondition);
+        setResultFormValue("actualPace", log.result.actualPace);
+        setResultFormValue("passingOrder", log.result.passingOrder);
+        setResultFormValue("learningPoint", log.osUpdate.learningPoint);
+        return true;
+      };
+
+      const importResultCsvPayload = () => {
+        if (!latestResultCsvValidation || latestResultCsvValidation.hasErrors || !latestResultCsvValidation.importableRows.length) return;
+        const payload = createRaceResultPayload(latestResultCsvValidation, resultCsvFileInput.files?.[0]?.name || "result.csv");
+        dataStorage.saveData("raceResults", payload, "localStorage");
+        const derivedLogs = payload.races.map(createResultLogFromImportedRace).filter(Boolean);
+        derivedLogs.forEach((log) => {
+          const index = resultLogs.findIndex((item) => item.id === log.id);
+          if (index >= 0) {
+            resultLogs[index] = { ...resultLogs[index], ...log };
+          } else {
+            resultLogs = [log, ...resultLogs];
+          }
+          saveResultVerificationToSelfEvolution(log, true);
+        });
+        activeResultLogStorageAdapter.save(resultLogs);
+        saveSelfEvolutionLogs(`結果CSV ${derivedLogs.length}Rを自己進化ログへ連動しました`);
+        if (payload.races[0]) applyImportedRaceToResultForm(payload.races[0]);
+        renderResultLogs();
+        renderBacktestDashboard();
+        renderSelfEvolutionLoop(`結果CSV取込 ${payload.items.length}行 / ${payload.races.length}R`);
+        resultCsvValidationStatus.textContent = `raceResults保存済 ${payload.items.length}行 / ${payload.races.length}R`;
+        resultSaveStatus.textContent = `結果CSV連動 ${derivedLogs.length}R`;
+      };
+
+      const handleResultCsvFile = (file) => {
+        if (!file) {
+          latestResultCsvValidation = null;
+          importResultCsvButton.disabled = true;
+          resultCsvValidationStatus.textContent = "結果CSV未選択";
+          resultCsvValidationAlerts.innerHTML = "";
+          resultCsvValidationPreviewBody.innerHTML = '<tr><td data-label="状態" colspan="8">結果CSVを選択すると、各行のOK・注意・エラーを表示します。</td></tr>';
+          return;
+        }
+        const reader = new FileReader();
+        reader.addEventListener("load", () => renderResultCsvValidation(validateResultCsv(reader.result)));
+        reader.addEventListener("error", () => {
+          latestResultCsvValidation = null;
+          importResultCsvButton.disabled = true;
+          resultCsvValidationStatus.textContent = "結果CSV読込エラー";
+          resultCsvValidationAlerts.innerHTML = '<div class="csv-validation-alert csv-validation-alert--error"><strong>エラー</strong><span>結果CSVファイルを読み込めませんでした。</span></div>';
+        });
+        reader.readAsText(file, "utf-8");
+      };
+
+      const downloadResultCsvTemplate = () => {
+        const headers = [...RESULT_CSV_REQUIRED_COLUMNS, ...RESULT_CSV_OPTIONAL_COLUMNS];
+        const sample = ["2026-06-02", "東京競馬場", "11", "安田記念", "1", "7", "ゴールドブリッツ", "武豊", "2", "4.8", "3", "33.9", "125430", "良", "平均", "内先行有利を確認"];
+        const csv = [headers.join(","), sample.join(",")].join("\n");
+        const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "hashimoto-keiba-ai-result-csv-template.csv";
+        document.body.append(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      };
+
       const renderRanking = (target, horses, field, suffix = "") => {
         target.innerHTML = "";
         if (!horses.length) {
@@ -3469,6 +3781,9 @@
 
       raceCsvFileInput.addEventListener("change", () => handleRaceCsvFile(raceCsvFileInput.files?.[0]));
       importRaceCsvButton.addEventListener("click", applyCsvValidationToRace);
+      resultCsvFileInput.addEventListener("change", () => handleResultCsvFile(resultCsvFileInput.files?.[0]));
+      importResultCsvButton.addEventListener("click", importResultCsvPayload);
+      downloadResultCsvTemplateButton.addEventListener("click", downloadResultCsvTemplate);
 
       horseForm.addEventListener("submit", (event) => {
         event.preventDefault();
