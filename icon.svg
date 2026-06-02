@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">橋本競馬AI 仮アイコン</title>
+  <desc id="desc">黒い背景に金色の円と橋の文字を配置した仮のPWAアイコン。</desc>
+  <rect width="512" height="512" rx="96" fill="#0f0a00" />
+  <circle cx="256" cy="256" r="188" fill="none" stroke="#d8a536" stroke-width="18" />
+  <circle cx="256" cy="256" r="154" fill="#1d1405" stroke="#f5d274" stroke-width="6" />
+  <path d="M116 326c44-66 91-99 141-99 48 0 95 33 139 99" fill="none" stroke="#f5d274" stroke-width="22" stroke-linecap="round" />
+  <path d="M104 360h312" stroke="#d8a536" stroke-width="20" stroke-linecap="round" />
+  <text x="256" y="248" text-anchor="middle" font-family="'Hiragino Mincho ProN', 'Yu Mincho', serif" font-size="156" font-weight="800" fill="#ffd66b">橋</text>
+  <text x="256" y="404" text-anchor="middle" font-family="Arial, sans-serif" font-size="46" font-weight="700" letter-spacing="4" fill="#f5d274">KEIBA AI</text>
+</svg>
