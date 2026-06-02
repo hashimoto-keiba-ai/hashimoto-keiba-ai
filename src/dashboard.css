@@ -3885,3 +3885,16 @@ h1 {
     width: 100%;
   }
 }
+
+.score-breakdown {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  white-space: normal;
+}
+
+.runner-table .score-breakdown {
+  max-width: 320px;
+}

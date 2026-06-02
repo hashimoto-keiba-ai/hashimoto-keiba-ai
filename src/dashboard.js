@@ -2,6 +2,45 @@
   const clampScore = (value) => Math.max(0, Math.min(100, Math.round(Number(value || 0) * 10) / 10));
   const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
   const normalizeText = (value) => String(value || "").trim();
+
+  const COURSE_CORRECTION_TABLE = {
+    中山: { frontAdvantage: 2.8, closerAdvantage: -0.8, insideDraw: 1.4, outsideDraw: -1.1, hillAptitude: 2.4, tightTurnAptitude: 2.2, straightLength: -0.8 },
+    東京: { frontAdvantage: -0.7, closerAdvantage: 2.7, insideDraw: 0.8, outsideDraw: 0.9, hillAptitude: 1.6, tightTurnAptitude: -1.2, straightLength: 3.0 },
+    京都: { frontAdvantage: 1.2, closerAdvantage: 1.4, insideDraw: 1.1, outsideDraw: 0.2, hillAptitude: 0.3, tightTurnAptitude: 0.4, straightLength: 1.4 },
+    阪神: { frontAdvantage: 0.6, closerAdvantage: 1.7, insideDraw: 0.5, outsideDraw: 0.5, hillAptitude: 2.6, tightTurnAptitude: 0.8, straightLength: 1.6 },
+    中京: { frontAdvantage: -0.2, closerAdvantage: 1.8, insideDraw: 0.4, outsideDraw: 0.7, hillAptitude: 1.9, tightTurnAptitude: -0.4, straightLength: 1.9 },
+    新潟: { frontAdvantage: -0.8, closerAdvantage: 2.4, insideDraw: -0.2, outsideDraw: 1.2, hillAptitude: -0.8, tightTurnAptitude: -1.4, straightLength: 3.2 },
+    福島: { frontAdvantage: 2.5, closerAdvantage: -0.9, insideDraw: 1.5, outsideDraw: -1.3, hillAptitude: 0.7, tightTurnAptitude: 2.7, straightLength: -1.6 },
+    小倉: { frontAdvantage: 2.2, closerAdvantage: -0.5, insideDraw: 1.2, outsideDraw: -0.8, hillAptitude: 0.2, tightTurnAptitude: 2.4, straightLength: -1.3 },
+  };
+
+  const DISTANCE_CORRECTION_TABLE = {
+    芝短距離: { frontAdvantage: 2.4, closerAdvantage: -0.5, stamina: -0.8, speed: 2.2, darkHorse: 0.8, risk: 0.5 },
+    芝マイル: { frontAdvantage: 0.8, closerAdvantage: 1.2, stamina: 0.2, speed: 1.4, darkHorse: 1.1, risk: 0 },
+    芝中距離: { frontAdvantage: 0.2, closerAdvantage: 1.3, stamina: 1.4, speed: 0.6, darkHorse: 0.6, risk: 0.2 },
+    芝長距離: { frontAdvantage: -1.0, closerAdvantage: 1.8, stamina: 2.8, speed: -0.5, darkHorse: 0.3, risk: 1.1 },
+    ダート短距離: { frontAdvantage: 2.8, closerAdvantage: -1.1, stamina: -0.5, speed: 2.0, darkHorse: 0.7, risk: 0.6 },
+    ダート1400: { frontAdvantage: 1.9, closerAdvantage: -0.1, stamina: 0.2, speed: 1.6, darkHorse: 0.9, risk: 0.2 },
+    ダート1800: { frontAdvantage: 1.2, closerAdvantage: 0.4, stamina: 1.5, speed: 0.4, darkHorse: 0.5, risk: 0.4 },
+    ダート中長距離: { frontAdvantage: 0.3, closerAdvantage: 1.0, stamina: 2.3, speed: -0.3, darkHorse: 0.3, risk: 0.9 },
+  };
+
+  const SURFACE_CORRECTION_TABLE = {
+    芝: { frontAdvantage: 0.2, closerAdvantage: 0.8, insideDraw: 0.3, outsideDraw: 0.2, speed: 0.9, stamina: 0.4, risk: 0 },
+    ダート: { frontAdvantage: 1.4, closerAdvantage: -0.5, insideDraw: 0.4, outsideDraw: -0.2, speed: 0.6, stamina: 0.8, risk: 0.4 },
+    障害: { frontAdvantage: 0.3, closerAdvantage: 0.2, insideDraw: 0, outsideDraw: 0, speed: -0.5, stamina: 1.6, risk: 1.3 },
+  };
+
+  const PACE_STYLE_CORRECTION_TABLE = {
+    逃げ: { ai: 2.4, darkHorse: 1.0, risk: 1.1, frontAdvantageWeight: 1.0, closerAdvantageWeight: -0.6, longStraightWeight: -0.45, tightTurnWeight: 0.55 },
+    先行: { ai: 2.0, darkHorse: 0.9, risk: 0.5, frontAdvantageWeight: 0.82, closerAdvantageWeight: -0.25, longStraightWeight: -0.2, tightTurnWeight: 0.42 },
+    好位: { ai: 1.7, darkHorse: 0.8, risk: 0.2, frontAdvantageWeight: 0.55, closerAdvantageWeight: 0.2, longStraightWeight: 0.05, tightTurnWeight: 0.22 },
+    自在: { ai: 1.6, darkHorse: 0.8, risk: 0.1, frontAdvantageWeight: 0.45, closerAdvantageWeight: 0.35, longStraightWeight: 0.15, tightTurnWeight: 0.16 },
+    中団: { ai: 1.1, darkHorse: 1.1, risk: -0.1, frontAdvantageWeight: -0.15, closerAdvantageWeight: 0.62, longStraightWeight: 0.35, tightTurnWeight: -0.18 },
+    差し: { ai: 1.3, darkHorse: 1.5, risk: -0.2, frontAdvantageWeight: -0.45, closerAdvantageWeight: 0.9, longStraightWeight: 0.58, tightTurnWeight: -0.35 },
+    追込: { ai: 0.4, darkHorse: 1.9, risk: 0.4, frontAdvantageWeight: -0.75, closerAdvantageWeight: 1.05, longStraightWeight: 0.75, tightTurnWeight: -0.58 },
+  };
+
   const scorePresenceKeys = {
     aiIndex: ["aiIndex", "AI指数"],
     kamianaIndex: ["kamianaIndex", "神穴指数"],
@@ -32,7 +71,7 @@
     if (value <= 40) return 0;
     return -4;
   };
-  const styleBonus = (style) => ({ 逃げ: 8, 先行: 7, 自在: 6, 差し: 5, 追込: 2 }[normalizeText(style)] ?? 3);
+  const styleBonus = (style) => ({ 逃げ: 8, 先行: 7, 好位: 6, 自在: 6, 中団: 4, 差し: 5, 追込: 2 }[normalizeText(style)] ?? 3);
   const cornerBonus = (cornerPosition, fieldSize = 18) => {
     const position = toNumber(cornerPosition, fieldSize);
     const size = Math.max(1, toNumber(fieldSize, 18));
@@ -70,7 +109,103 @@
     return penalty;
   };
 
-  const calculateRiskScore = (horse = {}) => {
+  const normalizeCourseKey = (value) => normalizeText(value).replace(/競馬場/g, "");
+  const normalizeSurfaceKey = (value) => normalizeText(value) || "芝";
+  const normalizeRunningStyleKey = (style) => {
+    const normalized = normalizeText(style);
+    if (normalized === "自在") return "好位";
+    return PACE_STYLE_CORRECTION_TABLE[normalized] ? normalized : "中団";
+  };
+  const resolveDistanceCategory = (horse = {}) => {
+    const surface = normalizeSurfaceKey(horse.surface ?? horse.track ?? horse["芝ダート"]);
+    const distance = toNumber(horse.distance ?? horse.raceDistance, 0);
+    if (surface === "ダート") {
+      if (distance <= 1300) return "ダート短距離";
+      if (distance <= 1500) return "ダート1400";
+      if (distance <= 1900) return "ダート1800";
+      return "ダート中長距離";
+    }
+    if (distance <= 1400) return "芝短距離";
+    if (distance <= 1600) return "芝マイル";
+    if (distance <= 2400) return "芝中距離";
+    return "芝長距離";
+  };
+  const signed = (value) => {
+    const numeric = Math.round(toNumber(value, 0) * 10) / 10;
+    return numeric > 0 ? `+${numeric}` : String(numeric);
+  };
+  const roundCorrection = (value) => Math.round(toNumber(value, 0) * 10) / 10;
+
+  const calculateCourseCorrection = (horse = {}, scoreType = "ai") => {
+    const course = COURSE_CORRECTION_TABLE[normalizeCourseKey(horse.course ?? horse.raceCourse)] || null;
+    if (!course) return 0;
+    const fieldSize = Math.max(1, toNumber(horse.fieldSize, 18));
+    const number = toNumber(horse.number ?? horse.horseNumber, Math.ceil(fieldSize / 2));
+    const style = PACE_STYLE_CORRECTION_TABLE[normalizeRunningStyleKey(horse.runningStyle)];
+    const corner = toNumber(horse.cornerPosition, fieldSize);
+    const isInside = number <= Math.ceil(fieldSize * 0.38);
+    const isOutside = number >= Math.floor(fieldSize * 0.68);
+    const drawCorrection = isInside ? course.insideDraw : isOutside ? course.outsideDraw : 0;
+    const slopeCorrection = course.hillAptitude * (trainingBonus(horse.training) > 0 ? 0.32 : trainingBonus(horse.training) < 0 ? -0.2 : 0.08);
+    const tightTurnCorrection = course.tightTurnAptitude * style.tightTurnWeight;
+    const straightCorrection = course.straightLength * style.longStraightWeight;
+    const paceBiasCorrection = (course.frontAdvantage * style.frontAdvantageWeight) + (course.closerAdvantage * style.closerAdvantageWeight);
+    const positionRisk = scoreType === "risk" && corner > Math.ceil(fieldSize * 0.7) ? Math.max(0, course.frontAdvantage) * 0.45 : 0;
+    const typeWeight = scoreType === "darkHorse" ? 0.78 : scoreType === "risk" ? 0.42 : 1;
+    return roundCorrection((drawCorrection + slopeCorrection + tightTurnCorrection + straightCorrection + paceBiasCorrection) * typeWeight + positionRisk);
+  };
+
+  const calculateDistanceCorrection = (horse = {}, scoreType = "ai") => {
+    const table = DISTANCE_CORRECTION_TABLE[resolveDistanceCategory(horse)];
+    const style = PACE_STYLE_CORRECTION_TABLE[normalizeRunningStyleKey(horse.runningStyle)];
+    const popularity = toNumber(horse.popularity, 18);
+    const odds = toNumber(horse.odds, 99);
+    const longshotBoost = scoreType === "darkHorse" && (popularity >= 6 || odds >= 12) ? table.darkHorse : 0;
+    const riskBoost = scoreType === "risk" ? table.risk + (table.frontAdvantage > 1.5 && ["差し", "追込"].includes(normalizeRunningStyleKey(horse.runningStyle)) ? 1.1 : 0) : 0;
+    const paceFit = (table.frontAdvantage * style.frontAdvantageWeight) + (table.closerAdvantage * style.closerAdvantageWeight);
+    const staminaFit = table.stamina * (["差し", "追込", "中団"].includes(normalizeRunningStyleKey(horse.runningStyle)) ? 0.35 : 0.18);
+    const speedFit = table.speed * (["逃げ", "先行", "好位"].includes(normalizeRunningStyleKey(horse.runningStyle)) ? 0.36 : 0.18);
+    const typeWeight = scoreType === "darkHorse" ? 0.82 : scoreType === "risk" ? 0.38 : 1;
+    return roundCorrection((paceFit + staminaFit + speedFit) * typeWeight + longshotBoost + riskBoost);
+  };
+
+  const calculateSurfaceCorrection = (horse = {}, scoreType = "ai") => {
+    const surface = SURFACE_CORRECTION_TABLE[normalizeSurfaceKey(horse.surface ?? horse.track ?? horse["芝ダート"])] || SURFACE_CORRECTION_TABLE.芝;
+    const style = PACE_STYLE_CORRECTION_TABLE[normalizeRunningStyleKey(horse.runningStyle)];
+    const surfaceFit = (surface.frontAdvantage * style.frontAdvantageWeight) + (surface.closerAdvantage * style.closerAdvantageWeight);
+    const typeWeight = scoreType === "darkHorse" ? 0.55 : scoreType === "risk" ? 0.35 : 0.75;
+    return roundCorrection(surfaceFit * typeWeight + (scoreType === "risk" ? surface.risk : 0));
+  };
+
+  const calculateStyleCorrection = (horse = {}, scoreType = "ai") => {
+    const style = PACE_STYLE_CORRECTION_TABLE[normalizeRunningStyleKey(horse.runningStyle)];
+    return roundCorrection((style[scoreType === "darkHorse" ? "darkHorse" : scoreType === "risk" ? "risk" : "ai"] || 0) + calculateSurfaceCorrection(horse, scoreType));
+  };
+
+  const createScoreBreakdown = (baseScore, horse, scoreType) => {
+    const courseCorrection = calculateCourseCorrection(horse, scoreType);
+    const distanceCorrectionValue = calculateDistanceCorrection(horse, scoreType);
+    const styleCorrectionValue = calculateStyleCorrection(horse, scoreType);
+    const total = baseScore + courseCorrection + distanceCorrectionValue + styleCorrectionValue;
+    return {
+      baseScore: roundCorrection(baseScore),
+      courseCorrection,
+      distanceCorrection: distanceCorrectionValue,
+      styleCorrection: styleCorrectionValue,
+      finalScore: clampScore(total),
+      course: normalizeCourseKey(horse.course ?? horse.raceCourse) || "未設定",
+      distanceCategory: resolveDistanceCategory(horse),
+      surface: normalizeSurfaceKey(horse.surface ?? horse.track ?? horse["芝ダート"]),
+      runningStyle: normalizeRunningStyleKey(horse.runningStyle),
+    };
+  };
+
+  const formatScoreBreakdown = (breakdown) => breakdown
+    ? `基本${breakdown.baseScore} / 競馬場${signed(breakdown.courseCorrection)} / 距離${signed(breakdown.distanceCorrection)} / 脚質${signed(breakdown.styleCorrection)} / 最終${breakdown.finalScore}`
+    : "補正内訳なし";
+
+
+  const calculateRiskScoreBase = (horse = {}) => {
     const popularity = toNumber(horse.popularity, 18);
     const odds = toNumber(horse.odds, 99);
     const fieldSize = toNumber(horse.fieldSize, 18);
@@ -85,12 +220,17 @@
     if (training === "D" || !training) score += 18;
     if (trackStyleBonus(horse.runningStyle, horse.going) < 0) score += 12;
     if (!toNumber(horse.distance ?? horse.raceDistance, 0)) score += 10;
-    return clampScore(score);
+    return score;
   };
 
-  const calculateAiScore = (horse = {}) => {
-    const riskPenalty = calculateRiskScore(horse) >= 80 ? 14 : calculateRiskScore(horse) >= 65 ? 8 : calculateRiskScore(horse) >= 50 ? 4 : 0;
-    const total = 38
+  const calculateRiskScoreBreakdown = (horse = {}) => createScoreBreakdown(calculateRiskScoreBase(horse), horse, "risk");
+
+  const calculateRiskScore = (horse = {}) => calculateRiskScoreBreakdown(horse).finalScore;
+
+  const calculateAiScoreBase = (horse = {}) => {
+    const correctedRisk = calculateRiskScore(horse);
+    const riskPenalty = correctedRisk >= 80 ? 14 : correctedRisk >= 65 ? 8 : correctedRisk >= 50 ? 4 : 0;
+    return 38
       + popularityBonus(horse.popularity)
       + oddsBonus(horse.odds)
       + styleBonus(horse.runningStyle)
@@ -99,10 +239,13 @@
       + trackStyleBonus(horse.runningStyle, horse.going)
       + distanceBonus(horse)
       - riskPenalty;
-    return clampScore(total);
   };
 
-  const calculateDarkHorseScore = (horse = {}) => {
+  const calculateAiScoreBreakdown = (horse = {}) => createScoreBreakdown(calculateAiScoreBase(horse), horse, "ai");
+
+  const calculateAiScore = (horse = {}) => calculateAiScoreBreakdown(horse).finalScore;
+
+  const calculateDarkHorseScoreBase = (horse = {}) => {
     const popularity = toNumber(horse.popularity, 18);
     const odds = toNumber(horse.odds, 99);
     let score = 22;
@@ -117,19 +260,40 @@
     score += Math.max(0, trainingBonus(horse.training));
     score += odds >= 12 ? 8 : odds >= 6 ? 4 : -5;
     score += calculateRiskScore(horse) < 50 ? 10 : calculateRiskScore(horse) >= 70 ? -14 : 0;
-    return clampScore(score);
+    return score;
   };
+
+  const calculateDarkHorseScoreBreakdown = (horse = {}) => createScoreBreakdown(calculateDarkHorseScoreBase(horse), horse, "darkHorse");
+
+  const calculateDarkHorseScore = (horse = {}) => calculateDarkHorseScoreBreakdown(horse).finalScore;
+
+  const applyManualScoreToBreakdown = (breakdown, manualScore) => ({
+    ...breakdown,
+    manualScore: clampScore(manualScore),
+    finalScore: clampScore(manualScore),
+  });
 
   const calculateAllHorseScores = (horses = [], raceContext = {}) => horses.map((horse) => {
     const scoringBase = { ...raceContext, ...horse, fieldSize: raceContext.fieldSize || horse.fieldSize || horses.length || 18 };
     const aiManual = hasScoreInput(horse, "aiIndex");
     const kamianaManual = hasScoreInput(horse, "kamianaIndex");
     const dangerManual = hasScoreInput(horse, "dangerIndex");
+    const aiBreakdown = calculateAiScoreBreakdown(scoringBase);
+    const kamianaBreakdown = calculateDarkHorseScoreBreakdown(scoringBase);
+    const dangerBreakdown = calculateRiskScoreBreakdown(scoringBase);
+    const aiIndex = aiManual ? clampScore(horse.aiIndex ?? horse["AI指数"]) : aiBreakdown.finalScore;
+    const kamianaIndex = kamianaManual ? clampScore(horse.kamianaIndex ?? horse["神穴指数"]) : kamianaBreakdown.finalScore;
+    const dangerIndex = dangerManual ? clampScore(horse.dangerIndex ?? horse["危険人気馬指数"]) : dangerBreakdown.finalScore;
     return {
       ...horse,
-      aiIndex: aiManual ? clampScore(horse.aiIndex ?? horse["AI指数"]) : calculateAiScore(scoringBase),
-      kamianaIndex: kamianaManual ? clampScore(horse.kamianaIndex ?? horse["神穴指数"]) : calculateDarkHorseScore(scoringBase),
-      dangerIndex: dangerManual ? clampScore(horse.dangerIndex ?? horse["危険人気馬指数"]) : calculateRiskScore(scoringBase),
+      aiIndex,
+      kamianaIndex,
+      dangerIndex,
+      scoreBreakdown: {
+        aiIndex: aiManual ? applyManualScoreToBreakdown(aiBreakdown, aiIndex) : aiBreakdown,
+        kamianaIndex: kamianaManual ? applyManualScoreToBreakdown(kamianaBreakdown, kamianaIndex) : kamianaBreakdown,
+        dangerIndex: dangerManual ? applyManualScoreToBreakdown(dangerBreakdown, dangerIndex) : dangerBreakdown,
+      },
       scoreSource: {
         aiIndex: aiManual ? "manual" : "auto",
         kamianaIndex: kamianaManual ? "manual" : "auto",
@@ -142,7 +306,15 @@
     calculateAiScore,
     calculateDarkHorseScore,
     calculateRiskScore,
+    calculateAiScoreBreakdown,
+    calculateDarkHorseScoreBreakdown,
+    calculateRiskScoreBreakdown,
     calculateAllHorseScores,
+    formatScoreBreakdown,
+    COURSE_CORRECTION_TABLE,
+    DISTANCE_CORRECTION_TABLE,
+    SURFACE_CORRECTION_TABLE,
+    PACE_STYLE_CORRECTION_TABLE,
   };
   window.calculateAiScore = calculateAiScore;
   window.calculateDarkHorseScore = calculateDarkHorseScore;

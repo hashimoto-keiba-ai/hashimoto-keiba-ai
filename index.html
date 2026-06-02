@@ -373,9 +373,9 @@
               <label><span>脚質</span><select id="horse-style" name="runningStyle"><option value="逃げ">逃げ</option><option value="先行">先行</option><option value="差し">差し</option><option value="追込">追込</option><option value="自在">自在</option></select></label>
               <label><span>想定4角位置</span><input id="horse-corner" name="cornerPosition" type="number" min="1" max="18" required /></label>
               <label><span>調教評価</span><select id="horse-training" name="training"><option value="S">S</option><option value="A">A</option><option value="B" selected>B</option><option value="C">C</option><option value="D">D</option></select></label>
-              <label><span>AI指数</span><input id="horse-ai" name="aiIndex" type="number" min="0" max="100" step="0.1" required /></label>
-              <label><span>神穴指数</span><input id="horse-kamiana" name="kamianaIndex" type="number" min="0" max="100" step="0.1" required /></label>
-              <label><span>危険人気馬指数</span><input id="horse-danger" name="dangerIndex" type="number" min="0" max="100" step="0.1" required /></label>
+              <label><span>AI指数</span><input id="horse-ai" name="aiIndex" type="number" min="0" max="100" step="0.1" placeholder="空欄で自動計算" /></label>
+              <label><span>神穴指数</span><input id="horse-kamiana" name="kamianaIndex" type="number" min="0" max="100" step="0.1" placeholder="空欄で自動計算" /></label>
+              <label><span>危険人気馬指数</span><input id="horse-danger" name="dangerIndex" type="number" min="0" max="100" step="0.1" placeholder="空欄で自動計算" /></label>
               <div class="entry-actions">
                 <button class="button button--primary" type="submit">出走馬を追加 / 更新</button>
                 <button class="button button--ghost" id="clear-horses" type="button">出走馬をクリア</button>
@@ -1611,7 +1611,9 @@
         `神穴:${scoreSourceLabel(horse.scoreSource?.kamianaIndex)}`,
         `危険:${scoreSourceLabel(horse.scoreSource?.dangerIndex)}`,
       ].join(" / ");
+      const getScoreBreakdownSummary = (horse, field = "aiIndex") => scoreEngine.formatScoreBreakdown?.(horse.scoreBreakdown?.[field]) || "補正内訳なし";
       const getRaceScoreContext = () => ({
+        course: raceForm?.elements.course?.value || "",
         distance: Number(raceForm?.elements.distance?.value) || 0,
         surface: raceForm?.elements.surface?.value || "",
         going: raceForm?.elements.going?.value || "良",
@@ -3606,7 +3608,7 @@
         }
         horses.slice(0, 6).forEach((horse) => {
           const item = document.createElement("li");
-          item.innerHTML = `<strong>${escapeHtml(formatHorse(horse))}</strong><span>${horse[field]}${suffix} / ${horse.popularity}人気 / ${horse.odds}倍</span>`;
+          item.innerHTML = `<strong>${escapeHtml(formatHorse(horse))}</strong><span>${horse[field]}${suffix} / ${horse.popularity}人気 / ${horse.odds}倍</span><small class="score-breakdown">${escapeHtml(getScoreBreakdownSummary(horse, field))}</small>`;
           target.append(item);
         });
       };
@@ -3632,7 +3634,12 @@
             <td data-label="AI">${horse.aiIndex}</td>
             <td data-label="神穴">${horse.kamianaIndex}</td>
             <td data-label="危険">${horse.dangerIndex}</td>
-            <td data-label="計算"><span class="badge ${horse.scoreSource?.aiIndex === "manual" || horse.scoreSource?.kamianaIndex === "manual" || horse.scoreSource?.dangerIndex === "manual" ? "badge--gold" : "badge--warning"}">${escapeHtml(scoreSourceSummary(horse))}</span></td>
+            <td data-label="計算">
+              <span class="badge ${horse.scoreSource?.aiIndex === "manual" || horse.scoreSource?.kamianaIndex === "manual" || horse.scoreSource?.dangerIndex === "manual" ? "badge--gold" : "badge--warning"}">${escapeHtml(scoreSourceSummary(horse))}</span>
+              <small class="score-breakdown">AI ${escapeHtml(getScoreBreakdownSummary(horse, "aiIndex"))}</small>
+              <small class="score-breakdown">神穴 ${escapeHtml(getScoreBreakdownSummary(horse, "kamianaIndex"))}</small>
+              <small class="score-breakdown">危険 ${escapeHtml(getScoreBreakdownSummary(horse, "dangerIndex"))}</small>
+            </td>
           `;
           runnerTableBody.append(row);
         });
