@@ -6,8 +6,7 @@
     <title>橋本競馬AIダッシュボード</title>
     <meta
       name="description"
-      content="AI指数ランキング、神穴ランキング、危険人気馬ランキング、最新保存ログ、WIN5コーナーを実データ形式で管理する黒×金の橋本競馬AIダッシュボード。"
-      content="AI指数ランキング、神穴ランキング、危険人気馬ランキング、最新保存ログ、WIN5コーナーを実データ形式で確認できる橋本競馬AI管理ダッシュボード。"
+      content="AI指数ランキング、神穴ランキング、危険人気馬ランキング、保存ログ検索、WIN5コーナーを実データ形式で管理する黒×金の橋本競馬AIダッシュボード。"
     />
     <link rel="stylesheet" href="./src/dashboard.css" />
   </head>
@@ -20,16 +19,12 @@
         </a>
         <div class="nav-links">
           <a href="#ai-index-ranking">AI指数</a>
-          <a href="#god-hole-ranking">神穴</a>
+          <a href="#kami-ana-ranking">神穴</a>
           <a href="#danger-popular">危険人気馬</a>
+          <a href="#save-log-search">保存ログ検索</a>
           <a href="#latest-save-log">保存ログ</a>
           <a href="#win5-corner">WIN5</a>
           <a href="#operations-board">運用ボード</a>
-          <a href="#kami-ana-ranking">神穴</a>
-          <a href="#danger-popular">危険人気馬</a>
-          <a href="#latest-save-log">保存ログ</a>
-          <a href="#win5-corner">WIN5</a>
-          <a href="#operations">運用監視</a>
         </div>
       </nav>
 
@@ -42,16 +37,7 @@
         </p>
         <div class="hero__actions" aria-label="主要メニュー">
           <a class="button button--primary" href="#ai-index-ranking">本日のランキングを見る</a>
-          <a class="button button--ghost" href="#latest-save-log">保存ログを確認</a>
-        <p class="eyebrow">Hashimoto Keiba AI Control Room</p>
-        <h1>実データ形式で、今日の勝負馬・穴馬・消し馬を即断する。</h1>
-        <p class="hero__lead">
-          AI指数、神穴、危険人気馬、最新保存ログ、WIN5買い目までを一画面に統合。
-          レースID、馬番、人気、想定オッズ、指数、根拠、ログ状態を並べ、競馬AIの管理画面として使える粒度に強化しました。
-        </p>
-        <div class="hero__actions" aria-label="主要メニュー">
-          <a class="button button--primary" href="#dashboard">本日のAI管理画面を開く</a>
-          <a class="button button--ghost" href="#latest-save-log">最新保存ログを確認</a>
+          <a class="button button--ghost" href="#save-log-search">保存ログを検索</a>
         </div>
       </section>
     </header>
@@ -61,7 +47,7 @@
         <article>
           <span class="summary__label">対象開催</span>
           <strong>東京・京都・阪神</strong>
-          <span>2026/06/02 09:30 更新 / 36R同期済み</span>
+          <span>2026/06/02 09:30 JST 更新 / 36R同期済み</span>
         </article>
         <article>
           <span class="summary__label">AI総合信頼度</span>
@@ -69,20 +55,9 @@
           <span>指数・展開・馬場・騎手を総合判定</span>
         </article>
         <article>
-          <span class="summary__label">本日抽出シグナル</span>
-          <strong>24件</strong>
-          <span>勝負馬8 / 神穴7 / 危険人気5 / WIN5候補4</span>
-          <span>2026/06/02 09:30 JST 更新</span>
-        </article>
-        <article>
-          <span class="summary__label">抽出レース / 出走馬</span>
-          <strong>36R / 512頭</strong>
-          <span>指数・馬場・展開・オッズを自動集計</span>
-        </article>
-        <article>
-          <span class="summary__label">本日のAI判定</span>
-          <strong>勝負 7 / 穴 9 / 消し 6</strong>
-          <span>WIN5推奨48点、期待回収率142%</span>
+          <span class="summary__label">保存ログ</span>
+          <strong>128件</strong>
+          <span>競馬場・年月・レース名・騎手・WIN5で検索可能</span>
         </article>
       </section>
 
@@ -97,18 +72,6 @@
         <article id="ai-index-ranking" class="card card--featured data-card control-card">
           <div class="card__icon" aria-hidden="true">📈</div>
           <div class="card__body">
-            <p class="card__kicker">AI INDEX RANKING</p>
-            <div class="section-heading">
-              <h2>① AI指数ランキング</h2>
-              <span class="live-pill">LIVE</span>
-            </div>
-            <p class="card__lead">
-              出走馬を総合指数順に表示。能力値、展開適性、馬場補正、騎手補正、妙味を合算し、勝負候補を実データ形式で確認できます。
-            </p>
-            <div class="race-meta" aria-label="AI指数集計条件">
-              <span>集計: 全36R / 431頭</span>
-              <span>指数閾値: 90以上</span>
-              <span>自動印: ◎○▲☆</span>
             <div class="card-heading">
               <div>
                 <p class="card__kicker">AI INDEX RANKING</p>
@@ -117,7 +80,7 @@
               <span class="status-pill status-pill--live">LIVE</span>
             </div>
             <p class="card__lead">
-              全出走馬を総合AI指数順に集計。勝負判定、指数差、展開補正、想定オッズをそのまま管理表で確認できます。
+              全出走馬を総合AI指数順に集計。勝負判定、指数差、展開補正、想定オッズを管理表で確認できます。
             </p>
             <div class="race-meta" aria-label="AI指数集計条件">
               <span>集計: 全36R / 512頭</span>
@@ -136,8 +99,6 @@
                     <th scope="col">想定</th>
                     <th scope="col">AI指数</th>
                     <th scope="col">根拠</th>
-                    <th scope="col">印</th>
-                    <th scope="col">差分</th>
                     <th scope="col">判定</th>
                   </tr>
                 </thead>
@@ -150,9 +111,7 @@
                     <td data-label="想定">4.8倍</td>
                     <td data-label="AI指数"><strong>96.8</strong></td>
                     <td data-label="根拠">末脚指数1位 / 東京替わりA</td>
-                    <td data-label="印"><span class="badge badge--gold">◎本命</span></td>
-                    <td data-label="差分">+5.4</td>
-                    <td data-label="判定"><span class="badge badge--gold">本命</span></td>
+                    <td data-label="判定"><span class="badge badge--gold">◎本命</span></td>
                   </tr>
                   <tr>
                     <td data-label="順位">2</td>
@@ -162,8 +121,6 @@
                     <td data-label="想定">2.9倍</td>
                     <td data-label="AI指数"><strong>94.1</strong></td>
                     <td data-label="根拠">先行力1位 / 調教A+</td>
-                    <td data-label="印"><span class="badge badge--gold">◎軸</span></td>
-                    <td data-label="差分">+3.8</td>
                     <td data-label="判定"><span class="badge badge--gold">WIN5軸</span></td>
                   </tr>
                   <tr>
@@ -174,72 +131,16 @@
                     <td data-label="想定">8.6倍</td>
                     <td data-label="AI指数"><strong>91.7</strong></td>
                     <td data-label="根拠">持続ラップ適性 / 外差し</td>
-                    <td data-label="印"><span class="badge">○対抗</span></td>
-                    <td data-label="差分">+2.9</td>
-                    <td data-label="判定"><span class="badge">対抗</span></td>
-                  </tr>
-                  <tr>
-                    <td data-label="順位">4</td>
-                    <td data-label="レースID">TOK08 ダ1400</td>
-                    <td data-label="馬番・馬名">5 エアヴェローチェ</td>
-                    <td data-label="人気">5人気</td>
-                    <td data-label="想定">11.4倍</td>
-                    <td data-label="AI指数"><strong>90.2</strong></td>
-                    <td data-label="根拠">距離短縮 / 斤量減</td>
-                    <td data-label="印"><span class="badge">▲穴</span></td>
-                    <td data-label="差分">+2.1</td>
-                    <td data-label="判定"><span class="badge">単穴</span></td>
+                    <td data-label="判定"><span class="badge">○対抗</span></td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <a class="card__link" href="./AI研究所/AI指数/README.md">AI指数ロジックを見る</a>
-        </article>
-
-        <article id="god-hole-ranking" class="card card--accent data-card">
-          <div class="card__icon" aria-hidden="true">💎</div>
-          <div class="card__body">
-            <p class="card__kicker">KAMI-ANA RANKING</p>
-            <h2>② 神穴ランキング</h2>
-            <p class="card__lead">人気の盲点、馬場バイアス、展開利、過去高配当パターンの一致率から、妙味ある穴馬だけを抽出します。</p>
-            <ol class="signal-list" aria-label="神穴ランキング">
-              <li>
-                <span class="rank-mark">S</span>
-                <div>
-                  <strong>東京8R 5番 エアヴェローチェ</strong>
-                  <small>5人気 11.4倍 / 神穴指数 93 / 距離短縮×外差しバイアス一致</small>
-                </div>
-              </li>
-              <li>
-                <span class="rank-mark">A+</span>
-                <div>
-                  <strong>阪神10R 12番 ナイトセイバー</strong>
-                  <small>7人気 18.2倍 / 神穴指数 89 / 前走不利・上がり最速をAI補正</small>
-                </div>
-              </li>
-              <li>
-                <span class="rank-mark">A</span>
-                <div>
-                  <strong>京都7R 14番 メイショウラピス</strong>
-                  <small>9人気 26.5倍 / 神穴指数 84 / ダ替わり・減量騎手で浮上</small>
-                </div>
-              </li>
-            </ol>
-          </div>
-          <a class="card__link" href="./AI研究所/神穴AI/README.md">神穴AIを見る</a>
-        </article>
-
-        <article id="danger-popular" class="card card--danger data-card">
-          <div class="card__icon" aria-hidden="true">⚠️</div>
-          <div class="card__body">
-            <p class="card__kicker">DANGER POPULAR RANKING</p>
-            <h2>③ 危険人気馬ランキング</h2>
-            <p class="card__lead">過剰人気、展開不利、馬場ミスマッチ、ローテ不安を検知し、買い下げ・消し候補を赤色アラートで表示します。</p>
           <a class="card__link" href="./AI研究所/AI指数エンジン/README.md">AI指数ロジックを見る</a>
         </article>
 
-        <article id="kami-ana-ranking" class="card data-card control-card">
+        <article id="kami-ana-ranking" class="card card--accent data-card control-card">
           <div class="card__icon" aria-hidden="true">💎</div>
           <div class="card__body">
             <div class="card-heading">
@@ -250,122 +151,12 @@
               <span class="status-pill">穴抽出 9頭</span>
             </div>
             <p class="card__lead">人気薄でも指数、展開、血統、馬場の条件が揃った高配当候補を抽出します。</p>
-            <div class="table-wrap">
-              <table class="data-table data-table--compact danger-table">
-                <thead>
-                  <tr>
-                    <th scope="col">危険度</th>
-                    <th scope="col">レース</th>
-                    <th scope="col">馬番・馬名</th>
-                    <th scope="col">人気/オッズ</th>
-                    <th scope="col">不安材料</th>
-                    <th scope="col">判定</th>
-                    <th scope="col">神穴馬</th>
-                    <th scope="col">人気</th>
-                    <th scope="col">想定</th>
-                    <th scope="col">神穴指数</th>
-                    <th scope="col">根拠</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td data-label="危険度"><strong class="danger-text">92</strong></td>
-                    <td data-label="レース">東京10R ダ1600</td>
-                    <td data-label="馬番・馬名">1 サンライズノヴァ</td>
-                    <td data-label="人気/オッズ">1人気 2.4倍</td>
-                    <td data-label="不安材料">逃げ過多 / 内枠揉まれリスク</td>
-                    <td data-label="判定"><span class="badge badge--red">消し候補</span></td>
-                  </tr>
-                  <tr>
-                    <td data-label="危険度"><strong class="danger-text">88</strong></td>
-                    <td data-label="レース">京都12R 芝1400</td>
-                    <td data-label="馬番・馬名">6 ミヤビクラウン</td>
-                    <td data-label="人気/オッズ">2人気 4.1倍</td>
-                    <td data-label="不安材料">昇級初戦 / 上がり指数不足</td>
-                    <td data-label="判定"><span class="badge badge--red">評価下げ</span></td>
-                  </tr>
-                  <tr>
-                    <td data-label="危険度"><strong class="danger-text">81</strong></td>
-                    <td data-label="レース">阪神8R ダ1200</td>
-                    <td data-label="馬番・馬名">10 ブルーアロー</td>
-                    <td data-label="人気/オッズ">3人気 5.6倍</td>
-                    <td data-label="不安材料">道悪適性C / 外差し不一致</td>
-                    <td data-label="判定"><span class="badge badge--red">紐まで</span></td>
-                    <td data-label="順位">1</td>
-                    <td data-label="レース">阪神10R</td>
-                    <td data-label="神穴馬">6 レッドオービット</td>
-                    <td data-label="人気">9人気</td>
-                    <td data-label="想定">28.4倍</td>
-                    <td data-label="神穴指数"><strong>穴S 93</strong></td>
-                    <td data-label="根拠">外差し馬場×上がり最速候補</td>
-                  </tr>
-                  <tr>
-                    <td data-label="順位">2</td>
-                    <td data-label="レース">東京8R</td>
-                    <td data-label="神穴馬">11 マイネルグリット</td>
-                    <td data-label="人気">8人気</td>
-                    <td data-label="想定">21.7倍</td>
-                    <td data-label="神穴指数"><strong>穴A 88</strong></td>
-                    <td data-label="根拠">距離短縮×先行残り</td>
-                  </tr>
-                  <tr>
-                    <td data-label="順位">3</td>
-                    <td data-label="レース">京都12R</td>
-                    <td data-label="神穴馬">14 サトノミラージュ</td>
-                    <td data-label="人気">10人気</td>
-                    <td data-label="想定">34.9倍</td>
-                    <td data-label="神穴指数"><strong>穴A 85</strong></td>
-                    <td data-label="根拠">道悪血統A×内前崩れ</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <a class="card__link" href="./AI研究所/危険人気馬AI/README.md">危険人気馬AIを見る</a>
-        </article>
-
-        <article id="latest-save-log" class="card data-card log-card">
-          <div class="card__icon" aria-hidden="true">🗂️</div>
-          <div class="card__body">
-            <p class="card__kicker">LATEST SAVE LOG</p>
-            <h2>④ 最新保存ログ</h2>
-            <p class="card__lead">予想生成、指数更新、買い目保存、検証結果の最新履歴をタイムラインで表示。保存先フォルダへすぐ遷移できます。</p>
-            <ol class="timeline" aria-label="最新保存ログ">
-              <li>
-                <time datetime="2026-06-02T09:30:00+09:00">09:30</time>
-                <div><strong>東京競馬場 / 事前予想を保存</strong><small>AI指数ランキング 12R分・神穴候補3頭を同期</small></div>
-              </li>
-              <li>
-                <time datetime="2026-06-02T09:22:00+09:00">09:22</time>
-                <div><strong>WIN5 / 買い目48点を生成</strong><small>期待回収率142%、資金4,800円で保存</small></div>
-              </li>
-              <li>
-                <time datetime="2026-06-02T09:11:00+09:00">09:11</time>
-                <div><strong>危険人気馬DB / 5件追加</strong><small>過剰人気スコア80以上を自動登録</small></div>
-              </li>
-              <li>
-                <time datetime="2026-06-02T08:58:00+09:00">08:58</time>
-                <div><strong>学習ログ / 馬場補正を更新</strong><small>東京芝+2、京都ダート+1、阪神芝±0</small></div>
-              </li>
+            <ol class="signal-list" aria-label="神穴ランキング">
+              <li><span class="rank-mark">S</span><div><strong>阪神10R 6番 レッドオービット</strong><small>9人気 28.4倍 / 外差し馬場×上がり最速候補</small></div></li>
+              <li><span class="rank-mark">A</span><div><strong>東京8R 11番 マイネルグリット</strong><small>8人気 21.7倍 / 距離短縮×先行残り</small></div></li>
+              <li><span class="rank-mark">A</span><div><strong>京都12R 14番 サトノミラージュ</strong><small>10人気 34.9倍 / 道悪血統A×内前崩れ</small></div></li>
             </ol>
           </div>
-          <a class="card__link" href="./学習ログ/README.md">学習ログを見る</a>
-        </article>
-
-        <article id="win5-corner" class="card card--featured data-card win5-card">
-          <div class="card__icon" aria-hidden="true">🏆</div>
-          <div class="card__body">
-            <p class="card__kicker">WIN5 CORNER</p>
-            <div class="section-heading">
-              <h2>⑤ WIN5コーナー</h2>
-              <span class="live-pill live-pill--green">48点生成済</span>
-            </div>
-            <p class="card__lead">対象5レースの難度、軸信頼、穴投入ポイントをもとに、実運用用の買い目フォーメーションと消し判断を表示します。</p>
-            <div class="win5-ticket" aria-label="WIN5コーナー 買い目">
-              <section>
-                <span>WIN1 東京9R</span>
-                <strong>2, 7</strong>
-                <small>難度B / 先行決着 / 軸信頼78%</small>
           <a class="card__link" href="./AI研究所/神穴AI/README.md">神穴AIを見る</a>
         </article>
 
@@ -380,22 +171,139 @@
               <span class="status-pill status-pill--danger">消し候補 6頭</span>
             </div>
             <p class="card__lead">過剰人気、展開不利、馬場ミスマッチ、騎手替わりの不安を危険度スコアで表示します。</p>
-            <ol class="danger-list danger-list--panel" aria-label="危険人気馬ランキング">
-              <li>
-                <span class="danger-score">92</span>
-                <div><strong>東京10R 1番 サンライズノヴァ</strong><small>1人気 2.4倍 / 逃げ過多で差し有利、内枠揉まれリスク。推奨: 2列目以下</small></div>
-              </li>
-              <li>
-                <span class="danger-score">88</span>
-                <div><strong>京都12R 6番 ミヤビクラウン</strong><small>2人気 4.1倍 / 昇級初戦、上がり指数が同組平均-0.8。推奨: 抑えまで</small></div>
-              </li>
-              <li>
-                <span class="danger-score">81</span>
-                <div><strong>阪神8R 10番 ブルーアロー</strong><small>3人気 5.6倍 / 道悪適性C、外差しバイアスと脚質不一致。推奨: 消し</small></div>
-              </li>
+            <ol class="timeline" aria-label="危険人気馬ランキング">
+              <li><time>92</time><div><strong>東京10R 1番 サンライズノヴァ</strong><small>1人気 2.4倍 / 逃げ過多で差し有利、内枠揉まれリスク。</small></div></li>
+              <li><time>88</time><div><strong>京都12R 6番 ミヤビクラウン</strong><small>2人気 4.1倍 / 昇級初戦、上がり指数が同組平均-0.8。</small></div></li>
+              <li><time>81</time><div><strong>阪神8R 10番 ブルーアロー</strong><small>3人気 5.6倍 / 道悪適性C、外差しバイアスと脚質不一致。</small></div></li>
             </ol>
           </div>
           <a class="card__link" href="./AI研究所/危険人気馬AI/README.md">危険人気馬AIを見る</a>
+        </article>
+
+        <article id="save-log-search" class="card card--featured data-card control-card search-card">
+          <div class="card__icon" aria-hidden="true">🔎</div>
+          <div class="card__body">
+            <div class="card-heading">
+              <div>
+                <p class="card__kicker">SAVE LOG SEARCH</p>
+                <h2>保存ログ検索</h2>
+              </div>
+              <span class="status-pill status-pill--live">5 FILTERS</span>
+            </div>
+            <p class="card__lead">
+              競馬場別、年月、レース名、騎手、WIN5対象を組み合わせて保存済みログを絞り込みます。条件を変更すると下の一覧が即時更新されます。
+            </p>
+            <form class="log-search" aria-label="保存ログ検索条件">
+              <label>
+                <span>競馬場別</span>
+                <select id="course-filter" name="course">
+                  <option value="">すべて</option>
+                  <option value="東京競馬場">東京競馬場</option>
+                  <option value="京都競馬場">京都競馬場</option>
+                  <option value="阪神競馬場">阪神競馬場</option>
+                  <option value="中山競馬場">中山競馬場</option>
+                  <option value="中京競馬場">中京競馬場</option>
+                  <option value="小倉競馬場">小倉競馬場</option>
+                </select>
+              </label>
+              <label>
+                <span>年月検索</span>
+                <input id="month-filter" name="month" type="month" />
+              </label>
+              <label>
+                <span>レース名検索</span>
+                <input id="race-filter" name="race" type="search" placeholder="例: 安田記念 / TOK11" />
+              </label>
+              <label>
+                <span>騎手検索</span>
+                <input id="jockey-filter" name="jockey" type="search" placeholder="例: ルメール" />
+              </label>
+              <label>
+                <span>WIN5検索</span>
+                <select id="win5-filter" name="win5">
+                  <option value="">すべて</option>
+                  <option value="対象">WIN5対象</option>
+                  <option value="非対象">WIN5非対象</option>
+                </select>
+              </label>
+              <button class="button button--primary" type="reset">条件クリア</button>
+            </form>
+            <div class="search-summary" aria-live="polite">
+              <span id="log-result-count">6件表示</span>
+              <span>検索対象: 各競馬場/保存ログ・WIN5/買い目</span>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table log-results">
+                <thead>
+                  <tr>
+                    <th scope="col">保存日</th>
+                    <th scope="col">競馬場</th>
+                    <th scope="col">レース名</th>
+                    <th scope="col">騎手</th>
+                    <th scope="col">WIN5</th>
+                    <th scope="col">ログ種別</th>
+                    <th scope="col">保存先</th>
+                  </tr>
+                </thead>
+                <tbody id="log-results-body">
+                  <tr data-course="東京競馬場" data-month="2026-06" data-race="安田記念 TOK11 芝1600" data-jockey="ルメール" data-win5="対象">
+                    <td data-label="保存日">2026/06/02 09:30</td>
+                    <td data-label="競馬場">東京競馬場</td>
+                    <td data-label="レース名">安田記念 / TOK11</td>
+                    <td data-label="騎手">ルメール</td>
+                    <td data-label="WIN5"><span class="badge badge--gold">対象</span></td>
+                    <td data-label="ログ種別">事前予想</td>
+                    <td data-label="保存先"><a href="./東京競馬場/保存ログ/README.md">東京/保存ログ</a></td>
+                  </tr>
+                  <tr data-course="京都競馬場" data-month="2026-06" data-race="水無月ステークス KYO10 ダ1800" data-jockey="川田将雅" data-win5="対象">
+                    <td data-label="保存日">2026/06/02 09:18</td>
+                    <td data-label="競馬場">京都競馬場</td>
+                    <td data-label="レース名">水無月S / KYO10</td>
+                    <td data-label="騎手">川田将雅</td>
+                    <td data-label="WIN5"><span class="badge badge--gold">対象</span></td>
+                    <td data-label="ログ種別">WIN5買い目</td>
+                    <td data-label="保存先"><a href="./WIN5/買い目/README.md">WIN5/買い目</a></td>
+                  </tr>
+                  <tr data-course="阪神競馬場" data-month="2026-06" data-race="灘ステークス HAN10 ダ2000" data-jockey="坂井瑠星" data-win5="対象">
+                    <td data-label="保存日">2026/06/02 08:54</td>
+                    <td data-label="競馬場">阪神競馬場</td>
+                    <td data-label="レース名">灘S / HAN10</td>
+                    <td data-label="騎手">坂井瑠星</td>
+                    <td data-label="WIN5"><span class="badge badge--gold">対象</span></td>
+                    <td data-label="ログ種別">馬場補正</td>
+                    <td data-label="保存先"><a href="./阪神競馬場/保存ログ/README.md">阪神/保存ログ</a></td>
+                  </tr>
+                  <tr data-course="中山競馬場" data-month="2026-03" data-race="中山牝馬ステークス NAK11 芝1800" data-jockey="横山武史" data-win5="非対象">
+                    <td data-label="保存日">2026/03/15 17:10</td>
+                    <td data-label="競馬場">中山競馬場</td>
+                    <td data-label="レース名">中山牝馬S / NAK11</td>
+                    <td data-label="騎手">横山武史</td>
+                    <td data-label="WIN5"><span class="badge">非対象</span></td>
+                    <td data-label="ログ種別">結果検証</td>
+                    <td data-label="保存先"><a href="./中山競馬場/2026-03-15_中山総括.md">中山総括</a></td>
+                  </tr>
+                  <tr data-course="中京競馬場" data-month="2026-01" data-race="東海ステークス CHU11 ダ1800" data-jockey="松山弘平" data-win5="対象">
+                    <td data-label="保存日">2026/01/25 16:42</td>
+                    <td data-label="競馬場">中京競馬場</td>
+                    <td data-label="レース名">東海S / CHU11</td>
+                    <td data-label="騎手">松山弘平</td>
+                    <td data-label="WIN5"><span class="badge badge--gold">対象</span></td>
+                    <td data-label="ログ種別">WIN5検証</td>
+                    <td data-label="保存先"><a href="./中京競馬場/保存ログ/README.md">中京/保存ログ</a></td>
+                  </tr>
+                  <tr data-course="小倉競馬場" data-month="2025-08" data-race="小倉記念 KOK11 芝2000" data-jockey="浜中俊" data-win5="非対象">
+                    <td data-label="保存日">2025/08/17 16:05</td>
+                    <td data-label="競馬場">小倉競馬場</td>
+                    <td data-label="レース名">小倉記念 / KOK11</td>
+                    <td data-label="騎手">浜中俊</td>
+                    <td data-label="WIN5"><span class="badge">非対象</span></td>
+                    <td data-label="ログ種別">穴馬条件</td>
+                    <td data-label="保存先"><a href="./小倉競馬場/保存ログ/README.md">小倉/保存ログ</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </article>
 
         <article id="latest-save-log" class="card card--wide data-card control-card log-card">
@@ -410,26 +318,9 @@
             </div>
             <p class="card__lead">競馬場別の予想保存、指数更新、検証ログを時系列で監視。保存済みファイルへの導線も配置しました。</p>
             <div class="log-stream" aria-label="最新保存ログ一覧">
-              <article>
-                <time datetime="2026-06-02T09:30:00+09:00">09:30</time>
-                <div><strong>東京競馬場 / 事前予想</strong><span>AI指数ランキングを36R分で再計算。TOK11の本命を7番へ更新。</span></div>
-                <em>saved</em>
-              </article>
-              <article>
-                <time datetime="2026-06-02T09:18:00+09:00">09:18</time>
-                <div><strong>WIN5 / 買い目</strong><span>WIN3を3頭構成へ変更。総点数48点、資金4,800円で確定候補。</span></div>
-                <em>updated</em>
-              </article>
-              <article>
-                <time datetime="2026-06-02T08:54:00+09:00">08:54</time>
-                <div><strong>阪神競馬場 / 保存ログ</strong><span>馬場バイアスを外差し+1.6へ補正。神穴候補6番を昇格。</span></div>
-                <em>synced</em>
-              </article>
-              <article>
-                <time datetime="2026-06-02T08:21:00+09:00">08:21</time>
-                <div><strong>危険人気馬DB</strong><span>過剰人気検知ルールに昇級初戦フラグを追加。危険度88以上を警告。</span></div>
-                <em>logged</em>
-              </article>
+              <article><time datetime="2026-06-02T09:30:00+09:00">09:30</time><div><strong>東京競馬場 / 事前予想</strong><span>AI指数ランキングを36R分で再計算。TOK11の本命を7番へ更新。</span></div><em>saved</em></article>
+              <article><time datetime="2026-06-02T09:18:00+09:00">09:18</time><div><strong>WIN5 / 買い目</strong><span>WIN3を3頭構成へ変更。総点数48点、資金4,800円で確定候補。</span></div><em>updated</em></article>
+              <article><time datetime="2026-06-02T08:54:00+09:00">08:54</time><div><strong>阪神競馬場 / 保存ログ</strong><span>馬場バイアスを外差し+1.6へ補正。神穴候補6番を昇格。</span></div><em>synced</em></article>
             </div>
           </div>
           <a class="card__link" href="./東京競馬場/保存ログ/README.md">保存ログを開く</a>
@@ -447,40 +338,16 @@
             </div>
             <p class="card__lead">対象5レースの難度、軸信頼、穴投入ポイントをもとに買い目フォーメーションを生成します。</p>
             <div class="win5-ticket" aria-label="WIN5 買い目フォーメーション">
-              <section>
-                <span>WIN1 東京9R</span>
-                <strong>2, 7</strong>
-                <small>難度B / 先行決着 / 軸信頼76%</small>
-              </section>
-              <section>
-                <span>WIN2 京都10R</span>
-                <strong>3</strong>
-                <small>堅軸 / AI指数94.1 / 1点突破</small>
-              </section>
-              <section>
-                <span>WIN3 阪神10R</span>
-                <strong>1, 6, 12</strong>
-                <small>難度A / 神穴12番を投入</small>
-                <small>難度A / 神穴6番を投入</small>
-              </section>
-              <section>
-                <span>WIN4 東京10R</span>
-                <strong>4, 9</strong>
-                <small>危険人気1番を消し / 差し決着</small>
-                <small>危険人気1番を消し / 差し重視</small>
-              </section>
-              <section>
-                <span>WIN5 東京11R</span>
-                <strong>7, 14, 16, 18</strong>
-                <small>神レースS / 7番本線</small>
-                <small>指数1位＋高配当カバー</small>
-              </section>
+              <section><span>WIN1 東京9R</span><strong>2, 7</strong><small>難度B / 先行決着 / 軸信頼76%</small></section>
+              <section><span>WIN2 京都10R</span><strong>3</strong><small>堅軸 / AI指数94.1 / 1点突破</small></section>
+              <section><span>WIN3 阪神10R</span><strong>1, 6, 12</strong><small>難度A / 神穴6番を投入</small></section>
+              <section><span>WIN4 東京10R</span><strong>4, 9</strong><small>危険人気1番を消し / 差し重視</small></section>
+              <section><span>WIN5 東京11R</span><strong>7, 14, 16, 18</strong><small>指数1位＋高配当カバー</small></section>
             </div>
             <div class="generated-summary">
               <span>生成点数 <strong>48点</strong></span>
               <span>推奨資金 <strong>4,800円</strong></span>
               <span>期待回収率 <strong>142%</strong></span>
-              <span>最大想定 <strong>1,280万円</strong></span>
               <span>最大想定払戻 <strong>1,840,000円</strong></span>
             </div>
           </div>
@@ -500,36 +367,6 @@
               <span><b>神穴抽出</b> 完了</span>
               <span><b>危険人気馬</b> 完了</span>
               <span><b>WIN5</b> 保存済</span>
-        <article id="operations" class="card card--accent ops-card">
-          <div class="card__icon" aria-hidden="true">🧠</div>
-          <div class="card__body">
-            <p class="card__kicker">AI OPERATIONS</p>
-            <h2>運用監視</h2>
-            <p>モデル、データ、ログ、買い目生成の稼働状態を管理者目線で確認できます。</p>
-            <div class="ops-grid" aria-label="AI運用監視ステータス">
-              <span><strong>index-v4.8</strong>正常</span>
-              <span><strong>ana-v3.2</strong>正常</span>
-              <span><strong>danger-v2.9</strong>警告1件</span>
-              <span><strong>win5-v1.7</strong>生成完了</span>
-            </div>
-          </div>
-        </article>
-
-        <article id="course-ai" class="card card--wide">
-          <div class="card__icon" aria-hidden="true">🏟️</div>
-          <div class="card__body">
-            <p class="card__kicker">COURSE AI</p>
-            <h2>競馬場別AI</h2>
-            <p>競馬場ごとのコース傾向、脚質、枠順、馬場バイアスを横断して確認できます。</p>
-            <div class="course-links" aria-label="競馬場別リンク">
-              <a href="./中山競馬場/README.md">中山</a>
-              <a href="./東京競馬場/README.md">東京</a>
-              <a href="./京都競馬場/README.md">京都</a>
-              <a href="./阪神競馬場/README.md">阪神</a>
-              <a href="./中京競馬場/README.md">中京</a>
-              <a href="./新潟競馬場/README.md">新潟</a>
-              <a href="./福島競馬場/README.md">福島</a>
-              <a href="./小倉競馬場/README.md">小倉</a>
             </div>
           </div>
         </article>
@@ -538,7 +375,48 @@
 
     <footer class="footer">
       <p>橋本競馬AI — 予想、検証、保存ログ、WIN5をつなぐ競馬AIダッシュボード</p>
-      <p>橋本競馬AI — 予想、検証、学習ログ、WIN5をつなぐ競馬AI管理ダッシュボード</p>
     </footer>
+
+    <script>
+      const searchForm = document.querySelector(".log-search");
+      const courseFilter = document.querySelector("#course-filter");
+      const monthFilter = document.querySelector("#month-filter");
+      const raceFilter = document.querySelector("#race-filter");
+      const jockeyFilter = document.querySelector("#jockey-filter");
+      const win5Filter = document.querySelector("#win5-filter");
+      const resultRows = Array.from(document.querySelectorAll("#log-results-body tr"));
+      const resultCount = document.querySelector("#log-result-count");
+
+      const normalize = (value) => value.trim().toLowerCase();
+
+      const updateLogResults = () => {
+        const course = courseFilter.value;
+        const month = monthFilter.value;
+        const race = normalize(raceFilter.value);
+        const jockey = normalize(jockeyFilter.value);
+        const win5 = win5Filter.value;
+        let visibleCount = 0;
+
+        resultRows.forEach((row) => {
+          const matchesCourse = !course || row.dataset.course === course;
+          const matchesMonth = !month || row.dataset.month === month;
+          const matchesRace = !race || normalize(row.dataset.race).includes(race);
+          const matchesJockey = !jockey || normalize(row.dataset.jockey).includes(jockey);
+          const matchesWin5 = !win5 || row.dataset.win5 === win5;
+          const isVisible = matchesCourse && matchesMonth && matchesRace && matchesJockey && matchesWin5;
+
+          row.hidden = !isVisible;
+          if (isVisible) visibleCount += 1;
+        });
+
+        resultCount.textContent = `${visibleCount}件表示`;
+      };
+
+      searchForm.addEventListener("input", updateLogResults);
+      searchForm.addEventListener("reset", () => {
+        window.requestAnimationFrame(updateLogResults);
+      });
+      updateLogResults();
+    </script>
   </body>
 </html>
