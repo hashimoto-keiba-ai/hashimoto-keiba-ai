@@ -46,6 +46,7 @@
           <a href="#operations-board">運用</a>
           <a href="#backup-restore">バックアップ</a>
           <a href="#github-storage-settings">保存設定</a>
+          <a href="#pages-publish-check">Pages確認</a>
         </div>
       </nav>
 
@@ -80,6 +81,7 @@
           <a href="#os-update-manager"><span>⑮</span>OS自動アップデート管理</a>
           <a href="#backup-restore"><span>⑯</span>バックアップ／復元</a>
           <a href="#github-storage-settings"><span>⑰</span>GitHub保存設定</a>
+          <a href="#pages-publish-check"><span>⑱</span>Pages公開チェック</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -246,6 +248,51 @@
                 <li>トークンはこのブラウザのlocalStorageに保存されます。共有端末では使用後にクリアしてください。</li>
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="pages-publish-check" class="pages-publish-check card card--wide control-card" aria-label="GitHub Pages公開チェック">
+        <div class="card__icon" aria-hidden="true">🌐</div>
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">GITHUB PAGES PUBLIC CHECK</p>
+              <h2>Pages公開チェック</h2>
+            </div>
+            <span id="pages-check-overall" class="status-pill">未確認</span>
+          </div>
+          <p class="card__lead">GitHub Pages公開後に、PC・iPad・スマホで橋本競馬AIが正しく開けるか確認するためのチェックパネルです。公開URLを入力して読み込み状態を確認し、iPadでの手動確認メモも残せます。</p>
+
+          <div class="pages-check-grid">
+            <form id="pages-check-form" class="pages-check-url-form" aria-label="GitHub Pages公開URL入力フォーム">
+              <label class="pages-check-url-form__field">
+                <span>GitHub Pages公開URL</span>
+                <input id="pages-public-url" name="pagesPublicUrl" type="url" inputmode="url" placeholder="https://ユーザー名.github.io/hashimoto-keiba-ai/" />
+              </label>
+              <button class="button button--primary" type="submit">公開チェックを実行</button>
+              <p id="pages-check-help" class="pages-check-help">未入力の場合は現在開いているURLを基準にチェックします。</p>
+            </form>
+
+            <div class="pages-check-panel" aria-label="Pages公開チェック項目">
+              <div class="pages-check-item" data-pages-check="index"><strong>index.html 読み込み</strong><span class="pages-check-status pages-check-status--unchecked">未確認</span><small>トップHTMLが取得できるか</small></div>
+              <div class="pages-check-item" data-pages-check="css"><strong>CSS読み込み</strong><span class="pages-check-status pages-check-status--unchecked">未確認</span><small>黒×金デザインCSSを取得できるか</small></div>
+              <div class="pages-check-item" data-pages-check="javascript"><strong>JavaScript読み込み</strong><span class="pages-check-status pages-check-status--unchecked">未確認</span><small>ダッシュボードJSを取得できるか</small></div>
+              <div class="pages-check-item" data-pages-check="manifest"><strong>manifest.json 読み込み</strong><span class="pages-check-status pages-check-status--unchecked">未確認</span><small>PWA設定をJSONとして取得できるか</small></div>
+              <div class="pages-check-item" data-pages-check="data-json"><strong>data JSON読み込み</strong><span class="pages-check-status pages-check-status--unchecked">未確認</span><small>data/selfEvolutionLogs.jsonを取得できるか</small></div>
+              <div class="pages-check-item" data-pages-check="localstorage"><strong>localStorage利用可</strong><span class="pages-check-status pages-check-status--unchecked">未確認</span><small>ブラウザ保存領域へ読み書きできるか</small></div>
+              <div class="pages-check-item" data-pages-check="ipad"><strong>iPad表示対応</strong><span class="pages-check-status pages-check-status--unchecked">未確認</span><small>タブレット用CSSとviewport設定を確認</small></div>
+              <div class="pages-check-item" data-pages-check="smartphone"><strong>スマホ表示対応</strong><span class="pages-check-status pages-check-status--unchecked">未確認</span><small>スマホ用CSSとviewport設定を確認</small></div>
+            </div>
+
+            <fieldset class="ipad-check-memo" aria-label="iPad確認メモ">
+              <legend>iPad確認メモ</legend>
+              <label><input type="checkbox" name="ipadSafari" /> <span>Safariで開いたか</span></label>
+              <label><input type="checkbox" name="ipadHome" /> <span>ホーム画面に追加したか</span></label>
+              <label><input type="checkbox" name="ipadDesign" /> <span>黒×金デザインが表示されたか</span></label>
+              <label><input type="checkbox" name="ipadCsv" /> <span>CSV取込画面が見えるか</span></label>
+            </fieldset>
           </div>
         </div>
       </section>
