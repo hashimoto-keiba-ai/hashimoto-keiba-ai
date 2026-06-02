@@ -21,6 +21,7 @@
           <span class="brand__text">橋本競馬AI</span>
         </a>
         <div class="nav-links">
+          <a href="#command-dashboard">司令塔</a>
           <a href="#today-races">今日のレース</a>
           <a href="#real-data-entry">実データ入力</a>
           <a href="#kami-race-top10">神レースTOP10</a>
@@ -49,28 +50,29 @@
           レース条件、馬番、人気、想定オッズ、指数、根拠、勝負度、買い目、ROI、保存ステータスまで実運用モードの管理画面として整理しました。
         </p>
         <div class="hero__actions" aria-label="主要メニュー">
-          <a class="button button--primary" href="#today-races">今日のレース一覧を開く</a>
+          <a class="button button--primary" href="#command-dashboard">総合司令塔を開く</a>
           <a class="button button--ghost" href="#ai-index-auto-input">AI指数を自動入力</a>
           <a class="button button--ghost" href="#roi-dashboard">回収率を見る</a>
         </div>
 
         <div class="operation-launcher" aria-label="実運用モード操作メニュー">
-          <a href="#today-races"><span>①</span>今日のレース一覧</a>
-          <a href="#real-data-entry"><span>②</span>実データ入力フォーム</a>
-          <a href="#kami-race-top10"><span>③</span>神レースTOP10</a>
-          <a href="#ai-index-auto-input"><span>④</span>AI指数自動入力</a>
-          <a href="#danger-popular"><span>⑤</span>危険人気馬自動判定</a>
-          <a href="#bakuana-ranking"><span>⑥</span>神穴ランキング</a>
-          <a href="#trifecta-generator"><span>⑦</span>三連単自動生成</a>
-          <a href="#win5-ai-screen"><span>⑧</span>WIN5自動生成</a>
-          <a href="#roi-dashboard"><span>⑨</span>回収率ダッシュボード</a>
-          <a href="#result-verification"><span>⑩</span>結果検証フォーム</a>
-          <a href="#result-log-list"><span>⑪</span>最新結果検証ログ</a>
-          <a href="#ai-backtest-lab"><span>⑫</span>AI精度テスト・バックテスト</a>
-          <a href="#self-evolution-loop"><span>⑬</span>AI自己進化ループ</a>
-          <a href="#os-update-manager"><span>⑭</span>OS自動アップデート管理</a>
-          <a href="#backup-restore"><span>⑮</span>バックアップ／復元</a>
-          <a href="#github-storage-settings"><span>⑯</span>GitHub保存設定</a>
+          <a href="#command-dashboard"><span>①</span>総合司令塔UI</a>
+          <a href="#today-races"><span>②</span>今日のレース一覧</a>
+          <a href="#real-data-entry"><span>③</span>実データ入力フォーム</a>
+          <a href="#kami-race-top10"><span>④</span>神レースTOP10</a>
+          <a href="#ai-index-auto-input"><span>⑤</span>AI指数自動入力</a>
+          <a href="#danger-popular"><span>⑥</span>危険人気馬自動判定</a>
+          <a href="#bakuana-ranking"><span>⑦</span>神穴ランキング</a>
+          <a href="#trifecta-generator"><span>⑧</span>三連単自動生成</a>
+          <a href="#win5-ai-screen"><span>⑨</span>WIN5自動生成</a>
+          <a href="#roi-dashboard"><span>⑩</span>回収率ダッシュボード</a>
+          <a href="#result-verification"><span>⑪</span>結果検証フォーム</a>
+          <a href="#result-log-list"><span>⑫</span>最新結果検証ログ</a>
+          <a href="#ai-backtest-lab"><span>⑬</span>AI精度テスト・バックテスト</a>
+          <a href="#self-evolution-loop"><span>⑭</span>AI自己進化ループ</a>
+          <a href="#os-update-manager"><span>⑮</span>OS自動アップデート管理</a>
+          <a href="#backup-restore"><span>⑯</span>バックアップ／復元</a>
+          <a href="#github-storage-settings"><span>⑰</span>GitHub保存設定</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -108,6 +110,46 @@
       </section>
 
 
+      <section id="command-dashboard" class="command-dashboard" aria-label="橋本競馬AI 総合司令塔UI">
+        <div class="command-dashboard__head">
+          <div>
+            <p class="eyebrow">FINAL COMMAND DASHBOARD</p>
+            <h2>黒×金の総合司令塔UI</h2>
+            <p>神レース、勝負レース、AI指数、神穴、危険人気馬、WIN5、ログ検索、ROI、自己進化ログをトップ画面で横断監視します。</p>
+          </div>
+          <span class="status-pill status-pill--live">COMMAND READY</span>
+        </div>
+
+        <div class="command-dashboard__grid">
+          <a class="command-tile command-tile--hero" href="#kami-race-top10">
+            <span>神レース</span><strong>東京11R 安田記念</strong><small>勝負度96 / 三連単・馬連を厚め管理</small>
+          </a>
+          <a class="command-tile command-tile--hero" href="#today-races">
+            <span>本日の勝負レース</span><strong>11R</strong><small>S/A判定のみ資金投入、B以下は見送り候補</small>
+          </a>
+          <a class="command-tile" href="#ai-index-ranking">
+            <span>AI指数TOP10</span><strong>指数98.6</strong><small>能力・展開・馬場・騎手補正を統合</small>
+          </a>
+          <a class="command-tile" href="#bakuana-ranking">
+            <span>神穴TOP10</span><strong>穴指数94</strong><small>人気薄の激走条件と妙味を即確認</small>
+          </a>
+          <a class="command-tile command-tile--danger" href="#danger-popular">
+            <span>危険人気馬TOP10</span><strong>危険度91</strong><small>過剰人気、展開不利、馬場不一致を警告</small>
+          </a>
+          <a class="command-tile" href="#win5-ai-screen">
+            <span>WIN5候補</span><strong>A/B/C/D</strong><small>5レースの軸・相手・穴・消しを分割</small>
+          </a>
+          <a class="command-tile" href="#save-log-search">
+            <span>保存ログ検索</span><strong>128件</strong><small>競馬場・年月・レース名・騎手・WIN5で検索</small>
+          </a>
+          <a class="command-tile" href="#roi-dashboard">
+            <span>回収率/ROI</span><strong>148.2%</strong><small>券種別・競馬場別・月別ROIを資金配分へ反映</small>
+          </a>
+          <a class="command-tile" href="#self-evolution-loop">
+            <span>AI自己進化ログ</span><strong>採用12</strong><small>検証→改善→次走ルール化の学習履歴</small>
+          </a>
+        </div>
+      </section>
 
       <section id="github-storage-settings" class="github-settings card card--wide control-card" aria-label="GitHub保存設定">
         <div class="card__icon" aria-hidden="true">⚙️</div>
