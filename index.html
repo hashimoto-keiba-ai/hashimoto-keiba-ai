@@ -9,6 +9,9 @@
       content="今日のレース一覧、神レースTOP10、AI指数自動入力、危険人気馬、爆穴、三連単、WIN5、回収率を実運用モードで管理する橋本競馬AIダッシュボード。"
     />
     <link rel="stylesheet" href="./src/dashboard.css" />
+    <script src="./src/storage/localStorageAdapter.js"></script>
+    <script src="./src/storage/githubAdapter.js"></script>
+    <script src="./src/storage/dataStorageService.js"></script>
   </head>
   <body>
     <header class="hero">
@@ -1073,24 +1076,23 @@
 
     <script>
 
-      const STORAGE_KEY = "hashimoto-keiba-ai:real-race-entry:v1";
+      const dataStorage = window.HashimotoDataStorage;
+      const STORAGE_KEY = dataStorage.getDefinition("raceEntries").storageKey;
       const storageAdapters = {
         local: {
           save(payload) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-            return payload;
+            return dataStorage.saveData("raceEntries", payload, "localStorage");
           },
           load() {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            return raw ? JSON.parse(raw) : null;
+            return dataStorage.loadData("raceEntries", "localStorage");
           },
         },
         github: {
-          save() {
-            throw new Error("GitHub保存は未接続です。Storage AdapterのsaveをGitHub APIへ接続してください。");
+          save(payload) {
+            return dataStorage.saveData("raceEntries", payload, "github");
           },
           load() {
-            throw new Error("GitHub保存は未接続です。Storage AdapterのloadをGitHub APIへ接続してください。");
+            return dataStorage.loadData("raceEntries", "github");
           },
         },
       };
@@ -1118,31 +1120,29 @@
       const saveRaceDataButton = document.querySelector("#save-race-data");
       const loadRaceDataButton = document.querySelector("#load-race-data");
 
-      const TRIFECTA_STORAGE_KEY = "hashimoto-keiba-ai:trifecta-tickets:v1";
+      const TRIFECTA_STORAGE_KEY = dataStorage.getDefinition("betTickets").storageKey;
       const trifectaStorageAdapters = {
         local: {
           save(payload) {
-            localStorage.setItem(TRIFECTA_STORAGE_KEY, JSON.stringify(payload));
-            return payload;
+            return dataStorage.saveData("betTickets", payload, "localStorage");
           },
           load() {
-            const raw = localStorage.getItem(TRIFECTA_STORAGE_KEY);
-            return raw ? JSON.parse(raw) : null;
+            return dataStorage.loadData("betTickets", "localStorage");
           },
         },
         github: {
-          save() {
-            throw new Error("GitHub保存は未接続です。trifectaStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          save(payload) {
+            return dataStorage.saveData("betTickets", payload, "github");
           },
           load() {
-            throw new Error("GitHub保存は未接続です。trifectaStorageAdapters.github.loadをGitHub APIへ接続してください。");
+            return dataStorage.loadData("betTickets", "github");
           },
         },
       };
       let activeTrifectaStorageAdapter = trifectaStorageAdapters.local;
       let currentTrifectaPayload = null;
 
-      const WIN5_STORAGE_KEY = "hashimoto-keiba-ai:win5-ticket:v1";
+      const WIN5_STORAGE_KEY = dataStorage.getDefinition("win5Tickets").storageKey;
       const win5Form = document.querySelector("#win5-generator-form");
       const win5RaceInputs = document.querySelector("#win5-race-inputs");
       const win5TicketOutput = document.querySelector("#win5-ticket-output");
@@ -1163,20 +1163,18 @@
       const win5StorageAdapters = {
         local: {
           save(payload) {
-            localStorage.setItem(WIN5_STORAGE_KEY, JSON.stringify(payload));
-            return payload;
+            return dataStorage.saveData("win5Tickets", payload, "localStorage");
           },
           load() {
-            const raw = localStorage.getItem(WIN5_STORAGE_KEY);
-            return raw ? JSON.parse(raw) : null;
+            return dataStorage.loadData("win5Tickets", "localStorage");
           },
         },
         github: {
-          save() {
-            throw new Error("GitHub保存は未接続です。win5StorageAdapters.github.saveをGitHub APIへ接続してください。");
+          save(payload) {
+            return dataStorage.saveData("win5Tickets", payload, "github");
           },
           load() {
-            throw new Error("GitHub保存は未接続です。win5StorageAdapters.github.loadをGitHub APIへ接続してください。");
+            return dataStorage.loadData("win5Tickets", "github");
           },
         },
       };
@@ -1207,7 +1205,7 @@
 
       const uniqueCandidates = (items) => [...new Set(items)];
 
-      const INVESTMENT_STORAGE_KEY = "hashimoto-keiba-ai:investment-results:v1";
+      const INVESTMENT_STORAGE_KEY = dataStorage.getDefinition("roiRecords").storageKey;
       const investmentForm = document.querySelector("#investment-result-form");
       const investmentDate = document.querySelector("#investment-date");
       const investmentSaveStatus = document.querySelector("#investment-save-status");
@@ -1228,23 +1226,21 @@
       const investmentStorageAdapters = {
         local: {
           save(payload) {
-            localStorage.setItem(INVESTMENT_STORAGE_KEY, JSON.stringify(payload));
-            return payload;
+            return dataStorage.saveData("roiRecords", payload, "localStorage");
           },
           load() {
-            const raw = localStorage.getItem(INVESTMENT_STORAGE_KEY);
-            return raw ? JSON.parse(raw) : null;
+            return dataStorage.loadData("roiRecords", "localStorage");
           },
           clear() {
-            localStorage.removeItem(INVESTMENT_STORAGE_KEY);
+            dataStorage.removeData("roiRecords", "localStorage");
           },
         },
         github: {
-          save() {
-            throw new Error("GitHub保存は未接続です。investmentStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          save(payload) {
+            return dataStorage.saveData("roiRecords", payload, "github");
           },
           load() {
-            throw new Error("GitHub保存は未接続です。investmentStorageAdapters.github.loadをGitHub APIへ接続してください。");
+            return dataStorage.loadData("roiRecords", "github");
           },
         },
       };
@@ -1540,7 +1536,7 @@
         renderWin5Payload(payload);
       };
 
-      const RESULT_LOG_STORAGE_KEY = "hashimoto-keiba-ai:result-verification-logs:v1";
+      const RESULT_LOG_STORAGE_KEY = dataStorage.getDefinition("results").storageKey;
       const resultVerificationForm = document.querySelector("#result-verification-form");
       const resultSaveStatus = document.querySelector("#result-save-status");
       const resultFormReset = document.querySelector("#result-form-reset");
@@ -1551,7 +1547,7 @@
       const resultLogFilters = document.querySelector(".result-log-filters");
       const resultCheckboxFields = ["mainHit", "rivalHit", "longshotHit", "kamianaHit", "dangerPopularSuccess", "trifectaHit"];
       const resultNumericFields = ["raceNumber", "firstNumber", "firstPopularity", "secondNumber", "secondPopularity", "thirdNumber", "thirdPopularity", "trifectaPayout"];
-      const OS_RULE_STORAGE_KEY = "hashimoto-keiba-ai:os-update-rules:v1";
+      const OS_RULE_STORAGE_KEY = dataStorage.getDefinition("osUpdates").storageKey;
       const osRuleForm = document.querySelector("#os-rule-form");
       const osRuleFormReset = document.querySelector("#os-rule-form-reset");
       const reflectResultToOsButton = document.querySelector("#reflect-result-to-os");
@@ -1569,22 +1565,22 @@
       const resultLogStorageAdapters = {
         local: {
           save(logs) {
-            localStorage.setItem(RESULT_LOG_STORAGE_KEY, JSON.stringify({ storageVersion: 1, provider: "localStorage", logs }));
+            dataStorage.saveData("results", { storageVersion: 1, provider: "localStorage", logs }, "localStorage");
             return logs;
           },
           load() {
-            const raw = localStorage.getItem(RESULT_LOG_STORAGE_KEY);
-            if (!raw) return [];
-            const payload = JSON.parse(raw);
-            return Array.isArray(payload) ? payload : payload.logs || [];
+            const payload = dataStorage.loadData("results", "localStorage");
+            return Array.isArray(payload) ? payload : payload?.logs || [];
           },
         },
         github: {
-          save() {
-            throw new Error("GitHub保存は未接続です。resultLogStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          save(logs) {
+            dataStorage.saveData("results", { storageVersion: 1, provider: "github", logs }, "github");
+            return logs;
           },
           load() {
-            throw new Error("GitHub保存は未接続です。resultLogStorageAdapters.github.loadをGitHub APIへ接続してください。");
+            const payload = dataStorage.loadData("results", "github");
+            return Array.isArray(payload) ? payload : payload?.logs || [];
           },
         },
       };
@@ -1594,30 +1590,32 @@
       const osRuleStorageAdapters = {
         local: {
           save(rules) {
-            localStorage.setItem(OS_RULE_STORAGE_KEY, JSON.stringify({ storageVersion: 1, provider: "localStorage", rules }));
+            dataStorage.saveData("osUpdates", { storageVersion: 1, provider: "localStorage", rules }, "localStorage");
             return rules;
           },
           load() {
-            const raw = localStorage.getItem(OS_RULE_STORAGE_KEY);
-            if (!raw) return [];
-            const payload = JSON.parse(raw);
-            return Array.isArray(payload) ? payload : payload.rules || [];
+            const payload = dataStorage.loadData("osUpdates", "localStorage");
+            return Array.isArray(payload) ? payload : payload?.rules || [];
           },
         },
         github: {
-          save() {
-            throw new Error("GitHub保存は未接続です。osRuleStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          save(rules) {
+            dataStorage.saveData("osUpdates", { storageVersion: 1, provider: "github", rules }, "github");
+            return rules;
           },
           load() {
-            throw new Error("GitHub保存は未接続です。osRuleStorageAdapters.github.loadをGitHub APIへ接続してください。");
+            const payload = dataStorage.loadData("osUpdates", "github");
+            return Array.isArray(payload) ? payload : payload?.rules || [];
           },
         },
       };
       let activeOsRuleStorageAdapter = osRuleStorageAdapters.local;
       let osRules = activeOsRuleStorageAdapter.load();
 
-      const PREDICTION_LOG_STORAGE_KEY = "hashimoto-keiba-ai:prediction-logs:v1";
+      const PREDICTION_LOG_STORAGE_KEY = dataStorage.getDefinition("predictions").storageKey;
       const AUTO_BET_STORAGE_KEY = "hashimoto-keiba-ai:auto-bet-tickets:v1";
+      const HORSE_ENTRY_STORAGE_KEY = dataStorage.getDefinition("horseEntries").storageKey;
+      const BACKUP_DATA_STORAGE_KEY = dataStorage.getDefinition("backupData").storageKey;
       const backupRestoreStatus = document.querySelector("#backup-restore-status");
       const backupCourseFilter = document.querySelector("#backup-course-filter");
       const restoreJsonFile = document.querySelector("#restore-json-file");
@@ -1628,19 +1626,20 @@
       const restoreJsonDataButton = document.querySelector("#restore-json-data");
 
       const backupStorageTargets = [
-        { key: STORAGE_KEY, label: "レース登録データ・出走馬データ・事前予想ログ", category: "race", coursePaths: [["race", "course"]] },
-        { key: PREDICTION_LOG_STORAGE_KEY, label: "事前予想ログ", category: "prediction", optional: true, listPath: "logs", coursePaths: [["course"], ["race", "course"]] },
-        { key: RESULT_LOG_STORAGE_KEY, label: "結果検証ログ", category: "result", listPath: "logs", coursePaths: [["race", "course"]] },
-        { key: OS_RULE_STORAGE_KEY, label: "OSアップデートログ", category: "os", listPath: "rules", coursePaths: [["course"]] },
-        { key: WIN5_STORAGE_KEY, label: "WIN5買い目", category: "win5", coursePaths: [["races", "*", "course"], ["formation", "*", "course"]] },
-        { key: INVESTMENT_STORAGE_KEY, label: "回収率データ", category: "roi", listPath: "results", coursePaths: [["course"]] },
-        { key: TRIFECTA_STORAGE_KEY, label: "自動買い目データ（三連単）", category: "autoBet", coursePaths: [["race", "course"]] },
-        { key: AUTO_BET_STORAGE_KEY, label: "自動買い目データ", category: "autoBet", optional: true, listPath: "tickets", coursePaths: [["course"], ["race", "course"]] },
+        { type: "raceEntries", key: STORAGE_KEY, label: "レース登録データ", category: "race", coursePaths: [["race", "course"]] },
+        { type: "horseEntries", key: HORSE_ENTRY_STORAGE_KEY, label: "出走馬データ", category: "race", optional: true, listPath: "horses", coursePaths: [["race", "course"], ["course"]] },
+        { type: "predictions", key: PREDICTION_LOG_STORAGE_KEY, label: "事前予想ログ", category: "prediction", optional: true, listPath: "logs", coursePaths: [["course"], ["race", "course"]] },
+        { type: "results", key: RESULT_LOG_STORAGE_KEY, label: "結果検証ログ", category: "result", listPath: "logs", coursePaths: [["race", "course"]] },
+        { type: "osUpdates", key: OS_RULE_STORAGE_KEY, label: "OSアップデートログ", category: "os", listPath: "rules", coursePaths: [["course"]] },
+        { type: "win5Tickets", key: WIN5_STORAGE_KEY, label: "WIN5買い目", category: "win5", coursePaths: [["races", "*", "course"], ["formation", "*", "course"]] },
+        { type: "roiRecords", key: INVESTMENT_STORAGE_KEY, label: "回収率データ", category: "roi", listPath: "results", coursePaths: [["course"]] },
+        { type: "betTickets", key: TRIFECTA_STORAGE_KEY, label: "自動買い目データ（三連単）", category: "autoBet", coursePaths: [["race", "course"]] },
       ];
 
       const backupStorageAdapters = {
         local: {
           save(payload) {
+            dataStorage.saveData("backupData", payload, "localStorage");
             downloadBackupJson(payload);
             return payload;
           },
@@ -1650,24 +1649,15 @@
           },
         },
         github: {
-          save() {
-            throw new Error("GitHub保存は未接続です。backupStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          save(payload) {
+            return dataStorage.saveData("backupData", payload, "github");
           },
-          restore() {
-            throw new Error("GitHub保存は未接続です。backupStorageAdapters.github.restoreをGitHub APIへ接続してください。");
+          restore(payload) {
+            return dataStorage.importData("backupData", payload, "github");
           },
         },
       };
       let activeBackupStorageAdapter = backupStorageAdapters.local;
-
-      const safeJsonParse = (raw) => {
-        if (!raw) return null;
-        try {
-          return JSON.parse(raw);
-        } catch (error) {
-          return { raw, parseError: error.message };
-        }
-      };
 
       const getNestedValues = (source, path) => {
         if (!source) return [];
@@ -1684,7 +1674,10 @@
       const payloadMatchesCourse = (value, target) => {
         const targetCourse = normalizeCourseName(target);
         if (!targetCourse || !value) return false;
-        return backupStorageTargets.some((definition) => definition.coursePaths?.some((path) => (
+        const targetDefinitions = value?.storageType
+          ? backupStorageTargets.filter((definition) => definition.type === value.storageType)
+          : backupStorageTargets;
+        return targetDefinitions.some((definition) => definition.coursePaths?.some((path) => (
           getNestedValues(value, path).some((course) => normalizeCourseName(course).includes(targetCourse))
         )));
       };
@@ -1705,15 +1698,16 @@
         });
 
         return selectedDefinitions.reduce((accumulator, definition) => {
-          const raw = localStorage.getItem(definition.key);
-          if (!raw && definition.optional) return accumulator;
-          const parsed = safeJsonParse(raw);
+          const parsed = dataStorage.loadData(definition.type, "localStorage");
+          if (parsed === null && definition.optional) return accumulator;
           if (parsed === null) return accumulator;
-          const value = scope === "course" ? filterListByCourse(parsed, definition, course) : parsed;
+          const value = scope === "course" ? filterListByCourse({ ...parsed, storageType: definition.type }, definition, course) : parsed;
           if (!value) return accumulator;
           accumulator[definition.key] = {
             label: definition.label,
             category: definition.category,
+            storageType: definition.type,
+            repositoryPath: dataStorage.getDefinition(definition.type).repositoryPath,
             value,
           };
           return accumulator;
@@ -1769,13 +1763,20 @@
       const restoreBackupToLocalStorage = (payload) => {
         const normalized = normalizeRestorePayload(payload);
         normalized.keys.forEach((key) => {
-          if (normalized.data[key]) localStorage.setItem(key, JSON.stringify(normalized.data[key].value));
+          if (normalized.data[key]) {
+            const storageType = normalized.data[key].storageType || backupStorageTargets.find((definition) => definition.key === key)?.type;
+            if (storageType) {
+              dataStorage.importData(storageType, normalized.data[key].value, "localStorage");
+            }
+          }
         });
         return normalized;
       };
 
       const refreshDashboardAfterRestore = () => {
-        applyRacePayload(activeStorageAdapter.load());
+        const initialRacePayload = activeStorageAdapter.load();
+      const initialHorsePayload = dataStorage.loadData("horseEntries", "localStorage");
+      applyRacePayload(initialRacePayload ? { ...initialRacePayload, horses: initialRacePayload.horses?.length ? initialRacePayload.horses : initialHorsePayload?.horses || [] } : null);
         renderTrifectaPayload(activeTrifectaStorageAdapter.load() || buildTrifectaPayload());
         loadInvestmentResults();
         renderInvestmentDashboard();
@@ -2370,12 +2371,22 @@
       saveRaceDataButton.addEventListener("click", () => {
         const payload = createRacePayload();
         activeStorageAdapter.save(payload);
+        dataStorage.saveData("horseEntries", {
+          storageVersion: 1,
+          provider: "localStorage",
+          extensibleProvider: "github-ready",
+          repositoryPath: dataStorage.getDefinition("horseEntries").repositoryPath,
+          savedAt: payload.generatedAt,
+          race: payload.race,
+          horses: payload.horses,
+        }, "localStorage");
         saveStatus.textContent = `保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
       });
 
       loadRaceDataButton.addEventListener("click", () => {
         const payload = activeStorageAdapter.load();
-        applyRacePayload(payload);
+        const horsePayload = dataStorage.loadData("horseEntries", "localStorage");
+        applyRacePayload(payload ? { ...payload, horses: payload.horses?.length ? payload.horses : horsePayload?.horses || [] } : null);
         saveStatus.textContent = payload ? "復元完了" : "保存なし";
       });
 
@@ -2462,7 +2473,9 @@
       renderWin5Payload(currentWin5Payload || createWin5Payload());
 
       document.querySelector("#race-date").valueAsDate = new Date();
-      applyRacePayload(activeStorageAdapter.load());
+      const initialRacePayload = activeStorageAdapter.load();
+      const initialHorsePayload = dataStorage.loadData("horseEntries", "localStorage");
+      applyRacePayload(initialRacePayload ? { ...initialRacePayload, horses: initialRacePayload.horses?.length ? initialRacePayload.horses : initialHorsePayload?.horses || [] } : null);
       renderRaceEntry();
 
       const courseChips = Array.from(document.querySelectorAll(".course-chip"));
