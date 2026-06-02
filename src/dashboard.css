@@ -1849,6 +1849,7 @@ h1 {
 
 .result-verification,
 .result-log-list,
+.ai-backtest-lab,
 .os-update-manager {
   width: min(1180px, calc(100% - 32px));
   min-height: auto;
@@ -1861,6 +1862,7 @@ h1 {
 
 .result-form,
 .result-log-filters,
+.backtest-filter-form,
 .os-rule-form,
 .os-rule-toolbar {
   display: grid;
@@ -1873,6 +1875,8 @@ h1 {
 .result-log-filters,
 .result-log-group,
 .result-log-card,
+.backtest-panel,
+.backtest-insight-list article,
 .os-rule-group,
 .os-rule-card {
   border: 1px solid rgba(248, 196, 79, 0.24);
@@ -1899,7 +1903,8 @@ h1 {
 
 .result-fieldset label,
 .finisher-card label,
-.result-log-filters label {
+.result-log-filters label,
+.backtest-filter-form label {
   display: grid;
   gap: 7px;
   color: var(--text);
@@ -1907,7 +1912,8 @@ h1 {
 
 .result-fieldset label span,
 .finisher-card label span,
-.result-log-filters label span {
+.result-log-filters label span,
+.backtest-filter-form label span {
   color: var(--gold);
   font-size: 0.78rem;
   font-weight: 900;
@@ -1918,7 +1924,9 @@ h1 {
 .result-fieldset select,
 .result-fieldset textarea,
 .result-log-filters input,
-.result-log-filters select {
+.result-log-filters select,
+.backtest-filter-form input,
+.backtest-filter-form select {
   width: 100%;
   min-height: 44px;
   padding: 0 12px;
@@ -1939,7 +1947,9 @@ h1 {
 .result-fieldset select:focus,
 .result-fieldset textarea:focus,
 .result-log-filters input:focus,
-.result-log-filters select:focus {
+.result-log-filters select:focus,
+.backtest-filter-form input:focus,
+.backtest-filter-form select:focus {
   border-color: var(--gold-light);
   box-shadow: 0 0 0 3px rgba(248, 196, 79, 0.16);
 }
@@ -2403,6 +2413,115 @@ h1 {
   }
 
   .win5-actions .button {
+    width: 100%;
+  }
+}
+
+/* AI accuracy backtest lab */
+.ai-backtest-lab {
+  background:
+    radial-gradient(circle at 10% 4%, rgba(248, 196, 79, 0.22), transparent 24rem),
+    linear-gradient(145deg, rgba(20, 13, 2, 0.98), rgba(0, 0, 0, 0.94));
+}
+
+.backtest-filter-fieldset {
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+}
+
+.backtest-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+}
+
+.backtest-summary-grid,
+.backtest-analytics-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.backtest-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.backtest-summary-grid section {
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.28);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(248, 196, 79, 0.12), rgba(0, 0, 0, 0.38));
+}
+
+.backtest-summary-grid span,
+.backtest-summary-grid small {
+  display: block;
+  color: var(--muted);
+}
+
+.backtest-summary-grid strong {
+  display: block;
+  margin: 8px 0;
+  color: var(--gold-light);
+  font-size: clamp(1.45rem, 3vw, 2.25rem);
+}
+
+.backtest-analytics-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.backtest-panel {
+  padding: 18px;
+}
+
+.backtest-panel--wide {
+  grid-column: 1 / -1;
+}
+
+.backtest-insight-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.backtest-insight-list article {
+  padding: 16px;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.38), rgba(248, 196, 79, 0.075));
+}
+
+.backtest-insight-list strong {
+  display: block;
+  color: var(--gold-light);
+  font-weight: 900;
+}
+
+.backtest-insight-list p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.backtest-improvement-list article {
+  border-color: rgba(255, 226, 135, 0.38);
+}
+
+@media (max-width: 980px) {
+  .backtest-filter-fieldset,
+  .backtest-summary-grid,
+  .backtest-analytics-grid,
+  .backtest-insight-list {
+    grid-template-columns: 1fr;
+  }
+
+  .backtest-panel--wide {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .backtest-actions,
+  .backtest-actions .button {
     width: 100%;
   }
 }
