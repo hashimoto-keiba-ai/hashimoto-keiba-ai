@@ -48,6 +48,8 @@ Phase2-1の実データ連携設計は [`DATA_IMPORT_DESIGN.md`](DATA_IMPORT_DES
 
 Phase2-2のAI指数自動計算エンジン設計は [`AI_SCORE_ENGINE_DESIGN.md`](AI_SCORE_ENGINE_DESIGN.md) に整理しています。CSVで取り込んだ出馬表データから、AI指数・神穴指数・危険人気馬指数を自動計算し、ランキング更新と三連単生成へ接続する流れを定義しています。
 
+Phase2-3のGitHub JSON保存本実装設計は [`GITHUB_JSON_STORAGE_DESIGN.md`](GITHUB_JSON_STORAGE_DESIGN.md) に整理しています。localStorage中心の保存から、`data/*.json`、GitHub API読込/保存、差分更新、バックアップ、保存方式切替へ段階移行する流れを定義しています。
+
 CSV取込強化、netkeiba手動CSV変換、JRA出馬表データ取込準備、オッズ取込、AI指数/神穴指数/危険人気馬の自動計算、三連単/WIN5自動生成精度向上、`data/*.json` 保存、GitHub API保存、自己進化AI強化、iPad週末運用フローを段階的に進めます。
 
 
