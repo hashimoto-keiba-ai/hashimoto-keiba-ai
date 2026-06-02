@@ -31,6 +31,7 @@
           <a href="#result-log-list">検証ログ</a>
           <a href="#os-update-manager">OSアップデート</a>
           <a href="#operations-board">運用</a>
+          <a href="#backup-restore">バックアップ</a>
         </div>
       </nav>
 
@@ -60,6 +61,7 @@
           <a href="#result-verification"><span>⑩</span>結果検証フォーム</a>
           <a href="#result-log-list"><span>⑪</span>最新結果検証ログ</a>
           <a href="#os-update-manager"><span>⑫</span>OS自動アップデート管理</a>
+          <a href="#backup-restore"><span>⑬</span>バックアップ／復元</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -989,6 +991,61 @@
           <a class="card__link" href="./結果検証/README.md">結果検証を見る</a>
         </article>
 
+
+
+        <article id="backup-restore" class="card card--wide backup-restore-card control-card">
+          <div class="card__icon" aria-hidden="true">🗄️</div>
+          <div class="card__body">
+            <div class="card-heading">
+              <div>
+                <p class="card__kicker">BACKUP / RESTORE CONSOLE</p>
+                <h2>データバックアップ／復元</h2>
+              </div>
+              <span id="backup-restore-status" class="status-pill">localStorage待機中</span>
+            </div>
+            <p class="card__lead">レース登録、出走馬、事前予想ログ、結果検証ログ、OSアップデートログ、WIN5買い目、回収率、自動買い目をJSONで保存・復元します。将来のGitHub保存に備え、保存処理はアダプター化しています。</p>
+
+            <div class="backup-restore-grid" aria-label="バックアップと復元操作">
+              <section class="backup-panel" aria-label="バックアップ操作">
+                <div class="form-section-heading">
+                  <span>① バックアップ</span>
+                  <small>JSONダウンロード</small>
+                </div>
+                <label class="backup-course-select"><span>競馬場別バックアップ</span>
+                  <select id="backup-course-filter">
+                    <option value="東京">東京</option>
+                    <option value="中山">中山</option>
+                    <option value="京都">京都</option>
+                    <option value="阪神">阪神</option>
+                    <option value="中京">中京</option>
+                    <option value="新潟">新潟</option>
+                    <option value="福島">福島</option>
+                    <option value="小倉">小倉</option>
+                    <option value="札幌">札幌</option>
+                    <option value="函館">函館</option>
+                  </select>
+                </label>
+                <div class="backup-button-grid">
+                  <button id="backup-all-data" class="button button--primary" type="button">全データをバックアップ</button>
+                  <button id="backup-course-data" class="button button--ghost" type="button">競馬場別バックアップ</button>
+                  <button id="backup-win5-data" class="button button--ghost" type="button">WIN5のみバックアップ</button>
+                  <button id="backup-roi-data" class="button button--ghost" type="button">回収率のみバックアップ</button>
+                </div>
+              </section>
+
+              <section class="restore-panel" aria-label="復元操作">
+                <div class="form-section-heading">
+                  <span>② 復元</span>
+                  <small>復元前に確認メッセージを表示</small>
+                </div>
+                <label class="restore-file-drop"><span>JSONファイルを選択</span><input id="restore-json-file" type="file" accept="application/json,.json" /></label>
+                <button id="restore-json-data" class="button button--primary" type="button">読み込んだJSONから復元</button>
+                <p class="restore-note">復元対象のlocalStorageキーだけを上書きします。操作前に現在の全データバックアップを推奨します。</p>
+              </section>
+            </div>
+          </div>
+        </article>
+
         <article id="operations-board" class="card card--wide operations-card">
           <div class="card__icon" aria-hidden="true">🖥️</div>
           <div class="card__body">
@@ -1558,6 +1615,216 @@
       };
       let activeOsRuleStorageAdapter = osRuleStorageAdapters.local;
       let osRules = activeOsRuleStorageAdapter.load();
+
+      const PREDICTION_LOG_STORAGE_KEY = "hashimoto-keiba-ai:prediction-logs:v1";
+      const AUTO_BET_STORAGE_KEY = "hashimoto-keiba-ai:auto-bet-tickets:v1";
+      const backupRestoreStatus = document.querySelector("#backup-restore-status");
+      const backupCourseFilter = document.querySelector("#backup-course-filter");
+      const restoreJsonFile = document.querySelector("#restore-json-file");
+      const backupAllDataButton = document.querySelector("#backup-all-data");
+      const backupCourseDataButton = document.querySelector("#backup-course-data");
+      const backupWin5DataButton = document.querySelector("#backup-win5-data");
+      const backupRoiDataButton = document.querySelector("#backup-roi-data");
+      const restoreJsonDataButton = document.querySelector("#restore-json-data");
+
+      const backupStorageTargets = [
+        { key: STORAGE_KEY, label: "レース登録データ・出走馬データ・事前予想ログ", category: "race", coursePaths: [["race", "course"]] },
+        { key: PREDICTION_LOG_STORAGE_KEY, label: "事前予想ログ", category: "prediction", optional: true, listPath: "logs", coursePaths: [["course"], ["race", "course"]] },
+        { key: RESULT_LOG_STORAGE_KEY, label: "結果検証ログ", category: "result", listPath: "logs", coursePaths: [["race", "course"]] },
+        { key: OS_RULE_STORAGE_KEY, label: "OSアップデートログ", category: "os", listPath: "rules", coursePaths: [["course"]] },
+        { key: WIN5_STORAGE_KEY, label: "WIN5買い目", category: "win5", coursePaths: [["races", "*", "course"], ["formation", "*", "course"]] },
+        { key: INVESTMENT_STORAGE_KEY, label: "回収率データ", category: "roi", listPath: "results", coursePaths: [["course"]] },
+        { key: TRIFECTA_STORAGE_KEY, label: "自動買い目データ（三連単）", category: "autoBet", coursePaths: [["race", "course"]] },
+        { key: AUTO_BET_STORAGE_KEY, label: "自動買い目データ", category: "autoBet", optional: true, listPath: "tickets", coursePaths: [["course"], ["race", "course"]] },
+      ];
+
+      const backupStorageAdapters = {
+        local: {
+          save(payload) {
+            downloadBackupJson(payload);
+            return payload;
+          },
+          restore(payload) {
+            restoreBackupToLocalStorage(payload);
+            return payload;
+          },
+        },
+        github: {
+          save() {
+            throw new Error("GitHub保存は未接続です。backupStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          },
+          restore() {
+            throw new Error("GitHub保存は未接続です。backupStorageAdapters.github.restoreをGitHub APIへ接続してください。");
+          },
+        },
+      };
+      let activeBackupStorageAdapter = backupStorageAdapters.local;
+
+      const safeJsonParse = (raw) => {
+        if (!raw) return null;
+        try {
+          return JSON.parse(raw);
+        } catch (error) {
+          return { raw, parseError: error.message };
+        }
+      };
+
+      const getNestedValues = (source, path) => {
+        if (!source) return [];
+        if (!path.length) return [source];
+        const [head, ...rest] = path;
+        if (head === "*") {
+          return Array.isArray(source) ? source.flatMap((item) => getNestedValues(item, rest)) : [];
+        }
+        return getNestedValues(source[head], rest);
+      };
+
+      const normalizeCourseName = (value) => String(value || "").replace(/競馬場/g, "").trim();
+
+      const payloadMatchesCourse = (value, target) => {
+        const targetCourse = normalizeCourseName(target);
+        if (!targetCourse || !value) return false;
+        return backupStorageTargets.some((definition) => definition.coursePaths?.some((path) => (
+          getNestedValues(value, path).some((course) => normalizeCourseName(course).includes(targetCourse))
+        )));
+      };
+
+      const filterListByCourse = (payload, definition, course) => {
+        if (!definition.listPath || !Array.isArray(payload?.[definition.listPath])) return payloadMatchesCourse(payload, course) ? payload : null;
+        const filteredItems = payload[definition.listPath].filter((item) => definition.coursePaths?.some((path) => (
+          getNestedValues(item, path).some((value) => normalizeCourseName(value).includes(normalizeCourseName(course)))
+        )));
+        return filteredItems.length ? { ...payload, [definition.listPath]: filteredItems } : null;
+      };
+
+      const collectBackupData = ({ scope = "all", course = "" } = {}) => {
+        const selectedDefinitions = backupStorageTargets.filter((definition) => {
+          if (scope === "win5") return definition.category === "win5";
+          if (scope === "roi") return definition.category === "roi";
+          return true;
+        });
+
+        return selectedDefinitions.reduce((accumulator, definition) => {
+          const raw = localStorage.getItem(definition.key);
+          if (!raw && definition.optional) return accumulator;
+          const parsed = safeJsonParse(raw);
+          if (parsed === null) return accumulator;
+          const value = scope === "course" ? filterListByCourse(parsed, definition, course) : parsed;
+          if (!value) return accumulator;
+          accumulator[definition.key] = {
+            label: definition.label,
+            category: definition.category,
+            value,
+          };
+          return accumulator;
+        }, {});
+      };
+
+      const createBackupPayload = ({ scope = "all", course = "" } = {}) => {
+        const data = collectBackupData({ scope, course });
+        return {
+          storageVersion: 1,
+          type: "hashimoto-keiba-ai-backup",
+          provider: "localStorage",
+          extensibleProvider: "github-ready",
+          repositoryPath: scope === "win5" ? "WIN5/買い目/" : scope === "roi" ? "結果検証/回収率管理/" : "data/backups/",
+          createdAt: new Date().toISOString(),
+          scope: { type: scope, course: scope === "course" ? course : "" },
+          keys: Object.keys(data),
+          data,
+        };
+      };
+
+      const downloadBackupJson = (payload) => {
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const scopeLabel = payload.scope.type === "course" ? normalizeCourseName(payload.scope.course) : payload.scope.type;
+        link.href = url;
+        link.download = `hashimoto-keiba-ai-${scopeLabel}-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.append(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      };
+
+      const runBackup = (options) => {
+        const payload = createBackupPayload(options);
+        activeBackupStorageAdapter.save(payload);
+        backupRestoreStatus.textContent = `${payload.keys.length}キー出力`;
+      };
+
+      const normalizeRestorePayload = (payload) => {
+        if (payload?.type === "hashimoto-keiba-ai-backup" && payload.data) return payload;
+        return {
+          storageVersion: 1,
+          type: "hashimoto-keiba-ai-backup",
+          createdAt: new Date().toISOString(),
+          scope: { type: "legacy", course: "" },
+          keys: Object.keys(payload || {}),
+          data: Object.fromEntries(Object.entries(payload || {}).map(([key, value]) => [key, { label: key, category: "legacy", value }])),
+        };
+      };
+
+      const restoreBackupToLocalStorage = (payload) => {
+        const normalized = normalizeRestorePayload(payload);
+        normalized.keys.forEach((key) => {
+          if (normalized.data[key]) localStorage.setItem(key, JSON.stringify(normalized.data[key].value));
+        });
+        return normalized;
+      };
+
+      const refreshDashboardAfterRestore = () => {
+        applyRacePayload(activeStorageAdapter.load());
+        renderTrifectaPayload(activeTrifectaStorageAdapter.load() || buildTrifectaPayload());
+        loadInvestmentResults();
+        renderInvestmentDashboard();
+        applyWin5PayloadToForm(activeWin5StorageAdapter.load());
+        resultLogs = activeResultLogStorageAdapter.load();
+        renderResultLogs();
+        osRules = activeOsRuleStorageAdapter.load();
+        renderOsRules();
+      };
+
+      const readRestoreFile = () => new Promise((resolve, reject) => {
+        const file = restoreJsonFile.files?.[0];
+        if (!file) {
+          reject(new Error("復元するJSONファイルを選択してください。"));
+          return;
+        }
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          try {
+            resolve(JSON.parse(reader.result));
+          } catch (error) {
+            reject(new Error(`JSONを読み込めません: ${error.message}`));
+          }
+        });
+        reader.addEventListener("error", () => reject(new Error("ファイルの読み込みに失敗しました。")));
+        reader.readAsText(file, "utf-8");
+      });
+
+      const restoreSelectedBackup = async () => {
+        try {
+          const payload = normalizeRestorePayload(await readRestoreFile());
+          const message = `${payload.keys.length}件のlocalStorageキーを復元します。現在の同名データは上書きされます。実行しますか？`;
+          if (!window.confirm(message)) {
+            backupRestoreStatus.textContent = "復元キャンセル";
+            return;
+          }
+          const restored = activeBackupStorageAdapter.restore(payload);
+          refreshDashboardAfterRestore();
+          backupRestoreStatus.textContent = `${restored.keys.length}キー復元完了`;
+        } catch (error) {
+          backupRestoreStatus.textContent = error.message;
+        }
+      };
+
+      backupAllDataButton.addEventListener("click", () => runBackup({ scope: "all" }));
+      backupCourseDataButton.addEventListener("click", () => runBackup({ scope: "course", course: backupCourseFilter.value }));
+      backupWin5DataButton.addEventListener("click", () => runBackup({ scope: "win5" }));
+      backupRoiDataButton.addEventListener("click", () => runBackup({ scope: "roi" }));
+      restoreJsonDataButton.addEventListener("click", restoreSelectedBackup);
 
       const toNumberOrBlank = (value) => (value === "" ? "" : Number(value));
       const normalizeRuleKeyPart = (value) => String(value || "未設定").replace(/\s+/g, "").slice(0, 80);
