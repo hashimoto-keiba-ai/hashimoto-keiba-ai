@@ -19,6 +19,7 @@
         </a>
         <div class="nav-links">
           <a href="#today-races">今日のレース</a>
+          <a href="#real-data-entry">実データ入力</a>
           <a href="#kami-race-top10">神レースTOP10</a>
           <a href="#ai-index-auto-input">AI指数自動入力</a>
           <a href="#danger-popular">危険人気馬</a>
@@ -45,13 +46,14 @@
 
         <div class="operation-launcher" aria-label="実運用モード操作メニュー">
           <a href="#today-races"><span>①</span>今日のレース一覧</a>
-          <a href="#kami-race-top10"><span>②</span>神レースTOP10</a>
-          <a href="#ai-index-auto-input"><span>③</span>AI指数自動入力</a>
-          <a href="#danger-popular"><span>④</span>危険人気馬自動判定</a>
-          <a href="#bakuana-ranking"><span>⑤</span>爆穴ランキング</a>
-          <a href="#trifecta-generator"><span>⑥</span>三連単自動生成</a>
-          <a href="#win5-ai-screen"><span>⑦</span>WIN5自動生成</a>
-          <a href="#roi-dashboard"><span>⑧</span>回収率ダッシュボード</a>
+          <a href="#real-data-entry"><span>②</span>実データ入力フォーム</a>
+          <a href="#kami-race-top10"><span>③</span>神レースTOP10</a>
+          <a href="#ai-index-auto-input"><span>④</span>AI指数自動入力</a>
+          <a href="#danger-popular"><span>⑤</span>危険人気馬自動判定</a>
+          <a href="#bakuana-ranking"><span>⑥</span>爆穴ランキング</a>
+          <a href="#trifecta-generator"><span>⑦</span>三連単自動生成</a>
+          <a href="#win5-ai-screen"><span>⑧</span>WIN5自動生成</a>
+          <a href="#roi-dashboard"><span>⑨</span>回収率ダッシュボード</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -121,6 +123,98 @@
           </div>
         </div>
       </section>
+      <section id="real-data-entry" class="real-data-entry card card--featured data-card control-card" aria-label="実データ入力フォーム">
+        <div class="card__icon" aria-hidden="true">🏇</div>
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">REAL DATA ENTRY MODE</p>
+              <h2>レース登録・出走馬入力フォーム</h2>
+            </div>
+            <span class="status-pill status-pill--live" id="save-status">LOCAL READY</span>
+          </div>
+          <p class="card__lead">レース条件と出走馬の実データを入力し、AI指数・神穴指数・危険人気馬指数のランキング、買い目候補を即時生成します。保存処理はStorage Adapterで分離し、現在はlocalStorage、将来はGitHub保存へ差し替えできます。</p>
+
+          <div class="entry-layout">
+            <form id="race-form" class="race-entry-form" aria-label="レース登録フォーム">
+              <div class="entry-heading">
+                <span>① レース登録</span>
+                <small>Race profile</small>
+              </div>
+              <label><span>開催日</span><input id="race-date" name="date" type="date" required /></label>
+              <label><span>競馬場</span><select id="race-course" name="course" required><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
+              <label><span>レース番号</span><input id="race-number" name="raceNumber" type="number" min="1" max="12" value="11" required /></label>
+              <label><span>レース名</span><input id="race-name" name="raceName" type="text" placeholder="例: 安田記念" required /></label>
+              <label><span>距離</span><input id="race-distance" name="distance" type="number" min="800" step="100" placeholder="1600" required /></label>
+              <label><span>芝/ダート</span><select id="race-surface" name="surface"><option value="芝">芝</option><option value="ダート">ダート</option><option value="障害">障害</option></select></label>
+              <label><span>馬場状態</span><select id="race-going" name="going"><option value="良">良</option><option value="稍重">稍重</option><option value="重">重</option><option value="不良">不良</option></select></label>
+              <label><span>天候</span><select id="race-weather" name="weather"><option value="晴">晴</option><option value="曇">曇</option><option value="雨">雨</option><option value="小雨">小雨</option><option value="雪">雪</option></select></label>
+              <label><span>頭数</span><input id="race-field-size" name="fieldSize" type="number" min="1" max="18" value="16" required /></label>
+            </form>
+
+            <form id="horse-form" class="horse-entry-form" aria-label="出走馬入力フォーム">
+              <div class="entry-heading">
+                <span>② 出走馬入力</span>
+                <small>Runner profile</small>
+              </div>
+              <label><span>馬番</span><input id="horse-number" name="number" type="number" min="1" max="18" required /></label>
+              <label><span>馬名</span><input id="horse-name" name="name" type="text" placeholder="例: ゴールドブリッツ" required /></label>
+              <label><span>騎手</span><input id="horse-jockey" name="jockey" type="text" placeholder="例: ルメール" required /></label>
+              <label><span>人気</span><input id="horse-popularity" name="popularity" type="number" min="1" max="18" required /></label>
+              <label><span>オッズ</span><input id="horse-odds" name="odds" type="number" min="1" step="0.1" required /></label>
+              <label><span>脚質</span><select id="horse-style" name="runningStyle"><option value="逃げ">逃げ</option><option value="先行">先行</option><option value="差し">差し</option><option value="追込">追込</option><option value="自在">自在</option></select></label>
+              <label><span>想定4角位置</span><input id="horse-corner" name="cornerPosition" type="number" min="1" max="18" required /></label>
+              <label><span>調教評価</span><select id="horse-training" name="training"><option value="S">S</option><option value="A">A</option><option value="B" selected>B</option><option value="C">C</option><option value="D">D</option></select></label>
+              <label><span>AI指数</span><input id="horse-ai" name="aiIndex" type="number" min="0" max="100" step="0.1" required /></label>
+              <label><span>神穴指数</span><input id="horse-kamiana" name="kamianaIndex" type="number" min="0" max="100" step="0.1" required /></label>
+              <label><span>危険人気馬指数</span><input id="horse-danger" name="dangerIndex" type="number" min="0" max="100" step="0.1" required /></label>
+              <div class="entry-actions">
+                <button class="button button--primary" type="submit">出走馬を追加 / 更新</button>
+                <button class="button button--ghost" id="clear-horses" type="button">出走馬をクリア</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="runner-table-panel" aria-label="入力済み出走馬">
+            <div class="entry-heading">
+              <span>入力済み出走馬</span>
+              <small id="runner-count">0頭</small>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table data-table--compact runner-table">
+                <thead><tr><th>馬番</th><th>馬名</th><th>騎手</th><th>人気</th><th>オッズ</th><th>脚質</th><th>4角</th><th>調教</th><th>AI</th><th>神穴</th><th>危険</th></tr></thead>
+                <tbody id="runner-table-body"><tr><td data-label="状態" colspan="11">まだ出走馬が入力されていません。</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ranking-grid" aria-label="自動ランキング表示">
+            <section class="ranking-panel"><h3>AI指数順</h3><ol id="ai-ranking"></ol></section>
+            <section class="ranking-panel ranking-panel--hole"><h3>神穴指数順</h3><ol id="kamiana-ranking-live"></ol></section>
+            <section class="ranking-panel ranking-panel--danger"><h3>危険人気馬指数順</h3><ol id="danger-ranking-live"></ol></section>
+          </div>
+
+          <div class="bet-generator-panel" aria-label="買い目生成エリア">
+            <div class="entry-heading">
+              <span>④ 買い目生成エリア</span>
+              <small>AI generated tickets</small>
+            </div>
+            <div class="bet-grid">
+              <article><span>三連単</span><strong id="generated-trifecta">出走馬を3頭以上入力してください</strong><small>AI上位を頭、神穴上位を3着候補に自動配置</small></article>
+              <article><span>WIN5</span><strong id="generated-win5">レース登録後に生成</strong><small>AI指数上位2頭をWIN5候補として保存</small></article>
+              <article><span>穴馬候補</span><strong id="generated-longshots">未生成</strong><small>神穴指数が高く人気薄の馬を抽出</small></article>
+              <article><span>危険人気馬</span><strong id="generated-danger">未生成</strong><small>人気上位かつ危険指数が高い馬を抽出</small></article>
+            </div>
+          </div>
+
+          <div class="storage-actions">
+            <button class="button button--primary" id="save-race-data" type="button">⑤ localStorageに保存</button>
+            <button class="button button--ghost" id="load-race-data" type="button">保存データを復元</button>
+            <p id="storage-note">保存キー: <code>hashimoto-keiba-ai:real-race-entry:v1</code> / GitHub保存へ拡張する時はStorage Adapterを差し替えます。</p>
+          </div>
+        </div>
+      </section>
+
 
       <section id="course-selector" class="course-console" aria-label="競馬場選択メニュー">
         <div class="section-heading">
@@ -657,6 +751,182 @@
     </footer>
 
     <script>
+
+      const STORAGE_KEY = "hashimoto-keiba-ai:real-race-entry:v1";
+      const storageAdapters = {
+        local: {
+          save(payload) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            return payload;
+          },
+          load() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+          },
+        },
+        github: {
+          save() {
+            throw new Error("GitHub保存は未接続です。Storage AdapterのsaveをGitHub APIへ接続してください。");
+          },
+          load() {
+            throw new Error("GitHub保存は未接続です。Storage AdapterのloadをGitHub APIへ接続してください。");
+          },
+        },
+      };
+      let activeStorageAdapter = storageAdapters.local;
+      let raceHorses = [];
+
+      const raceForm = document.querySelector("#race-form");
+      const horseForm = document.querySelector("#horse-form");
+      const runnerTableBody = document.querySelector("#runner-table-body");
+      const runnerCount = document.querySelector("#runner-count");
+      const saveStatus = document.querySelector("#save-status");
+      const aiRanking = document.querySelector("#ai-ranking");
+      const kamianaRankingLive = document.querySelector("#kamiana-ranking-live");
+      const dangerRankingLive = document.querySelector("#danger-ranking-live");
+      const generatedTrifecta = document.querySelector("#generated-trifecta");
+      const generatedWin5 = document.querySelector("#generated-win5");
+      const generatedLongshots = document.querySelector("#generated-longshots");
+      const generatedDanger = document.querySelector("#generated-danger");
+      const clearHorsesButton = document.querySelector("#clear-horses");
+      const saveRaceDataButton = document.querySelector("#save-race-data");
+      const loadRaceDataButton = document.querySelector("#load-race-data");
+
+      const getFormData = (form) => Object.fromEntries(new FormData(form).entries());
+      const numericFields = ["number", "popularity", "odds", "cornerPosition", "aiIndex", "kamianaIndex", "dangerIndex"];
+
+      const normalizeHorse = (horse) => {
+        const normalized = { ...horse };
+        numericFields.forEach((field) => {
+          normalized[field] = Number(normalized[field]);
+        });
+        return normalized;
+      };
+
+      const rankBy = (field) => [...raceHorses].sort((a, b) => b[field] - a[field]);
+      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
+      const formatHorse = (horse) => `${horse.number} ${horse.name}`;
+
+      const renderRanking = (target, horses, field, suffix = "") => {
+        target.innerHTML = "";
+        if (!horses.length) {
+          const item = document.createElement("li");
+          item.textContent = "出走馬を入力してください";
+          target.append(item);
+          return;
+        }
+        horses.slice(0, 6).forEach((horse) => {
+          const item = document.createElement("li");
+          item.innerHTML = `<strong>${escapeHtml(formatHorse(horse))}</strong><span>${horse[field]}${suffix} / ${horse.popularity}人気 / ${horse.odds}倍</span>`;
+          target.append(item);
+        });
+      };
+
+      const renderRunnerTable = () => {
+        runnerTableBody.innerHTML = "";
+        runnerCount.textContent = `${raceHorses.length}頭`;
+        if (!raceHorses.length) {
+          runnerTableBody.innerHTML = '<tr><td data-label="状態" colspan="11">まだ出走馬が入力されていません。</td></tr>';
+          return;
+        }
+        [...raceHorses].sort((a, b) => a.number - b.number).forEach((horse) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td data-label="馬番">${horse.number}</td>
+            <td data-label="馬名"><strong>${escapeHtml(horse.name)}</strong></td>
+            <td data-label="騎手">${escapeHtml(horse.jockey)}</td>
+            <td data-label="人気">${horse.popularity}</td>
+            <td data-label="オッズ">${horse.odds}</td>
+            <td data-label="脚質">${horse.runningStyle}</td>
+            <td data-label="4角">${horse.cornerPosition}</td>
+            <td data-label="調教">${horse.training}</td>
+            <td data-label="AI">${horse.aiIndex}</td>
+            <td data-label="神穴">${horse.kamianaIndex}</td>
+            <td data-label="危険">${horse.dangerIndex}</td>
+          `;
+          runnerTableBody.append(row);
+        });
+      };
+
+      const generateBets = () => {
+        const aiTop = rankBy("aiIndex");
+        const kamianaTop = rankBy("kamianaIndex");
+        const dangerTop = rankBy("dangerIndex");
+        const longshots = kamianaTop.filter((horse) => horse.popularity >= 6 || horse.odds >= 15).slice(0, 3);
+        const dangerousPopular = dangerTop.filter((horse) => horse.popularity <= 5).slice(0, 3);
+        const head = aiTop.slice(0, 2).map((horse) => horse.number);
+        const second = aiTop.slice(0, 4).map((horse) => horse.number);
+        const third = [...new Set([...second, ...longshots.map((horse) => horse.number)])].slice(0, 7);
+
+        generatedTrifecta.textContent = raceHorses.length >= 3 ? `${head.join(",")} → ${second.join(",")} → ${third.join(",")}` : "出走馬を3頭以上入力してください";
+        generatedWin5.textContent = aiTop.length ? aiTop.slice(0, 2).map(formatHorse).join(" / ") : "レース登録後に生成";
+        generatedLongshots.textContent = longshots.length ? longshots.map(formatHorse).join(" / ") : "該当なし";
+        generatedDanger.textContent = dangerousPopular.length ? dangerousPopular.map(formatHorse).join(" / ") : "該当なし";
+      };
+
+      const renderRaceEntry = () => {
+        renderRunnerTable();
+        renderRanking(aiRanking, rankBy("aiIndex"), "aiIndex");
+        renderRanking(kamianaRankingLive, rankBy("kamianaIndex"), "kamianaIndex");
+        renderRanking(dangerRankingLive, rankBy("dangerIndex"), "dangerIndex");
+        generateBets();
+      };
+
+      const createRacePayload = () => ({
+        race: getFormData(raceForm),
+        horses: raceHorses,
+        generatedAt: new Date().toISOString(),
+        storageVersion: 1,
+      });
+
+      const applyRacePayload = (payload) => {
+        if (!payload) return;
+        Object.entries(payload.race || {}).forEach(([key, value]) => {
+          const input = raceForm.elements[key];
+          if (input) input.value = value;
+        });
+        raceHorses = (payload.horses || []).map(normalizeHorse);
+        renderRaceEntry();
+      };
+
+      horseForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const horse = normalizeHorse(getFormData(horseForm));
+        const existingIndex = raceHorses.findIndex((item) => item.number === horse.number);
+        if (existingIndex >= 0) {
+          raceHorses[existingIndex] = horse;
+        } else {
+          raceHorses.push(horse);
+        }
+        horseForm.reset();
+        document.querySelector("#horse-training").value = "B";
+        document.querySelector("#horse-number").focus();
+        saveStatus.textContent = "編集中";
+        renderRaceEntry();
+      });
+
+      clearHorsesButton.addEventListener("click", () => {
+        raceHorses = [];
+        saveStatus.textContent = "出走馬クリア";
+        renderRaceEntry();
+      });
+
+      saveRaceDataButton.addEventListener("click", () => {
+        const payload = createRacePayload();
+        activeStorageAdapter.save(payload);
+        saveStatus.textContent = `保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+      });
+
+      loadRaceDataButton.addEventListener("click", () => {
+        const payload = activeStorageAdapter.load();
+        applyRacePayload(payload);
+        saveStatus.textContent = payload ? "復元完了" : "保存なし";
+      });
+
+      document.querySelector("#race-date").valueAsDate = new Date();
+      applyRacePayload(activeStorageAdapter.load());
+      renderRaceEntry();
+
       const courseChips = Array.from(document.querySelectorAll(".course-chip"));
       const selectedCourse = document.querySelector("#selected-course");
       const selectedBias = document.querySelector("#selected-bias");
