@@ -13,6 +13,7 @@ AI指数ランキング、今日のレース一覧、実データ入力フォー
 - **実データ入力フォーム**: 開催日、競馬場、レース番号、レース名、距離、芝/ダート、馬場状態、天候、頭数を登録し、馬番、馬名、騎手、人気、オッズ、脚質、想定4角位置、調教評価、AI指数、神穴指数、危険人気馬指数を出走馬ごとに入力できます。
 - **自動ランキング / 買い目生成**: 入力された出走馬をAI指数順、神穴指数順、危険人気馬指数順で即時ランキング表示し、三連単、WIN5、穴馬候補、危険人気馬をブラウザ上で自動生成します。
 - **localStorage保存**: 保存ボタンで `hashimoto-keiba-ai:real-race-entry:v1` にレース・出走馬・生成時刻を保存します。保存処理はStorage Adapterとして分離しているため、後からGitHub API保存へ拡張できます。
+- **GitHub保存設定（準備実装）**: ダッシュボードの「GitHub保存設定」で保存方式を `localStorage` / `GitHub` から選択し、GitHubユーザー名、リポジトリ名、ブランチ名、保存先ディレクトリ、アクセストークンを登録できます。GitHub選択時は `src/storage/githubAdapter.js` 経由でGitHub Contents API形式の読み書きを呼び出します。
 - **結果検証フォーム**: 1〜3着の馬番・馬名・騎手・人気、三連単配当、馬場状態、実ペース、通過順を入力し、本命・対抗・穴馬・神穴・危険人気馬・三連単の事前予想照合をチェックできます。
 - **OSアップデート欄**: 今回の学習点、次回から採用するルール、保留ルール、削除するルールを検証フォーム内で記録し、競馬場OSやAI研究所へ反映する材料として残します。
 - **結果検証ログ自動保存**: 結果検証フォームの入力は `hashimoto-keiba-ai:result-verification-logs:v1` にResultLogStorage Adapter経由で自動保存します。JSONは `race`、`result`、`predictionCheck`、`osUpdate` に分離しているため、GitHub API保存へ拡張しやすい構造です。
@@ -102,6 +103,37 @@ AI指数ランキング、今日のレース一覧、実データ入力フォー
 5. 配当ラインは、採用ゾーンと点数から「100万ライン」「500万ライン」「3000万ライン」「1億ライン」を自動判定します。D爆発候補を含む少点数構成ほど高配当ラインとして表示します。
 6. 「買い目保存」を押すと `hashimoto-keiba-ai:win5-ticket:v1` にlocalStorage保存します。保存JSONは `races`、`formation`、`summary`、`repositoryPath` を分けたGitHub保存拡張対応構造です。将来GitHubへ保存する場合は、`win5StorageAdapters.github` の `save/load` をGitHub APIに接続します。
 7. 黒×金デザインのまま、スマホではレース基本情報、候補馬入力、生成サマリーが1カラムへ切り替わるため、現場入力でも利用できます。
+
+## GitHub API保存設定（準備実装）
+
+将来的にブラウザのlocalStorageではなく、GitHubリポジトリ内の `data/*.json` へ直接保存するための準備実装を追加しています。現在の既定値は従来通り `localStorage` です。
+
+### 設定手順
+
+1. `index.html` を開き、画面上部または操作メニューから「GitHub保存設定」へ移動します。
+2. 保存方式で `localStorage` または `GitHub` を選択します。通常運用や未設定時は `localStorage` を選んでください。
+3. GitHub保存を試す場合は、以下を入力して「設定を保存」を押します。
+   - GitHubユーザー名
+   - リポジトリ名
+   - ブランチ名（例: `main`）
+   - 保存先ディレクトリ（例: `data`）
+   - アクセストークン
+4. 「接続テスト」ボタンでGitHub API疎通を確認します。設定不足やfetch非対応環境ではモック/準備状態のメッセージを返し、ブラウザでは `https://api.github.com/repos/{owner}/{repo}` へ接続する形にしています。
+5. GitHub保存方式を選ぶと、レース登録、出走馬、三連単、WIN5などの保存処理がStorage Adapter経由でGitHub用Adapterを呼び出します。保存先pathは `data/raceEntries.json`、`data/horseEntries.json`、`data/betTickets.json` などの `data/*.json` を想定しています。
+
+### 実装メモ
+
+- GitHub連携関数は `src/storage/githubAdapter.js` に集約しています。`getGithubConfig()`、`setGithubConfig(config)`、`clearGithubConfig()`、`testGithubConnection()`、`readGithubJson(path)`、`writeGithubJson(path, data)`、`createGithubCommit(path, content, message)` を用意しています。
+- `src/storage/dataStorageService.js` は現在の保存方式を保持し、`localStorage` の場合は従来Adapter、`github` の場合はGitHub Adapterへ委譲します。
+- GitHubへの書き込みはContents APIの `PUT /repos/{owner}/{repo}/contents/{path}` を想定し、既存ファイル更新時に必要な `sha` を事前取得します。
+
+### アクセストークンの注意点
+
+アクセストークンは現段階ではブラウザの `localStorage` に保存します。これは実装準備としての簡易設計であり、共有端末・本番運用・第三者が触れる環境では漏えいリスクがあります。
+
+- 必要最小限の権限を持つfine-grained token、またはGitHub App tokenを使用してください。
+- 共有端末では利用後に「設定クリア」を押してください。
+- 本番運用ではサーバー側プロキシ、GitHub App、短命トークンなど、トークンをブラウザに長期保存しない構成を推奨します。
 
 
 ## OSアップデート運用ルール

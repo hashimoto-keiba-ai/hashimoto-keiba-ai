@@ -76,7 +76,18 @@
     github: global.HashimotoGithubAdapter,
   };
 
-  let activeAdapterName = "localStorage";
+  const STORAGE_MODE_KEY = "hashimoto-keiba-ai:storage-mode:v1";
+
+  const readInitialAdapterName = () => {
+    try {
+      const stored = localStorage.getItem(STORAGE_MODE_KEY);
+      return stored && adapters[stored] ? stored : "localStorage";
+    } catch (error) {
+      return "localStorage";
+    }
+  };
+
+  let activeAdapterName = readInitialAdapterName();
 
   const getDefinition = (type) => {
     const definition = storageTypes[type];
@@ -108,6 +119,16 @@
     setActiveAdapter(adapterName) {
       getAdapter(adapterName);
       activeAdapterName = adapterName;
+      try {
+        localStorage.setItem(STORAGE_MODE_KEY, adapterName);
+      } catch (error) {
+        // localStorageが利用できない環境ではメモリ上の切替だけ維持します。
+      }
+      return activeAdapterName;
+    },
+
+    getStorageModeKey() {
+      return STORAGE_MODE_KEY;
     },
 
     getDefinition,

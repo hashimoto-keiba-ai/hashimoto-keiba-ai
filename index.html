@@ -35,6 +35,7 @@
           <a href="#os-update-manager">OSアップデート</a>
           <a href="#operations-board">運用</a>
           <a href="#backup-restore">バックアップ</a>
+          <a href="#github-storage-settings">保存設定</a>
         </div>
       </nav>
 
@@ -65,6 +66,7 @@
           <a href="#result-log-list"><span>⑪</span>最新結果検証ログ</a>
           <a href="#os-update-manager"><span>⑫</span>OS自動アップデート管理</a>
           <a href="#backup-restore"><span>⑬</span>バックアップ／復元</a>
+          <a href="#github-storage-settings"><span>⑭</span>GitHub保存設定</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -101,6 +103,52 @@
         <span><b>保存先</b> 各競馬場/保存ログ</span>
       </section>
 
+
+
+      <section id="github-storage-settings" class="github-settings card card--wide control-card" aria-label="GitHub保存設定">
+        <div class="card__icon" aria-hidden="true">⚙️</div>
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">GITHUB STORAGE SETTINGS</p>
+              <h2>GitHub保存設定</h2>
+            </div>
+            <span id="github-connection-status" class="status-pill">未接続</span>
+          </div>
+          <p class="card__lead">保存方式をlocalStorage/GitHubから切り替え、将来的にGitHub Contents APIで <code>/data/*.json</code> へ直接保存するための接続情報を管理します。</p>
+
+          <div class="github-settings-grid">
+            <form id="github-settings-form" class="github-settings-form" aria-label="GitHub保存設定フォーム">
+              <label><span>保存方式</span>
+                <select id="storage-mode-select" name="storageMode">
+                  <option value="localStorage">localStorage</option>
+                  <option value="github">GitHub</option>
+                </select>
+              </label>
+              <label><span>GitHubユーザー名</span><input id="github-owner" name="owner" type="text" autocomplete="username" placeholder="例: hashimoto" /></label>
+              <label><span>リポジトリ名</span><input id="github-repo" name="repo" type="text" placeholder="例: hashimoto-keiba-ai" /></label>
+              <label><span>ブランチ名</span><input id="github-branch" name="branch" type="text" placeholder="main" /></label>
+              <label><span>保存先ディレクトリ</span><input id="github-directory" name="directory" type="text" placeholder="data" /></label>
+              <label class="github-settings-form__wide"><span>アクセストークン</span><input id="github-token" name="token" type="password" autocomplete="off" placeholder="fine-grained token / GitHub App token" /></label>
+              <div class="github-settings-actions github-settings-form__wide">
+                <button class="button button--primary" type="submit">設定を保存</button>
+                <button class="button button--ghost" id="test-github-connection" type="button">接続テスト</button>
+                <button class="button button--ghost" id="clear-github-config" type="button">設定クリア</button>
+              </div>
+            </form>
+
+            <div class="github-settings-note">
+              <strong>GitHub保存の準備状況</strong>
+              <p id="storage-mode-help">現在はlocalStorage保存が有効です。GitHubを選ぶとStorage Adapter経由でGitHub API保存を呼び出します。</p>
+              <ul>
+                <li>保存対象: <code>data/raceEntries.json</code> などのJSONファイル</li>
+                <li>API形状: <code>GET/PUT /repos/{owner}/{repo}/contents/{path}</code></li>
+                <li>トークンはこのブラウザのlocalStorageに保存されます。共有端末では使用後にクリアしてください。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section id="today-races" class="card card--featured data-card control-card today-races-card" aria-label="今日のレース一覧">
         <div class="card__icon" aria-hidden="true">📅</div>
@@ -233,9 +281,9 @@
           </div>
 
           <div class="storage-actions">
-            <button class="button button--primary" id="save-race-data" type="button">⑤ localStorageに保存</button>
+            <button class="button button--primary" id="save-race-data" type="button">⑤ 現在の保存方式で保存</button>
             <button class="button button--ghost" id="load-race-data" type="button">保存データを復元</button>
-            <p id="storage-note">保存キー: <code>hashimoto-keiba-ai:real-race-entry:v1</code> / 買い目キー: <code>hashimoto-keiba-ai:trifecta-tickets:v1</code> / GitHub保存へ拡張する時はStorage Adapterを差し替えます。</p>
+            <p id="storage-note">保存キー: <code>hashimoto-keiba-ai:real-race-entry:v1</code> / 買い目キー: <code>hashimoto-keiba-ai:trifecta-tickets:v1</code> / 保存方式は「GitHub保存設定」で切り替えます。</p>
           </div>
         </div>
       </section>
@@ -1077,6 +1125,16 @@
     <script>
 
       const dataStorage = window.HashimotoDataStorage;
+      const githubAdapter = window.HashimotoGithubAdapter;
+      const githubSettingsForm = document.querySelector("#github-settings-form");
+      const storageModeSelect = document.querySelector("#storage-mode-select");
+      const githubConnectionStatus = document.querySelector("#github-connection-status");
+      const storageModeHelp = document.querySelector("#storage-mode-help");
+      const testGithubConnectionButton = document.querySelector("#test-github-connection");
+      const clearGithubConfigButton = document.querySelector("#clear-github-config");
+      const adapterKeyByMode = { localStorage: "local", github: "github" };
+      const modeLabel = (mode) => mode === "github" ? "GitHub" : "localStorage";
+      const resolveMaybeAsync = (value) => Promise.resolve(value);
       const STORAGE_KEY = dataStorage.getDefinition("raceEntries").storageKey;
       const storageAdapters = {
         local: {
@@ -1241,6 +1299,9 @@
           },
           load() {
             return dataStorage.loadData("roiRecords", "github");
+          },
+          clear() {
+            return dataStorage.removeData("roiRecords", "github");
           },
         },
       };
@@ -1658,6 +1719,74 @@
         },
       };
       let activeBackupStorageAdapter = backupStorageAdapters.local;
+
+      const applyGithubConfigToForm = () => {
+        const config = githubAdapter.getGithubConfig();
+        githubSettingsForm.elements.owner.value = config.owner;
+        githubSettingsForm.elements.repo.value = config.repo;
+        githubSettingsForm.elements.branch.value = config.branch;
+        githubSettingsForm.elements.directory.value = config.directory;
+        githubSettingsForm.elements.token.value = config.token;
+      };
+
+      const setActiveStorageMode = (mode) => {
+        const adapterMode = mode === "github" ? "github" : "localStorage";
+        const adapterKey = adapterKeyByMode[adapterMode];
+        dataStorage.setActiveAdapter(adapterMode);
+        storageModeSelect.value = adapterMode;
+        activeStorageAdapter = storageAdapters[adapterKey];
+        activeTrifectaStorageAdapter = trifectaStorageAdapters[adapterKey];
+        activeWin5StorageAdapter = win5StorageAdapters[adapterKey];
+        activeInvestmentStorageAdapter = investmentStorageAdapters[adapterKey];
+        activeResultLogStorageAdapter = resultLogStorageAdapters[adapterKey];
+        activeOsRuleStorageAdapter = osRuleStorageAdapters[adapterKey];
+        activeBackupStorageAdapter = backupStorageAdapters[adapterKey] || backupStorageAdapters.local;
+        githubConnectionStatus.textContent = adapterMode === "github" ? "GITHUB MODE" : "LOCAL MODE";
+        storageModeHelp.textContent = adapterMode === "github"
+          ? "GitHub保存が有効です。保存/読込ボタンはGitHub Contents API用Adapterを呼び出します。"
+          : "localStorage保存が有効です。従来通りブラウザ内に保存します。";
+        saveRaceDataButton.textContent = `⑤ ${modeLabel(adapterMode)}に保存`;
+        return adapterMode;
+      };
+
+      applyGithubConfigToForm();
+      setActiveStorageMode(dataStorage.getActiveAdapterName());
+
+      githubSettingsForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const config = githubAdapter.setGithubConfig(getFormData(githubSettingsForm));
+        const mode = setActiveStorageMode(storageModeSelect.value);
+        githubConnectionStatus.textContent = `${modeLabel(mode)}設定保存済`;
+        storageModeHelp.textContent = config.token
+          ? "設定を保存しました。接続テストでGitHub API疎通を確認してください。"
+          : "設定を保存しました。GitHub保存にはアクセストークンも必要です。";
+      });
+
+      storageModeSelect.addEventListener("change", () => {
+        const mode = setActiveStorageMode(storageModeSelect.value);
+        githubConnectionStatus.textContent = `${modeLabel(mode)}選択中`;
+      });
+
+      testGithubConnectionButton.addEventListener("click", async () => {
+        githubAdapter.setGithubConfig(getFormData(githubSettingsForm));
+        githubConnectionStatus.textContent = "接続テスト中";
+        try {
+          const result = await githubAdapter.testGithubConnection();
+          githubConnectionStatus.textContent = result.ok ? "接続OK" : "接続未完了";
+          storageModeHelp.textContent = result.message;
+        } catch (error) {
+          githubConnectionStatus.textContent = "接続エラー";
+          storageModeHelp.textContent = error.message;
+        }
+      });
+
+      clearGithubConfigButton.addEventListener("click", () => {
+        githubAdapter.clearGithubConfig();
+        applyGithubConfigToForm();
+        setActiveStorageMode("localStorage");
+        githubConnectionStatus.textContent = "設定クリア";
+        storageModeHelp.textContent = "GitHub設定をクリアし、localStorage保存へ戻しました。";
+      });
 
       const getNestedValues = (source, path) => {
         if (!source) return [];
@@ -2368,42 +2497,62 @@
         renderRaceEntry();
       });
 
-      saveRaceDataButton.addEventListener("click", () => {
+      saveRaceDataButton.addEventListener("click", async () => {
         const payload = createRacePayload();
-        activeStorageAdapter.save(payload);
-        dataStorage.saveData("horseEntries", {
-          storageVersion: 1,
-          provider: "localStorage",
-          extensibleProvider: "github-ready",
-          repositoryPath: dataStorage.getDefinition("horseEntries").repositoryPath,
-          savedAt: payload.generatedAt,
-          race: payload.race,
-          horses: payload.horses,
-        }, "localStorage");
-        saveStatus.textContent = `保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+        const activeMode = dataStorage.getActiveAdapterName();
+        try {
+          await resolveMaybeAsync(activeStorageAdapter.save(payload));
+          await resolveMaybeAsync(dataStorage.saveData("horseEntries", {
+            storageVersion: 1,
+            provider: activeMode,
+            extensibleProvider: "github-ready",
+            repositoryPath: dataStorage.getDefinition("horseEntries").repositoryPath,
+            savedAt: payload.generatedAt,
+            race: payload.race,
+            horses: payload.horses,
+          }, activeMode));
+          saveStatus.textContent = `${modeLabel(activeMode)}保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+        } catch (error) {
+          saveStatus.textContent = `${modeLabel(activeMode)}保存エラー: ${error.message}`;
+        }
       });
 
-      loadRaceDataButton.addEventListener("click", () => {
-        const payload = activeStorageAdapter.load();
-        const horsePayload = dataStorage.loadData("horseEntries", "localStorage");
-        applyRacePayload(payload ? { ...payload, horses: payload.horses?.length ? payload.horses : horsePayload?.horses || [] } : null);
-        saveStatus.textContent = payload ? "復元完了" : "保存なし";
+      loadRaceDataButton.addEventListener("click", async () => {
+        const activeMode = dataStorage.getActiveAdapterName();
+        try {
+          const payload = await resolveMaybeAsync(activeStorageAdapter.load());
+          const horsePayload = await resolveMaybeAsync(dataStorage.loadData("horseEntries", activeMode));
+          applyRacePayload(payload ? { ...payload, horses: payload.horses?.length ? payload.horses : horsePayload?.horses || [] } : null);
+          saveStatus.textContent = payload ? `${modeLabel(activeMode)}復元完了` : `${modeLabel(activeMode)}保存なし`;
+        } catch (error) {
+          saveStatus.textContent = `${modeLabel(activeMode)}読込エラー: ${error.message}`;
+        }
       });
 
-      saveTrifectaTicketButton.addEventListener("click", () => {
+      saveTrifectaTicketButton.addEventListener("click", async () => {
         const payload = buildTrifectaPayload();
-        activeTrifectaStorageAdapter.save(payload);
-        renderTrifectaPayload(payload);
-        trifectaSaveStatus.textContent = `localStorage保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })} / GitHub保存へはtrifectaStorageAdapters.githubを接続`;
+        const activeMode = dataStorage.getActiveAdapterName();
+        try {
+          await resolveMaybeAsync(activeTrifectaStorageAdapter.save(payload));
+          renderTrifectaPayload(payload);
+          trifectaSaveStatus.textContent = `${modeLabel(activeMode)}保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+        } catch (error) {
+          trifectaSaveStatus.textContent = `${modeLabel(activeMode)}保存エラー: ${error.message}`;
+        }
       });
 
-      loadTrifectaTicketButton.addEventListener("click", () => {
-        const payload = activeTrifectaStorageAdapter.load();
-        if (payload) {
-          renderTrifectaPayload(payload);
-          trifectaSaveStatus.textContent = "保存済み三連単買い目を復元しました。";
-        } else {
-          trifectaSaveStatus.textContent = "保存済み三連単買い目はありません。";
+      loadTrifectaTicketButton.addEventListener("click", async () => {
+        const activeMode = dataStorage.getActiveAdapterName();
+        try {
+          const payload = await resolveMaybeAsync(activeTrifectaStorageAdapter.load());
+          if (payload) {
+            renderTrifectaPayload(payload);
+            trifectaSaveStatus.textContent = `保存済み三連単買い目を${modeLabel(activeMode)}から復元しました。`;
+          } else {
+            trifectaSaveStatus.textContent = `${modeLabel(activeMode)}に保存済み三連単買い目はありません。`;
+          }
+        } catch (error) {
+          trifectaSaveStatus.textContent = `${modeLabel(activeMode)}読込エラー: ${error.message}`;
         }
       });
 
@@ -2446,20 +2595,30 @@
         renderWin5Payload(createWin5Payload());
       });
 
-      saveWin5TicketButton.addEventListener("click", () => {
+      saveWin5TicketButton.addEventListener("click", async () => {
         const payload = createWin5Payload();
-        activeWin5StorageAdapter.save(payload);
-        renderWin5Payload(payload);
-        win5SaveStatus.textContent = `localStorage保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })} / GitHub保存へはwin5StorageAdapters.githubを接続`;
+        const activeMode = dataStorage.getActiveAdapterName();
+        try {
+          await resolveMaybeAsync(activeWin5StorageAdapter.save(payload));
+          renderWin5Payload(payload);
+          win5SaveStatus.textContent = `${modeLabel(activeMode)}保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+        } catch (error) {
+          win5SaveStatus.textContent = `${modeLabel(activeMode)}保存エラー: ${error.message}`;
+        }
       });
 
-      loadWin5TicketButton.addEventListener("click", () => {
-        const payload = activeWin5StorageAdapter.load();
-        if (payload) {
-          applyWin5PayloadToForm(payload);
-          win5SaveStatus.textContent = "保存済みWIN5買い目を復元しました。";
-        } else {
-          win5SaveStatus.textContent = "保存済みWIN5買い目はありません。";
+      loadWin5TicketButton.addEventListener("click", async () => {
+        const activeMode = dataStorage.getActiveAdapterName();
+        try {
+          const payload = await resolveMaybeAsync(activeWin5StorageAdapter.load());
+          if (payload) {
+            applyWin5PayloadToForm(payload);
+            win5SaveStatus.textContent = `保存済みWIN5買い目を${modeLabel(activeMode)}から復元しました。`;
+          } else {
+            win5SaveStatus.textContent = `${modeLabel(activeMode)}に保存済みWIN5買い目はありません。`;
+          }
+        } catch (error) {
+          win5SaveStatus.textContent = `${modeLabel(activeMode)}読込エラー: ${error.message}`;
         }
       });
 
@@ -2469,14 +2628,25 @@
         win5SaveStatus.textContent = "入力をクリアしました。保存データは残っています。";
       });
 
-      applyWin5PayloadToForm(activeWin5StorageAdapter.load());
-      renderWin5Payload(currentWin5Payload || createWin5Payload());
+      (async () => {
+        const activeMode = dataStorage.getActiveAdapterName();
+        try {
+          applyWin5PayloadToForm(await resolveMaybeAsync(activeWin5StorageAdapter.load()));
+        } catch (error) {
+          win5SaveStatus.textContent = `${modeLabel(activeMode)}初期読込エラー: ${error.message}`;
+        }
+        renderWin5Payload(currentWin5Payload || createWin5Payload());
 
-      document.querySelector("#race-date").valueAsDate = new Date();
-      const initialRacePayload = activeStorageAdapter.load();
-      const initialHorsePayload = dataStorage.loadData("horseEntries", "localStorage");
-      applyRacePayload(initialRacePayload ? { ...initialRacePayload, horses: initialRacePayload.horses?.length ? initialRacePayload.horses : initialHorsePayload?.horses || [] } : null);
-      renderRaceEntry();
+        document.querySelector("#race-date").valueAsDate = new Date();
+        try {
+          const initialRacePayload = await resolveMaybeAsync(activeStorageAdapter.load());
+          const initialHorsePayload = await resolveMaybeAsync(dataStorage.loadData("horseEntries", activeMode));
+          applyRacePayload(initialRacePayload ? { ...initialRacePayload, horses: initialRacePayload.horses?.length ? initialRacePayload.horses : initialHorsePayload?.horses || [] } : null);
+        } catch (error) {
+          saveStatus.textContent = `${modeLabel(activeMode)}初期読込エラー: ${error.message}`;
+        }
+        renderRaceEntry();
+      })();
 
       const courseChips = Array.from(document.querySelectorAll(".course-chip"));
       const selectedCourse = document.querySelector("#selected-course");
