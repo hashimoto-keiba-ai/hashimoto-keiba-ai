@@ -32,6 +32,7 @@
           <a href="#roi-dashboard">回収率</a>
           <a href="#result-verification">結果検証</a>
           <a href="#result-log-list">検証ログ</a>
+          <a href="#ai-backtest-lab">AI精度テスト</a>
           <a href="#os-update-manager">OSアップデート</a>
           <a href="#operations-board">運用</a>
           <a href="#backup-restore">バックアップ</a>
@@ -64,9 +65,10 @@
           <a href="#roi-dashboard"><span>⑨</span>回収率ダッシュボード</a>
           <a href="#result-verification"><span>⑩</span>結果検証フォーム</a>
           <a href="#result-log-list"><span>⑪</span>最新結果検証ログ</a>
-          <a href="#os-update-manager"><span>⑫</span>OS自動アップデート管理</a>
-          <a href="#backup-restore"><span>⑬</span>バックアップ／復元</a>
-          <a href="#github-storage-settings"><span>⑭</span>GitHub保存設定</a>
+          <a href="#ai-backtest-lab"><span>⑫</span>AI精度テスト・バックテスト</a>
+          <a href="#os-update-manager"><span>⑬</span>OS自動アップデート管理</a>
+          <a href="#backup-restore"><span>⑭</span>バックアップ／復元</a>
+          <a href="#github-storage-settings"><span>⑮</span>GitHub保存設定</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -307,6 +309,8 @@
               <label><span>競馬場</span><select name="course" required><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
               <label><span>レース番号</span><input name="raceNumber" type="number" min="1" max="12" value="11" required /></label>
               <label><span>レース名</span><input name="raceName" type="text" placeholder="例: 安田記念" required /></label>
+              <label><span>距離</span><input name="distance" type="number" min="800" max="3600" step="100" placeholder="例: 1600" /></label>
+              <label><span>芝/ダート</span><select name="surface"><option value="">未設定</option><option value="芝">芝</option><option value="ダート">ダート</option></select></label>
             </fieldset>
 
             <fieldset class="result-fieldset result-fieldset--finishers">
@@ -348,6 +352,7 @@
               <label><input name="kamianaHit" type="checkbox" value="true" />神穴的中</label>
               <label><input name="dangerPopularSuccess" type="checkbox" value="true" />危険人気馬判定成功</label>
               <label><input name="trifectaHit" type="checkbox" value="true" />三連単的中</label>
+              <label><input name="win5Hit" type="checkbox" value="true" />WIN5的中</label>
             </fieldset>
 
             <fieldset class="result-fieldset result-fieldset--os">
@@ -385,6 +390,66 @@
             <button class="button button--ghost" type="reset">絞り込み解除</button>
           </form>
           <div id="result-log-groups" class="result-log-groups" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="ai-backtest-lab" class="ai-backtest-lab card card--featured data-card control-card" aria-label="AI精度テスト・バックテスト機能">
+        <div class="card__icon" aria-hidden="true">🧪</div>
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">AI ACCURACY BACKTEST LAB</p>
+              <h2>AI精度テスト・バックテスト</h2>
+            </div>
+            <span class="status-pill status-pill--live" id="backtest-status">LOCAL LOG READY</span>
+          </div>
+          <p class="card__lead">localStorageに保存された結果検証ログと回収率ログを横断集計し、過去の事前予想と結果検証の的中率・回収率・弱点・補正案を黒×金デザインで可視化します。読み込み口はBacktestDataSource Adapterで分離し、GitHub JSON保存データにも拡張できます。</p>
+
+          <form id="backtest-filter-form" class="backtest-filter-form" aria-label="バックテスト対象選択フォーム">
+            <fieldset class="result-fieldset backtest-filter-fieldset">
+              <legend>① バックテスト対象選択</legend>
+              <label><span>開始日</span><input name="startDate" type="date" /></label>
+              <label><span>終了日</span><input name="endDate" type="date" /></label>
+              <label><span>競馬場</span><select name="course"><option value="">すべて</option><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
+              <label><span>距離</span><select name="distanceBand"><option value="">すべて</option><option value="sprint">短距離 1000-1400m</option><option value="mile">マイル 1500-1800m</option><option value="middle">中距離 1900-2200m</option><option value="long">長距離 2300m以上</option><option value="unknown">未設定</option></select></label>
+              <label><span>芝/ダート</span><select name="surface"><option value="">すべて</option><option value="芝">芝</option><option value="ダート">ダート</option><option value="未設定">未設定</option></select></label>
+              <label><span>馬場状態</span><select name="trackCondition"><option value="">すべて</option><option value="良">良</option><option value="稍重">稍重</option><option value="重">重</option><option value="不良">不良</option></select></label>
+              <label><span>券種</span><select name="ticketType"><option value="">すべて</option><option value="三連単">三連単</option><option value="WIN5">WIN5</option><option value="馬連">馬連</option><option value="三連複">三連複</option><option value="単勝">単勝</option><option value="複勝">複勝</option></select></label>
+              <div class="backtest-actions">
+                <button class="button button--primary" type="submit">バックテスト集計</button>
+                <button class="button button--ghost" type="reset">条件リセット</button>
+              </div>
+            </fieldset>
+          </form>
+
+          <div class="backtest-summary-grid" id="backtest-summary-grid" aria-live="polite"></div>
+
+          <div class="backtest-analytics-grid">
+            <section class="backtest-panel">
+              <div class="form-section-heading"><span>② 的中率集計</span><small>事前予想チェックから算出</small></div>
+              <div class="table-wrap"><table class="data-table data-table--compact"><thead><tr><th>指標</th><th>対象</th><th>的中/成功</th><th>率</th></tr></thead><tbody id="backtest-hit-rate-body"></tbody></table></div>
+            </section>
+            <section class="backtest-panel">
+              <div class="form-section-heading"><span>③ 回収率集計</span><small>投資ログから算出</small></div>
+              <div class="table-wrap"><table class="data-table data-table--compact"><thead><tr><th>項目</th><th>投資</th><th>払戻</th><th>ROI/損益</th></tr></thead><tbody id="backtest-roi-body"></tbody></table></div>
+            </section>
+            <section class="backtest-panel">
+              <div class="form-section-heading"><span>券種別ROI</span><small>買い目タイプ別</small></div>
+              <div class="table-wrap"><table class="data-table data-table--compact"><thead><tr><th>券種</th><th>件数</th><th>投資</th><th>ROI</th></tr></thead><tbody id="backtest-ticket-roi-body"></tbody></table></div>
+            </section>
+            <section class="backtest-panel">
+              <div class="form-section-heading"><span>競馬場別ROI</span><small>苦手競馬場検出にも利用</small></div>
+              <div class="table-wrap"><table class="data-table data-table--compact"><thead><tr><th>競馬場</th><th>件数</th><th>損益</th><th>ROI</th></tr></thead><tbody id="backtest-course-roi-body"></tbody></table></div>
+            </section>
+            <section class="backtest-panel backtest-panel--wide">
+              <div class="form-section-heading"><span>④ 弱点分析</span><small>ROI・的中率・人気ゾーンを横断判定</small></div>
+              <div id="backtest-weakness-list" class="backtest-insight-list"></div>
+            </section>
+            <section class="backtest-panel backtest-panel--wide">
+              <div class="form-section-heading"><span>⑤ 改善提案</span><small>AI指数/展開/危険人気馬/神穴/WIN5補正</small></div>
+              <div id="backtest-improvement-list" class="backtest-insight-list backtest-improvement-list"></div>
+            </section>
+          </div>
         </div>
       </section>
 
@@ -1606,8 +1671,17 @@
       const resultLogGroups = document.querySelector("#result-log-groups");
       const resultLogCount = document.querySelector("#result-log-count");
       const resultLogFilters = document.querySelector(".result-log-filters");
-      const resultCheckboxFields = ["mainHit", "rivalHit", "longshotHit", "kamianaHit", "dangerPopularSuccess", "trifectaHit"];
-      const resultNumericFields = ["raceNumber", "firstNumber", "firstPopularity", "secondNumber", "secondPopularity", "thirdNumber", "thirdPopularity", "trifectaPayout"];
+      const backtestFilterForm = document.querySelector("#backtest-filter-form");
+      const backtestStatus = document.querySelector("#backtest-status");
+      const backtestSummaryGrid = document.querySelector("#backtest-summary-grid");
+      const backtestHitRateBody = document.querySelector("#backtest-hit-rate-body");
+      const backtestRoiBody = document.querySelector("#backtest-roi-body");
+      const backtestTicketRoiBody = document.querySelector("#backtest-ticket-roi-body");
+      const backtestCourseRoiBody = document.querySelector("#backtest-course-roi-body");
+      const backtestWeaknessList = document.querySelector("#backtest-weakness-list");
+      const backtestImprovementList = document.querySelector("#backtest-improvement-list");
+      const resultCheckboxFields = ["mainHit", "rivalHit", "longshotHit", "kamianaHit", "dangerPopularSuccess", "trifectaHit", "win5Hit"];
+      const resultNumericFields = ["raceNumber", "distance", "firstNumber", "firstPopularity", "secondNumber", "secondPopularity", "thirdNumber", "thirdPopularity", "trifectaPayout"];
       const OS_RULE_STORAGE_KEY = dataStorage.getDefinition("osUpdates").storageKey;
       const osRuleForm = document.querySelector("#os-rule-form");
       const osRuleFormReset = document.querySelector("#os-rule-form-reset");
@@ -1912,6 +1986,7 @@
         applyWin5PayloadToForm(activeWin5StorageAdapter.load());
         resultLogs = activeResultLogStorageAdapter.load();
         renderResultLogs();
+        renderBacktestDashboard();
         osRules = activeOsRuleStorageAdapter.load();
         renderOsRules();
       };
@@ -2123,6 +2198,8 @@
             course,
             raceNumber: flat.raceNumber,
             raceName,
+            distance: flat.distance,
+            surface: flat.surface || "",
           },
           result: {
             first: { number: flat.firstNumber, name: flat.firstName || "", jockey: flat.firstJockey || "", popularity: flat.firstPopularity },
@@ -2140,6 +2217,7 @@
             kamianaHit: flat.kamianaHit,
             dangerPopularSuccess: flat.dangerPopularSuccess,
             trifectaHit: flat.trifectaHit,
+            win5Hit: flat.win5Hit,
           },
           osUpdate: {
             learningPoint: flat.learningPoint || "",
@@ -2163,6 +2241,7 @@
         resultLogs.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
         activeResultLogStorageAdapter.save(resultLogs);
         renderResultLogs();
+        renderBacktestDashboard();
         return true;
       };
 
@@ -2173,6 +2252,7 @@
         kamianaHit: "神穴",
         dangerPopularSuccess: "危険人気馬",
         trifectaHit: "三連単",
+        win5Hit: "WIN5",
       };
 
       const formatHitBadges = (predictionCheck) => Object.entries(resultHitLabels)
@@ -2221,6 +2301,151 @@
         });
       };
 
+      const getDistanceBand = (distance) => {
+        const value = Number(distance || 0);
+        if (!value) return "unknown";
+        if (value <= 1400) return "sprint";
+        if (value <= 1800) return "mile";
+        if (value <= 2200) return "middle";
+        return "long";
+      };
+      const distanceBandLabels = { sprint: "短距離", mile: "マイル", middle: "中距離", long: "長距離", unknown: "未設定" };
+      const backtestSourceAdapters = {
+        local: {
+          load() {
+            return {
+              provider: "localStorage",
+              resultLogs: Array.isArray(resultLogs) ? resultLogs : [],
+              roiRecords: Array.isArray(investmentResults) ? investmentResults : [],
+            };
+          },
+        },
+        github: {
+          load() {
+            const resultsPayload = dataStorage.loadData("results", "github");
+            const roiPayload = dataStorage.loadData("roiRecords", "github");
+            return {
+              provider: "github",
+              resultLogs: Array.isArray(resultsPayload) ? resultsPayload : resultsPayload?.logs || [],
+              roiRecords: Array.isArray(roiPayload?.results) ? roiPayload.results : [],
+            };
+          },
+        },
+      };
+
+      const getBacktestFilters = () => getFormData(backtestFilterForm);
+      const isDateInRange = (date, startDate, endDate) => (!startDate || date >= startDate) && (!endDate || date <= endDate);
+      const matchesBacktestLog = (log, filters) => {
+        const race = log.race || {};
+        const result = log.result || {};
+        const surface = race.surface || "未設定";
+        return isDateInRange(race.date || "", filters.startDate, filters.endDate)
+          && (!filters.course || race.course === filters.course)
+          && (!filters.distanceBand || getDistanceBand(race.distance) === filters.distanceBand)
+          && (!filters.surface || surface === filters.surface)
+          && (!filters.trackCondition || result.trackCondition === filters.trackCondition);
+      };
+      const matchesBacktestInvestment = (record, filters) => {
+        const course = record.course?.includes("競馬場") ? record.course : `${record.course || ""}競馬場`;
+        return isDateInRange(record.date || "", filters.startDate, filters.endDate)
+          && (!filters.course || course === filters.course)
+          && (!filters.ticketType || record.ticketType === filters.ticketType);
+      };
+      const hitRateDefinitions = [
+        ["本命的中率", "mainHit"],
+        ["対抗的中率", "rivalHit"],
+        ["神穴的中率", "kamianaHit"],
+        ["危険人気馬判定成功率", "dangerPopularSuccess"],
+        ["三連単的中率", "trifectaHit"],
+        ["WIN5的中率", "win5Hit"],
+      ];
+      const aggregateBy = (items, keyGetter) => items.reduce((accumulator, item) => {
+        const key = keyGetter(item) || "未設定";
+        accumulator[key] = accumulator[key] || createEmptyStats();
+        addToStats(accumulator[key], item);
+        return accumulator;
+      }, {});
+      const summarizeHitRates = (logs) => hitRateDefinitions.map(([label, field]) => {
+        const total = logs.length;
+        const hits = logs.filter((log) => Boolean(log.predictionCheck?.[field])).length;
+        return { label, total, hits, rate: total ? (hits / total) * 100 : 0 };
+      });
+      const renderBacktestRateRow = ({ label, total, hits, rate }) => `<tr><td data-label="指標"><strong>${escapeHtml(label)}</strong></td><td data-label="対象">${total}R</td><td data-label="的中/成功">${hits}件</td><td data-label="率"><span class="badge ${rate >= 50 ? "badge--gold" : ""}">${formatPercent(rate)}</span></td></tr>`;
+      const renderBacktestRoiRow = (label, stats) => `<tr><td data-label="項目"><strong>${escapeHtml(label)}</strong></td><td data-label="投資">${formatYen(stats.stake)}</td><td data-label="払戻">${formatYen(stats.payout)}</td><td data-label="ROI/損益">${formatPercent(calculateRoi(stats.stake, stats.payout))} / ${formatYen(stats.profit)}</td></tr>`;
+      const renderBacktestGroupRoiRow = (label, stats, labelName) => `<tr><td data-label="${escapeHtml(labelName)}"><strong>${escapeHtml(label)}</strong></td><td data-label="件数">${stats.total}</td><td data-label="投資/損益">${labelName === "競馬場" ? formatYen(stats.profit) : formatYen(stats.stake)}</td><td data-label="ROI">${formatPercent(calculateRoi(stats.stake, stats.payout))}</td></tr>`;
+      const getWorstHitGroup = (logs, keyGetter) => Object.entries(logs.reduce((accumulator, log) => {
+        const key = keyGetter(log) || "未設定";
+        accumulator[key] = accumulator[key] || { total: 0, hits: 0 };
+        accumulator[key].total += 1;
+        if (log.predictionCheck?.mainHit || log.predictionCheck?.rivalHit || log.predictionCheck?.kamianaHit) accumulator[key].hits += 1;
+        return accumulator;
+      }, {})).filter(([, stats]) => stats.total > 0).sort((a, b) => (a[1].hits / a[1].total) - (b[1].hits / b[1].total))[0];
+      const getWorstRoiGroup = (records, keyGetter) => Object.entries(aggregateBy(records, keyGetter)).filter(([, stats]) => stats.total > 0).sort((a, b) => calculateRoi(a[1].stake, a[1].payout) - calculateRoi(b[1].stake, b[1].payout))[0];
+      const buildBacktestWeaknesses = (logs, records) => {
+        const worstCourse = getWorstRoiGroup(records, (record) => normalizeCourseName(record.course)) || getWorstHitGroup(logs, (log) => normalizeCourseName(log.race?.course));
+        const worstDistance = getWorstHitGroup(logs, (log) => distanceBandLabels[getDistanceBand(log.race?.distance)]);
+        const worstTrack = getWorstHitGroup(logs, (log) => log.result?.trackCondition);
+        const worstPace = getWorstHitGroup(logs, (log) => log.result?.actualPace);
+        const popularityZones = logs.flatMap((log) => [log.result?.first?.popularity, log.result?.second?.popularity, log.result?.third?.popularity].filter(Boolean));
+        const zoneCounts = popularityZones.reduce((accumulator, value) => {
+          const zone = value <= 3 ? "1〜3人気" : value <= 6 ? "4〜6人気" : value <= 9 ? "7〜9人気" : "10人気以下";
+          accumulator[zone] = (accumulator[zone] || 0) + 1;
+          return accumulator;
+        }, {});
+        const volatileZone = Object.entries(zoneCounts).sort((a, b) => b[1] - a[1])[0];
+        return [
+          ["苦手競馬場", worstCourse ? `${worstCourse[0]} / ROIまたは複合的中率が最低水準` : "データ不足"],
+          ["苦手距離", worstDistance ? `${worstDistance[0]} / 複合的中率 ${formatPercent((worstDistance[1].hits / worstDistance[1].total) * 100)}` : "距離入力ログが不足"],
+          ["苦手馬場", worstTrack ? `${worstTrack[0]} / 複合的中率 ${formatPercent((worstTrack[1].hits / worstTrack[1].total) * 100)}` : "馬場別ログが不足"],
+          ["苦手ペース", worstPace ? `${worstPace[0]} / 展開読みの再補正対象` : "ペース別ログが不足"],
+          ["外れやすい人気ゾーン", volatileZone ? `${volatileZone[0]}が馬券内に多く、人気ゾーン補正を要確認` : "人気データ不足"],
+        ];
+      };
+      const buildBacktestImprovements = (hitRates, totalStats, weaknesses) => {
+        const byLabel = Object.fromEntries(hitRates.map((item) => [item.label, item.rate]));
+        const roi = calculateRoi(totalStats.stake, totalStats.payout);
+        return [
+          ["AI指数補正", `${weaknesses[1]?.[1] || "距離別"}を重点監視し、低的中距離では指数上位馬の過信を-2〜-4補正。`],
+          ["展開AI補正", `${weaknesses[3]?.[1] || "ペース別"}で逃げ/差しの着順乖離を見直し、実ペース一致時だけ展開加点を強める。`],
+          ["危険人気馬AI補正", `成功率${formatPercent(byLabel["危険人気馬判定成功率"] || 0)}。50%未満なら1〜3人気の危険判定閾値を厳格化し、ROI低下時は消し判定を買い目から除外。`],
+          ["神穴AI補正", `神穴的中率${formatPercent(byLabel["神穴的中率"] || 0)}。7人気以下の馬場・距離一致条件を必須化し、根拠が薄い穴は印を1段階下げる。`],
+          ["WIN5補正", `WIN5的中率${formatPercent(byLabel["WIN5的中率"] || 0)}。軸1頭固定の低成績場ではA/B候補2頭化、ROI ${formatPercent(roi)}未満なら点数配分を抑制。`],
+        ];
+      };
+      const renderInsightList = (target, items) => {
+        target.innerHTML = items.map(([title, body]) => `<article><strong>${escapeHtml(title)}</strong><p>${escapeHtml(body)}</p></article>`).join("");
+      };
+      const renderBacktestDashboard = () => {
+        if (!backtestFilterForm) return;
+        const filters = getBacktestFilters();
+        const source = backtestSourceAdapters[dataStorage.getActiveAdapterName() === "github" ? "github" : "local"].load();
+        const filteredLogs = source.resultLogs.filter((log) => matchesBacktestLog(log, filters));
+        const filteredRecords = source.roiRecords.filter((record) => matchesBacktestInvestment(record, filters));
+        const hitRates = summarizeHitRates(filteredLogs);
+        const totalStats = filteredRecords.reduce((stats, record) => addToStats(stats, record), createEmptyStats());
+        const ticketStats = aggregateBy(filteredRecords, (record) => record.ticketType);
+        const courseStats = aggregateBy(filteredRecords, (record) => normalizeCourseName(record.course));
+        const totalHitRate = filteredLogs.length ? hitRates.reduce((sum, item) => sum + item.rate, 0) / hitRates.length : 0;
+        const roi = calculateRoi(totalStats.stake, totalStats.payout);
+        backtestStatus.textContent = `${source.provider === "github" ? "GITHUB" : "LOCAL"} ${filteredLogs.length}R / ${filteredRecords.length} BETS`;
+        backtestSummaryGrid.innerHTML = `
+          <section><span>検証レース</span><strong>${filteredLogs.length}R</strong><small>結果検証ログ対象</small></section>
+          <section><span>平均的中率</span><strong>${formatPercent(totalHitRate)}</strong><small>本命/対抗/神穴/危険/三連単/WIN5</small></section>
+          <section><span>総投資額</span><strong>${formatYen(totalStats.stake)}</strong><small>券種フィルター反映</small></section>
+          <section><span>ROI</span><strong>${formatPercent(roi)}</strong><small>利益/損失 ${formatYen(totalStats.profit)}</small></section>
+        `;
+        backtestHitRateBody.innerHTML = hitRates.length ? hitRates.map(renderBacktestRateRow).join("") : '<tr><td colspan="4">結果検証ログがありません。</td></tr>';
+        backtestRoiBody.innerHTML = [
+          renderBacktestRoiRow("総投資額/総払戻額", totalStats),
+          `<tr><td data-label="項目"><strong>利益/損失</strong></td><td data-label="投資">-</td><td data-label="払戻">-</td><td data-label="ROI/損益">${formatYen(totalStats.profit)}</td></tr>`,
+        ].join("");
+        backtestTicketRoiBody.innerHTML = Object.entries(ticketStats).length ? Object.entries(ticketStats).sort(([a], [b]) => a.localeCompare(b, "ja")).map(([label, stats]) => renderBacktestGroupRoiRow(label, stats, "券種")).join("") : '<tr><td colspan="4">券種別ROIデータがありません。</td></tr>';
+        backtestCourseRoiBody.innerHTML = Object.entries(courseStats).length ? Object.entries(courseStats).sort(([a], [b]) => a.localeCompare(b, "ja")).map(([label, stats]) => renderBacktestGroupRoiRow(label, stats, "競馬場")).join("") : '<tr><td colspan="4">競馬場別ROIデータがありません。</td></tr>';
+        const weaknesses = buildBacktestWeaknesses(filteredLogs, filteredRecords);
+        renderInsightList(backtestWeaknessList, weaknesses);
+        renderInsightList(backtestImprovementList, buildBacktestImprovements(hitRates, totalStats, weaknesses));
+      };
+
       const autosaveResultLog = () => {
         const log = getResultFormPayload();
         if (upsertResultLog(log)) {
@@ -2247,7 +2472,14 @@
       });
       resultLogFilters.addEventListener("input", renderResultLogs);
       resultLogFilters.addEventListener("reset", () => window.requestAnimationFrame(renderResultLogs));
+      backtestFilterForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        renderBacktestDashboard();
+      });
+      backtestFilterForm.addEventListener("input", renderBacktestDashboard);
+      backtestFilterForm.addEventListener("reset", () => window.requestAnimationFrame(renderBacktestDashboard));
       renderResultLogs();
+      renderBacktestDashboard();
 
       osRuleForm.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -2569,6 +2801,7 @@
         investmentDate.valueAsDate = new Date();
         investmentSaveStatus.textContent = `localStorage保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })} / GitHub保存へはinvestmentStorageAdapters.githubを接続`;
         renderInvestmentDashboard();
+        renderBacktestDashboard();
       });
 
       investmentClearFormButton.addEventListener("click", () => {
@@ -2582,6 +2815,7 @@
         activeInvestmentStorageAdapter.clear();
         renderInvestmentDashboard();
         investmentSaveStatus.textContent = "localStorage保存データを削除しました。";
+        renderBacktestDashboard();
       });
 
       createWin5RaceFields();
