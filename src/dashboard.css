@@ -3631,3 +3631,155 @@ h1 {
     font-size: 0.66rem;
   }
 }
+
+/* GitHub Pages public release checklist */
+.pages-publish-check {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto 18px;
+}
+
+.pages-check-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.pages-check-url-form,
+.pages-check-panel,
+.ipad-check-memo {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(18, 13, 6, 0.92), rgba(5, 5, 5, 0.78));
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.1);
+}
+
+.pages-check-url-form {
+  display: grid;
+  gap: 14px;
+}
+
+.pages-check-url-form__field {
+  display: grid;
+  gap: 8px;
+}
+
+.pages-check-url-form__field span,
+.ipad-check-memo legend {
+  color: var(--gold-light);
+  font-size: 0.86rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.pages-check-url-form input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.34);
+  outline: none;
+}
+
+.pages-check-url-form input:focus {
+  border-color: rgba(248, 196, 79, 0.7);
+  box-shadow: 0 0 0 3px rgba(248, 196, 79, 0.12);
+}
+
+.pages-check-help {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+.pages-check-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pages-check-item {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(248, 196, 79, 0.22);
+  border-radius: 18px;
+  background: rgba(255, 233, 163, 0.07);
+}
+
+.pages-check-item strong {
+  color: var(--text);
+}
+
+.pages-check-item small {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.pages-check-status {
+  width: fit-content;
+  padding: 5px 10px;
+  font-size: 0.76rem;
+  font-weight: 900;
+  border: 1px solid rgba(248, 196, 79, 0.34);
+  border-radius: 999px;
+}
+
+.pages-check-status--ok {
+  color: #101106;
+  border-color: rgba(120, 240, 163, 0.65);
+  background: linear-gradient(135deg, var(--green), #d7ffd8);
+}
+
+.pages-check-status--warning {
+  color: #2a1600;
+  border-color: rgba(248, 196, 79, 0.7);
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+}
+
+.pages-check-status--unchecked {
+  color: var(--gold-light);
+  background: rgba(248, 196, 79, 0.11);
+}
+
+.ipad-check-memo {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.ipad-check-memo legend {
+  padding: 0 8px;
+}
+
+.ipad-check-memo label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 48px;
+  padding: 12px;
+  color: var(--muted);
+  border: 1px solid rgba(248, 196, 79, 0.22);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.ipad-check-memo input {
+  accent-color: var(--gold);
+}
+
+@media (max-width: 900px) {
+  .pages-check-grid,
+  .pages-check-panel,
+  .ipad-check-memo {
+    grid-template-columns: 1fr;
+  }
+
+  .pages-check-url-form .button {
+    width: 100%;
+  }
+}
