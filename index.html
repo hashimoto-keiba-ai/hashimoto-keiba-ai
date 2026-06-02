@@ -6,6 +6,7 @@
     <title>橋本競馬AIダッシュボード</title>
     <meta
       name="description"
+      content="AI指数ランキング、神穴ランキング、危険人気馬ランキング、最新保存ログ、WIN5コーナーを実データ形式で管理する黒×金の橋本競馬AIダッシュボード。"
       content="AI指数ランキング、神穴ランキング、危険人気馬ランキング、最新保存ログ、WIN5コーナーを実データ形式で確認できる橋本競馬AI管理ダッシュボード。"
     />
     <link rel="stylesheet" href="./src/dashboard.css" />
@@ -19,6 +20,11 @@
         </a>
         <div class="nav-links">
           <a href="#ai-index-ranking">AI指数</a>
+          <a href="#god-hole-ranking">神穴</a>
+          <a href="#danger-popular">危険人気馬</a>
+          <a href="#latest-save-log">保存ログ</a>
+          <a href="#win5-corner">WIN5</a>
+          <a href="#operations-board">運用ボード</a>
           <a href="#kami-ana-ranking">神穴</a>
           <a href="#danger-popular">危険人気馬</a>
           <a href="#latest-save-log">保存ログ</a>
@@ -28,6 +34,15 @@
       </nav>
 
       <section id="top" class="hero__content">
+        <p class="eyebrow">Hashimoto Keiba AI Command Center</p>
+        <h1>実データ形式で、今日の勝負馬・消し馬・WIN5を統合管理。</h1>
+        <p class="hero__lead">
+          AI指数、神穴、危険人気馬、保存ログ、WIN5生成結果を同じ画面で監視できる、競馬AI運用者向けの黒×金ダッシュボードです。
+          レース条件、馬番、人気、想定オッズ、指数、根拠、保存ステータスまで管理画面らしく整理しました。
+        </p>
+        <div class="hero__actions" aria-label="主要メニュー">
+          <a class="button button--primary" href="#ai-index-ranking">本日のランキングを見る</a>
+          <a class="button button--ghost" href="#latest-save-log">保存ログを確認</a>
         <p class="eyebrow">Hashimoto Keiba AI Control Room</p>
         <h1>実データ形式で、今日の勝負馬・穴馬・消し馬を即断する。</h1>
         <p class="hero__lead">
@@ -46,6 +61,17 @@
         <article>
           <span class="summary__label">対象開催</span>
           <strong>東京・京都・阪神</strong>
+          <span>2026/06/02 09:30 更新 / 36R同期済み</span>
+        </article>
+        <article>
+          <span class="summary__label">AI総合信頼度</span>
+          <strong>92.4</strong>
+          <span>指数・展開・馬場・騎手を総合判定</span>
+        </article>
+        <article>
+          <span class="summary__label">本日抽出シグナル</span>
+          <strong>24件</strong>
+          <span>勝負馬8 / 神穴7 / 危険人気5 / WIN5候補4</span>
           <span>2026/06/02 09:30 JST 更新</span>
         </article>
         <article>
@@ -60,10 +86,29 @@
         </article>
       </section>
 
+      <section class="status-strip" aria-label="データ取り込み状況">
+        <span><b>JRA出馬表</b> 取得完了</span>
+        <span><b>オッズ</b> 09:28時点</span>
+        <span><b>馬場補正</b> 東京芝+2 / 京都ダ+1</span>
+        <span><b>保存先</b> 各競馬場/保存ログ</span>
+      </section>
+
       <section id="dashboard" class="dashboard-grid" aria-label="橋本競馬AI 実データ形式ダッシュボード">
         <article id="ai-index-ranking" class="card card--featured data-card control-card">
           <div class="card__icon" aria-hidden="true">📈</div>
           <div class="card__body">
+            <p class="card__kicker">AI INDEX RANKING</p>
+            <div class="section-heading">
+              <h2>① AI指数ランキング</h2>
+              <span class="live-pill">LIVE</span>
+            </div>
+            <p class="card__lead">
+              出走馬を総合指数順に表示。能力値、展開適性、馬場補正、騎手補正、妙味を合算し、勝負候補を実データ形式で確認できます。
+            </p>
+            <div class="race-meta" aria-label="AI指数集計条件">
+              <span>集計: 全36R / 431頭</span>
+              <span>指数閾値: 90以上</span>
+              <span>自動印: ◎○▲☆</span>
             <div class="card-heading">
               <div>
                 <p class="card__kicker">AI INDEX RANKING</p>
@@ -90,6 +135,8 @@
                     <th scope="col">人気</th>
                     <th scope="col">想定</th>
                     <th scope="col">AI指数</th>
+                    <th scope="col">根拠</th>
+                    <th scope="col">印</th>
                     <th scope="col">差分</th>
                     <th scope="col">判定</th>
                   </tr>
@@ -102,6 +149,8 @@
                     <td data-label="人気">2人気</td>
                     <td data-label="想定">4.8倍</td>
                     <td data-label="AI指数"><strong>96.8</strong></td>
+                    <td data-label="根拠">末脚指数1位 / 東京替わりA</td>
+                    <td data-label="印"><span class="badge badge--gold">◎本命</span></td>
                     <td data-label="差分">+5.4</td>
                     <td data-label="判定"><span class="badge badge--gold">本命</span></td>
                   </tr>
@@ -112,6 +161,8 @@
                     <td data-label="人気">1人気</td>
                     <td data-label="想定">2.9倍</td>
                     <td data-label="AI指数"><strong>94.1</strong></td>
+                    <td data-label="根拠">先行力1位 / 調教A+</td>
+                    <td data-label="印"><span class="badge badge--gold">◎軸</span></td>
                     <td data-label="差分">+3.8</td>
                     <td data-label="判定"><span class="badge badge--gold">WIN5軸</span></td>
                   </tr>
@@ -122,6 +173,8 @@
                     <td data-label="人気">4人気</td>
                     <td data-label="想定">8.6倍</td>
                     <td data-label="AI指数"><strong>91.7</strong></td>
+                    <td data-label="根拠">持続ラップ適性 / 外差し</td>
+                    <td data-label="印"><span class="badge">○対抗</span></td>
                     <td data-label="差分">+2.9</td>
                     <td data-label="判定"><span class="badge">対抗</span></td>
                   </tr>
@@ -132,6 +185,8 @@
                     <td data-label="人気">5人気</td>
                     <td data-label="想定">11.4倍</td>
                     <td data-label="AI指数"><strong>90.2</strong></td>
+                    <td data-label="根拠">距離短縮 / 斤量減</td>
+                    <td data-label="印"><span class="badge">▲穴</span></td>
                     <td data-label="差分">+2.1</td>
                     <td data-label="判定"><span class="badge">単穴</span></td>
                   </tr>
@@ -139,6 +194,48 @@
               </table>
             </div>
           </div>
+          <a class="card__link" href="./AI研究所/AI指数/README.md">AI指数ロジックを見る</a>
+        </article>
+
+        <article id="god-hole-ranking" class="card card--accent data-card">
+          <div class="card__icon" aria-hidden="true">💎</div>
+          <div class="card__body">
+            <p class="card__kicker">KAMI-ANA RANKING</p>
+            <h2>② 神穴ランキング</h2>
+            <p class="card__lead">人気の盲点、馬場バイアス、展開利、過去高配当パターンの一致率から、妙味ある穴馬だけを抽出します。</p>
+            <ol class="signal-list" aria-label="神穴ランキング">
+              <li>
+                <span class="rank-mark">S</span>
+                <div>
+                  <strong>東京8R 5番 エアヴェローチェ</strong>
+                  <small>5人気 11.4倍 / 神穴指数 93 / 距離短縮×外差しバイアス一致</small>
+                </div>
+              </li>
+              <li>
+                <span class="rank-mark">A+</span>
+                <div>
+                  <strong>阪神10R 12番 ナイトセイバー</strong>
+                  <small>7人気 18.2倍 / 神穴指数 89 / 前走不利・上がり最速をAI補正</small>
+                </div>
+              </li>
+              <li>
+                <span class="rank-mark">A</span>
+                <div>
+                  <strong>京都7R 14番 メイショウラピス</strong>
+                  <small>9人気 26.5倍 / 神穴指数 84 / ダ替わり・減量騎手で浮上</small>
+                </div>
+              </li>
+            </ol>
+          </div>
+          <a class="card__link" href="./AI研究所/神穴AI/README.md">神穴AIを見る</a>
+        </article>
+
+        <article id="danger-popular" class="card card--danger data-card">
+          <div class="card__icon" aria-hidden="true">⚠️</div>
+          <div class="card__body">
+            <p class="card__kicker">DANGER POPULAR RANKING</p>
+            <h2>③ 危険人気馬ランキング</h2>
+            <p class="card__lead">過剰人気、展開不利、馬場ミスマッチ、ローテ不安を検知し、買い下げ・消し候補を赤色アラートで表示します。</p>
           <a class="card__link" href="./AI研究所/AI指数エンジン/README.md">AI指数ロジックを見る</a>
         </article>
 
@@ -154,11 +251,15 @@
             </div>
             <p class="card__lead">人気薄でも指数、展開、血統、馬場の条件が揃った高配当候補を抽出します。</p>
             <div class="table-wrap">
-              <table class="data-table data-table--compact">
+              <table class="data-table data-table--compact danger-table">
                 <thead>
                   <tr>
-                    <th scope="col">順位</th>
+                    <th scope="col">危険度</th>
                     <th scope="col">レース</th>
+                    <th scope="col">馬番・馬名</th>
+                    <th scope="col">人気/オッズ</th>
+                    <th scope="col">不安材料</th>
+                    <th scope="col">判定</th>
                     <th scope="col">神穴馬</th>
                     <th scope="col">人気</th>
                     <th scope="col">想定</th>
@@ -168,6 +269,28 @@
                 </thead>
                 <tbody>
                   <tr>
+                    <td data-label="危険度"><strong class="danger-text">92</strong></td>
+                    <td data-label="レース">東京10R ダ1600</td>
+                    <td data-label="馬番・馬名">1 サンライズノヴァ</td>
+                    <td data-label="人気/オッズ">1人気 2.4倍</td>
+                    <td data-label="不安材料">逃げ過多 / 内枠揉まれリスク</td>
+                    <td data-label="判定"><span class="badge badge--red">消し候補</span></td>
+                  </tr>
+                  <tr>
+                    <td data-label="危険度"><strong class="danger-text">88</strong></td>
+                    <td data-label="レース">京都12R 芝1400</td>
+                    <td data-label="馬番・馬名">6 ミヤビクラウン</td>
+                    <td data-label="人気/オッズ">2人気 4.1倍</td>
+                    <td data-label="不安材料">昇級初戦 / 上がり指数不足</td>
+                    <td data-label="判定"><span class="badge badge--red">評価下げ</span></td>
+                  </tr>
+                  <tr>
+                    <td data-label="危険度"><strong class="danger-text">81</strong></td>
+                    <td data-label="レース">阪神8R ダ1200</td>
+                    <td data-label="馬番・馬名">10 ブルーアロー</td>
+                    <td data-label="人気/オッズ">3人気 5.6倍</td>
+                    <td data-label="不安材料">道悪適性C / 外差し不一致</td>
+                    <td data-label="判定"><span class="badge badge--red">紐まで</span></td>
                     <td data-label="順位">1</td>
                     <td data-label="レース">阪神10R</td>
                     <td data-label="神穴馬">6 レッドオービット</td>
@@ -198,6 +321,51 @@
               </table>
             </div>
           </div>
+          <a class="card__link" href="./AI研究所/危険人気馬AI/README.md">危険人気馬AIを見る</a>
+        </article>
+
+        <article id="latest-save-log" class="card data-card log-card">
+          <div class="card__icon" aria-hidden="true">🗂️</div>
+          <div class="card__body">
+            <p class="card__kicker">LATEST SAVE LOG</p>
+            <h2>④ 最新保存ログ</h2>
+            <p class="card__lead">予想生成、指数更新、買い目保存、検証結果の最新履歴をタイムラインで表示。保存先フォルダへすぐ遷移できます。</p>
+            <ol class="timeline" aria-label="最新保存ログ">
+              <li>
+                <time datetime="2026-06-02T09:30:00+09:00">09:30</time>
+                <div><strong>東京競馬場 / 事前予想を保存</strong><small>AI指数ランキング 12R分・神穴候補3頭を同期</small></div>
+              </li>
+              <li>
+                <time datetime="2026-06-02T09:22:00+09:00">09:22</time>
+                <div><strong>WIN5 / 買い目48点を生成</strong><small>期待回収率142%、資金4,800円で保存</small></div>
+              </li>
+              <li>
+                <time datetime="2026-06-02T09:11:00+09:00">09:11</time>
+                <div><strong>危険人気馬DB / 5件追加</strong><small>過剰人気スコア80以上を自動登録</small></div>
+              </li>
+              <li>
+                <time datetime="2026-06-02T08:58:00+09:00">08:58</time>
+                <div><strong>学習ログ / 馬場補正を更新</strong><small>東京芝+2、京都ダート+1、阪神芝±0</small></div>
+              </li>
+            </ol>
+          </div>
+          <a class="card__link" href="./学習ログ/README.md">学習ログを見る</a>
+        </article>
+
+        <article id="win5-corner" class="card card--featured data-card win5-card">
+          <div class="card__icon" aria-hidden="true">🏆</div>
+          <div class="card__body">
+            <p class="card__kicker">WIN5 CORNER</p>
+            <div class="section-heading">
+              <h2>⑤ WIN5コーナー</h2>
+              <span class="live-pill live-pill--green">48点生成済</span>
+            </div>
+            <p class="card__lead">対象5レースの難度、軸信頼、穴投入ポイントをもとに、実運用用の買い目フォーメーションと消し判断を表示します。</p>
+            <div class="win5-ticket" aria-label="WIN5コーナー 買い目">
+              <section>
+                <span>WIN1 東京9R</span>
+                <strong>2, 7</strong>
+                <small>難度B / 先行決着 / 軸信頼78%</small>
           <a class="card__link" href="./AI研究所/神穴AI/README.md">神穴AIを見る</a>
         </article>
 
@@ -292,16 +460,19 @@
               <section>
                 <span>WIN3 阪神10R</span>
                 <strong>1, 6, 12</strong>
+                <small>難度A / 神穴12番を投入</small>
                 <small>難度A / 神穴6番を投入</small>
               </section>
               <section>
                 <span>WIN4 東京10R</span>
                 <strong>4, 9</strong>
+                <small>危険人気1番を消し / 差し決着</small>
                 <small>危険人気1番を消し / 差し重視</small>
               </section>
               <section>
                 <span>WIN5 東京11R</span>
                 <strong>7, 14, 16, 18</strong>
+                <small>神レースS / 7番本線</small>
                 <small>指数1位＋高配当カバー</small>
               </section>
             </div>
@@ -309,12 +480,26 @@
               <span>生成点数 <strong>48点</strong></span>
               <span>推奨資金 <strong>4,800円</strong></span>
               <span>期待回収率 <strong>142%</strong></span>
+              <span>最大想定 <strong>1,280万円</strong></span>
               <span>最大想定払戻 <strong>1,840,000円</strong></span>
             </div>
           </div>
           <a class="card__link" href="./WIN5/WIN5_AI.md">WIN5 AIを見る</a>
         </article>
 
+        <article id="operations-board" class="card card--wide operations-card">
+          <div class="card__icon" aria-hidden="true">🖥️</div>
+          <div class="card__body">
+            <p class="card__kicker">OPERATIONS BOARD</p>
+            <h2>運用ステータス</h2>
+            <p>競馬AI管理画面として、取り込み・指数計算・保存・検証のステータスを横断監視できます。</p>
+            <div class="ops-grid" aria-label="運用ステータス一覧">
+              <span><b>出馬表</b> 完了</span>
+              <span><b>直前オッズ</b> 待機中</span>
+              <span><b>AI指数</b> 完了</span>
+              <span><b>神穴抽出</b> 完了</span>
+              <span><b>危険人気馬</b> 完了</span>
+              <span><b>WIN5</b> 保存済</span>
         <article id="operations" class="card card--accent ops-card">
           <div class="card__icon" aria-hidden="true">🧠</div>
           <div class="card__body">
@@ -352,6 +537,7 @@
     </main>
 
     <footer class="footer">
+      <p>橋本競馬AI — 予想、検証、保存ログ、WIN5をつなぐ競馬AIダッシュボード</p>
       <p>橋本競馬AI — 予想、検証、学習ログ、WIN5をつなぐ競馬AI管理ダッシュボード</p>
     </footer>
   </body>
