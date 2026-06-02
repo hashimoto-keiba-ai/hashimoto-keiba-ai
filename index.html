@@ -777,40 +777,52 @@
           <a class="card__link" href="./東京競馬場/保存ログ/README.md">保存ログを開く</a>
         </article>
 
-        <article id="win5-ai-screen" class="card card--featured data-card win5-card control-card">
+        <article id="win5-ai-screen" class="card card--featured data-card win5-card control-card win5-auto-system">
           <div class="card__icon" aria-hidden="true">🏆</div>
           <div class="card__body">
             <div class="card-heading">
               <div>
                 <p class="card__kicker">WIN5 AUTO GENERATOR</p>
-                <h2>WIN5自動生成</h2>
+                <h2>WIN5自動生成システム</h2>
               </div>
-              <span class="status-pill">48点生成</span>
+              <span id="win5-system-status" class="status-pill">入力待ち</span>
             </div>
-            <p class="card__lead">対象5レースの難度、軸信頼、穴投入ポイント、買い目点数、資金配分を読み込み、WIN5買い目を自動生成します。</p>
-            <div class="win5-ticket" aria-label="WIN5 買い目フォーメーション">
-              <section><span>WIN1 東京9R</span><strong>2, 7</strong><small>難度B / 先行決着 / 軸信頼76%</small></section>
-              <section><span>WIN2 京都10R</span><strong>3</strong><small>堅軸 / AI指数94.1 / 1点突破</small></section>
-              <section><span>WIN3 阪神10R</span><strong>1, 6, 12</strong><small>難度A / 神穴6番を投入</small></section>
-              <section><span>WIN4 東京10R</span><strong>4, 9</strong><small>危険人気1番を消し / 差し重視</small></section>
-              <section><span>WIN5 東京11R</span><strong>7, 14, 16, 18</strong><small>指数1位＋高配当カバー</small></section>
+            <p class="card__lead">対象5レースの基本情報とA/B/C/D候補、危険人気馬を入力すると「A固定2・B本線1・C狙い1・D警戒1」の黒×金WIN5フォーメーションを自動生成し、点数・配当ライン・保存データを即時更新します。</p>
+
+            <form id="win5-generator-form" class="win5-generator-form" aria-label="WIN5対象レースと候補馬入力フォーム">
+              <div id="win5-race-inputs" class="win5-race-inputs"></div>
+              <div class="win5-actions">
+                <button class="button button--primary" type="submit">WIN5フォーメーション生成</button>
+                <button id="save-win5-ticket" class="button button--ghost" type="button">買い目保存</button>
+                <button id="load-win5-ticket" class="button button--ghost" type="button">保存データ読込</button>
+                <button id="clear-win5-ticket" class="button button--ghost" type="button">入力クリア</button>
+                <p id="win5-save-status">保存先: localStorage / GitHub保存アダプター拡張対応</p>
+              </div>
+            </form>
+
+            <div id="win5-ticket-output" class="win5-ticket" aria-label="WIN5 買い目フォーメーション">
+              <section><span>WIN1</span><strong>未生成</strong><small>対象レースと候補馬を入力してください</small></section>
+              <section><span>WIN2</span><strong>未生成</strong><small>対象レースと候補馬を入力してください</small></section>
+              <section><span>WIN3</span><strong>未生成</strong><small>対象レースと候補馬を入力してください</small></section>
+              <section><span>WIN4</span><strong>未生成</strong><small>対象レースと候補馬を入力してください</small></section>
+              <section><span>WIN5</span><strong>未生成</strong><small>対象レースと候補馬を入力してください</small></section>
             </div>
-            <div class="win5-candidate-board" aria-label="WIN5 AI候補ゾーン">
-              <article class="candidate candidate--a"><span>A固定候補</span><strong>京都10R 3 キングロード</strong><small>単勝突破率74% / WIN5軸固定 / 点数圧縮</small></article>
-              <article class="candidate candidate--b"><span>B本線候補</span><strong>東京11R 7・14</strong><small>指数上位＋展開一致 / 本線2頭構成</small></article>
-              <article class="candidate candidate--c"><span>Cゾーン候補</span><strong>阪神10R 1・6・12</strong><small>荒れ許容ゾーン / 神穴6番を保険投入</small></article>
-              <article class="candidate candidate--d"><span>D爆発候補</span><strong>東京10R 9 / 福島8R 11</strong><small>人気断層×差し決着なら高配当爆発</small></article>
+            <div id="win5-candidate-output" class="win5-candidate-board" aria-label="WIN5 AI候補ゾーン">
+              <article class="candidate candidate--a"><span>A固定候補</span><strong>各レース最大2頭</strong><small>点数圧縮の最重要ゾーン</small></article>
+              <article class="candidate candidate--b"><span>B本線候補</span><strong>各レース最大1頭</strong><small>Aに次ぐ勝ち切り候補</small></article>
+              <article class="candidate candidate--c"><span>Cゾーン候補</span><strong>各レース最大1頭</strong><small>中穴・展開ハマり狙い</small></article>
+              <article class="candidate candidate--d"><span>D爆発候補</span><strong>各レース最大1頭</strong><small>高配当警戒の押さえ</small></article>
+              <article class="candidate candidate--danger"><span>危険人気馬</span><strong>自動除外警戒</strong><small>候補欄と重複した馬は危険表示</small></article>
             </div>
-            <div class="generated-summary">
-              <span>生成点数 <strong>48点</strong></span>
-              <span>推奨資金 <strong>4,800円</strong></span>
-              <span>期待回収率 <strong>142%</strong></span>
-              <span>最大想定払戻 <strong>1,840,000円</strong></span>
+            <div id="win5-summary" class="generated-summary win5-summary">
+              <span>生成点数 <strong>0点</strong></span>
+              <span>推奨資金 <strong>0円</strong></span>
+              <span>配当ライン <strong>入力待ち</strong></span>
+              <span>保存構造 <strong>localStorage v1</strong></span>
             </div>
           </div>
           <a class="card__link" href="./WIN5/WIN5_AI.md">WIN5自動生成を見る</a>
         </article>
-
 
         <article id="trifecta-generator" class="card card--featured data-card control-card trifecta-card">
           <div class="card__icon" aria-hidden="true">🎲</div>
@@ -951,6 +963,47 @@
       const saveRaceDataButton = document.querySelector("#save-race-data");
       const loadRaceDataButton = document.querySelector("#load-race-data");
 
+      const WIN5_STORAGE_KEY = "hashimoto-keiba-ai:win5-ticket:v1";
+      const win5Form = document.querySelector("#win5-generator-form");
+      const win5RaceInputs = document.querySelector("#win5-race-inputs");
+      const win5TicketOutput = document.querySelector("#win5-ticket-output");
+      const win5CandidateOutput = document.querySelector("#win5-candidate-output");
+      const win5Summary = document.querySelector("#win5-summary");
+      const win5SystemStatus = document.querySelector("#win5-system-status");
+      const win5SaveStatus = document.querySelector("#win5-save-status");
+      const saveWin5TicketButton = document.querySelector("#save-win5-ticket");
+      const loadWin5TicketButton = document.querySelector("#load-win5-ticket");
+      const clearWin5TicketButton = document.querySelector("#clear-win5-ticket");
+      const win5RaceIndexes = [1, 2, 3, 4, 5];
+      const win5Zones = [
+        { key: "a", label: "A固定候補", limit: 2, className: "candidate--a", role: "A固定2" },
+        { key: "b", label: "B本線候補", limit: 1, className: "candidate--b", role: "B本線1" },
+        { key: "c", label: "Cゾーン候補", limit: 1, className: "candidate--c", role: "C狙い1" },
+        { key: "d", label: "D爆発候補", limit: 1, className: "candidate--d", role: "D警戒1" },
+      ];
+      const win5StorageAdapters = {
+        local: {
+          save(payload) {
+            localStorage.setItem(WIN5_STORAGE_KEY, JSON.stringify(payload));
+            return payload;
+          },
+          load() {
+            const raw = localStorage.getItem(WIN5_STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+          },
+        },
+        github: {
+          save() {
+            throw new Error("GitHub保存は未接続です。win5StorageAdapters.github.saveをGitHub APIへ接続してください。");
+          },
+          load() {
+            throw new Error("GitHub保存は未接続です。win5StorageAdapters.github.loadをGitHub APIへ接続してください。");
+          },
+        },
+      };
+      let activeWin5StorageAdapter = win5StorageAdapters.local;
+      let currentWin5Payload = null;
+
       const getFormData = (form) => Object.fromEntries(new FormData(form).entries());
       const numericFields = ["number", "popularity", "odds", "cornerPosition", "aiIndex", "kamianaIndex", "dangerIndex"];
 
@@ -965,6 +1018,169 @@
       const rankBy = (field) => [...raceHorses].sort((a, b) => b[field] - a[field]);
       const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
       const formatHorse = (horse) => `${horse.number} ${horse.name}`;
+
+      const splitWin5Candidates = (value) => String(value || "")
+        .split(/[\n,、/]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      const uniqueCandidates = (items) => [...new Set(items)];
+
+      const createWin5RaceFields = () => {
+        win5RaceInputs.innerHTML = win5RaceIndexes.map((index) => `
+          <fieldset class="win5-race-fieldset">
+            <legend>レース${index}</legend>
+            <div class="win5-race-meta-grid">
+              <label><span>競馬場</span><input name="race${index}_course" type="text" placeholder="東京競馬場" /></label>
+              <label><span>レース番号</span><input name="race${index}_number" type="number" min="1" max="12" placeholder="11" /></label>
+              <label><span>レース名</span><input name="race${index}_name" type="text" placeholder="メインレース" /></label>
+              <label><span>距離</span><input name="race${index}_distance" type="text" placeholder="芝1600 / ダ1800" /></label>
+              <label><span>馬場</span><input name="race${index}_track" type="text" placeholder="良 / 稍重 / 重" /></label>
+              <label><span>頭数</span><input name="race${index}_fieldSize" type="number" min="1" max="24" placeholder="16" /></label>
+            </div>
+            <div class="win5-zone-grid">
+              ${win5Zones.map((zone) => `
+                <label class="win5-zone-input win5-zone-input--${zone.key}">
+                  <span>${zone.label}</span>
+                  <textarea name="race${index}_${zone.key}" rows="3" placeholder="馬番＋馬名を改行またはカンマ区切りで入力"></textarea>
+                  <small>${zone.role}として最大${zone.limit}頭を自動採用</small>
+                </label>
+              `).join("")}
+              <label class="win5-zone-input win5-zone-input--danger">
+                <span>危険人気馬</span>
+                <textarea name="race${index}_danger" rows="3" placeholder="消し・割引したい人気馬"></textarea>
+                <small>採用候補と重複した場合は危険表示します</small>
+              </label>
+            </div>
+          </fieldset>
+        `).join("");
+      };
+
+      const readWin5Form = () => {
+        const data = getFormData(win5Form);
+        return win5RaceIndexes.map((index) => {
+          const zones = win5Zones.reduce((accumulator, zone) => {
+            accumulator[zone.key] = splitWin5Candidates(data[`race${index}_${zone.key}`]);
+            return accumulator;
+          }, {});
+          return {
+            win: index,
+            course: data[`race${index}_course`] || "未入力",
+            raceNumber: data[`race${index}_number`] || "",
+            raceName: data[`race${index}_name`] || "未入力レース",
+            distance: data[`race${index}_distance`] || "未入力",
+            track: data[`race${index}_track`] || "未入力",
+            fieldSize: Number(data[`race${index}_fieldSize`] || 0),
+            zones,
+            dangerPopular: splitWin5Candidates(data[`race${index}_danger`]),
+          };
+        });
+      };
+
+      const buildWin5Formation = (races) => races.map((race) => {
+        const selected = [];
+        const selectedZoneMap = {};
+        win5Zones.forEach((zone) => {
+          const candidates = uniqueCandidates(race.zones[zone.key]).slice(0, zone.limit);
+          selectedZoneMap[zone.key] = candidates;
+          selected.push(...candidates.map((candidate) => ({ name: candidate, zone: zone.key, label: zone.label })));
+        });
+        const uniqueSelected = [];
+        selected.forEach((candidate) => {
+          if (!uniqueSelected.some((item) => item.name === candidate.name)) uniqueSelected.push(candidate);
+        });
+        return { ...race, selected: uniqueSelected, selectedZoneMap };
+      });
+
+      const judgeWin5PayoutLine = (formation, points) => {
+        const hasD = formation.some((race) => race.selectedZoneMap.d.length);
+        const hasC = formation.some((race) => race.selectedZoneMap.c.length);
+        if (!points) return "入力待ち";
+        if (hasD && points <= 160) return "1億ライン";
+        if ((hasD || hasC) && points <= 240) return "3000万ライン";
+        if (points <= 320) return "500万ライン";
+        return "100万ライン";
+      };
+
+      const createWin5Payload = () => {
+        const races = readWin5Form();
+        const formation = buildWin5Formation(races);
+        const counts = formation.map((race) => race.selected.length);
+        const points = counts.every((count) => count > 0) ? counts.reduce((total, count) => total * count, 1) : 0;
+        return {
+          storageVersion: 1,
+          provider: "localStorage",
+          extensibleProvider: "github-ready",
+          repositoryPath: "WIN5/買い目/",
+          generatedAt: new Date().toISOString(),
+          rule: { aFixed: 2, bMain: 1, cTarget: 1, dAlert: 1, unitYen: 100 },
+          races,
+          formation,
+          summary: {
+            raceCounts: counts,
+            points,
+            stakeYen: points * 100,
+            payoutLine: judgeWin5PayoutLine(formation, points),
+          },
+        };
+      };
+
+      const renderWin5Payload = (payload) => {
+        if (!payload) return;
+        currentWin5Payload = payload;
+        win5TicketOutput.innerHTML = payload.formation.map((race) => {
+          const selectedNames = race.selected.map((candidate) => candidate.name);
+          const dangerSet = new Set(race.dangerPopular);
+          const dangerOverlap = selectedNames.filter((name) => dangerSet.has(name));
+          const raceLabel = `${race.course}${race.raceNumber ? `${race.raceNumber}R` : ""} ${race.raceName}`;
+          return `
+            <section>
+              <span>WIN${race.win} ${escapeHtml(raceLabel)}</span>
+              <strong>${selectedNames.length ? escapeHtml(selectedNames.join(" / ")) : "未入力"}</strong>
+              <small>${escapeHtml(race.distance)} / ${escapeHtml(race.track)} / ${race.fieldSize || "?"}頭 / 採用${selectedNames.length}頭${dangerOverlap.length ? ` / 危険重複: ${escapeHtml(dangerOverlap.join("・"))}` : ""}</small>
+            </section>
+          `;
+        }).join("");
+
+        win5CandidateOutput.innerHTML = win5Zones.map((zone) => {
+          const zoneLines = payload.formation.map((race) => {
+            const candidates = race.selectedZoneMap[zone.key];
+            return `WIN${race.win}: ${candidates.length ? candidates.join("・") : "未入力"}`;
+          });
+          return `<article class="candidate ${zone.className}"><span>${zone.label}</span><strong>${escapeHtml(zone.role)}</strong><small>${escapeHtml(zoneLines.join(" / "))}</small></article>`;
+        }).join("") + `<article class="candidate candidate--danger"><span>危険人気馬</span><strong>重複警戒</strong><small>${escapeHtml(payload.formation.map((race) => `WIN${race.win}: ${race.dangerPopular.length ? race.dangerPopular.join("・") : "なし"}`).join(" / "))}</small></article>`;
+
+        win5Summary.innerHTML = `
+          <span>生成点数 <strong>${payload.summary.points.toLocaleString("ja-JP")}点</strong></span>
+          <span>推奨資金 <strong>${payload.summary.stakeYen.toLocaleString("ja-JP")}円</strong></span>
+          <span>配当ライン <strong>${escapeHtml(payload.summary.payoutLine)}</strong></span>
+          <span>保存構造 <strong>${escapeHtml(payload.provider)} v${payload.storageVersion} / ${escapeHtml(payload.repositoryPath)}</strong></span>
+        `;
+        win5SystemStatus.textContent = payload.summary.points ? `${payload.summary.points.toLocaleString("ja-JP")}点生成` : "候補不足";
+      };
+
+      const applyWin5PayloadToForm = (payload) => {
+        if (!payload) return;
+        payload.races.forEach((race) => {
+          const prefix = `race${race.win}`;
+          const values = {
+            [`${prefix}_course`]: race.course === "未入力" ? "" : race.course,
+            [`${prefix}_number`]: race.raceNumber,
+            [`${prefix}_name`]: race.raceName === "未入力レース" ? "" : race.raceName,
+            [`${prefix}_distance`]: race.distance === "未入力" ? "" : race.distance,
+            [`${prefix}_track`]: race.track === "未入力" ? "" : race.track,
+            [`${prefix}_fieldSize`]: race.fieldSize || "",
+            [`${prefix}_danger`]: race.dangerPopular.join("\n"),
+          };
+          win5Zones.forEach((zone) => {
+            values[`${prefix}_${zone.key}`] = race.zones[zone.key].join("\n");
+          });
+          Object.entries(values).forEach(([name, value]) => {
+            if (win5Form.elements[name]) win5Form.elements[name].value = value;
+          });
+        });
+        renderWin5Payload(payload);
+      };
 
       const RESULT_LOG_STORAGE_KEY = "hashimoto-keiba-ai:result-verification-logs:v1";
       const resultVerificationForm = document.querySelector("#result-verification-form");
@@ -1473,6 +1689,43 @@
         applyRacePayload(payload);
         saveStatus.textContent = payload ? "復元完了" : "保存なし";
       });
+
+      createWin5RaceFields();
+      win5Form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        renderWin5Payload(createWin5Payload());
+        win5SaveStatus.textContent = "生成完了。保存する場合は『買い目保存』を押してください。";
+      });
+
+      win5Form.addEventListener("input", () => {
+        renderWin5Payload(createWin5Payload());
+      });
+
+      saveWin5TicketButton.addEventListener("click", () => {
+        const payload = createWin5Payload();
+        activeWin5StorageAdapter.save(payload);
+        renderWin5Payload(payload);
+        win5SaveStatus.textContent = `localStorage保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })} / GitHub保存へはwin5StorageAdapters.githubを接続`;
+      });
+
+      loadWin5TicketButton.addEventListener("click", () => {
+        const payload = activeWin5StorageAdapter.load();
+        if (payload) {
+          applyWin5PayloadToForm(payload);
+          win5SaveStatus.textContent = "保存済みWIN5買い目を復元しました。";
+        } else {
+          win5SaveStatus.textContent = "保存済みWIN5買い目はありません。";
+        }
+      });
+
+      clearWin5TicketButton.addEventListener("click", () => {
+        win5Form.reset();
+        renderWin5Payload(createWin5Payload());
+        win5SaveStatus.textContent = "入力をクリアしました。保存データは残っています。";
+      });
+
+      applyWin5PayloadToForm(activeWin5StorageAdapter.load());
+      renderWin5Payload(currentWin5Payload || createWin5Payload());
 
       document.querySelector("#race-date").valueAsDate = new Date();
       applyRacePayload(activeStorageAdapter.load());
