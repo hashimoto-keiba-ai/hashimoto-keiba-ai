@@ -29,6 +29,7 @@
           <a href="#roi-dashboard">回収率</a>
           <a href="#result-verification">結果検証</a>
           <a href="#result-log-list">検証ログ</a>
+          <a href="#os-update-manager">OSアップデート</a>
           <a href="#operations-board">運用</a>
         </div>
       </nav>
@@ -58,6 +59,7 @@
           <a href="#roi-dashboard"><span>⑨</span>回収率ダッシュボード</a>
           <a href="#result-verification"><span>⑩</span>結果検証フォーム</a>
           <a href="#result-log-list"><span>⑪</span>最新結果検証ログ</a>
+          <a href="#os-update-manager"><span>⑫</span>OS自動アップデート管理</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -291,6 +293,7 @@
 
             <div class="result-actions">
               <button class="button button--primary" type="submit">結果検証ログを保存</button>
+              <button class="button button--ghost" id="reflect-result-to-os" type="button">OS管理へ反映</button>
               <button class="button button--ghost" id="result-form-reset" type="button">フォーム初期化</button>
               <p>自動保存キー: <code>hashimoto-keiba-ai:result-verification-logs:v1</code> / GitHub連携時は <code>resultLogStorageAdapters.github</code> を実装します。</p>
             </div>
@@ -315,6 +318,59 @@
             <button class="button button--ghost" type="reset">絞り込み解除</button>
           </form>
           <div id="result-log-groups" class="result-log-groups" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="os-update-manager" class="os-update-manager card card--featured data-card control-card" aria-label="OS自動アップデート管理画面">
+        <div class="card__icon" aria-hidden="true">🧠</div>
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">OS AUTO UPDATE MANAGER</p>
+              <h2>OS自動アップデート管理画面</h2>
+            </div>
+            <span class="status-pill status-pill--live" id="os-rule-count">0 RULES</span>
+          </div>
+          <p class="card__lead">競馬場OSへ反映する補正ルールを、競馬場・距離・馬場・ステータス別に登録管理します。保存はOSRuleStorage Adapter経由のlocalStorageで行い、将来はGitHub保存アダプターへ差し替えできます。</p>
+
+          <form id="os-rule-form" class="os-rule-form" aria-label="OSルール登録フォーム">
+            <fieldset class="result-fieldset os-rule-fieldset">
+              <legend>① OSルール登録フォーム</legend>
+              <label><span>競馬場</span><select name="course" required><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
+              <label><span>距離</span><input name="distance" type="text" placeholder="例: 1600m / 1800m" required /></label>
+              <label><span>芝/ダート</span><select name="surface" required><option value="芝">芝</option><option value="ダート">ダート</option><option value="障害">障害</option><option value="未設定">未設定</option></select></label>
+              <label><span>馬場状態</span><select name="trackCondition" required><option value="良">良</option><option value="稍重">稍重</option><option value="重">重</option><option value="不良">不良</option><option value="未設定">未設定</option></select></label>
+              <label><span>ペース</span><select name="pace" required><option value="超スロー">超スロー</option><option value="スロー">スロー</option><option value="平均">平均</option><option value="ハイ">ハイ</option><option value="超ハイ">超ハイ</option><option value="未設定">未設定</option></select></label>
+              <label><span>勝ち位置ゾーン</span><input name="winningZone" type="text" placeholder="例: 4角1〜5番手 / 外差し" /></label>
+              <label><span>有利脚質</span><select name="favorableRunningStyle"><option value="逃げ">逃げ</option><option value="先行">先行</option><option value="差し">差し</option><option value="追込">追込</option><option value="自在">自在</option><option value="未設定">未設定</option></select></label>
+              <label><span>採用/保留/削除</span><select name="status" required><option value="採用">採用</option><option value="保留">保留</option><option value="削除">削除</option></select></label>
+              <label class="result-form__wide"><span>危険人気馬条件</span><textarea name="dangerPopularCondition" rows="3" placeholder="例: 重馬場×外枠×差し届かずの1〜3人気"></textarea></label>
+              <label class="result-form__wide"><span>万馬券パターン</span><textarea name="longshotPattern" rows="3" placeholder="例: ハイペース前崩れで6人気以下差しが2〜3着"></textarea></label>
+              <label class="result-form__wide"><span>根拠レース</span><textarea name="evidenceRace" rows="3" placeholder="例: 2026/06/02 東京11R 安田記念 / 結果検証ログID"></textarea></label>
+              <label class="result-form__wide"><span>ルール本文・学習点</span><textarea name="ruleText" rows="4" placeholder="今回の学習点や次回から採用する具体ルール"></textarea></label>
+            </fieldset>
+            <div class="result-actions">
+              <button class="button button--primary" type="submit">OSルールを登録</button>
+              <button class="button button--ghost" id="os-rule-form-reset" type="button">登録フォーム初期化</button>
+              <p>保存キー: <code>hashimoto-keiba-ai:os-update-rules:v1</code> / GitHub保存へ拡張する時は <code>osRuleStorageAdapters.github</code> を実装します。</p>
+            </div>
+          </form>
+
+          <div class="os-rule-toolbar" aria-label="OSルール一覧絞り込み">
+            <div class="os-rule-stats" aria-label="OSルールステータス集計">
+              <article><span>採用ルール</span><strong id="os-adopt-count">0</strong></article>
+              <article><span>保留ルール</span><strong id="os-pending-count">0</strong></article>
+              <article><span>削除ルール</span><strong id="os-delete-count">0</strong></article>
+            </div>
+            <form class="result-log-filters os-rule-filters">
+              <label><span>競馬場別</span><select id="os-course-filter"><option value="">すべて</option><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
+              <label><span>距離別</span><input id="os-distance-filter" type="text" placeholder="例: 1600m" /></label>
+              <label><span>馬場別</span><select id="os-track-filter"><option value="">すべて</option><option value="良">良</option><option value="稍重">稍重</option><option value="重">重</option><option value="不良">不良</option><option value="未設定">未設定</option></select></label>
+              <label><span>ステータス別</span><select id="os-status-filter"><option value="">すべて</option><option value="採用">採用ルール</option><option value="保留">保留ルール</option><option value="削除">削除ルール</option></select></label>
+              <button class="button button--ghost" type="reset">絞り込み解除</button>
+            </form>
+          </div>
+          <div id="os-rule-groups" class="os-rule-groups" aria-live="polite"></div>
         </div>
       </section>
 
@@ -921,6 +977,20 @@
       const resultLogFilters = document.querySelector(".result-log-filters");
       const resultCheckboxFields = ["mainHit", "rivalHit", "longshotHit", "kamianaHit", "dangerPopularSuccess", "trifectaHit"];
       const resultNumericFields = ["raceNumber", "firstNumber", "firstPopularity", "secondNumber", "secondPopularity", "thirdNumber", "thirdPopularity", "trifectaPayout"];
+      const OS_RULE_STORAGE_KEY = "hashimoto-keiba-ai:os-update-rules:v1";
+      const osRuleForm = document.querySelector("#os-rule-form");
+      const osRuleFormReset = document.querySelector("#os-rule-form-reset");
+      const reflectResultToOsButton = document.querySelector("#reflect-result-to-os");
+      const osRuleCount = document.querySelector("#os-rule-count");
+      const osAdoptCount = document.querySelector("#os-adopt-count");
+      const osPendingCount = document.querySelector("#os-pending-count");
+      const osDeleteCount = document.querySelector("#os-delete-count");
+      const osRuleGroups = document.querySelector("#os-rule-groups");
+      const osRuleFilters = document.querySelector(".os-rule-filters");
+      const osCourseFilter = document.querySelector("#os-course-filter");
+      const osDistanceFilter = document.querySelector("#os-distance-filter");
+      const osTrackFilter = document.querySelector("#os-track-filter");
+      const osStatusFilter = document.querySelector("#os-status-filter");
 
       const resultLogStorageAdapters = {
         local: {
@@ -947,7 +1017,173 @@
       let activeResultLogStorageAdapter = resultLogStorageAdapters.local;
       let resultLogs = activeResultLogStorageAdapter.load();
 
+      const osRuleStorageAdapters = {
+        local: {
+          save(rules) {
+            localStorage.setItem(OS_RULE_STORAGE_KEY, JSON.stringify({ storageVersion: 1, provider: "localStorage", rules }));
+            return rules;
+          },
+          load() {
+            const raw = localStorage.getItem(OS_RULE_STORAGE_KEY);
+            if (!raw) return [];
+            const payload = JSON.parse(raw);
+            return Array.isArray(payload) ? payload : payload.rules || [];
+          },
+        },
+        github: {
+          save() {
+            throw new Error("GitHub保存は未接続です。osRuleStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          },
+          load() {
+            throw new Error("GitHub保存は未接続です。osRuleStorageAdapters.github.loadをGitHub APIへ接続してください。");
+          },
+        },
+      };
+      let activeOsRuleStorageAdapter = osRuleStorageAdapters.local;
+      let osRules = activeOsRuleStorageAdapter.load();
+
       const toNumberOrBlank = (value) => (value === "" ? "" : Number(value));
+      const normalizeRuleKeyPart = (value) => String(value || "未設定").replace(/\s+/g, "").slice(0, 80);
+
+      const createOsRuleId = (rule) => [
+        rule.course,
+        rule.distance,
+        rule.surface,
+        rule.trackCondition,
+        rule.pace,
+        rule.status,
+        rule.ruleText || rule.evidenceRace,
+      ].map(normalizeRuleKeyPart).join(":");
+
+      const getOsRuleFormPayload = () => {
+        const flat = getFormData(osRuleForm);
+        const rule = {
+          id: "",
+          savedAt: new Date().toISOString(),
+          storageVersion: 1,
+          source: { type: "manual", resultLogId: "" },
+          course: flat.course || "未選択",
+          distance: flat.distance || "未設定",
+          surface: flat.surface || "未設定",
+          trackCondition: flat.trackCondition || "未設定",
+          pace: flat.pace || "未設定",
+          winningZone: flat.winningZone || "未入力",
+          favorableRunningStyle: flat.favorableRunningStyle || "未設定",
+          dangerPopularCondition: flat.dangerPopularCondition || "未入力",
+          longshotPattern: flat.longshotPattern || "未入力",
+          status: flat.status || "保留",
+          evidenceRace: flat.evidenceRace || "未入力",
+          ruleText: flat.ruleText || "未入力",
+          learningPoint: flat.ruleText || "",
+        };
+        rule.id = createOsRuleId(rule);
+        return rule;
+      };
+
+      const upsertOsRule = (rule) => {
+        const index = osRules.findIndex((item) => item.id === rule.id);
+        if (index >= 0) {
+          osRules[index] = { ...osRules[index], ...rule, savedAt: new Date().toISOString() };
+        } else {
+          osRules = [rule, ...osRules];
+        }
+        osRules.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+        activeOsRuleStorageAdapter.save(osRules);
+        renderOsRules();
+      };
+
+      const countOsRulesByStatus = (status) => osRules.filter((rule) => rule.status === status).length;
+
+      const renderOsRules = () => {
+        const course = osCourseFilter.value;
+        const distance = osDistanceFilter.value.trim().toLowerCase();
+        const track = osTrackFilter.value;
+        const status = osStatusFilter.value;
+        const filtered = osRules.filter((rule) => (
+          (!course || rule.course === course)
+          && (!distance || String(rule.distance).toLowerCase().includes(distance))
+          && (!track || rule.trackCondition === track)
+          && (!status || rule.status === status)
+        ));
+
+        osRuleCount.textContent = `${filtered.length} RULES`;
+        osAdoptCount.textContent = countOsRulesByStatus("採用");
+        osPendingCount.textContent = countOsRulesByStatus("保留");
+        osDeleteCount.textContent = countOsRulesByStatus("削除");
+        osRuleGroups.innerHTML = "";
+
+        if (!filtered.length) {
+          osRuleGroups.innerHTML = '<p class="empty-result-log">登録済みのOSルールはまだありません。</p>';
+          return;
+        }
+
+        const groups = filtered.reduce((accumulator, rule) => {
+          const key = `${rule.course} / ${rule.distance} / ${rule.trackCondition}`;
+          accumulator[key] = accumulator[key] || [];
+          accumulator[key].push(rule);
+          return accumulator;
+        }, {});
+
+        Object.entries(groups).forEach(([groupName, rules]) => {
+          const group = document.createElement("section");
+          group.className = "os-rule-group";
+          group.innerHTML = `<h3>${escapeHtml(groupName)}</h3>`;
+          rules.forEach((rule) => {
+            const card = document.createElement("article");
+            card.className = `os-rule-card os-rule-card--${rule.status}`;
+            card.innerHTML = `
+              <div class="result-log-card__head">
+                <div><strong>${escapeHtml(rule.status)}｜${escapeHtml(rule.surface)} ${escapeHtml(rule.pace)}</strong><small>保存: ${new Date(rule.savedAt).toLocaleString("ja-JP")} / ${escapeHtml(rule.source?.type || "manual")}</small></div>
+                <span class="badge ${rule.status === "採用" ? "badge--gold" : ""}">${escapeHtml(rule.status)}ルール</span>
+              </div>
+              <p><strong>勝ち位置:</strong> ${escapeHtml(rule.winningZone)} / <strong>有利脚質:</strong> ${escapeHtml(rule.favorableRunningStyle)}</p>
+              <dl>
+                <dt>ルール本文</dt><dd>${escapeHtml(rule.ruleText)}</dd>
+                <dt>学習点</dt><dd>${escapeHtml(rule.learningPoint || "未入力")}</dd>
+                <dt>危険人気馬条件</dt><dd>${escapeHtml(rule.dangerPopularCondition)}</dd>
+                <dt>万馬券パターン</dt><dd>${escapeHtml(rule.longshotPattern)}</dd>
+                <dt>根拠レース</dt><dd>${escapeHtml(rule.evidenceRace)}</dd>
+              </dl>
+            `;
+            group.append(card);
+          });
+          osRuleGroups.append(group);
+        });
+      };
+
+      const splitRuleLines = (value) => String(value || "").split(/\n+/).map((line) => line.trim()).filter(Boolean);
+
+      const createOsRulesFromResultLog = (log) => {
+        const evidenceRace = `${log.race.date} ${log.race.course} ${log.race.raceNumber || "未設定"}R ${log.race.raceName || "未入力レース"} / ResultLogID:${log.id}`;
+        const base = {
+          savedAt: new Date().toISOString(),
+          storageVersion: 1,
+          source: { type: "resultVerification", resultLogId: log.id },
+          course: log.race.course || "未選択",
+          distance: "未設定",
+          surface: "未設定",
+          trackCondition: log.result.trackCondition || "未設定",
+          pace: log.result.actualPace || "未設定",
+          winningZone: log.result.passingOrder || "未入力",
+          favorableRunningStyle: "未設定",
+          dangerPopularCondition: "未入力",
+          longshotPattern: "未入力",
+          evidenceRace,
+          learningPoint: log.osUpdate.learningPoint || "",
+        };
+
+        const candidates = [
+          ...splitRuleLines(log.osUpdate.adoptRule).map((ruleText) => ({ ...base, status: "採用", ruleText })),
+          ...splitRuleLines(log.osUpdate.pendingRule).map((ruleText) => ({ ...base, status: "保留", ruleText })),
+          ...splitRuleLines(log.osUpdate.deleteRule).map((ruleText) => ({ ...base, status: "削除", ruleText })),
+        ];
+
+        if (log.osUpdate.learningPoint && !candidates.length) {
+          candidates.push({ ...base, status: "保留", ruleText: log.osUpdate.learningPoint });
+        }
+
+        return candidates.map((rule) => ({ ...rule, id: createOsRuleId(rule) }));
+      };
 
       const getResultFormPayload = () => {
         const formData = new FormData(resultVerificationForm);
@@ -1098,6 +1334,29 @@
       resultLogFilters.addEventListener("input", renderResultLogs);
       resultLogFilters.addEventListener("reset", () => window.requestAnimationFrame(renderResultLogs));
       renderResultLogs();
+
+      osRuleForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        upsertOsRule(getOsRuleFormPayload());
+      });
+      osRuleFormReset.addEventListener("click", () => {
+        osRuleForm.reset();
+        osRuleForm.elements.status.value = "採用";
+      });
+      osRuleFilters.addEventListener("input", renderOsRules);
+      osRuleFilters.addEventListener("reset", () => window.requestAnimationFrame(renderOsRules));
+      reflectResultToOsButton.addEventListener("click", () => {
+        const log = getResultFormPayload();
+        const reflectedRules = createOsRulesFromResultLog(log);
+        if (!upsertResultLog(log) || !reflectedRules.length) {
+          resultSaveStatus.textContent = "OS反映する学習点・ルールを入力してください";
+          return;
+        }
+        reflectedRules.forEach(upsertOsRule);
+        resultSaveStatus.textContent = `OS反映 ${reflectedRules.length}件`;
+        window.location.hash = "os-update-manager";
+      });
+      renderOsRules();
 
       const renderRanking = (target, horses, field, suffix = "") => {
         target.innerHTML = "";
