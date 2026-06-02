@@ -44,6 +44,8 @@ AI指数ランキング、今日のレース一覧、実データ入力フォー
 
 v1.0完成後の次段階として、実データ連携・自動化・AI強化を進めるための計画は [`PHASE2_ROADMAP.md`](PHASE2_ROADMAP.md) に整理しています。
 
+Phase2-1の実データ連携設計は [`DATA_IMPORT_DESIGN.md`](DATA_IMPORT_DESIGN.md) に整理しています。netkeibaやJRAの出馬表・オッズ・結果データを将来的に取り込めるよう、取込対象、取込方法、CSV標準フォーマット、結果CSVフォーマット、取込後の連動先、実装順を定義しています。
+
 Phase2では、CSV取込強化、netkeiba手動CSV変換、JRA出馬表データ取込準備、オッズ取込、AI指数/神穴指数/危険人気馬の自動計算、三連単/WIN5自動生成精度向上、`data/*.json` 保存、GitHub API保存、自己進化AI強化、iPad週末運用フローを段階的に進めます。
 
 
