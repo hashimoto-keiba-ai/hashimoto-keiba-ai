@@ -2789,3 +2789,73 @@ h1 {
     width: 100%;
   }
 }
+
+.safe-mode-settings {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(248, 196, 79, 0.3);
+  border-radius: 18px;
+  background: rgba(248, 196, 79, 0.06);
+}
+
+.safe-mode-settings legend {
+  padding: 0 8px;
+  color: var(--gold-light);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.safe-mode-settings label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.safe-mode-settings input {
+  width: auto;
+  min-height: auto;
+  accent-color: var(--gold);
+}
+
+.backup-history-panel {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.3);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.56), rgba(248, 196, 79, 0.06));
+}
+
+.backup-history-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.backup-history-actions .button {
+  min-height: 36px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.backup-history-table {
+  min-width: 860px;
+}
+
+@media (max-width: 820px) {
+  .safe-mode-settings {
+    grid-template-columns: 1fr;
+  }
+
+  .backup-history-actions {
+    justify-content: flex-end;
+  }
+
+  .backup-history-actions .button {
+    width: auto;
+  }
+}

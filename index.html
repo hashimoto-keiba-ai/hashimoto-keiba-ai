@@ -130,6 +130,12 @@
               <label><span>ブランチ名</span><input id="github-branch" name="branch" type="text" placeholder="main" /></label>
               <label><span>保存先ディレクトリ</span><input id="github-directory" name="directory" type="text" placeholder="data" /></label>
               <label class="github-settings-form__wide"><span>アクセストークン</span><input id="github-token" name="token" type="password" autocomplete="off" placeholder="fine-grained token / GitHub App token" /></label>
+              <fieldset class="safe-mode-settings github-settings-form__wide" aria-label="安全モード設定">
+                <legend>安全モード</legend>
+                <label><input id="safe-confirm-save" name="confirmBeforeSave" type="checkbox" /> <span>保存前に必ず確認する</span></label>
+                <label><input id="safe-confirm-restore" name="confirmBeforeRestore" type="checkbox" /> <span>復元前に必ず確認する</span></label>
+                <label><input id="safe-auto-github-backup" name="autoBackupBeforeGithubSave" type="checkbox" /> <span>GitHub保存前に自動バックアップする</span></label>
+              </fieldset>
               <div class="github-settings-actions github-settings-form__wide">
                 <button class="button button--primary" type="submit">設定を保存</button>
                 <button class="button button--ghost" id="test-github-connection" type="button">接続テスト</button>
@@ -1091,9 +1097,17 @@
                 </div>
                 <label class="restore-file-drop"><span>JSONファイルを選択</span><input id="restore-json-file" type="file" accept="application/json,.json" /></label>
                 <button id="restore-json-data" class="button button--primary" type="button">読み込んだJSONから復元</button>
-                <p class="restore-note">復元対象のlocalStorageキーだけを上書きします。操作前に現在の全データバックアップを推奨します。</p>
+                <p class="restore-note">復元対象のlocalStorageキーだけを上書きします。安全モードON時は復元直前に現在データを一時バックアップします。</p>
               </section>
             </div>
+
+            <section class="backup-history-panel" aria-label="バックアップ履歴">
+              <div class="form-section-heading">
+                <span>③ バックアップ履歴</span>
+                <small>GitHub保存前・復元前・手動バックアップをワンクリック復元</small>
+              </div>
+              <div class="table-wrap"><table class="data-table backup-history-table"><thead><tr><th>作成日時</th><th>保存対象</th><th>件数</th><th>種別</th><th>操作</th></tr></thead><tbody id="backup-history-body"></tbody></table></div>
+            </section>
           </div>
         </article>
 
@@ -1132,6 +1146,16 @@
       const storageModeHelp = document.querySelector("#storage-mode-help");
       const testGithubConnectionButton = document.querySelector("#test-github-connection");
       const clearGithubConfigButton = document.querySelector("#clear-github-config");
+      const safeConfirmSave = document.querySelector("#safe-confirm-save");
+      const safeConfirmRestore = document.querySelector("#safe-confirm-restore");
+      const safeAutoGithubBackup = document.querySelector("#safe-auto-github-backup");
+      const SAFE_MODE_STORAGE_KEY = "hashimoto-keiba-ai:safe-mode-settings:v1";
+      const BACKUP_HISTORY_STORAGE_KEY = "hashimoto-keiba-ai:backup-history:v1";
+      const defaultSafeModeSettings = {
+        confirmBeforeSave: true,
+        confirmBeforeRestore: true,
+        autoBackupBeforeGithubSave: true,
+      };
       const adapterKeyByMode = { localStorage: "local", github: "github" };
       const modeLabel = (mode) => mode === "github" ? "GitHub" : "localStorage";
       const resolveMaybeAsync = (value) => Promise.resolve(value);
@@ -1685,6 +1709,7 @@
       const backupWin5DataButton = document.querySelector("#backup-win5-data");
       const backupRoiDataButton = document.querySelector("#backup-roi-data");
       const restoreJsonDataButton = document.querySelector("#restore-json-data");
+      const backupHistoryBody = document.querySelector("#backup-history-body");
 
       const backupStorageTargets = [
         { type: "raceEntries", key: STORAGE_KEY, label: "レース登録データ", category: "race", coursePaths: [["race", "course"]] },
@@ -1858,6 +1883,140 @@
         };
       };
 
+      const readSafeModeSettings = () => {
+        try {
+          return { ...defaultSafeModeSettings, ...JSON.parse(localStorage.getItem(SAFE_MODE_STORAGE_KEY) || "{}") };
+        } catch (error) {
+          return { ...defaultSafeModeSettings };
+        }
+      };
+
+      const writeSafeModeSettings = (settings) => {
+        localStorage.setItem(SAFE_MODE_STORAGE_KEY, JSON.stringify(settings));
+      };
+
+      const applySafeModeSettingsToForm = () => {
+        const settings = readSafeModeSettings();
+        safeConfirmSave.checked = settings.confirmBeforeSave;
+        safeConfirmRestore.checked = settings.confirmBeforeRestore;
+        safeAutoGithubBackup.checked = settings.autoBackupBeforeGithubSave;
+      };
+
+      const saveSafeModeSettingsFromForm = () => {
+        const settings = {
+          confirmBeforeSave: safeConfirmSave.checked,
+          confirmBeforeRestore: safeConfirmRestore.checked,
+          autoBackupBeforeGithubSave: safeAutoGithubBackup.checked,
+        };
+        writeSafeModeSettings(settings);
+        return settings;
+      };
+
+      const countBackupValueItems = (value) => {
+        if (Array.isArray(value)) return value.length;
+        if (!value || typeof value !== "object") return value === null || value === undefined ? 0 : 1;
+        const listKeys = ["horses", "logs", "rules", "results", "races", "formation", "tickets", "entries"];
+        const listKey = listKeys.find((key) => Array.isArray(value[key]));
+        return listKey ? value[listKey].length : Object.keys(value).length;
+      };
+
+      const countBackupItems = (payload) => Object.values(payload?.data || {}).reduce((total, entry) => total + countBackupValueItems(entry.value), 0);
+
+      const formatBackupDate = (iso) => {
+        if (!iso) return "-";
+        return new Date(iso).toLocaleString("ja-JP", { dateStyle: "short", timeStyle: "short" });
+      };
+
+      const describeBackupTarget = (payload) => {
+        const labels = Object.values(payload?.data || {}).map((entry) => entry.label).filter(Boolean);
+        if (payload?.scope?.type === "course") return `${normalizeCourseName(payload.scope.course)}競馬場 / ${labels.join("・")}`;
+        if (payload?.scope?.type === "win5") return "WIN5買い目";
+        if (payload?.scope?.type === "roi") return "回収率データ";
+        return labels.length ? labels.join("・") : "全データ";
+      };
+
+      const getBackupHistory = () => {
+        try {
+          const history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_STORAGE_KEY) || "[]");
+          return Array.isArray(history) ? history : [];
+        } catch (error) {
+          return [];
+        }
+      };
+
+      const saveBackupHistory = (history) => {
+        localStorage.setItem(BACKUP_HISTORY_STORAGE_KEY, JSON.stringify(history.slice(0, 30)));
+      };
+
+      const renderBackupHistory = () => {
+        const history = getBackupHistory();
+        if (!backupHistoryBody) return;
+        if (!history.length) {
+          backupHistoryBody.innerHTML = '<tr><td data-label="作成日時" colspan="5">バックアップ履歴はまだありません。</td></tr>';
+          return;
+        }
+        backupHistoryBody.innerHTML = history.map((entry) => `
+          <tr>
+            <td data-label="作成日時">${escapeHtml(formatBackupDate(entry.createdAt))}</td>
+            <td data-label="保存対象"><strong>${escapeHtml(entry.targetLabel)}</strong></td>
+            <td data-label="件数">${Number(entry.itemCount || 0).toLocaleString("ja-JP")}件 / ${entry.keyCount || entry.payload?.keys?.length || 0}キー</td>
+            <td data-label="種別"><span class="badge">${escapeHtml(entry.backupKindLabel)}</span></td>
+            <td data-label="操作" class="backup-history-actions">
+              <button class="button button--primary" type="button" data-backup-action="restore" data-backup-id="${escapeHtml(entry.id)}">復元</button>
+              <button class="button button--ghost" type="button" data-backup-action="delete" data-backup-id="${escapeHtml(entry.id)}">削除</button>
+            </td>
+          </tr>
+        `).join("");
+      };
+
+      const addBackupHistory = (payload, backupKind = "manual", backupKindLabel = "手動バックアップ") => {
+        const entry = {
+          id: `${backupKind}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          createdAt: payload.createdAt || new Date().toISOString(),
+          targetLabel: describeBackupTarget(payload),
+          itemCount: countBackupItems(payload),
+          keyCount: payload.keys?.length || 0,
+          backupKind,
+          backupKindLabel,
+          payload,
+        };
+        saveBackupHistory([entry, ...getBackupHistory()]);
+        renderBackupHistory();
+        return entry;
+      };
+
+      const createTemporaryBackup = ({ scope = "all", course = "", backupKind = "temporary", backupKindLabel = "一時バックアップ" } = {}) => {
+        const payload = createBackupPayload({ scope, course });
+        addBackupHistory(payload, backupKind, backupKindLabel);
+        return payload;
+      };
+
+      const confirmBeforeSaveOperation = (label) => {
+        const settings = readSafeModeSettings();
+        return !settings.confirmBeforeSave || window.confirm(`${label}を保存します。現在データを確認しましたか？`);
+      };
+
+      const prepareBeforeSaveOperation = (label) => {
+        const activeMode = dataStorage.getActiveAdapterName();
+        if (!confirmBeforeSaveOperation(label)) return false;
+        const settings = readSafeModeSettings();
+        if (activeMode === "github" && settings.autoBackupBeforeGithubSave) {
+          createTemporaryBackup({ backupKind: "before-github-save", backupKindLabel: "保存前バックアップ" });
+          backupRestoreStatus.textContent = "GitHub保存前バックアップ作成済";
+        }
+        return true;
+      };
+
+      const prepareBeforeRestoreOperation = (label) => {
+        const settings = readSafeModeSettings();
+        if (settings.confirmBeforeRestore && !window.confirm(`${label}を実行します。現在データを一時バックアップしてから上書きしますか？`)) {
+          return false;
+        }
+        createTemporaryBackup({ backupKind: "before-restore", backupKindLabel: "復元前バックアップ" });
+        backupRestoreStatus.textContent = "復元前バックアップ作成済";
+        return true;
+      };
+
       const downloadBackupJson = (payload) => {
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -1874,7 +2033,8 @@
       const runBackup = (options) => {
         const payload = createBackupPayload(options);
         activeBackupStorageAdapter.save(payload);
-        backupRestoreStatus.textContent = `${payload.keys.length}キー出力`;
+        addBackupHistory(payload, "manual", "手動バックアップ");
+        backupRestoreStatus.textContent = `${payload.keys.length}キー出力 / 履歴に保存`;
       };
 
       const normalizeRestorePayload = (payload) => {
@@ -1937,18 +2097,52 @@
       const restoreSelectedBackup = async () => {
         try {
           const payload = normalizeRestorePayload(await readRestoreFile());
-          const message = `${payload.keys.length}件のlocalStorageキーを復元します。現在の同名データは上書きされます。実行しますか？`;
-          if (!window.confirm(message)) {
+          if (!prepareBeforeRestoreOperation("JSONインポート復元")) {
             backupRestoreStatus.textContent = "復元キャンセル";
             return;
           }
-          const restored = activeBackupStorageAdapter.restore(payload);
+          const restored = restoreBackupToLocalStorage(payload);
+          setActiveStorageMode("localStorage");
           refreshDashboardAfterRestore();
           backupRestoreStatus.textContent = `${restored.keys.length}キー復元完了`;
         } catch (error) {
           backupRestoreStatus.textContent = error.message;
         }
       };
+
+      applySafeModeSettingsToForm();
+      renderBackupHistory();
+
+      [safeConfirmSave, safeConfirmRestore, safeAutoGithubBackup].forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+          saveSafeModeSettingsFromForm();
+          githubConnectionStatus.textContent = "安全モード更新";
+          storageModeHelp.textContent = "安全モード設定を保存しました。保存/復元操作前の確認と自動バックアップに反映されます。";
+        });
+      });
+
+      backupHistoryBody.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-backup-action]");
+        if (!button) return;
+        const history = getBackupHistory();
+        const entry = history.find((item) => item.id === button.dataset.backupId);
+        if (!entry) return;
+        if (button.dataset.backupAction === "delete") {
+          if (!window.confirm(`バックアップ「${entry.targetLabel}」を削除しますか？`)) return;
+          saveBackupHistory(history.filter((item) => item.id !== entry.id));
+          renderBackupHistory();
+          backupRestoreStatus.textContent = "バックアップ履歴を削除しました。";
+          return;
+        }
+        if (!prepareBeforeRestoreOperation("バックアップ履歴からの復元")) {
+          backupRestoreStatus.textContent = "復元キャンセル";
+          return;
+        }
+        const restored = restoreBackupToLocalStorage(entry.payload);
+        setActiveStorageMode("localStorage");
+        refreshDashboardAfterRestore();
+        backupRestoreStatus.textContent = `${restored.keys.length}キーを履歴から復元しました。`;
+      });
 
       backupAllDataButton.addEventListener("click", () => runBackup({ scope: "all" }));
       backupCourseDataButton.addEventListener("click", () => runBackup({ scope: "course", course: backupCourseFilter.value }));
@@ -2500,6 +2694,10 @@
       saveRaceDataButton.addEventListener("click", async () => {
         const payload = createRacePayload();
         const activeMode = dataStorage.getActiveAdapterName();
+        if (!prepareBeforeSaveOperation("レース登録データ")) {
+          saveStatus.textContent = "保存キャンセル";
+          return;
+        }
         try {
           await resolveMaybeAsync(activeStorageAdapter.save(payload));
           await resolveMaybeAsync(dataStorage.saveData("horseEntries", {
@@ -2519,6 +2717,10 @@
 
       loadRaceDataButton.addEventListener("click", async () => {
         const activeMode = dataStorage.getActiveAdapterName();
+        if (activeMode === "github" && !prepareBeforeRestoreOperation("GitHubデータ読込")) {
+          saveStatus.textContent = "読込キャンセル";
+          return;
+        }
         try {
           const payload = await resolveMaybeAsync(activeStorageAdapter.load());
           const horsePayload = await resolveMaybeAsync(dataStorage.loadData("horseEntries", activeMode));
@@ -2532,6 +2734,10 @@
       saveTrifectaTicketButton.addEventListener("click", async () => {
         const payload = buildTrifectaPayload();
         const activeMode = dataStorage.getActiveAdapterName();
+        if (!prepareBeforeSaveOperation("三連単買い目")) {
+          trifectaSaveStatus.textContent = "保存キャンセル";
+          return;
+        }
         try {
           await resolveMaybeAsync(activeTrifectaStorageAdapter.save(payload));
           renderTrifectaPayload(payload);
@@ -2543,6 +2749,10 @@
 
       loadTrifectaTicketButton.addEventListener("click", async () => {
         const activeMode = dataStorage.getActiveAdapterName();
+        if (activeMode === "github" && !prepareBeforeRestoreOperation("GitHub三連単データ読込")) {
+          trifectaSaveStatus.textContent = "読込キャンセル";
+          return;
+        }
         try {
           const payload = await resolveMaybeAsync(activeTrifectaStorageAdapter.load());
           if (payload) {
@@ -2598,6 +2808,10 @@
       saveWin5TicketButton.addEventListener("click", async () => {
         const payload = createWin5Payload();
         const activeMode = dataStorage.getActiveAdapterName();
+        if (!prepareBeforeSaveOperation("WIN5買い目")) {
+          win5SaveStatus.textContent = "保存キャンセル";
+          return;
+        }
         try {
           await resolveMaybeAsync(activeWin5StorageAdapter.save(payload));
           renderWin5Payload(payload);
@@ -2609,6 +2823,10 @@
 
       loadWin5TicketButton.addEventListener("click", async () => {
         const activeMode = dataStorage.getActiveAdapterName();
+        if (activeMode === "github" && !prepareBeforeRestoreOperation("GitHub WIN5データ読込")) {
+          win5SaveStatus.textContent = "読込キャンセル";
+          return;
+        }
         try {
           const payload = await resolveMaybeAsync(activeWin5StorageAdapter.load());
           if (payload) {
