@@ -1350,7 +1350,7 @@ h1 {
 
 .auto-input-form {
   display: grid;
-  grid-template-columns: repeat(3, minmax(150px, 1fr)) auto;
+  grid-template-columns: repeat(4, minmax(150px, 1fr)) auto;
   gap: 12px;
   align-items: end;
   margin: 20px 0 4px;
@@ -1368,7 +1368,8 @@ h1 {
   letter-spacing: 0.08em;
 }
 
-.auto-input-form select {
+.auto-input-form select,
+.auto-input-form input {
   width: 100%;
   min-height: 46px;
   padding: 0 13px;
@@ -3499,6 +3500,7 @@ h1 {
   .horse-entry-form input,
   .horse-entry-form select,
   .auto-input-form select,
+  .auto-input-form input,
   .log-search input,
   .log-search select,
   .result-fieldset input,

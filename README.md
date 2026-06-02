@@ -4,6 +4,44 @@
 
 AI指数ランキング、今日のレース一覧、実データ入力フォーム、結果検証フォーム、最新結果検証ログ一覧、神レースTOP10、AI指数自動入力、危険人気馬自動判定、神穴ランキング（爆穴候補）、三連単自動生成、WIN5自動生成、回収率ダッシュボード、競馬場別AI、騎手ランキングを横断的に扱い、予想根拠と検証結果を再利用できる構造にしています。
 
+
+## GitHub Pages公開手順
+
+このリポジトリは、`main` ブランチ直下の `index.html` をGitHub Pagesの公開対象にする前提です。`docs/` フォルダを作成したり、公開対象に切り替えたりする必要はありません。
+
+### 公開構成
+
+GitHub Pagesでは、以下のファイルをリポジトリ直下から相対パスで読み込みます。
+
+- `index.html`
+- `src/dashboard.css`
+- `src/dashboard.js`
+- `src/storage/localStorageAdapter.js`
+- `src/storage/githubAdapter.js`
+- `src/storage/dataStorageService.js`
+- `data/*.json`
+
+`index.html` からCSS/JSは `./src/...`、自己進化ログJSONは `./data/selfEvolutionLogs.json` のように相対パスで参照するため、GitHub Pagesのリポジトリ配下URLでもPC、自宅PC、iPad、スマホから同じURLで開けます。
+
+### GitHub Pages設定
+
+1. GitHubの対象リポジトリを開く
+2. **Settings** を開く
+3. **Pages** を開く
+4. **Build and deployment** を確認する
+5. **Source: Deploy from a branch** を選択する
+6. **Branch: main** を選択する
+7. **Folder: /root** を選択する
+8. **Save** を押す
+
+### 公開後の確認項目
+
+- トップ画面が開く
+- 黒×金デザインが反映される
+- AI指数ランキングが見える
+- CSV取込画面が見える
+- iPadで開ける
+
 ## ダッシュボード
 
 トップ画面は `index.html` から開けます。黒×金の競馬AI管理画面として、スマホ表示でも主要判定を確認できるレスポンシブ構成です。
