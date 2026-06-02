@@ -1,0 +1,7 @@
+{
+  "storageVersion": 1,
+  "type": "horseEntries",
+  "provider": "github-ready-placeholder",
+  "description": "GitHub JSON保存連携時に橋本競馬AIのhorseEntriesデータを保存する想定ファイルです。現在はlocalStorageを使用します。",
+  "items": []
+}

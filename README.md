@@ -31,6 +31,31 @@ AI指数ランキング、今日のレース一覧、実データ入力フォー
 - **運用ステータス**: 出馬表、オッズ、AI指数、爆穴、危険人気馬、三連単、WIN5、回収率の処理状態を管理します。
 
 
+
+## データ保存サービス層
+
+現在のダッシュボード保存は `src/storage/dataStorageService.js` を入口にし、共通関数 `saveData(type, data)`、`loadData(type)`、`exportData(type)`、`importData(type, data)` で扱います。実体の保存先はアダプターで切り替える設計です。
+
+- **現在の保存先**: `src/storage/localStorageAdapter.js` がブラウザの `localStorage` へJSON保存します。既存の保存キーは維持しているため、これまで保存したレース、買い目、結果検証、OSルール、回収率データを壊さず読み込めます。
+- **将来のGitHub保存**: `src/storage/githubAdapter.js` は未接続の雛形です。将来、GitHub Contents APIへ接続し、`/data/*.json` を読み書きする実装を追加します。
+- **アダプター切り替え**: `HashimotoDataStorage.setActiveAdapter("localStorage")` / `HashimotoDataStorage.setActiveAdapter("github")` の形で保存先を切り替えられる構造にしています。GitHub側は現在エラーを返し、誤って未実装APIへ送信しないようにしています。
+- **対象タイプ**: `raceEntries`、`horseEntries`、`predictions`、`results`、`osUpdates`、`win5Tickets`、`roiRecords`、`betTickets`、`backupData` を共通タイプとして定義しています。
+
+保存先JSONは将来的に以下の対応を想定します。
+
+```text
+/data/
+├─ raceEntries.json
+├─ horseEntries.json
+├─ predictions.json
+├─ results.json
+├─ osUpdates.json
+├─ win5Tickets.json
+├─ roiRecords.json
+├─ betTickets.json
+└─ backupData.json
+```
+
 ## バックアップ／復元機能の使い方
 
 1. ダッシュボードの「バックアップ」または「バックアップ／復元」へ移動します。黒×金デザインの操作パネルで、スマホではバックアップ欄と復元欄が1カラム表示になります。
