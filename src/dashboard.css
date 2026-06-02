@@ -453,6 +453,12 @@ h1 {
   background: rgba(255, 107, 95, 0.14);
 }
 
+.badge--warning {
+  color: #fff0b8;
+  border-color: rgba(248, 196, 79, 0.52);
+  background: rgba(248, 196, 79, 0.18);
+}
+
 .danger-text {
   color: #ffd0cc !important;
 }
@@ -1486,6 +1492,7 @@ h1 {
 .race-entry-form,
 .horse-entry-form,
 .runner-table-panel,
+.csv-validation-panel,
 .ranking-panel,
 .bet-generator-panel,
 .storage-actions {
@@ -1504,6 +1511,86 @@ h1 {
 
 .horse-entry-form {
   grid-template-columns: repeat(2, minmax(140px, 1fr));
+}
+
+.csv-validation-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  margin-top: 18px;
+}
+
+.csv-validation-lead {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.csv-validation-controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.csv-validation-controls label {
+  display: grid;
+  gap: 8px;
+}
+
+.csv-validation-controls input[type="file"] {
+  width: 100%;
+  color: var(--muted);
+}
+
+.csv-validation-controls button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.45);
+  opacity: 0.46;
+}
+
+.csv-validation-alerts {
+  display: grid;
+  gap: 10px;
+}
+
+.csv-validation-alert {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  line-height: 1.55;
+}
+
+.csv-validation-alert--error {
+  color: #ffd0cc;
+  border: 1px solid rgba(255, 107, 95, 0.62);
+  background: rgba(255, 107, 95, 0.14);
+}
+
+.csv-validation-alert--warning {
+  color: #fff0b8;
+  border: 1px solid rgba(248, 196, 79, 0.58);
+  background: rgba(248, 196, 79, 0.14);
+}
+
+.csv-validation-alert--ok {
+  color: #d9ffe4;
+  border: 1px solid rgba(120, 240, 163, 0.42);
+  background: rgba(120, 240, 163, 0.12);
+}
+
+.csv-validation-preview-wrap {
+  margin-top: 0;
+}
+
+.csv-validation-row--エラー {
+  background: rgba(255, 107, 95, 0.08);
+}
+
+.csv-validation-row--注意 {
+  background: rgba(248, 196, 79, 0.08);
 }
 
 .entry-heading,
@@ -1814,6 +1901,7 @@ h1 {
 
 @media (max-width: 980px) {
   .entry-layout,
+  .csv-validation-controls,
   .ranking-grid,
   .bet-grid,
   .trifecta-candidate-output,
