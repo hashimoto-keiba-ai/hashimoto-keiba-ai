@@ -101,6 +101,8 @@ AI指数・神穴指数・危険人気馬指数の構成要素、基本計算式
 
 localStorage中心の保存から、JSONファイル保存とGitHub API保存へ段階的に移行し、端末依存を減らします。
 
+保存対象JSON、保存方式、GitHub API設計、保存前安全処理、設定項目、実装順の詳細は [`GITHUB_JSON_STORAGE_DESIGN.md`](GITHUB_JSON_STORAGE_DESIGN.md) に整理します。
+
 ### 実施項目
 
 - **localStorageからJSON保存へ移行**
