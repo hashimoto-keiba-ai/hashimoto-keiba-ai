@@ -1296,3 +1296,167 @@ h1 {
     padding: 14px;
   }
 }
+
+.operation-launcher {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 28px 0 10px;
+}
+
+.operation-launcher a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 58px;
+  padding: 12px 14px;
+  color: var(--gold-light);
+  font-weight: 900;
+  border: 1px solid rgba(248, 196, 79, 0.32);
+  border-radius: 18px;
+  background: rgba(255, 233, 163, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.12);
+}
+
+.operation-launcher span {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  color: #130d04;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+}
+
+.today-races-card {
+  width: min(1180px, calc(100% - 32px));
+  min-height: auto;
+  margin: 0 auto 18px;
+}
+
+.today-races-card .card__body,
+.auto-input-card .card__body,
+.trifecta-card .card__body,
+.roi-card .card__body {
+  min-width: 0;
+}
+
+.today-races-card a,
+.ticket-preview code {
+  color: var(--gold-light);
+  font-weight: 900;
+}
+
+.auto-input-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+  margin: 20px 0 4px;
+}
+
+.auto-input-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.auto-input-form span {
+  color: var(--gold-light);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.auto-input-form select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  color: var(--text);
+  border: 1px solid rgba(248, 196, 79, 0.34);
+  border-radius: 14px;
+  background: rgba(5, 5, 5, 0.7);
+}
+
+.ticket-preview {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ticket-preview code {
+  display: block;
+  padding: 13px 14px;
+  white-space: normal;
+  border: 1px solid rgba(248, 196, 79, 0.24);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.roi-panels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.roi-panels section {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 233, 163, 0.07);
+}
+
+.roi-panels span,
+.roi-panels small {
+  display: block;
+  color: var(--muted);
+}
+
+.roi-panels strong {
+  display: block;
+  margin: 8px 0;
+  color: var(--gold-light);
+  font-size: 1.6rem;
+}
+
+.roi-chart {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  align-items: end;
+  min-height: 170px;
+  padding: 16px;
+  border: 1px solid rgba(248, 196, 79, 0.24);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 233, 163, 0.06), rgba(0, 0, 0, 0.28));
+}
+
+.roi-chart span {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 48px;
+  padding: 8px 4px;
+  color: #120d04;
+  font-weight: 900;
+  border-radius: 12px 12px 6px 6px;
+  background: linear-gradient(180deg, var(--gold-light), var(--gold-deep));
+}
+
+@media (max-width: 980px) {
+  .operation-launcher,
+  .auto-input-form,
+  .roi-panels {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .operation-launcher,
+  .auto-input-form,
+  .roi-panels,
+  .roi-chart {
+    grid-template-columns: 1fr;
+  }
+}
