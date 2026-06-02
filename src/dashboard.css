@@ -3331,3 +3331,301 @@ h1 {
     min-height: auto;
   }
 }
+
+/* iPad / smartphone dedicated command UI */
+.device-command-ui,
+.fixed-action-bar,
+.bottom-device-nav {
+  display: none;
+}
+
+.device-command-ui {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto 18px;
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.42);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(248, 196, 79, 0.2), transparent 22rem),
+    linear-gradient(145deg, rgba(20, 14, 5, 0.96), rgba(0, 0, 0, 0.9));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 233, 163, 0.12);
+}
+
+.device-race-rail,
+.device-priority-card {
+  border: 1px solid rgba(248, 196, 79, 0.28);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255, 233, 163, 0.08), rgba(0, 0, 0, 0.34));
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.1);
+}
+
+.device-race-rail {
+  position: sticky;
+  top: 12px;
+  display: grid;
+  gap: 12px;
+  align-self: start;
+  padding: 16px;
+}
+
+.device-section-heading h2 {
+  margin: 6px 0 4px;
+  color: var(--gold-light);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.device-section-heading span,
+.device-priority-card small,
+.device-race-rail a span {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.device-race-rail a {
+  display: grid;
+  gap: 5px;
+  min-height: 68px;
+  padding: 13px;
+  border: 1px solid rgba(248, 196, 79, 0.22);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.device-race-rail a strong,
+.device-priority-card strong {
+  color: var(--gold-light);
+}
+
+.device-priority-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.device-priority-card {
+  display: grid;
+  gap: 10px;
+  min-height: 196px;
+  padding: 16px;
+}
+
+.device-priority-card span {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.device-priority-card strong {
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+.device-priority-card .button {
+  align-self: end;
+  min-height: 52px;
+}
+
+.device-priority-card--gold {
+  border-color: rgba(248, 196, 79, 0.58);
+  background: linear-gradient(145deg, rgba(248, 196, 79, 0.16), rgba(0, 0, 0, 0.34));
+}
+
+.device-priority-card--danger {
+  border-color: rgba(255, 107, 95, 0.44);
+  background: linear-gradient(145deg, rgba(80, 16, 11, 0.38), rgba(0, 0, 0, 0.38));
+}
+
+@media (max-width: 1180px) and (min-width: 761px) {
+  body {
+    padding-bottom: 142px;
+  }
+
+  .device-command-ui {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.82fr) minmax(420px, 1.18fr);
+    gap: 16px;
+  }
+
+  .topbar {
+    border-radius: 28px;
+  }
+
+  .nav-links {
+    max-height: 124px;
+    overflow-y: auto;
+  }
+
+  .fixed-action-bar,
+  .bottom-device-nav {
+    display: flex;
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    padding-bottom: 156px;
+  }
+
+  .device-command-ui {
+    display: grid;
+    width: min(100% - 22px, 1180px);
+    gap: 12px;
+    padding: 14px;
+    border-radius: 24px;
+  }
+
+  .device-race-rail {
+    position: static;
+    padding: 14px;
+  }
+
+  .device-priority-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .device-priority-card {
+    min-height: auto;
+    padding: 15px;
+  }
+
+  .button,
+  .course-chip,
+  .fixed-action,
+  .bottom-device-nav a,
+  .race-entry-form input,
+  .race-entry-form select,
+  .horse-entry-form input,
+  .horse-entry-form select,
+  .auto-input-form select,
+  .log-search input,
+  .log-search select,
+  .result-fieldset input,
+  .result-fieldset select,
+  .result-fieldset textarea,
+  .result-log-filters input,
+  .result-log-filters select,
+  .backtest-filter-form input,
+  .backtest-filter-form select,
+  .win5-race-fieldset input,
+  .win5-race-fieldset textarea,
+  .github-settings-form input,
+  .github-settings-form select,
+  .backup-course-select select,
+  .restore-file-drop input {
+    min-height: 52px;
+    font-size: 1rem;
+  }
+
+  .hero__actions .button,
+  .operation-launcher a,
+  .auto-input-form .button,
+  .github-settings-actions .button,
+  .entry-actions .button,
+  .storage-actions .button,
+  .result-actions .button,
+  .win5-actions .button,
+  .backup-button-grid .button,
+  .restore-panel .button {
+    width: 100%;
+  }
+
+  .summary,
+  .status-strip,
+  .dashboard-grid,
+  .footer {
+    width: min(100% - 22px, 1180px);
+  }
+
+  .dashboard-grid {
+    gap: 14px;
+  }
+}
+
+.fixed-action-bar {
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  left: max(12px, env(safe-area-inset-left));
+  z-index: 30;
+  gap: 8px;
+  justify-content: center;
+  padding: 9px;
+  border: 1px solid rgba(248, 196, 79, 0.36);
+  border-radius: 22px;
+  background: rgba(5, 5, 5, 0.9);
+  box-shadow: 0 16px 46px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 233, 163, 0.1);
+  backdrop-filter: blur(16px);
+}
+
+.fixed-action {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 10px;
+  color: var(--gold-light);
+  font-weight: 900;
+  text-align: center;
+  border: 1px solid rgba(248, 196, 79, 0.3);
+  border-radius: 16px;
+  background: rgba(255, 233, 163, 0.08);
+}
+
+.fixed-action--primary {
+  color: #120d04;
+  border-color: rgba(255, 233, 163, 0.75);
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+}
+
+.bottom-device-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 29;
+  justify-content: space-around;
+  padding: 8px max(8px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  border-top: 1px solid rgba(248, 196, 79, 0.36);
+  background: rgba(5, 5, 5, 0.94);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.56), inset 0 1px 0 rgba(255, 233, 163, 0.1);
+  backdrop-filter: blur(16px);
+}
+
+.bottom-device-nav a {
+  display: grid;
+  flex: 1 1 0;
+  gap: 3px;
+  min-height: 58px;
+  place-items: center;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.bottom-device-nav span {
+  color: var(--gold-light);
+  font-size: 1.16rem;
+}
+
+.bottom-device-nav strong {
+  font-size: inherit;
+}
+
+@media (max-width: 420px) {
+  .fixed-action-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: grid;
+  }
+
+  .fixed-action {
+    min-height: 44px;
+    font-size: 0.88rem;
+  }
+
+  .bottom-device-nav a {
+    font-size: 0.66rem;
+  }
+}

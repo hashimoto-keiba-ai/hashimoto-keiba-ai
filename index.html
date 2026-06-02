@@ -110,6 +110,47 @@
       </section>
 
 
+      <section class="device-command-ui" aria-label="iPad・スマホ専用クイックUI">
+        <aside class="device-race-rail" aria-label="iPad左カラム レース一覧">
+          <div class="device-section-heading">
+            <p class="card__kicker">iPad Race List</p>
+            <h2>今日のレース</h2>
+            <span>横画面は左に固定表示</span>
+          </div>
+          <a href="#today-races"><strong>10:05 東京1R</strong><span>AI勝負度71 / 指数入力へ</span></a>
+          <a href="#bakuana-ranking"><strong>13:55 福島8R</strong><span>AI勝負度88 / 神穴確認</span></a>
+          <a href="#trifecta-generator"><strong>15:10 阪神10R 灘S</strong><span>AI勝負度93 / 買い目生成</span></a>
+          <a href="#win5-ai-screen"><strong>15:40 東京11R 安田記念</strong><span>AI勝負度96 / WIN5生成</span></a>
+        </aside>
+        <div class="device-priority-stack" aria-label="iPad右カラム AI指数・神穴・危険人気馬・買い目">
+          <article class="device-priority-card device-priority-card--gold">
+            <span>AI指数</span>
+            <strong>7 ゴールドブリッツ / 96.5</strong>
+            <small>スマホでは最上段に表示。指数確認ボタンを大きく配置します。</small>
+            <a class="button button--primary" href="#ai-index-ranking">AI指数を見る</a>
+          </article>
+          <article class="device-priority-card">
+            <span>神穴</span>
+            <strong>6 レッドオービット / 91.8</strong>
+            <small>中穴・爆穴候補を先に確認し、三連系の相手候補へ反映します。</small>
+            <a class="button button--ghost" href="#bakuana-ranking">神穴を見る</a>
+          </article>
+          <article class="device-priority-card device-priority-card--danger">
+            <span>危険人気馬</span>
+            <strong>1 サンライズノヴァ / 危険82</strong>
+            <small>人気過剰・展開不利・馬場不一致を赤系アクセントで警告します。</small>
+            <a class="button button--ghost" href="#danger-popular">危険馬を見る</a>
+          </article>
+          <article class="device-priority-card">
+            <span>買い目</span>
+            <strong>三連単 8/12/16点・WIN5候補</strong>
+            <small>買い目生成と保存ログを下部固定ボタンから即操作できます。</small>
+            <a class="button button--primary" href="#trifecta-generator">買い目生成</a>
+          </article>
+        </div>
+      </section>
+
+
       <section id="command-dashboard" class="command-dashboard" aria-label="橋本競馬AI 総合司令塔UI">
         <div class="command-dashboard__head">
           <div>
@@ -1295,6 +1336,21 @@
         </article>
       </section>
     </main>
+
+    <nav class="fixed-action-bar" aria-label="重要操作固定メニュー">
+      <a class="fixed-action fixed-action--primary" href="#save-race-data">保存</a>
+      <a class="fixed-action" href="#trifecta-generator">買い目生成</a>
+      <a class="fixed-action" href="#result-verification">結果検証</a>
+      <a class="fixed-action" href="#backup-restore">バックアップ</a>
+    </nav>
+
+    <nav class="bottom-device-nav" aria-label="スマホ・iPad下部固定ナビゲーション">
+      <a href="#top"><span aria-hidden="true">🏠</span><strong>ホーム</strong></a>
+      <a href="#today-races"><span aria-hidden="true">📅</span><strong>今日のレース</strong></a>
+      <a href="#ai-index-ranking"><span aria-hidden="true">📈</span><strong>AI指数</strong></a>
+      <a href="#trifecta-generator"><span aria-hidden="true">🎫</span><strong>買い目</strong></a>
+      <a href="#save-log-search"><span aria-hidden="true">💾</span><strong>保存ログ</strong></a>
+    </nav>
 
     <footer class="footer">
       <p>橋本競馬AI — 予想、検証、保存ログ、WIN5をつなぐ競馬AIダッシュボード</p>
