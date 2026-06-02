@@ -206,17 +206,31 @@
               <small>AI generated tickets</small>
             </div>
             <div class="bet-grid">
-              <article><span>三連単</span><strong id="generated-trifecta">出走馬を3頭以上入力してください</strong><small>AI上位を頭、神穴上位を3着候補に自動配置</small></article>
+              <article><span>三連単</span><strong id="generated-trifecta">出走馬を3頭以上入力してください</strong><small>頭数別の点数上限、1人気ルール、危険人気馬の頭除外を反映</small></article>
               <article><span>WIN5</span><strong id="generated-win5">レース登録後に生成</strong><small>AI指数上位2頭をWIN5候補として保存</small></article>
               <article><span>穴馬候補</span><strong id="generated-longshots">未生成</strong><small>神穴指数が高く人気薄の馬を抽出</small></article>
               <article><span>危険人気馬</span><strong id="generated-danger">未生成</strong><small>人気上位かつ危険指数が高い馬を抽出</small></article>
+            </div>
+            <div class="trifecta-engine-panel" aria-label="三連単フォーメーション詳細">
+              <div class="trifecta-engine-toolbar">
+                <div>
+                  <strong>三連単フォーメーション・買い目一覧</strong>
+                  <small id="trifecta-save-status">localStorage待機中 / GitHub保存アダプター拡張対応</small>
+                </div>
+                <div class="trifecta-engine-actions">
+                  <button class="button button--primary" id="save-trifecta-ticket" type="button">三連単買い目保存</button>
+                  <button class="button button--ghost" id="load-trifecta-ticket" type="button">保存買い目読込</button>
+                </div>
+              </div>
+              <div id="trifecta-candidate-output" class="trifecta-candidate-output" aria-live="polite"></div>
+              <div id="trifecta-ticket-output" class="trifecta-ticket-output" aria-live="polite"></div>
             </div>
           </div>
 
           <div class="storage-actions">
             <button class="button button--primary" id="save-race-data" type="button">⑤ localStorageに保存</button>
             <button class="button button--ghost" id="load-race-data" type="button">保存データを復元</button>
-            <p id="storage-note">保存キー: <code>hashimoto-keiba-ai:real-race-entry:v1</code> / GitHub保存へ拡張する時はStorage Adapterを差し替えます。</p>
+            <p id="storage-note">保存キー: <code>hashimoto-keiba-ai:real-race-entry:v1</code> / 買い目キー: <code>hashimoto-keiba-ai:trifecta-tickets:v1</code> / GitHub保存へ拡張する時はStorage Adapterを差し替えます。</p>
           </div>
         </div>
       </section>
@@ -832,20 +846,19 @@
                 <p class="card__kicker">TRIFECTA AUTO GENERATOR</p>
                 <h2>三連単自動生成</h2>
               </div>
-              <span class="status-pill status-pill--live">36点 AUTO</span>
+              <span class="status-pill status-pill--live">8/12/16点 AUTO</span>
             </div>
-            <p class="card__lead">AI指数、危険人気馬、爆穴候補、資金上限を組み合わせて、1着固定・2着流し・3着広めの三連単フォーメーションを自動生成します。</p>
+            <p class="card__lead">実データ入力フォームのAI指数、神穴指数、危険人気馬指数から、1着候補・2着候補・3着候補を自動抽出。10頭以下は8点、11〜14頭は12点、15〜18頭は16点を基本点数にし、1人気は2着固定せず、危険人気馬指数が高い馬は頭から除外します。</p>
             <div class="generated-summary" aria-label="三連単生成条件">
-              <span><strong>対象</strong> 阪神10R 灘S</span>
-              <span><strong>1着軸</strong> 7,12</span>
-              <span><strong>2着</strong> 6,7,12</span>
-              <span><strong>3着</strong> 1,3,6,7,12,14</span>
-              <span><strong>推奨資金</strong> 3,600円</span>
+              <span><strong>本線</strong> Aゾーン頭×AI上位2着×総合3着</span>
+              <span><strong>攻撃型</strong> B/Cゾーン頭を混ぜて高配当化</span>
+              <span><strong>万馬券型</strong> B/Cゾーン頭×神穴3着</span>
+              <span><strong>保存</strong> localStorage v1 / GitHub Adapter準備済み</span>
             </div>
             <div class="ticket-preview" aria-label="三連単買い目プレビュー">
-              <code>7,12 → 6,7,12 → 1,3,6,7,12,14</code>
-              <code>6爆穴絡み: 7 → 6 → 1,3,12,14 / 12 → 6 → 1,3,7,14</code>
-              <code>危険人気馬1番は3着まで、頭固定から除外</code>
+              <code>1人気ルール: 1人気は原則「1着」または「3着」のみ。2着候補からは自動除外。</code>
+              <code>危険人気馬除外: 危険人気馬指数80以上の人気馬は1着候補から除外。</code>
+              <code>攻撃型: Bゾーン頭・Cゾーン頭・神穴3着を含め、本線 / 攻撃型 / 万馬券型に分けて表示。</code>
             </div>
           </div>
           <a class="card__link" href="./万馬券DB/README.md">三連単ロジックを見る</a>
@@ -1039,9 +1052,38 @@
       const generatedWin5 = document.querySelector("#generated-win5");
       const generatedLongshots = document.querySelector("#generated-longshots");
       const generatedDanger = document.querySelector("#generated-danger");
+      const trifectaCandidateOutput = document.querySelector("#trifecta-candidate-output");
+      const trifectaTicketOutput = document.querySelector("#trifecta-ticket-output");
+      const trifectaSaveStatus = document.querySelector("#trifecta-save-status");
+      const saveTrifectaTicketButton = document.querySelector("#save-trifecta-ticket");
+      const loadTrifectaTicketButton = document.querySelector("#load-trifecta-ticket");
       const clearHorsesButton = document.querySelector("#clear-horses");
       const saveRaceDataButton = document.querySelector("#save-race-data");
       const loadRaceDataButton = document.querySelector("#load-race-data");
+
+      const TRIFECTA_STORAGE_KEY = "hashimoto-keiba-ai:trifecta-tickets:v1";
+      const trifectaStorageAdapters = {
+        local: {
+          save(payload) {
+            localStorage.setItem(TRIFECTA_STORAGE_KEY, JSON.stringify(payload));
+            return payload;
+          },
+          load() {
+            const raw = localStorage.getItem(TRIFECTA_STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+          },
+        },
+        github: {
+          save() {
+            throw new Error("GitHub保存は未接続です。trifectaStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          },
+          load() {
+            throw new Error("GitHub保存は未接続です。trifectaStorageAdapters.github.loadをGitHub APIへ接続してください。");
+          },
+        },
+      };
+      let activeTrifectaStorageAdapter = trifectaStorageAdapters.local;
+      let currentTrifectaPayload = null;
 
       const WIN5_STORAGE_KEY = "hashimoto-keiba-ai:win5-ticket:v1";
       const win5Form = document.querySelector("#win5-generator-form");
@@ -1098,6 +1140,8 @@
       const rankBy = (field) => [...raceHorses].sort((a, b) => b[field] - a[field]);
       const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
       const formatHorse = (horse) => `${horse.number} ${horse.name}`;
+      const formatHorseWithZone = (horse) => horse ? `${formatHorse(horse)}（${horse.popularity}人気 / AI${horse.aiIndex} / 神穴${horse.kamianaIndex} / 危険${horse.dangerIndex}）` : "該当なし";
+      const uniqueByHorseNumber = (horses) => [...new Map(horses.filter(Boolean).map((horse) => [horse.number, horse])).values()];
 
       const splitWin5Candidates = (value) => String(value || "")
         .split(/[\n,、/]+/)
@@ -1872,17 +1916,134 @@
         });
       };
 
+      const getTrifectaTargetPointCount = (fieldSize) => {
+        const size = Number(fieldSize) || raceHorses.length;
+        if (size <= 10) return 8;
+        if (size <= 14) return 12;
+        return 16;
+      };
+
+      const createTrifectaTicket = (first, second, third, type, reason) => {
+        if (!first || !second || !third) return null;
+        if (first.number === second.number || first.number === third.number || second.number === third.number) return null;
+        if (second.popularity === 1) return null;
+        return {
+          key: `${first.number}-${second.number}-${third.number}`,
+          first,
+          second,
+          third,
+          type,
+          reason,
+          notation: `${first.number} → ${second.number} → ${third.number}`,
+        };
+      };
+
+      const pushTrifectaTickets = (tickets, sourceTickets, limit) => {
+        sourceTickets.some((ticket) => {
+          if (!ticket || tickets.some((item) => item.key === ticket.key)) return false;
+          tickets.push(ticket);
+          return tickets.length >= limit;
+        });
+      };
+
+      const buildTrifectaPayload = () => {
+        const race = getFormData(raceForm);
+        const fieldSize = Number(race.fieldSize) || raceHorses.length;
+        const targetPoints = getTrifectaTargetPointCount(fieldSize);
+        const aiTop = rankBy("aiIndex");
+        const kamianaTop = rankBy("kamianaIndex");
+        const dangerTop = rankBy("dangerIndex");
+        const favorite = raceHorses.find((horse) => horse.popularity === 1);
+        const dangerHeadExcluded = raceHorses.filter((horse) => horse.dangerIndex >= 80 && horse.popularity <= 5);
+        const isHeadAllowed = (horse) => horse && !dangerHeadExcluded.some((danger) => danger.number === horse.number);
+        const aZone = uniqueByHorseNumber(aiTop.filter(isHeadAllowed).slice(0, 2));
+        const bZone = uniqueByHorseNumber(aiTop.filter(isHeadAllowed).slice(2, 5));
+        const cZone = uniqueByHorseNumber(kamianaTop.filter((horse) => isHeadAllowed(horse) && (horse.popularity >= 6 || horse.kamianaIndex >= 72 || horse.odds >= 15)).slice(0, 4));
+        const firstCandidates = uniqueByHorseNumber([...aZone, ...bZone, ...cZone]);
+        const secondCandidates = uniqueByHorseNumber(aiTop.filter((horse) => horse.popularity !== 1).slice(0, 6));
+        const kamianaThird = uniqueByHorseNumber(kamianaTop.filter((horse) => horse.popularity >= 4 || horse.kamianaIndex >= 70 || horse.odds >= 12).slice(0, 5));
+        const thirdCandidates = uniqueByHorseNumber([...aiTop.slice(0, 5), ...kamianaThird, favorite ? [favorite] : []]).slice(0, 9);
+        const longshotThird = kamianaThird.length ? kamianaThird : thirdCandidates;
+        const base = {
+          storageVersion: 1,
+          provider: "localStorage",
+          extensibleProvider: "github-ready",
+          repositoryPath: "万馬券DB/三連単買い目/",
+          generatedAt: new Date().toISOString(),
+          race,
+          fieldSize,
+          targetPoints,
+          rules: {
+            pointControl: "10頭以下8点 / 11〜14頭12点 / 15〜18頭16点",
+            favoriteRule: "1人気は原則1着・3着のみ。2着候補から除外。",
+            dangerRule: "危険人気馬指数80以上かつ5人気以内は1着候補から除外。",
+          },
+          candidates: { aZone, bZone, cZone, firstCandidates, secondCandidates, thirdCandidates, kamianaThird, dangerHeadExcluded, favorite },
+          tickets: { main: [], attack: [], jackpot: [] },
+          summary: { total: 0, stakeYen: 0 },
+        };
+
+        if (raceHorses.length < 3) return base;
+
+        const mainSource = aZone.flatMap((first) => secondCandidates.flatMap((second) => thirdCandidates.map((third) => createTrifectaTicket(first, second, third, "本線", "Aゾーン頭×AI上位2着×総合3着"))));
+        const attackHeads = uniqueByHorseNumber([...bZone, ...cZone]);
+        const attackSource = attackHeads.flatMap((first) => secondCandidates.flatMap((second) => thirdCandidates.map((third) => createTrifectaTicket(first, second, third, "攻撃型", "B/Cゾーン頭で高配当を狙う"))));
+        const jackpotSource = attackHeads.flatMap((first) => secondCandidates.flatMap((second) => longshotThird.map((third) => createTrifectaTicket(first, second, third, "万馬券型", "B/Cゾーン頭×神穴3着"))));
+
+        const tickets = [];
+        pushTrifectaTickets(tickets, mainSource, Math.ceil(targetPoints * 0.5));
+        const attackLimit = Math.ceil(targetPoints * 0.75);
+        pushTrifectaTickets(tickets, attackSource, attackLimit);
+        pushTrifectaTickets(tickets, jackpotSource, targetPoints);
+        if (tickets.length < targetPoints) pushTrifectaTickets(tickets, [...mainSource, ...attackSource, ...jackpotSource], targetPoints);
+
+        base.tickets.main = tickets.filter((ticket) => ticket.type === "本線");
+        base.tickets.attack = tickets.filter((ticket) => ticket.type === "攻撃型");
+        base.tickets.jackpot = tickets.filter((ticket) => ticket.type === "万馬券型");
+        base.summary.total = tickets.length;
+        base.summary.stakeYen = tickets.length * 100;
+        return base;
+      };
+
+      const renderTrifectaPayload = (payload) => {
+        currentTrifectaPayload = payload;
+        if (!payload || payload.summary.total === 0) {
+          generatedTrifecta.textContent = raceHorses.length >= 3 ? "条件に合う買い目がありません" : "出走馬を3頭以上入力してください";
+          trifectaCandidateOutput.innerHTML = '<p class="empty-state">出走馬を3頭以上入力すると、本線・攻撃型・万馬券型の買い目を自動生成します。</p>';
+          trifectaTicketOutput.innerHTML = "";
+          return;
+        }
+
+        const { candidates, tickets, targetPoints, summary } = payload;
+        const formatList = (horses) => horses.length ? horses.map(formatHorse).join(" / ") : "該当なし";
+        generatedTrifecta.textContent = `${summary.total}点 / 基本${targetPoints}点 / ${summary.stakeYen.toLocaleString("ja-JP")}円`;
+        trifectaCandidateOutput.innerHTML = `
+          <article><span>1着候補</span><strong>${escapeHtml(formatList(candidates.firstCandidates))}</strong><small>A:${escapeHtml(formatList(candidates.aZone))} / B:${escapeHtml(formatList(candidates.bZone))} / C:${escapeHtml(formatList(candidates.cZone))}</small></article>
+          <article><span>2着候補</span><strong>${escapeHtml(formatList(candidates.secondCandidates))}</strong><small>1人気は2着候補から自動除外</small></article>
+          <article><span>3着候補</span><strong>${escapeHtml(formatList(candidates.thirdCandidates))}</strong><small>神穴3着: ${escapeHtml(formatList(candidates.kamianaThird))}</small></article>
+          <article><span>危険人気馬</span><strong>${escapeHtml(formatList(candidates.dangerHeadExcluded))}</strong><small>危険指数80以上の人気馬は1着候補から除外</small></article>
+        `;
+
+        const renderGroup = (label, groupTickets, className) => `
+          <section class="trifecta-ticket-group ${className}">
+            <h4>${label}<span>${groupTickets.length}点</span></h4>
+            ${groupTickets.length ? `<ol>${groupTickets.map((ticket) => `<li><code>${escapeHtml(ticket.notation)}</code><small>${escapeHtml(formatHorseWithZone(ticket.first))} → ${escapeHtml(formatHorseWithZone(ticket.second))} → ${escapeHtml(formatHorseWithZone(ticket.third))}</small></li>`).join("")}</ol>` : '<p class="empty-state">該当買い目なし</p>'}
+          </section>
+        `;
+        trifectaTicketOutput.innerHTML = [
+          renderGroup("本線", tickets.main, "trifecta-ticket-group--main"),
+          renderGroup("攻撃型", tickets.attack, "trifecta-ticket-group--attack"),
+          renderGroup("万馬券型", tickets.jackpot, "trifecta-ticket-group--jackpot"),
+        ].join("");
+      };
+
       const generateBets = () => {
         const aiTop = rankBy("aiIndex");
         const kamianaTop = rankBy("kamianaIndex");
         const dangerTop = rankBy("dangerIndex");
         const longshots = kamianaTop.filter((horse) => horse.popularity >= 6 || horse.odds >= 15).slice(0, 3);
         const dangerousPopular = dangerTop.filter((horse) => horse.popularity <= 5).slice(0, 3);
-        const head = aiTop.slice(0, 2).map((horse) => horse.number);
-        const second = aiTop.slice(0, 4).map((horse) => horse.number);
-        const third = [...new Set([...second, ...longshots.map((horse) => horse.number)])].slice(0, 7);
-
-        generatedTrifecta.textContent = raceHorses.length >= 3 ? `${head.join(",")} → ${second.join(",")} → ${third.join(",")}` : "出走馬を3頭以上入力してください";
+        renderTrifectaPayload(buildTrifectaPayload());
         generatedWin5.textContent = aiTop.length ? aiTop.slice(0, 2).map(formatHorse).join(" / ") : "レース登録後に生成";
         generatedLongshots.textContent = longshots.length ? longshots.map(formatHorse).join(" / ") : "該当なし";
         generatedDanger.textContent = dangerousPopular.length ? dangerousPopular.map(formatHorse).join(" / ") : "該当なし";
@@ -1899,8 +2060,12 @@
       const createRacePayload = () => ({
         race: getFormData(raceForm),
         horses: raceHorses,
+        generatedTickets: buildTrifectaPayload(),
         generatedAt: new Date().toISOString(),
         storageVersion: 1,
+        provider: "localStorage",
+        extensibleProvider: "github-ready",
+        repositoryPath: "各競馬場フォルダ/2026/事前予想/",
       });
 
       const applyRacePayload = (payload) => {
@@ -1945,6 +2110,23 @@
         const payload = activeStorageAdapter.load();
         applyRacePayload(payload);
         saveStatus.textContent = payload ? "復元完了" : "保存なし";
+      });
+
+      saveTrifectaTicketButton.addEventListener("click", () => {
+        const payload = buildTrifectaPayload();
+        activeTrifectaStorageAdapter.save(payload);
+        renderTrifectaPayload(payload);
+        trifectaSaveStatus.textContent = `localStorage保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })} / GitHub保存へはtrifectaStorageAdapters.githubを接続`;
+      });
+
+      loadTrifectaTicketButton.addEventListener("click", () => {
+        const payload = activeTrifectaStorageAdapter.load();
+        if (payload) {
+          renderTrifectaPayload(payload);
+          trifectaSaveStatus.textContent = "保存済み三連単買い目を復元しました。";
+        } else {
+          trifectaSaveStatus.textContent = "保存済み三連単買い目はありません。";
+        }
       });
 
       investmentDate.valueAsDate = new Date();

@@ -1674,11 +1674,155 @@ h1 {
   color: var(--gold-light);
 }
 
+
+.trifecta-engine-panel {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.32);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(248, 196, 79, 0.14), transparent 18rem),
+    linear-gradient(145deg, rgba(8, 8, 8, 0.92), rgba(25, 17, 5, 0.88));
+}
+
+.trifecta-engine-toolbar,
+.trifecta-engine-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.trifecta-engine-toolbar {
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.trifecta-engine-toolbar strong,
+.trifecta-engine-toolbar small {
+  display: block;
+}
+
+.trifecta-engine-toolbar strong {
+  color: var(--gold-light);
+  font-size: 1.05rem;
+}
+
+.trifecta-engine-toolbar small,
+.trifecta-ticket-group li small,
+.empty-state {
+  color: var(--muted);
+}
+
+.trifecta-candidate-output {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.trifecta-candidate-output article,
+.trifecta-ticket-group {
+  border: 1px solid rgba(248, 196, 79, 0.24);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.trifecta-candidate-output article {
+  padding: 14px;
+}
+
+.trifecta-candidate-output span,
+.trifecta-candidate-output strong,
+.trifecta-candidate-output small {
+  display: block;
+}
+
+.trifecta-candidate-output span {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.trifecta-candidate-output strong {
+  margin: 7px 0;
+  color: var(--gold-light);
+  line-height: 1.5;
+}
+
+.trifecta-candidate-output small {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.trifecta-ticket-output {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.trifecta-ticket-group {
+  overflow: hidden;
+}
+
+.trifecta-ticket-group h4 {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  color: #120d04;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+}
+
+.trifecta-ticket-group ol {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 14px 14px 14px 34px;
+}
+
+.trifecta-ticket-group li::marker {
+  color: var(--gold);
+  font-weight: 900;
+}
+
+.trifecta-ticket-group code,
+.trifecta-ticket-group li small {
+  display: block;
+}
+
+.trifecta-ticket-group code {
+  color: var(--gold-light);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.trifecta-ticket-group--attack h4 {
+  background: linear-gradient(135deg, #f0a629, var(--gold));
+}
+
+.trifecta-ticket-group--jackpot h4 {
+  background: linear-gradient(135deg, #ff6b5f, var(--gold));
+}
+
+.empty-state {
+  margin: 0;
+  padding: 14px;
+  line-height: 1.7;
+}
+
 @media (max-width: 980px) {
   .entry-layout,
   .ranking-grid,
-  .bet-grid {
+  .bet-grid,
+  .trifecta-candidate-output,
+  .trifecta-ticket-output {
     grid-template-columns: 1fr;
+  }
+
+  .trifecta-engine-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
@@ -1692,8 +1836,14 @@ h1 {
   }
 
   .storage-actions .button,
-  .entry-actions .button {
+  .entry-actions .button,
+  .trifecta-engine-actions,
+  .trifecta-engine-actions .button {
     width: 100%;
+  }
+
+  .trifecta-engine-actions {
+    flex-direction: column;
   }
 }
 
