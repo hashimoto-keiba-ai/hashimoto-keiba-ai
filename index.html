@@ -873,25 +873,105 @@
         </article>
 
 
-        <article id="roi-dashboard" class="card card--featured data-card control-card roi-card">
+        <article id="roi-dashboard" class="card card--featured data-card control-card roi-card roi-management-card">
           <div class="card__icon" aria-hidden="true">📊</div>
           <div class="card__body">
             <div class="card-heading">
               <div>
-                <p class="card__kicker">ROI DASHBOARD</p>
-                <h2>回収率ダッシュボード</h2>
+                <p class="card__kicker">ROI & BANKROLL DASHBOARD</p>
+                <h2>回収率・資金管理ダッシュボード</h2>
               </div>
-              <span class="status-pill status-pill--live">ROI 142%</span>
+              <span class="status-pill status-pill--live" id="roi-live-status">ROI 集計待ち</span>
             </div>
-            <p class="card__lead">月別ROI、券種別ROI、累積回収率を同じ画面で可視化し、勝っている券種と落としている条件を即時に把握します。</p>
-            <div class="roi-panels" aria-label="回収率指標">
-              <section><span>月別ROI</span><strong>6月 156%</strong><small>投資 128,000円 / 回収 199,680円</small></section>
-              <section><span>券種別ROI</span><strong>三連単 184%</strong><small>馬連 122% / ワイド 109% / WIN5 0%（次回対象）</small></section>
-              <section><span>累積回収率</span><strong>142%</strong><small>2026年累計 投資 1,240,000円 / 回収 1,760,800円</small></section>
+            <p class="card__lead">投資結果を入力すると、ROI、損益、累計投資額、累計払戻額、累計利益、的中率、券種別・競馬場別・月別の成績、資金配分AIの推奨投資額をlocalStorageで保存しながら自動集計します。</p>
+
+            <div class="roi-manager-grid" aria-label="回収率管理入力と自動集計">
+              <form id="investment-result-form" class="investment-result-form" aria-label="投資結果入力フォーム">
+                <div class="form-section-heading">
+                  <span>① 投資結果入力</span>
+                  <small id="investment-save-status">localStorage待機中</small>
+                </div>
+                <label><span>日付</span><input id="investment-date" name="date" type="date" required /></label>
+                <label><span>競馬場</span>
+                  <select name="course" required>
+                    <option value="中山">中山</option>
+                    <option value="東京">東京</option>
+                    <option value="京都">京都</option>
+                    <option value="阪神">阪神</option>
+                    <option value="中京">中京</option>
+                    <option value="新潟">新潟</option>
+                    <option value="福島">福島</option>
+                    <option value="小倉">小倉</option>
+                  </select>
+                </label>
+                <label><span>レース番号</span><input name="raceNumber" type="number" min="1" max="12" placeholder="11" required /></label>
+                <label><span>券種</span>
+                  <select name="ticketType" required>
+                    <option value="三連単">三連単</option>
+                    <option value="WIN5">WIN5</option>
+                    <option value="馬連">馬連</option>
+                    <option value="三連複">三連複</option>
+                    <option value="単勝">単勝</option>
+                    <option value="複勝">複勝</option>
+                  </select>
+                </label>
+                <label><span>購入点数</span><input name="points" type="number" min="1" step="1" placeholder="36" required /></label>
+                <label><span>投資金額</span><input name="stake" type="number" min="0" step="100" placeholder="3600" required /></label>
+                <label><span>払戻金額</span><input name="payout" type="number" min="0" step="10" placeholder="0" required /></label>
+                <label><span>的中/不的中</span>
+                  <select name="hit" required>
+                    <option value="true">的中</option>
+                    <option value="false">不的中</option>
+                  </select>
+                </label>
+                <label class="investment-result-form__wide"><span>メモ</span><textarea name="memo" rows="3" placeholder="買い目の根拠、反省点、次回改善メモ"></textarea></label>
+                <div class="investment-actions">
+                  <button class="button button--primary" type="submit">結果を保存</button>
+                  <button class="button button--ghost" id="investment-clear-form" type="button">入力クリア</button>
+                  <button class="button button--ghost" id="investment-clear-storage" type="button">保存データ削除</button>
+                </div>
+              </form>
+
+              <div class="roi-auto-summary" aria-label="自動計算サマリー">
+                <div class="form-section-heading">
+                  <span>② 自動計算</span>
+                  <small>ROI / 損益 / 的中率</small>
+                </div>
+                <div class="roi-panels" id="roi-summary-panels">
+                  <section><span>ROI</span><strong>0%</strong><small>投資 0円 / 払戻 0円</small></section>
+                  <section><span>利益/損失</span><strong>0円</strong><small>累計利益 0円</small></section>
+                  <section><span>的中率</span><strong>0%</strong><small>0戦 0勝</small></section>
+                </div>
+                <div class="bankroll-ai" aria-label="資金配分AI">
+                  <div class="form-section-heading">
+                    <span>⑥ 資金配分AI</span>
+                    <small>現在ROIと累計利益から自動調整</small>
+                  </div>
+                  <div class="bankroll-ai-grid" id="bankroll-ai-grid"></div>
+                </div>
+              </div>
             </div>
-            <div class="roi-chart" aria-label="累積回収率チャート">
-              <span style="height: 46%"><b>1月</b></span><span style="height: 62%"><b>2月</b></span><span style="height: 55%"><b>3月</b></span><span style="height: 70%"><b>4月</b></span><span style="height: 82%"><b>5月</b></span><span style="height: 94%"><b>6月</b></span>
+
+            <div class="roi-analytics-grid" aria-label="券種別・競馬場別・月別ROI集計">
+              <section class="roi-table-panel">
+                <div class="form-section-heading"><span>③ 券種別集計</span><small>指定6券種</small></div>
+                <div class="table-wrap"><table class="data-table data-table--compact"><thead><tr><th>券種</th><th>投資</th><th>払戻</th><th>ROI</th><th>損益</th></tr></thead><tbody id="ticket-type-summary-body"></tbody></table></div>
+              </section>
+              <section class="roi-table-panel">
+                <div class="form-section-heading"><span>④ 競馬場別集計</span><small>主要8場</small></div>
+                <div class="table-wrap"><table class="data-table data-table--compact"><thead><tr><th>競馬場</th><th>投資</th><th>払戻</th><th>ROI</th><th>的中率</th></tr></thead><tbody id="course-summary-body"></tbody></table></div>
+              </section>
+              <section class="roi-table-panel roi-table-panel--wide">
+                <div class="form-section-heading"><span>⑤ 月別ROI</span><small>月別投資額・払戻額・回収率</small></div>
+                <div class="roi-chart" id="monthly-roi-chart" aria-label="月別ROIチャート"></div>
+                <div class="table-wrap"><table class="data-table data-table--compact"><thead><tr><th>月</th><th>投資額</th><th>払戻額</th><th>回収率</th><th>利益</th></tr></thead><tbody id="monthly-summary-body"></tbody></table></div>
+              </section>
             </div>
+
+            <section class="investment-log-panel" aria-label="投資結果保存ログ">
+              <div class="form-section-heading"><span>⑦ localStorage保存ログ</span><small>GitHub保存へ拡張可能なpayload構造</small></div>
+              <div class="table-wrap"><table class="data-table"><thead><tr><th>日付</th><th>競馬場</th><th>R</th><th>券種</th><th>点数</th><th>投資</th><th>払戻</th><th>結果</th><th>メモ</th></tr></thead><tbody id="investment-log-body"></tbody></table></div>
+            </section>
           </div>
           <a class="card__link" href="./結果検証/README.md">結果検証を見る</a>
         </article>
@@ -1025,6 +1105,183 @@
         .filter(Boolean);
 
       const uniqueCandidates = (items) => [...new Set(items)];
+
+      const INVESTMENT_STORAGE_KEY = "hashimoto-keiba-ai:investment-results:v1";
+      const investmentForm = document.querySelector("#investment-result-form");
+      const investmentDate = document.querySelector("#investment-date");
+      const investmentSaveStatus = document.querySelector("#investment-save-status");
+      const roiLiveStatus = document.querySelector("#roi-live-status");
+      const roiSummaryPanels = document.querySelector("#roi-summary-panels");
+      const bankrollAiGrid = document.querySelector("#bankroll-ai-grid");
+      const ticketTypeSummaryBody = document.querySelector("#ticket-type-summary-body");
+      const courseSummaryBody = document.querySelector("#course-summary-body");
+      const monthlySummaryBody = document.querySelector("#monthly-summary-body");
+      const monthlyRoiChart = document.querySelector("#monthly-roi-chart");
+      const investmentLogBody = document.querySelector("#investment-log-body");
+      const investmentClearFormButton = document.querySelector("#investment-clear-form");
+      const investmentClearStorageButton = document.querySelector("#investment-clear-storage");
+      const ticketTypeOrder = ["三連単", "WIN5", "馬連", "三連複", "単勝", "複勝"];
+      const courseOrder = ["中山", "東京", "京都", "阪神", "中京", "新潟", "福島", "小倉"];
+      let investmentResults = [];
+
+      const investmentStorageAdapters = {
+        local: {
+          save(payload) {
+            localStorage.setItem(INVESTMENT_STORAGE_KEY, JSON.stringify(payload));
+            return payload;
+          },
+          load() {
+            const raw = localStorage.getItem(INVESTMENT_STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+          },
+          clear() {
+            localStorage.removeItem(INVESTMENT_STORAGE_KEY);
+          },
+        },
+        github: {
+          save() {
+            throw new Error("GitHub保存は未接続です。investmentStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          },
+          load() {
+            throw new Error("GitHub保存は未接続です。investmentStorageAdapters.github.loadをGitHub APIへ接続してください。");
+          },
+        },
+      };
+      let activeInvestmentStorageAdapter = investmentStorageAdapters.local;
+
+      const formatYen = (value) => `${Math.round(value).toLocaleString("ja-JP")}円`;
+      const formatPercent = (value) => `${Number.isFinite(value) ? Math.round(value) : 0}%`;
+      const calculateRoi = (stake, payout) => (stake > 0 ? (payout / stake) * 100 : 0);
+      const createEmptyStats = () => ({ stake: 0, payout: 0, profit: 0, total: 0, hits: 0 });
+
+      const addToStats = (stats, result) => {
+        stats.stake += result.stake;
+        stats.payout += result.payout;
+        stats.profit += result.payout - result.stake;
+        stats.total += 1;
+        if (result.hit) stats.hits += 1;
+        return stats;
+      };
+
+      const buildInvestmentPayload = () => ({
+        storageVersion: 1,
+        provider: "localStorage",
+        extensibleProvider: "github-ready",
+        repositoryPath: "結果検証/回収率管理/",
+        savedAt: new Date().toISOString(),
+        results: investmentResults,
+      });
+
+      const saveInvestmentResults = () => {
+        activeInvestmentStorageAdapter.save(buildInvestmentPayload());
+      };
+
+      const loadInvestmentResults = () => {
+        const payload = activeInvestmentStorageAdapter.load();
+        investmentResults = Array.isArray(payload?.results) ? payload.results : [];
+        return payload;
+      };
+
+      const summarizeInvestmentResults = () => {
+        const total = investmentResults.reduce((stats, result) => addToStats(stats, result), createEmptyStats());
+        const ticketTypes = ticketTypeOrder.reduce((accumulator, key) => ({ ...accumulator, [key]: createEmptyStats() }), {});
+        const courses = courseOrder.reduce((accumulator, key) => ({ ...accumulator, [key]: createEmptyStats() }), {});
+        const monthly = {};
+
+        investmentResults.forEach((result) => {
+          if (ticketTypes[result.ticketType]) addToStats(ticketTypes[result.ticketType], result);
+          if (courses[result.course]) addToStats(courses[result.course], result);
+          const month = result.date ? result.date.slice(0, 7) : "未設定";
+          monthly[month] = monthly[month] || createEmptyStats();
+          addToStats(monthly[month], result);
+        });
+
+        return { total, ticketTypes, courses, monthly };
+      };
+
+      const renderSummaryRow = (label, stats, options = {}) => {
+        const roi = calculateRoi(stats.stake, stats.payout);
+        const hitRate = stats.total > 0 ? (stats.hits / stats.total) * 100 : 0;
+        const fifth = options.hitRate ? formatPercent(hitRate) : formatYen(stats.profit);
+        return `<tr><td data-label="${escapeHtml(options.labelName || "項目")}"><strong>${escapeHtml(label)}</strong></td><td data-label="投資">${formatYen(stats.stake)}</td><td data-label="払戻">${formatYen(stats.payout)}</td><td data-label="ROI">${formatPercent(roi)}</td><td data-label="${options.hitRate ? "的中率" : "損益"}">${fifth}</td></tr>`;
+      };
+
+      const renderBankrollAi = (totalStats) => {
+        const roi = calculateRoi(totalStats.stake, totalStats.payout);
+        const baseUnit = totalStats.stake > 0 ? Math.max(1000, Math.round((totalStats.stake / Math.max(totalStats.total, 1)) / 100) * 100) : 3000;
+        const profitBoost = totalStats.profit > 0 ? 1.15 : 0.85;
+        const roiBoost = roi >= 130 ? 1.25 : roi >= 100 ? 1 : 0.75;
+        const plans = [
+          { label: "勝負レース", multiplier: 2.4, note: "軸信頼度A以上・期待値が最大のレースに集中" },
+          { label: "回収レース", multiplier: 1.2, note: "的中率を維持しながら日次回収を狙う標準配分" },
+          { label: "見送りレース", multiplier: 0, note: "妙味不足・荒れ指数過多は購入せず資金温存" },
+        ];
+
+        bankrollAiGrid.innerHTML = plans.map((plan) => {
+          const recommended = Math.round((baseUnit * plan.multiplier * profitBoost * roiBoost) / 100) * 100;
+          return `<article><span>${plan.label}</span><strong>${formatYen(recommended)}</strong><small>${plan.note}</small></article>`;
+        }).join("");
+      };
+
+      const renderInvestmentDashboard = () => {
+        const summary = summarizeInvestmentResults();
+        const total = summary.total;
+        const roi = calculateRoi(total.stake, total.payout);
+        const hitRate = total.total > 0 ? (total.hits / total.total) * 100 : 0;
+
+        roiLiveStatus.textContent = `ROI ${formatPercent(roi)}`;
+        roiSummaryPanels.innerHTML = `
+          <section><span>回収率ROI</span><strong>${formatPercent(roi)}</strong><small>累計投資 ${formatYen(total.stake)} / 累計払戻 ${formatYen(total.payout)}</small></section>
+          <section><span>利益/損失</span><strong>${formatYen(total.profit)}</strong><small>累計利益 ${formatYen(total.profit)}</small></section>
+          <section><span>的中率</span><strong>${formatPercent(hitRate)}</strong><small>${total.total}戦 ${total.hits}勝</small></section>
+        `;
+
+        ticketTypeSummaryBody.innerHTML = ticketTypeOrder.map((type) => renderSummaryRow(type, summary.ticketTypes[type], { labelName: "券種" })).join("");
+        courseSummaryBody.innerHTML = courseOrder.map((course) => renderSummaryRow(course, summary.courses[course], { labelName: "競馬場", hitRate: true })).join("");
+
+        const monthEntries = Object.entries(summary.monthly).sort(([a], [b]) => a.localeCompare(b));
+        monthlySummaryBody.innerHTML = monthEntries.length
+          ? monthEntries.map(([month, stats]) => renderSummaryRow(month, stats, { labelName: "月" })).join("")
+          : '<tr><td data-label="月" colspan="5">月別データはまだありません。</td></tr>';
+        const maxMonthlyRoi = Math.max(100, ...monthEntries.map(([, stats]) => calculateRoi(stats.stake, stats.payout)));
+        monthlyRoiChart.innerHTML = monthEntries.length
+          ? monthEntries.map(([month, stats]) => {
+              const monthRoi = calculateRoi(stats.stake, stats.payout);
+              const height = Math.max(12, Math.round((monthRoi / maxMonthlyRoi) * 100));
+              return `<span style="height: ${height}%"><b>${escapeHtml(month.slice(5))}月</b><small>${formatPercent(monthRoi)}</small></span>`;
+            }).join("")
+          : '<span style="height: 12%"><b>未入力</b><small>0%</small></span>';
+
+        investmentLogBody.innerHTML = investmentResults.length
+          ? investmentResults.map((result) => `<tr><td data-label="日付">${escapeHtml(result.date)}</td><td data-label="競馬場">${escapeHtml(result.course)}</td><td data-label="R">${escapeHtml(result.raceNumber)}R</td><td data-label="券種">${escapeHtml(result.ticketType)}</td><td data-label="点数">${result.points}</td><td data-label="投資">${formatYen(result.stake)}</td><td data-label="払戻">${formatYen(result.payout)}</td><td data-label="結果"><span class="result-hit ${result.hit ? "is-hit" : "is-miss"}">${result.hit ? "的中" : "不的中"}</span></td><td data-label="メモ">${escapeHtml(result.memo || "-")}</td></tr>`).join("")
+          : '<tr><td data-label="保存ログ" colspan="9">投資結果を入力するとブラウザ内に保存されます。</td></tr>';
+
+        renderBankrollAi(total);
+      };
+
+      const createInvestmentResult = () => {
+        const data = getFormData(investmentForm);
+        const stake = Number(data.stake || 0);
+        const payout = Number(data.payout || 0);
+        const date = data.date || new Date().toISOString().slice(0, 10);
+        return {
+          id: `${date}:${data.course}:${data.raceNumber}:${data.ticketType}:${Date.now()}`,
+          savedAt: new Date().toISOString(),
+          date,
+          course: data.course,
+          raceNumber: Number(data.raceNumber || 0),
+          ticketType: data.ticketType,
+          points: Number(data.points || 0),
+          stake,
+          payout,
+          hit: data.hit === "true",
+          memo: data.memo || "",
+          computed: {
+            roi: calculateRoi(stake, payout),
+            profit: payout - stake,
+          },
+        };
+      };
 
       const createWin5RaceFields = () => {
         win5RaceInputs.innerHTML = win5RaceIndexes.map((index) => `
@@ -1688,6 +1945,34 @@
         const payload = activeStorageAdapter.load();
         applyRacePayload(payload);
         saveStatus.textContent = payload ? "復元完了" : "保存なし";
+      });
+
+      investmentDate.valueAsDate = new Date();
+      loadInvestmentResults();
+      renderInvestmentDashboard();
+
+      investmentForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const result = createInvestmentResult();
+        investmentResults = [result, ...investmentResults];
+        saveInvestmentResults();
+        investmentForm.reset();
+        investmentDate.valueAsDate = new Date();
+        investmentSaveStatus.textContent = `localStorage保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })} / GitHub保存へはinvestmentStorageAdapters.githubを接続`;
+        renderInvestmentDashboard();
+      });
+
+      investmentClearFormButton.addEventListener("click", () => {
+        investmentForm.reset();
+        investmentDate.valueAsDate = new Date();
+        investmentSaveStatus.textContent = "入力フォームをクリアしました。保存データは残っています。";
+      });
+
+      investmentClearStorageButton.addEventListener("click", () => {
+        investmentResults = [];
+        activeInvestmentStorageAdapter.clear();
+        renderInvestmentDashboard();
+        investmentSaveStatus.textContent = "localStorage保存データを削除しました。";
       });
 
       createWin5RaceFields();
