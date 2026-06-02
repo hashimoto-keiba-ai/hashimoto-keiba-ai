@@ -2256,3 +2256,201 @@ h1 {
     width: 100%;
   }
 }
+
+/* ROI & bankroll management dashboard */
+.roi-management-card {
+  width: min(1180px, calc(100% - 32px));
+  margin-inline: auto;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(248, 196, 79, 0.2), transparent 22rem),
+    linear-gradient(145deg, rgba(18, 13, 6, 0.96), rgba(0, 0, 0, 0.9));
+}
+
+.roi-manager-grid,
+.roi-analytics-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.05fr);
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.investment-result-form,
+.roi-auto-summary,
+.roi-table-panel,
+.investment-log-panel {
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.28);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.46), rgba(248, 196, 79, 0.055));
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.1);
+}
+
+.investment-result-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.form-section-heading,
+.investment-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-section-heading span {
+  color: var(--gold-light);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.form-section-heading small {
+  color: var(--muted);
+  text-align: right;
+}
+
+.investment-result-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.investment-result-form label span {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.investment-result-form input,
+.investment-result-form select,
+.investment-result-form textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  color: var(--text);
+  border: 1px solid rgba(248, 196, 79, 0.34);
+  border-radius: 14px;
+  outline: none;
+  background: rgba(5, 5, 5, 0.72);
+}
+
+.investment-result-form textarea {
+  min-height: 92px;
+  padding-top: 12px;
+  resize: vertical;
+}
+
+.investment-result-form input:focus,
+.investment-result-form select:focus,
+.investment-result-form textarea:focus {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 3px rgba(248, 196, 79, 0.14);
+}
+
+.investment-result-form__wide,
+.roi-table-panel--wide,
+.investment-log-panel {
+  grid-column: 1 / -1;
+}
+
+.investment-actions {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.investment-actions .button {
+  min-height: 42px;
+  cursor: pointer;
+}
+
+.bankroll-ai {
+  margin-top: 18px;
+}
+
+.bankroll-ai-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.bankroll-ai-grid article {
+  padding: 16px;
+  border: 1px solid rgba(248, 196, 79, 0.24);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.bankroll-ai-grid span,
+.bankroll-ai-grid small {
+  display: block;
+  color: var(--muted);
+}
+
+.bankroll-ai-grid strong {
+  display: block;
+  margin: 8px 0;
+  color: var(--gold-light);
+  font-size: 1.5rem;
+}
+
+.roi-analytics-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.roi-table-panel .table-wrap,
+.investment-log-panel .table-wrap {
+  margin-top: 14px;
+}
+
+.roi-table-panel .data-table td,
+.investment-log-panel .data-table td {
+  vertical-align: top;
+}
+
+#monthly-roi-chart {
+  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+  margin-top: 14px;
+}
+
+#monthly-roi-chart span {
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  min-height: 54px;
+  text-align: center;
+}
+
+#monthly-roi-chart small {
+  color: #120d04;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 980px) {
+  .roi-manager-grid,
+  .roi-analytics-grid,
+  .bankroll-ai-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .investment-result-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .form-section-heading small {
+    text-align: left;
+  }
+
+  .investment-actions .button {
+    width: 100%;
+  }
+}
