@@ -430,8 +430,8 @@
             </div>
             <div class="table-wrap">
               <table class="data-table data-table--compact runner-table">
-                <thead><tr><th>馬番</th><th>馬名</th><th>騎手</th><th>人気</th><th>オッズ</th><th>脚質</th><th>4角</th><th>調教</th><th>AI</th><th>神穴</th><th>危険</th></tr></thead>
-                <tbody id="runner-table-body"><tr><td data-label="状態" colspan="11">まだ出走馬が入力されていません。</td></tr></tbody>
+                <thead><tr><th>馬番</th><th>馬名</th><th>騎手</th><th>人気</th><th>オッズ</th><th>脚質</th><th>4角</th><th>調教</th><th>AI</th><th>神穴</th><th>危険</th><th>計算</th></tr></thead>
+                <tbody id="runner-table-body"><tr><td data-label="状態" colspan="12">まだ出走馬が入力されていません。</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -1453,6 +1453,7 @@
       <p>橋本競馬AI — 予想、検証、保存ログ、WIN5をつなぐ競馬AIダッシュボード</p>
     </footer>
 
+    <script src="./src/dashboard.js"></script>
     <script>
 
       const dataStorage = window.HashimotoDataStorage;
@@ -1534,7 +1535,7 @@
 
       const CSV_REQUIRED_COLUMNS = ["開催日", "競馬場", "レース番号", "レース名", "馬番", "馬名", "騎手", "人気", "オッズ", "脚質", "距離", "芝ダート", "馬場状態"];
       const CSV_OPTIONAL_COLUMNS = ["調教師", "調教評価", "AI指数", "神穴指数", "危険人気馬指数", "想定4角位置"];
-      const CSV_NUMERIC_COLUMNS = ["馬番", "人気", "オッズ", "AI指数", "神穴指数", "危険人気馬指数"];
+      const CSV_NUMERIC_COLUMNS = ["馬番", "人気", "オッズ", "AI指数", "神穴指数", "危険人気馬指数", "想定4角位置"];
       const RACE_RESULT_STORAGE_KEY = dataStorage.getDefinition("raceResults").storageKey;
       const RESULT_CSV_REQUIRED_COLUMNS = ["開催日", "競馬場", "レース番号", "着順", "馬番", "馬名"];
       const RESULT_CSV_OPTIONAL_COLUMNS = ["レース名", "騎手", "人気", "オッズ", "4角位置", "上がり3F", "三連単配当", "馬場状態", "実ペース", "メモ"];
@@ -1603,14 +1604,30 @@
 
       const getFormData = (form) => Object.fromEntries(new FormData(form).entries());
       const numericFields = ["number", "popularity", "odds", "cornerPosition", "aiIndex", "kamianaIndex", "dangerIndex"];
+      const scoreEngine = window.HashimotoKeibaAiScoreEngine;
+      const scoreSourceLabel = (source) => source === "manual" ? "手入力" : "自動計算";
+      const scoreSourceSummary = (horse) => [
+        `AI:${scoreSourceLabel(horse.scoreSource?.aiIndex)}`,
+        `神穴:${scoreSourceLabel(horse.scoreSource?.kamianaIndex)}`,
+        `危険:${scoreSourceLabel(horse.scoreSource?.dangerIndex)}`,
+      ].join(" / ");
+      const getRaceScoreContext = () => ({
+        distance: Number(raceForm?.elements.distance?.value) || 0,
+        surface: raceForm?.elements.surface?.value || "",
+        going: raceForm?.elements.going?.value || "良",
+        fieldSize: Number(raceForm?.elements.fieldSize?.value) || raceHorses.length || 18,
+      });
 
       const normalizeHorse = (horse) => {
         const normalized = { ...horse };
         numericFields.forEach((field) => {
+          if (normalized[field] === undefined || normalized[field] === null || String(normalized[field]).trim() === "") return;
           normalized[field] = Number(normalized[field]);
         });
         return normalized;
       };
+
+      const calculateHorseScores = (horses) => scoreEngine.calculateAllHorseScores(horses.map(normalizeHorse), getRaceScoreContext()).map(normalizeHorse);
 
       const rankBy = (field) => [...raceHorses].sort((a, b) => b[field] - a[field]);
       const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
@@ -3314,7 +3331,7 @@
         raceForm.elements.surface.value = first["芝ダート"] || raceForm.elements.surface.value;
         raceForm.elements.going.value = first["馬場状態"] || raceForm.elements.going.value;
         raceForm.elements.fieldSize.value = latestCsvValidation.importableRows.length;
-        raceHorses = latestCsvValidation.importableRows.map(({ record }) => normalizeHorse({
+        raceHorses = calculateHorseScores(latestCsvValidation.importableRows.map(({ record }) => ({
           number: toCsvNumber(record["馬番"]),
           name: record["馬名"] || "未設定",
           jockey: record["騎手"] || "未設定",
@@ -3324,10 +3341,13 @@
           cornerPosition: toCsvNumber(record["想定4角位置"], toCsvNumber(record["馬番"], 1)),
           training: record["調教評価"] || "B",
           trainer: record["調教師"] || "",
-          aiIndex: toCsvNumber(record["AI指数"]),
-          kamianaIndex: toCsvNumber(record["神穴指数"]),
-          dangerIndex: toCsvNumber(record["危険人気馬指数"]),
-        }));
+          distance: toCsvNumber(record["距離"]),
+          surface: record["芝ダート"] || "",
+          going: record["馬場状態"] || "良",
+          aiIndex: record["AI指数"],
+          kamianaIndex: record["神穴指数"],
+          dangerIndex: record["危険人気馬指数"],
+        })));
         saveStatus.textContent = `CSV取込済 ${raceHorses.length}頭`;
         renderRaceEntry();
       };
@@ -3595,7 +3615,7 @@
         runnerTableBody.innerHTML = "";
         runnerCount.textContent = `${raceHorses.length}頭`;
         if (!raceHorses.length) {
-          runnerTableBody.innerHTML = '<tr><td data-label="状態" colspan="11">まだ出走馬が入力されていません。</td></tr>';
+          runnerTableBody.innerHTML = '<tr><td data-label="状態" colspan="12">まだ出走馬が入力されていません。</td></tr>';
           return;
         }
         [...raceHorses].sort((a, b) => a.number - b.number).forEach((horse) => {
@@ -3612,6 +3632,7 @@
             <td data-label="AI">${horse.aiIndex}</td>
             <td data-label="神穴">${horse.kamianaIndex}</td>
             <td data-label="危険">${horse.dangerIndex}</td>
+            <td data-label="計算"><span class="badge ${horse.scoreSource?.aiIndex === "manual" || horse.scoreSource?.kamianaIndex === "manual" || horse.scoreSource?.dangerIndex === "manual" ? "badge--gold" : "badge--warning"}">${escapeHtml(scoreSourceSummary(horse))}</span></td>
           `;
           runnerTableBody.append(row);
         });
@@ -3751,6 +3772,7 @@
       };
 
       const renderRaceEntry = () => {
+        raceHorses = calculateHorseScores(raceHorses);
         renderRunnerTable();
         renderRanking(aiRanking, rankBy("aiIndex"), "aiIndex");
         renderRanking(kamianaRankingLive, rankBy("kamianaIndex"), "kamianaIndex");
@@ -3775,7 +3797,7 @@
           const input = raceForm.elements[key];
           if (input) input.value = value;
         });
-        raceHorses = (payload.horses || []).map(normalizeHorse);
+        raceHorses = calculateHorseScores(payload.horses || []);
         renderRaceEntry();
       };
 
@@ -3787,7 +3809,7 @@
 
       horseForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        const horse = normalizeHorse(getFormData(horseForm));
+        const horse = calculateHorseScores([{ ...getFormData(horseForm), scoreSource: { aiIndex: "manual", kamianaIndex: "manual", dangerIndex: "manual" } }])[0];
         const existingIndex = raceHorses.findIndex((item) => item.number === horse.number);
         if (existingIndex >= 0) {
           raceHorses[existingIndex] = horse;
@@ -4052,6 +4074,5 @@
       });
       updateLogResults();
     </script>
-    <script src="./src/dashboard.js"></script>
   </body>
 </html>

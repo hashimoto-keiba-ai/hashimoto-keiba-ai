@@ -1,4 +1,156 @@
 (() => {
+  const clampScore = (value) => Math.max(0, Math.min(100, Math.round(Number(value || 0) * 10) / 10));
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const normalizeText = (value) => String(value || "").trim();
+  const scorePresenceKeys = {
+    aiIndex: ["aiIndex", "AI指数"],
+    kamianaIndex: ["kamianaIndex", "神穴指数"],
+    dangerIndex: ["dangerIndex", "危険人気馬指数"],
+  };
+
+  const hasScoreInput = (horse, field) => scorePresenceKeys[field].some((key) => {
+    const value = horse?.[key];
+    return value !== undefined && value !== null && String(value).trim() !== "";
+  });
+
+  const trainingBonus = (training) => ({ S: 12, A: 8, B: 4, C: -4, D: -9 }[normalizeText(training).toUpperCase()] ?? 0);
+  const popularityBonus = (popularity) => {
+    const rank = toNumber(popularity, 18);
+    if (rank <= 1) return 14;
+    if (rank <= 3) return 10;
+    if (rank <= 5) return 6;
+    if (rank <= 8) return 2;
+    if (rank <= 12) return -1;
+    return -4;
+  };
+  const oddsBonus = (odds) => {
+    const value = toNumber(odds, 99);
+    if (value <= 2.5) return 7;
+    if (value <= 5) return 9;
+    if (value <= 10) return 7;
+    if (value <= 20) return 4;
+    if (value <= 40) return 0;
+    return -4;
+  };
+  const styleBonus = (style) => ({ 逃げ: 8, 先行: 7, 自在: 6, 差し: 5, 追込: 2 }[normalizeText(style)] ?? 3);
+  const cornerBonus = (cornerPosition, fieldSize = 18) => {
+    const position = toNumber(cornerPosition, fieldSize);
+    const size = Math.max(1, toNumber(fieldSize, 18));
+    const ratio = position / size;
+    if (ratio <= 0.2) return 10;
+    if (ratio <= 0.4) return 7;
+    if (ratio <= 0.65) return 3;
+    if (ratio <= 0.82) return -2;
+    return -7;
+  };
+  const trackStyleBonus = (style, going) => {
+    const runningStyle = normalizeText(style);
+    const condition = normalizeText(going || "良");
+    if (["重", "不良"].includes(condition)) return ["逃げ", "先行", "自在"].includes(runningStyle) ? 7 : -5;
+    if (condition === "稍重") return ["先行", "自在", "差し"].includes(runningStyle) ? 4 : 0;
+    return ["差し", "自在", "先行"].includes(runningStyle) ? 4 : runningStyle === "追込" ? 1 : 2;
+  };
+  const distanceBonus = (horse) => {
+    const distance = toNumber(horse.distance ?? horse.raceDistance, 0);
+    const style = normalizeText(horse.runningStyle);
+    if (!distance) return -3;
+    if (distance <= 1400) return ["逃げ", "先行"].includes(style) ? 6 : style === "追込" ? -3 : 3;
+    if (distance <= 1800) return ["先行", "自在", "差し"].includes(style) ? 5 : 1;
+    if (distance <= 2400) return ["自在", "差し", "先行"].includes(style) ? 4 : -1;
+    return ["差し", "追込", "自在"].includes(style) ? 5 : -3;
+  };
+  const unfavorableStylePenalty = (horse) => {
+    const fieldSize = toNumber(horse.fieldSize, 18);
+    const style = normalizeText(horse.runningStyle);
+    const corner = toNumber(horse.cornerPosition, fieldSize);
+    let penalty = 0;
+    if (["逃げ", "先行"].includes(style) && corner > Math.ceil(fieldSize * 0.45)) penalty += 10;
+    if (["差し", "追込"].includes(style) && corner > Math.ceil(fieldSize * 0.75)) penalty += 8;
+    if (style === "追込" && ["重", "不良"].includes(normalizeText(horse.going))) penalty += 6;
+    return penalty;
+  };
+
+  const calculateRiskScore = (horse = {}) => {
+    const popularity = toNumber(horse.popularity, 18);
+    const odds = toNumber(horse.odds, 99);
+    const fieldSize = toNumber(horse.fieldSize, 18);
+    let score = 10;
+    if (popularity <= 3 && odds <= 3) score += 28;
+    else if (popularity <= 3 && odds <= 5) score += 22;
+    else if (popularity <= 5 && odds <= 8) score += 14;
+    score += unfavorableStylePenalty({ ...horse, fieldSize });
+    if (cornerBonus(horse.cornerPosition, fieldSize) < 0) score += Math.abs(cornerBonus(horse.cornerPosition, fieldSize)) + 5;
+    const training = normalizeText(horse.training).toUpperCase();
+    if (training === "C") score += 12;
+    if (training === "D" || !training) score += 18;
+    if (trackStyleBonus(horse.runningStyle, horse.going) < 0) score += 12;
+    if (!toNumber(horse.distance ?? horse.raceDistance, 0)) score += 10;
+    return clampScore(score);
+  };
+
+  const calculateAiScore = (horse = {}) => {
+    const riskPenalty = calculateRiskScore(horse) >= 80 ? 14 : calculateRiskScore(horse) >= 65 ? 8 : calculateRiskScore(horse) >= 50 ? 4 : 0;
+    const total = 38
+      + popularityBonus(horse.popularity)
+      + oddsBonus(horse.odds)
+      + styleBonus(horse.runningStyle)
+      + cornerBonus(horse.cornerPosition, horse.fieldSize)
+      + trainingBonus(horse.training)
+      + trackStyleBonus(horse.runningStyle, horse.going)
+      + distanceBonus(horse)
+      - riskPenalty;
+    return clampScore(total);
+  };
+
+  const calculateDarkHorseScore = (horse = {}) => {
+    const popularity = toNumber(horse.popularity, 18);
+    const odds = toNumber(horse.odds, 99);
+    let score = 22;
+    if (popularity >= 6 && popularity <= 9) score += 18;
+    else if (popularity >= 10) score += 22;
+    else if (popularity >= 4) score += 10;
+    if (odds >= 8 && odds <= 20) score += 18;
+    else if (odds > 20 && odds <= 50) score += 15;
+    else if (odds > 50) score += 7;
+    score += Math.max(0, styleBonus(horse.runningStyle) - 2);
+    score += Math.max(0, cornerBonus(horse.cornerPosition, horse.fieldSize));
+    score += Math.max(0, trainingBonus(horse.training));
+    score += odds >= 12 ? 8 : odds >= 6 ? 4 : -5;
+    score += calculateRiskScore(horse) < 50 ? 10 : calculateRiskScore(horse) >= 70 ? -14 : 0;
+    return clampScore(score);
+  };
+
+  const calculateAllHorseScores = (horses = [], raceContext = {}) => horses.map((horse) => {
+    const scoringBase = { ...raceContext, ...horse, fieldSize: raceContext.fieldSize || horse.fieldSize || horses.length || 18 };
+    const aiManual = hasScoreInput(horse, "aiIndex");
+    const kamianaManual = hasScoreInput(horse, "kamianaIndex");
+    const dangerManual = hasScoreInput(horse, "dangerIndex");
+    return {
+      ...horse,
+      aiIndex: aiManual ? clampScore(horse.aiIndex ?? horse["AI指数"]) : calculateAiScore(scoringBase),
+      kamianaIndex: kamianaManual ? clampScore(horse.kamianaIndex ?? horse["神穴指数"]) : calculateDarkHorseScore(scoringBase),
+      dangerIndex: dangerManual ? clampScore(horse.dangerIndex ?? horse["危険人気馬指数"]) : calculateRiskScore(scoringBase),
+      scoreSource: {
+        aiIndex: aiManual ? "manual" : "auto",
+        kamianaIndex: kamianaManual ? "manual" : "auto",
+        dangerIndex: dangerManual ? "manual" : "auto",
+      },
+    };
+  });
+
+  window.HashimotoKeibaAiScoreEngine = {
+    calculateAiScore,
+    calculateDarkHorseScore,
+    calculateRiskScore,
+    calculateAllHorseScores,
+  };
+  window.calculateAiScore = calculateAiScore;
+  window.calculateDarkHorseScore = calculateDarkHorseScore;
+  window.calculateRiskScore = calculateRiskScore;
+  window.calculateAllHorseScores = calculateAllHorseScores;
+})();
+
+(() => {
   const STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
   const DATA_URL = "./data/selfEvolutionLogs.json";
 
