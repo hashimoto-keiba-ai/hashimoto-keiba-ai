@@ -167,6 +167,8 @@ localStorage中心の保存から、JSONファイル保存とGitHub API保存へ
 
 週末の実戦で、iPadだけでもデータ取込、AI指数確認、買い目生成、結果検証、自己進化ログ保存まで行える運用フローを整えます。
 
+開催前日から開催終了後までの詳細なiPad実戦手順、ホーム画面運用、トラブル対応、Phase2-5実装順は [`IPAD_OPERATION_MANUAL.md`](IPAD_OPERATION_MANUAL.md) に整理します。
+
 ### 実施項目
 
 - **iPadホーム画面運用**
