@@ -39,10 +39,11 @@ AI指数ランキング、今日のレース一覧、実データ入力フォー
 - `RELEASE_NOTES.md`: v1.0の完成日、実装済み機能、対応端末、公開手順、既知の制限、Phase2予定を管理します。
 - `CHANGELOG.md`: v1.0までの主要追加内容と既知の制限を履歴として管理します。
 - `PHASE2_ROADMAP.md`: v1.0完成後の実データ連携、自動化、AI強化、GitHub保存強化、iPad実戦運用の計画を管理します。
+- `PHASE2_INDEX.md`: Phase2の設計書リンク、実装優先順位、週末運用ナビ、v1.0からの移行手順をまとめた総合入口です。
 
 ## Phase2 ロードマップ
 
-v1.0完成後の次段階として、実データ連携・自動化・AI強化を進めるための計画は [`PHASE2_ROADMAP.md`](PHASE2_ROADMAP.md) に整理しています。
+v1.0完成後の次段階として、実データ連携・自動化・AI強化を進めるための計画は [`PHASE2_ROADMAP.md`](PHASE2_ROADMAP.md) に整理しています。Phase2で作成した設計書・運用書の総合入口は [`PHASE2_INDEX.md`](PHASE2_INDEX.md) です。
 
 Phase2-1の実データ連携設計は [`DATA_IMPORT_DESIGN.md`](DATA_IMPORT_DESIGN.md) に整理しています。netkeibaやJRAの出馬表・オッズ・結果データを将来的に取り込めるよう、取込対象、取込方法、CSV標準フォーマット、結果CSVフォーマット、取込後の連動先、実装順を定義しています。
 
