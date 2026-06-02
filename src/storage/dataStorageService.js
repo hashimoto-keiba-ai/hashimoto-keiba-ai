@@ -67,6 +67,13 @@
       repositoryPath: "/data/backupData.json",
       description: "バックアップデータ",
     },
+    selfEvolutionLogs: {
+      type: "selfEvolutionLogs",
+      storageKey: "hashimoto-keiba-ai:self-evolution-logs:v1",
+      fileName: "selfEvolutionLogs.json",
+      repositoryPath: "/data/selfEvolutionLogs.json",
+      description: "AI自己進化ループログ",
+    },
   };
 
   // 保存アダプターはここで一元管理します。現在はlocalStorageを既定にし、

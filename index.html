@@ -33,6 +33,7 @@
           <a href="#result-verification">結果検証</a>
           <a href="#result-log-list">検証ログ</a>
           <a href="#ai-backtest-lab">AI精度テスト</a>
+          <a href="#self-evolution-loop">AI自己進化</a>
           <a href="#os-update-manager">OSアップデート</a>
           <a href="#operations-board">運用</a>
           <a href="#backup-restore">バックアップ</a>
@@ -66,9 +67,10 @@
           <a href="#result-verification"><span>⑩</span>結果検証フォーム</a>
           <a href="#result-log-list"><span>⑪</span>最新結果検証ログ</a>
           <a href="#ai-backtest-lab"><span>⑫</span>AI精度テスト・バックテスト</a>
-          <a href="#os-update-manager"><span>⑬</span>OS自動アップデート管理</a>
-          <a href="#backup-restore"><span>⑭</span>バックアップ／復元</a>
-          <a href="#github-storage-settings"><span>⑮</span>GitHub保存設定</a>
+          <a href="#self-evolution-loop"><span>⑬</span>AI自己進化ループ</a>
+          <a href="#os-update-manager"><span>⑭</span>OS自動アップデート管理</a>
+          <a href="#backup-restore"><span>⑮</span>バックアップ／復元</a>
+          <a href="#github-storage-settings"><span>⑯</span>GitHub保存設定</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -456,6 +458,35 @@
               <div id="backtest-improvement-list" class="backtest-insight-list backtest-improvement-list"></div>
             </section>
           </div>
+        </div>
+      </section>
+
+      <section id="self-evolution-loop" class="self-evolution-loop card card--featured data-card control-card" aria-label="AI自己進化ループ">
+        <div class="card__icon" aria-hidden="true">♻️</div>
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">AI SELF EVOLUTION LOOP</p>
+              <h2>AI自己進化ループ</h2>
+            </div>
+            <span class="status-pill status-pill--live" id="self-evolution-status">LOOP READY</span>
+          </div>
+          <p class="card__lead">結果検証ログ、バックテスト結果、改善提案を <code>data/selfEvolutionLogs.json</code> と同じJSON構造で保存し、検証→集計→改善→次走ルール化までの自己進化サイクルを追跡します。</p>
+
+          <div class="self-evolution-flow" aria-label="自己進化ループ手順">
+            <article><span>01</span><strong>結果検証保存</strong><small>レース結果・予想照合・学習点を蓄積</small></article>
+            <article><span>02</span><strong>バックテスト保存</strong><small>的中率・ROI・苦手条件をスナップショット化</small></article>
+            <article><span>03</span><strong>改善提案保存</strong><small>AI指数/展開/危険人気馬/神穴/WIN5補正へ変換</small></article>
+          </div>
+
+          <div class="self-evolution-actions">
+            <button class="button button--primary" id="save-evolution-result-log" type="button">結果検証ログ保存</button>
+            <button class="button button--ghost" id="save-evolution-backtest" type="button">バックテスト結果保存</button>
+            <button class="button button--ghost" id="save-evolution-improvements" type="button">改善提案保存</button>
+          </div>
+
+          <div class="self-evolution-summary" id="self-evolution-summary" aria-live="polite"></div>
+          <div class="self-evolution-log-list" id="self-evolution-log-list" aria-live="polite"></div>
         </div>
       </section>
 
@@ -1704,6 +1735,13 @@
       const backtestCourseRoiBody = document.querySelector("#backtest-course-roi-body");
       const backtestWeaknessList = document.querySelector("#backtest-weakness-list");
       const backtestImprovementList = document.querySelector("#backtest-improvement-list");
+      const SELF_EVOLUTION_STORAGE_KEY = dataStorage.getDefinition("selfEvolutionLogs").storageKey;
+      const selfEvolutionStatus = document.querySelector("#self-evolution-status");
+      const saveEvolutionResultLogButton = document.querySelector("#save-evolution-result-log");
+      const saveEvolutionBacktestButton = document.querySelector("#save-evolution-backtest");
+      const saveEvolutionImprovementsButton = document.querySelector("#save-evolution-improvements");
+      const selfEvolutionSummary = document.querySelector("#self-evolution-summary");
+      const selfEvolutionLogList = document.querySelector("#self-evolution-log-list");
       const resultCheckboxFields = ["mainHit", "rivalHit", "longshotHit", "kamianaHit", "dangerPopularSuccess", "trifectaHit", "win5Hit"];
       const resultNumericFields = ["raceNumber", "distance", "firstNumber", "firstPopularity", "secondNumber", "secondPopularity", "thirdNumber", "thirdPopularity", "trifectaPayout"];
       const OS_RULE_STORAGE_KEY = dataStorage.getDefinition("osUpdates").storageKey;
@@ -1771,6 +1809,52 @@
       let activeOsRuleStorageAdapter = osRuleStorageAdapters.local;
       let osRules = activeOsRuleStorageAdapter.load();
 
+      const createEmptySelfEvolutionPayload = (provider = "localStorage") => ({
+        storageVersion: 1,
+        type: "selfEvolutionLogs",
+        provider,
+        updatedAt: new Date().toISOString(),
+        logs: {
+          resultVerifications: [],
+          backtests: [],
+          improvementProposals: [],
+        },
+      });
+
+      const normalizeSelfEvolutionPayload = (payload, provider = "localStorage") => {
+        const normalized = createEmptySelfEvolutionPayload(payload?.provider || provider);
+        const sourceLogs = payload?.logs || {};
+        normalized.updatedAt = payload?.updatedAt || normalized.updatedAt;
+        normalized.logs.resultVerifications = Array.isArray(sourceLogs.resultVerifications) ? sourceLogs.resultVerifications : [];
+        normalized.logs.backtests = Array.isArray(sourceLogs.backtests) ? sourceLogs.backtests : [];
+        normalized.logs.improvementProposals = Array.isArray(sourceLogs.improvementProposals) ? sourceLogs.improvementProposals : [];
+        return normalized;
+      };
+
+      const selfEvolutionStorageAdapters = {
+        local: {
+          save(payload) {
+            return dataStorage.saveData("selfEvolutionLogs", normalizeSelfEvolutionPayload(payload, "localStorage"), "localStorage");
+          },
+          load() {
+            return normalizeSelfEvolutionPayload(dataStorage.loadData("selfEvolutionLogs", "localStorage"), "localStorage");
+          },
+        },
+        github: {
+          save(payload) {
+            return dataStorage.saveData("selfEvolutionLogs", normalizeSelfEvolutionPayload(payload, "github"), "github");
+          },
+          load() {
+            return normalizeSelfEvolutionPayload(dataStorage.loadData("selfEvolutionLogs", "github"), "github");
+          },
+        },
+      };
+      let activeSelfEvolutionStorageAdapter = selfEvolutionStorageAdapters.local;
+      let selfEvolutionLogs = activeSelfEvolutionStorageAdapter.load();
+      let latestBacktestSnapshot = null;
+      let latestImprovementSnapshot = [];
+
+
       const PREDICTION_LOG_STORAGE_KEY = dataStorage.getDefinition("predictions").storageKey;
       const AUTO_BET_STORAGE_KEY = "hashimoto-keiba-ai:auto-bet-tickets:v1";
       const HORSE_ENTRY_STORAGE_KEY = dataStorage.getDefinition("horseEntries").storageKey;
@@ -1794,6 +1878,7 @@
         { type: "win5Tickets", key: WIN5_STORAGE_KEY, label: "WIN5買い目", category: "win5", coursePaths: [["races", "*", "course"], ["formation", "*", "course"]] },
         { type: "roiRecords", key: INVESTMENT_STORAGE_KEY, label: "回収率データ", category: "roi", listPath: "results", coursePaths: [["course"]] },
         { type: "betTickets", key: TRIFECTA_STORAGE_KEY, label: "自動買い目データ（三連単）", category: "autoBet", coursePaths: [["race", "course"]] },
+        { type: "selfEvolutionLogs", key: SELF_EVOLUTION_STORAGE_KEY, label: "AI自己進化ループログ", category: "selfEvolution", optional: true, coursePaths: [["logs", "resultVerifications", "*", "race", "course"], ["logs", "backtests", "*", "filters", "course"]] },
       ];
 
       const backupStorageAdapters = {
@@ -1839,6 +1924,8 @@
         activeInvestmentStorageAdapter = investmentStorageAdapters[adapterKey];
         activeResultLogStorageAdapter = resultLogStorageAdapters[adapterKey];
         activeOsRuleStorageAdapter = osRuleStorageAdapters[adapterKey];
+        activeSelfEvolutionStorageAdapter = selfEvolutionStorageAdapters[adapterKey];
+        selfEvolutionLogs = activeSelfEvolutionStorageAdapter.load();
         activeBackupStorageAdapter = backupStorageAdapters[adapterKey] || backupStorageAdapters.local;
         githubConnectionStatus.textContent = adapterMode === "github" ? "GITHUB MODE" : "LOCAL MODE";
         storageModeHelp.textContent = adapterMode === "github"
@@ -2434,6 +2521,8 @@
         }
         resultLogs.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
         activeResultLogStorageAdapter.save(resultLogs);
+        saveResultVerificationToSelfEvolution(log);
+        saveSelfEvolutionLogs("結果検証ログを自動保存しました");
         renderResultLogs();
         renderBacktestDashboard();
         return true;
@@ -2609,6 +2698,106 @@
       const renderInsightList = (target, items) => {
         target.innerHTML = items.map(([title, body]) => `<article><strong>${escapeHtml(title)}</strong><p>${escapeHtml(body)}</p></article>`).join("");
       };
+
+      const saveSelfEvolutionLogs = (message = "自己進化ログ保存") => {
+        selfEvolutionLogs.updatedAt = new Date().toISOString();
+        selfEvolutionLogs.provider = dataStorage.getActiveAdapterName() === "github" ? "github" : "localStorage";
+        activeSelfEvolutionStorageAdapter.save(selfEvolutionLogs);
+        renderSelfEvolutionLoop(message);
+        return selfEvolutionLogs;
+      };
+
+      const upsertSelfEvolutionItem = (collectionName, item) => {
+        const collection = selfEvolutionLogs.logs[collectionName] || [];
+        const index = collection.findIndex((entry) => entry.id === item.id);
+        if (index >= 0) {
+          collection[index] = item;
+        } else {
+          collection.unshift(item);
+        }
+        selfEvolutionLogs.logs[collectionName] = collection.slice(0, 100);
+        return item;
+      };
+
+      const createSelfEvolutionResultRecord = (log) => ({
+        id: `result:${log.id}`,
+        savedAt: new Date().toISOString(),
+        source: "result-verification-form",
+        race: log.race,
+        predictionCheck: log.predictionCheck,
+        learningPoint: log.osUpdate?.learningPoint || "",
+        adoptRule: log.osUpdate?.adoptRule || "",
+        pendingRule: log.osUpdate?.pendingRule || "",
+        deleteRule: log.osUpdate?.deleteRule || "",
+      });
+
+      const saveResultVerificationToSelfEvolution = (log, shouldRender = false) => {
+        upsertSelfEvolutionItem("resultVerifications", createSelfEvolutionResultRecord(log));
+        if (shouldRender) saveSelfEvolutionLogs("結果検証ログを自己進化ループへ保存しました");
+      };
+
+      const createBacktestSnapshot = ({ filters, source, filteredLogs, filteredRecords, hitRates, totalStats, weaknesses, improvements }) => ({
+        id: `backtest:${new Date().toISOString()}:${Math.random().toString(36).slice(2, 8)}`,
+        savedAt: new Date().toISOString(),
+        source: source.provider,
+        filters,
+        resultLogCount: filteredLogs.length,
+        roiRecordCount: filteredRecords.length,
+        hitRates,
+        roi: {
+          stake: totalStats.stake,
+          payout: totalStats.payout,
+          profit: totalStats.profit,
+          rate: calculateRoi(totalStats.stake, totalStats.payout),
+        },
+        weaknesses: weaknesses.map(([title, body]) => ({ title, body })),
+        improvements: improvements.map(([title, body]) => ({ title, body })),
+      });
+
+      const saveBacktestToSelfEvolution = () => {
+        if (!latestBacktestSnapshot) renderBacktestDashboard();
+        if (!latestBacktestSnapshot) return;
+        upsertSelfEvolutionItem("backtests", { ...latestBacktestSnapshot, id: `backtest:${new Date().toISOString()}` });
+        saveSelfEvolutionLogs("バックテスト結果を自己進化ループへ保存しました");
+      };
+
+      const saveImprovementProposalsToSelfEvolution = () => {
+        if (!latestBacktestSnapshot) renderBacktestDashboard();
+        const improvements = latestImprovementSnapshot.length ? latestImprovementSnapshot : (latestBacktestSnapshot?.improvements || []).map((item) => [item.title, item.body]);
+        improvements.forEach(([title, body], index) => upsertSelfEvolutionItem("improvementProposals", {
+          id: `improvement:${title}:${new Date().toISOString()}:${index}`,
+          savedAt: new Date().toISOString(),
+          title,
+          body,
+          sourceBacktestId: latestBacktestSnapshot?.id || "manual-current-dashboard",
+          status: "提案",
+        }));
+        saveSelfEvolutionLogs("改善提案を自己進化ループへ保存しました");
+      };
+
+      const renderSelfEvolutionLoop = (message = "LOOP READY") => {
+        if (!selfEvolutionSummary || !selfEvolutionLogList) return;
+        const logs = selfEvolutionLogs.logs;
+        const resultCount = logs.resultVerifications.length;
+        const backtestCount = logs.backtests.length;
+        const improvementCount = logs.improvementProposals.length;
+        selfEvolutionStatus.textContent = `${resultCount + backtestCount + improvementCount} EVOLUTION LOGS`;
+        selfEvolutionSummary.innerHTML = `
+          <article><span>結果検証</span><strong>${resultCount}</strong><small>レース単位の学習ログ</small></article>
+          <article><span>バックテスト</span><strong>${backtestCount}</strong><small>ROI・的中率スナップショット</small></article>
+          <article><span>改善提案</span><strong>${improvementCount}</strong><small>次回予想への補正案</small></article>
+          <article><span>保存先</span><strong>${escapeHtml(selfEvolutionLogs.provider)}</strong><small>${escapeHtml(message)} / ${escapeHtml(SELF_EVOLUTION_STORAGE_KEY)}</small></article>
+        `;
+        const latestItems = [
+          ...logs.resultVerifications.map((item) => ({ kind: "結果検証", title: `${item.race?.date || "未日付"} ${item.race?.course || "未競馬場"} ${item.race?.raceNumber || "?"}R`, body: item.learningPoint || item.adoptRule || "学習点未入力", savedAt: item.savedAt })),
+          ...logs.backtests.map((item) => ({ kind: "バックテスト", title: `${item.resultLogCount}R / ROI ${formatPercent(item.roi?.rate || 0)}`, body: item.weaknesses?.[0]?.body || "弱点分析待ち", savedAt: item.savedAt })),
+          ...logs.improvementProposals.map((item) => ({ kind: "改善提案", title: item.title, body: item.body, savedAt: item.savedAt })),
+        ].sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt)).slice(0, 6);
+        selfEvolutionLogList.innerHTML = latestItems.length
+          ? latestItems.map((item) => `<article><span class="badge badge--gold">${escapeHtml(item.kind)}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.body)}</p><small>${new Date(item.savedAt).toLocaleString("ja-JP")}</small></article>`).join("")
+          : '<p class="empty-state">自己進化ログはまだありません。結果検証・バックテスト・改善提案を保存してください。</p>';
+      };
+
       const renderBacktestDashboard = () => {
         if (!backtestFilterForm) return;
         const filters = getBacktestFilters();
@@ -2636,8 +2825,11 @@
         backtestTicketRoiBody.innerHTML = Object.entries(ticketStats).length ? Object.entries(ticketStats).sort(([a], [b]) => a.localeCompare(b, "ja")).map(([label, stats]) => renderBacktestGroupRoiRow(label, stats, "券種")).join("") : '<tr><td colspan="4">券種別ROIデータがありません。</td></tr>';
         backtestCourseRoiBody.innerHTML = Object.entries(courseStats).length ? Object.entries(courseStats).sort(([a], [b]) => a.localeCompare(b, "ja")).map(([label, stats]) => renderBacktestGroupRoiRow(label, stats, "競馬場")).join("") : '<tr><td colspan="4">競馬場別ROIデータがありません。</td></tr>';
         const weaknesses = buildBacktestWeaknesses(filteredLogs, filteredRecords);
+        const improvements = buildBacktestImprovements(hitRates, totalStats, weaknesses);
+        latestImprovementSnapshot = improvements;
+        latestBacktestSnapshot = createBacktestSnapshot({ filters, source, filteredLogs, filteredRecords, hitRates, totalStats, weaknesses, improvements });
         renderInsightList(backtestWeaknessList, weaknesses);
-        renderInsightList(backtestImprovementList, buildBacktestImprovements(hitRates, totalStats, weaknesses));
+        renderInsightList(backtestImprovementList, improvements);
       };
 
       const autosaveResultLog = () => {
@@ -2672,8 +2864,19 @@
       });
       backtestFilterForm.addEventListener("input", renderBacktestDashboard);
       backtestFilterForm.addEventListener("reset", () => window.requestAnimationFrame(renderBacktestDashboard));
+      saveEvolutionResultLogButton.addEventListener("click", () => {
+        const log = getResultFormPayload();
+        if (hasMinimumResultFields(log)) {
+          saveResultVerificationToSelfEvolution(log, true);
+        } else {
+          renderSelfEvolutionLoop("結果検証フォームの必須項目を入力してください");
+        }
+      });
+      saveEvolutionBacktestButton.addEventListener("click", saveBacktestToSelfEvolution);
+      saveEvolutionImprovementsButton.addEventListener("click", saveImprovementProposalsToSelfEvolution);
       renderResultLogs();
       renderBacktestDashboard();
+      renderSelfEvolutionLoop();
 
       osRuleForm.addEventListener("submit", (event) => {
         event.preventDefault();
