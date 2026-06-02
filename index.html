@@ -27,6 +27,8 @@
           <a href="#trifecta-generator">三連単生成</a>
           <a href="#win5-ai-screen">WIN5生成</a>
           <a href="#roi-dashboard">回収率</a>
+          <a href="#result-verification">結果検証</a>
+          <a href="#result-log-list">検証ログ</a>
           <a href="#operations-board">運用</a>
         </div>
       </nav>
@@ -54,6 +56,8 @@
           <a href="#trifecta-generator"><span>⑦</span>三連単自動生成</a>
           <a href="#win5-ai-screen"><span>⑧</span>WIN5自動生成</a>
           <a href="#roi-dashboard"><span>⑨</span>回収率ダッシュボード</a>
+          <a href="#result-verification"><span>⑩</span>結果検証フォーム</a>
+          <a href="#result-log-list"><span>⑪</span>最新結果検証ログ</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -212,6 +216,105 @@
             <button class="button button--ghost" id="load-race-data" type="button">保存データを復元</button>
             <p id="storage-note">保存キー: <code>hashimoto-keiba-ai:real-race-entry:v1</code> / GitHub保存へ拡張する時はStorage Adapterを差し替えます。</p>
           </div>
+        </div>
+      </section>
+
+      <section id="result-verification" class="result-verification card card--featured data-card control-card" aria-label="結果検証フォーム">
+        <div class="card__icon" aria-hidden="true">🧾</div>
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">RESULT VERIFICATION OS</p>
+              <h2>結果検証フォーム</h2>
+            </div>
+            <span class="status-pill status-pill--live" id="result-save-status">AUTO SAVE READY</span>
+          </div>
+          <p class="card__lead">レース結果、事前予想との照合、OSアップデート案を1画面で入力します。ログはResultLogStorage AdapterでlocalStorageへ自動保存し、将来はGitHub保存アダプターへ差し替えできます。</p>
+
+          <form id="result-verification-form" class="result-form" aria-label="レース結果検証入力フォーム">
+            <fieldset class="result-fieldset result-fieldset--meta">
+              <legend>基本情報</legend>
+              <label><span>検証日</span><input name="date" type="date" required /></label>
+              <label><span>競馬場</span><select name="course" required><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
+              <label><span>レース番号</span><input name="raceNumber" type="number" min="1" max="12" value="11" required /></label>
+              <label><span>レース名</span><input name="raceName" type="text" placeholder="例: 安田記念" required /></label>
+            </fieldset>
+
+            <fieldset class="result-fieldset result-fieldset--finishers">
+              <legend>① レース結果入力</legend>
+              <div class="finisher-grid">
+                <section class="finisher-card" aria-label="1着馬入力">
+                  <h3>1着</h3>
+                  <label><span>1着馬番</span><input name="firstNumber" type="number" min="1" max="18" required /></label>
+                  <label><span>1着馬名</span><input name="firstName" type="text" required /></label>
+                  <label><span>1着騎手</span><input name="firstJockey" type="text" required /></label>
+                  <label><span>1着人気</span><input name="firstPopularity" type="number" min="1" max="18" required /></label>
+                </section>
+                <section class="finisher-card" aria-label="2着馬入力">
+                  <h3>2着</h3>
+                  <label><span>2着馬番</span><input name="secondNumber" type="number" min="1" max="18" required /></label>
+                  <label><span>2着馬名</span><input name="secondName" type="text" required /></label>
+                  <label><span>2着騎手</span><input name="secondJockey" type="text" required /></label>
+                  <label><span>2着人気</span><input name="secondPopularity" type="number" min="1" max="18" required /></label>
+                </section>
+                <section class="finisher-card" aria-label="3着馬入力">
+                  <h3>3着</h3>
+                  <label><span>3着馬番</span><input name="thirdNumber" type="number" min="1" max="18" required /></label>
+                  <label><span>3着馬名</span><input name="thirdName" type="text" required /></label>
+                  <label><span>3着騎手</span><input name="thirdJockey" type="text" required /></label>
+                  <label><span>3着人気</span><input name="thirdPopularity" type="number" min="1" max="18" required /></label>
+                </section>
+              </div>
+              <label><span>三連単配当</span><input name="trifectaPayout" type="number" min="0" step="10" placeholder="例: 125430" /></label>
+              <label><span>馬場状態</span><select name="trackCondition"><option value="良">良</option><option value="稍重">稍重</option><option value="重">重</option><option value="不良">不良</option></select></label>
+              <label><span>実ペース</span><select name="actualPace"><option value="超スロー">超スロー</option><option value="スロー">スロー</option><option value="平均">平均</option><option value="ハイ">ハイ</option><option value="超ハイ">超ハイ</option></select></label>
+              <label class="result-form__wide"><span>通過順</span><input name="passingOrder" type="text" placeholder="例: 12-8-6-3 / 34.7-35.9" /></label>
+            </fieldset>
+
+            <fieldset class="result-fieldset result-fieldset--match">
+              <legend>② 事前予想との照合</legend>
+              <label><input name="mainHit" type="checkbox" value="true" />本命的中</label>
+              <label><input name="rivalHit" type="checkbox" value="true" />対抗的中</label>
+              <label><input name="longshotHit" type="checkbox" value="true" />穴馬的中</label>
+              <label><input name="kamianaHit" type="checkbox" value="true" />神穴的中</label>
+              <label><input name="dangerPopularSuccess" type="checkbox" value="true" />危険人気馬判定成功</label>
+              <label><input name="trifectaHit" type="checkbox" value="true" />三連単的中</label>
+            </fieldset>
+
+            <fieldset class="result-fieldset result-fieldset--os">
+              <legend>③ OSアップデート欄</legend>
+              <label><span>今回の学習点</span><textarea name="learningPoint" rows="4" placeholder="例: 道悪×内枠先行を過小評価"></textarea></label>
+              <label><span>次回から採用するルール</span><textarea name="adoptRule" rows="4" placeholder="例: 重馬場で逃げ先行AI指数+3"></textarea></label>
+              <label><span>保留ルール</span><textarea name="pendingRule" rows="4" placeholder="継続検証する仮説"></textarea></label>
+              <label><span>削除するルール</span><textarea name="deleteRule" rows="4" placeholder="今回で不採用にするロジック"></textarea></label>
+            </fieldset>
+
+            <div class="result-actions">
+              <button class="button button--primary" type="submit">結果検証ログを保存</button>
+              <button class="button button--ghost" id="result-form-reset" type="button">フォーム初期化</button>
+              <p>自動保存キー: <code>hashimoto-keiba-ai:result-verification-logs:v1</code> / GitHub連携時は <code>resultLogStorageAdapters.github</code> を実装します。</p>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="result-log-list" class="result-log-list card card--wide data-card control-card" aria-label="最新結果検証ログ一覧">
+        <div class="card__icon" aria-hidden="true">📚</div>
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">LATEST RESULT VERIFICATION LOGS</p>
+              <h2>最新結果検証ログ一覧</h2>
+            </div>
+            <span class="status-pill status-pill--live" id="result-log-count">0 LOGS</span>
+          </div>
+          <p class="card__lead">localStorageに保存された結果検証ログを競馬場別・日付別に並べます。競馬場と日付で絞り込み、あとからGitHub保存へ拡張できるJSON構造で保持します。</p>
+          <form class="result-log-filters" aria-label="結果検証ログ絞り込み">
+            <label><span>競馬場別</span><select id="result-course-filter"><option value="">すべて</option><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
+            <label><span>日付別</span><input id="result-date-filter" type="date" /></label>
+            <button class="button button--ghost" type="reset">絞り込み解除</button>
+          </form>
+          <div id="result-log-groups" class="result-log-groups" aria-live="polite"></div>
         </div>
       </section>
 
@@ -806,6 +909,195 @@
       const rankBy = (field) => [...raceHorses].sort((a, b) => b[field] - a[field]);
       const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
       const formatHorse = (horse) => `${horse.number} ${horse.name}`;
+
+      const RESULT_LOG_STORAGE_KEY = "hashimoto-keiba-ai:result-verification-logs:v1";
+      const resultVerificationForm = document.querySelector("#result-verification-form");
+      const resultSaveStatus = document.querySelector("#result-save-status");
+      const resultFormReset = document.querySelector("#result-form-reset");
+      const resultCourseFilter = document.querySelector("#result-course-filter");
+      const resultDateFilter = document.querySelector("#result-date-filter");
+      const resultLogGroups = document.querySelector("#result-log-groups");
+      const resultLogCount = document.querySelector("#result-log-count");
+      const resultLogFilters = document.querySelector(".result-log-filters");
+      const resultCheckboxFields = ["mainHit", "rivalHit", "longshotHit", "kamianaHit", "dangerPopularSuccess", "trifectaHit"];
+      const resultNumericFields = ["raceNumber", "firstNumber", "firstPopularity", "secondNumber", "secondPopularity", "thirdNumber", "thirdPopularity", "trifectaPayout"];
+
+      const resultLogStorageAdapters = {
+        local: {
+          save(logs) {
+            localStorage.setItem(RESULT_LOG_STORAGE_KEY, JSON.stringify({ storageVersion: 1, provider: "localStorage", logs }));
+            return logs;
+          },
+          load() {
+            const raw = localStorage.getItem(RESULT_LOG_STORAGE_KEY);
+            if (!raw) return [];
+            const payload = JSON.parse(raw);
+            return Array.isArray(payload) ? payload : payload.logs || [];
+          },
+        },
+        github: {
+          save() {
+            throw new Error("GitHub保存は未接続です。resultLogStorageAdapters.github.saveをGitHub APIへ接続してください。");
+          },
+          load() {
+            throw new Error("GitHub保存は未接続です。resultLogStorageAdapters.github.loadをGitHub APIへ接続してください。");
+          },
+        },
+      };
+      let activeResultLogStorageAdapter = resultLogStorageAdapters.local;
+      let resultLogs = activeResultLogStorageAdapter.load();
+
+      const toNumberOrBlank = (value) => (value === "" ? "" : Number(value));
+
+      const getResultFormPayload = () => {
+        const formData = new FormData(resultVerificationForm);
+        const flat = Object.fromEntries(formData.entries());
+        resultCheckboxFields.forEach((field) => {
+          flat[field] = formData.has(field);
+        });
+        resultNumericFields.forEach((field) => {
+          flat[field] = toNumberOrBlank(flat[field] || "");
+        });
+        const date = flat.date || new Date().toISOString().slice(0, 10);
+        const course = flat.course || "未選択";
+        const raceNumber = flat.raceNumber || "未設定";
+        const raceName = flat.raceName || "";
+        const id = `${date}:${course}:${raceNumber}:${raceName}`;
+
+        return {
+          id,
+          savedAt: new Date().toISOString(),
+          storageVersion: 1,
+          race: {
+            date,
+            course,
+            raceNumber: flat.raceNumber,
+            raceName,
+          },
+          result: {
+            first: { number: flat.firstNumber, name: flat.firstName || "", jockey: flat.firstJockey || "", popularity: flat.firstPopularity },
+            second: { number: flat.secondNumber, name: flat.secondName || "", jockey: flat.secondJockey || "", popularity: flat.secondPopularity },
+            third: { number: flat.thirdNumber, name: flat.thirdName || "", jockey: flat.thirdJockey || "", popularity: flat.thirdPopularity },
+            trifectaPayout: flat.trifectaPayout,
+            trackCondition: flat.trackCondition || "",
+            actualPace: flat.actualPace || "",
+            passingOrder: flat.passingOrder || "",
+          },
+          predictionCheck: {
+            mainHit: flat.mainHit,
+            rivalHit: flat.rivalHit,
+            longshotHit: flat.longshotHit,
+            kamianaHit: flat.kamianaHit,
+            dangerPopularSuccess: flat.dangerPopularSuccess,
+            trifectaHit: flat.trifectaHit,
+          },
+          osUpdate: {
+            learningPoint: flat.learningPoint || "",
+            adoptRule: flat.adoptRule || "",
+            pendingRule: flat.pendingRule || "",
+            deleteRule: flat.deleteRule || "",
+          },
+        };
+      };
+
+      const hasMinimumResultFields = (log) => log.race.date && log.race.course && log.race.raceName;
+
+      const upsertResultLog = (log) => {
+        if (!hasMinimumResultFields(log)) return false;
+        const index = resultLogs.findIndex((item) => item.id === log.id);
+        if (index >= 0) {
+          resultLogs[index] = log;
+        } else {
+          resultLogs = [log, ...resultLogs];
+        }
+        resultLogs.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+        activeResultLogStorageAdapter.save(resultLogs);
+        renderResultLogs();
+        return true;
+      };
+
+      const resultHitLabels = {
+        mainHit: "本命",
+        rivalHit: "対抗",
+        longshotHit: "穴馬",
+        kamianaHit: "神穴",
+        dangerPopularSuccess: "危険人気馬",
+        trifectaHit: "三連単",
+      };
+
+      const formatHitBadges = (predictionCheck) => Object.entries(resultHitLabels)
+        .map(([field, label]) => `<span class="result-hit ${predictionCheck[field] ? "is-hit" : "is-miss"}">${label}:${predictionCheck[field] ? "的中" : "不的中"}</span>`)
+        .join("");
+
+      const renderResultLogs = () => {
+        const course = resultCourseFilter.value;
+        const date = resultDateFilter.value;
+        const filtered = resultLogs.filter((log) => (!course || log.race.course === course) && (!date || log.race.date === date));
+        resultLogCount.textContent = `${filtered.length} LOGS`;
+        resultLogGroups.innerHTML = "";
+
+        if (!filtered.length) {
+          resultLogGroups.innerHTML = '<p class="empty-result-log">保存済みの結果検証ログはまだありません。</p>';
+          return;
+        }
+
+        const groups = filtered.reduce((accumulator, log) => {
+          const key = `${log.race.course} / ${log.race.date}`;
+          accumulator[key] = accumulator[key] || [];
+          accumulator[key].push(log);
+          return accumulator;
+        }, {});
+
+        Object.entries(groups).forEach(([groupName, logs]) => {
+          const group = document.createElement("section");
+          group.className = "result-log-group";
+          group.innerHTML = `<h3>${escapeHtml(groupName)}</h3>`;
+          logs.forEach((log) => {
+            const card = document.createElement("article");
+            card.className = "result-log-card";
+            card.innerHTML = `
+              <div class="result-log-card__head">
+                <div><strong>${escapeHtml(log.race.raceNumber || "未設定")}R ${escapeHtml(log.race.raceName || "未入力レース")}</strong><small>保存: ${new Date(log.savedAt).toLocaleString("ja-JP")}</small></div>
+                <span class="badge ${log.predictionCheck.trifectaHit ? "badge--gold" : ""}">${log.predictionCheck.trifectaHit ? "三連単的中" : "三連単不的中"}</span>
+              </div>
+              <p>着順: ${escapeHtml(log.result.first.number)} ${escapeHtml(log.result.first.name)} → ${escapeHtml(log.result.second.number)} ${escapeHtml(log.result.second.name)} → ${escapeHtml(log.result.third.number)} ${escapeHtml(log.result.third.name)}</p>
+              <p>配当: ${log.result.trifectaPayout ? Number(log.result.trifectaPayout).toLocaleString("ja-JP") + "円" : "未入力"} / 馬場: ${escapeHtml(log.result.trackCondition)} / 実ペース: ${escapeHtml(log.result.actualPace)} / 通過順: ${escapeHtml(log.result.passingOrder || "未入力")}</p>
+              <div class="result-hit-list">${formatHitBadges(log.predictionCheck)}</div>
+              <dl><dt>学習点</dt><dd>${escapeHtml(log.osUpdate.learningPoint || "未入力")}</dd><dt>採用ルール</dt><dd>${escapeHtml(log.osUpdate.adoptRule || "未入力")}</dd></dl>
+            `;
+            group.append(card);
+          });
+          resultLogGroups.append(group);
+        });
+      };
+
+      const autosaveResultLog = () => {
+        const log = getResultFormPayload();
+        if (upsertResultLog(log)) {
+          resultSaveStatus.textContent = `AUTO SAVED ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+        } else {
+          resultSaveStatus.textContent = "入力待ち";
+        }
+      };
+
+      let resultAutosaveTimer;
+      resultVerificationForm.elements.date.valueAsDate = new Date();
+      resultVerificationForm.addEventListener("input", () => {
+        window.clearTimeout(resultAutosaveTimer);
+        resultAutosaveTimer = window.setTimeout(autosaveResultLog, 450);
+      });
+      resultVerificationForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        autosaveResultLog();
+      });
+      resultFormReset.addEventListener("click", () => {
+        resultVerificationForm.reset();
+        resultVerificationForm.elements.date.valueAsDate = new Date();
+        resultSaveStatus.textContent = "フォーム初期化";
+      });
+      resultLogFilters.addEventListener("input", renderResultLogs);
+      resultLogFilters.addEventListener("reset", () => window.requestAnimationFrame(renderResultLogs));
+      renderResultLogs();
 
       const renderRanking = (target, horses, field, suffix = "") => {
         target.innerHTML = "";
