@@ -38,6 +38,13 @@ AI指数ランキング、今日のレース一覧、実データ入力フォー
 - `VERSION`: 現在の正式バージョンを `1.0.0` として管理します。
 - `RELEASE_NOTES.md`: v1.0の完成日、実装済み機能、対応端末、公開手順、既知の制限、Phase2予定を管理します。
 - `CHANGELOG.md`: v1.0までの主要追加内容と既知の制限を履歴として管理します。
+- `PHASE2_ROADMAP.md`: v1.0完成後の実データ連携、自動化、AI強化、GitHub保存強化、iPad実戦運用の計画を管理します。
+
+## Phase2 ロードマップ
+
+v1.0完成後の次段階として、実データ連携・自動化・AI強化を進めるための計画は [`PHASE2_ROADMAP.md`](PHASE2_ROADMAP.md) に整理しています。
+
+Phase2では、CSV取込強化、netkeiba手動CSV変換、JRA出馬表データ取込準備、オッズ取込、AI指数/神穴指数/危険人気馬の自動計算、三連単/WIN5自動生成精度向上、`data/*.json` 保存、GitHub API保存、自己進化AI強化、iPad週末運用フローを段階的に進めます。
 
 
 ## GitHub Pages公開手順
