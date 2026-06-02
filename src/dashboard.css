@@ -1898,6 +1898,12 @@ h1 {
   font-weight: 900;
 }
 
+.trifecta-ticket-group .ticket-reason {
+  margin-top: 0.35rem;
+  white-space: pre-line;
+  color: var(--muted);
+}
+
 .trifecta-ticket-group--attack h4 {
   background: linear-gradient(135deg, #f0a629, var(--gold));
 }

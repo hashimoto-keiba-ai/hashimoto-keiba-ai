@@ -1605,6 +1605,7 @@
       const getFormData = (form) => Object.fromEntries(new FormData(form).entries());
       const numericFields = ["number", "popularity", "odds", "cornerPosition", "aiIndex", "kamianaIndex", "dangerIndex"];
       const scoreEngine = window.HashimotoKeibaAiScoreEngine;
+      const betEngine = window.HashimotoBetEngine;
       const scoreSourceLabel = (source) => source === "manual" ? "手入力" : "自動計算";
       const scoreSourceSummary = (horse) => [
         `AI:${scoreSourceLabel(horse.scoreSource?.aiIndex)}`,
@@ -3645,93 +3646,26 @@
         });
       };
 
-      const getTrifectaTargetPointCount = (fieldSize) => {
-        const size = Number(fieldSize) || raceHorses.length;
-        if (size <= 10) return 8;
-        if (size <= 14) return 12;
-        return 16;
-      };
-
-      const createTrifectaTicket = (first, second, third, type, reason) => {
-        if (!first || !second || !third) return null;
-        if (first.number === second.number || first.number === third.number || second.number === third.number) return null;
-        if (second.popularity === 1) return null;
-        return {
-          key: `${first.number}-${second.number}-${third.number}`,
-          first,
-          second,
-          third,
-          type,
-          reason,
-          notation: `${first.number} → ${second.number} → ${third.number}`,
-        };
-      };
-
-      const pushTrifectaTickets = (tickets, sourceTickets, limit) => {
-        sourceTickets.some((ticket) => {
-          if (!ticket || tickets.some((item) => item.key === ticket.key)) return false;
-          tickets.push(ticket);
-          return tickets.length >= limit;
+      const buildTrifectaPayload = () => {
+        const race = getFormData(raceForm);
+        return betEngine.buildTrifectaPayload(raceHorses, {
+          race,
+          fieldSize: Number(race.fieldSize) || raceHorses.length,
+          provider: activeMode,
         });
       };
 
-      const buildTrifectaPayload = () => {
-        const race = getFormData(raceForm);
-        const fieldSize = Number(race.fieldSize) || raceHorses.length;
-        const targetPoints = getTrifectaTargetPointCount(fieldSize);
-        const aiTop = rankBy("aiIndex");
-        const kamianaTop = rankBy("kamianaIndex");
-        const dangerTop = rankBy("dangerIndex");
-        const favorite = raceHorses.find((horse) => horse.popularity === 1);
-        const dangerHeadExcluded = raceHorses.filter((horse) => horse.dangerIndex >= 80 && horse.popularity <= 5);
-        const isHeadAllowed = (horse) => horse && !dangerHeadExcluded.some((danger) => danger.number === horse.number);
-        const aZone = uniqueByHorseNumber(aiTop.filter(isHeadAllowed).slice(0, 2));
-        const bZone = uniqueByHorseNumber(aiTop.filter(isHeadAllowed).slice(2, 5));
-        const cZone = uniqueByHorseNumber(kamianaTop.filter((horse) => isHeadAllowed(horse) && (horse.popularity >= 6 || horse.kamianaIndex >= 72 || horse.odds >= 15)).slice(0, 4));
-        const firstCandidates = uniqueByHorseNumber([...aZone, ...bZone, ...cZone]);
-        const secondCandidates = uniqueByHorseNumber(aiTop.filter((horse) => horse.popularity !== 1).slice(0, 6));
-        const kamianaThird = uniqueByHorseNumber(kamianaTop.filter((horse) => horse.popularity >= 4 || horse.kamianaIndex >= 70 || horse.odds >= 12).slice(0, 5));
-        const thirdCandidates = uniqueByHorseNumber([...aiTop.slice(0, 5), ...kamianaThird, favorite ? [favorite] : []]).slice(0, 9);
-        const longshotThird = kamianaThird.length ? kamianaThird : thirdCandidates;
-        const base = {
-          storageVersion: 1,
-          provider: "localStorage",
-          extensibleProvider: "github-ready",
-          repositoryPath: "万馬券DB/三連単買い目/",
-          generatedAt: new Date().toISOString(),
-          race,
-          fieldSize,
-          targetPoints,
-          rules: {
-            pointControl: "10頭以下8点 / 11〜14頭12点 / 15〜18頭16点",
-            favoriteRule: "1人気は原則1着・3着のみ。2着候補から除外。",
-            dangerRule: "危険人気馬指数80以上かつ5人気以内は1着候補から除外。",
-          },
-          candidates: { aZone, bZone, cZone, firstCandidates, secondCandidates, thirdCandidates, kamianaThird, dangerHeadExcluded, favorite },
-          tickets: { main: [], attack: [], jackpot: [] },
-          summary: { total: 0, stakeYen: 0 },
-        };
+      const formatTicketEvidence = (ticket) => (ticket.evidence || []).map((item) => `${item.number} ${item.name}: AI${item.aiIndex} / 神穴${item.kamianaIndex} / 危険${item.dangerIndex}｜${item.reason}`).join("\n");
 
-        if (raceHorses.length < 3) return base;
-
-        const mainSource = aZone.flatMap((first) => secondCandidates.flatMap((second) => thirdCandidates.map((third) => createTrifectaTicket(first, second, third, "本線", "Aゾーン頭×AI上位2着×総合3着"))));
-        const attackHeads = uniqueByHorseNumber([...bZone, ...cZone]);
-        const attackSource = attackHeads.flatMap((first) => secondCandidates.flatMap((second) => thirdCandidates.map((third) => createTrifectaTicket(first, second, third, "攻撃型", "B/Cゾーン頭で高配当を狙う"))));
-        const jackpotSource = attackHeads.flatMap((first) => secondCandidates.flatMap((second) => longshotThird.map((third) => createTrifectaTicket(first, second, third, "万馬券型", "B/Cゾーン頭×神穴3着"))));
-
-        const tickets = [];
-        pushTrifectaTickets(tickets, mainSource, Math.ceil(targetPoints * 0.5));
-        const attackLimit = Math.ceil(targetPoints * 0.75);
-        pushTrifectaTickets(tickets, attackSource, attackLimit);
-        pushTrifectaTickets(tickets, jackpotSource, targetPoints);
-        if (tickets.length < targetPoints) pushTrifectaTickets(tickets, [...mainSource, ...attackSource, ...jackpotSource], targetPoints);
-
-        base.tickets.main = tickets.filter((ticket) => ticket.type === "本線");
-        base.tickets.attack = tickets.filter((ticket) => ticket.type === "攻撃型");
-        base.tickets.jackpot = tickets.filter((ticket) => ticket.type === "万馬券型");
-        base.summary.total = tickets.length;
-        base.summary.stakeYen = tickets.length * 100;
-        return base;
+      const renderAutoWin5Classification = (payload) => {
+        const zoneLabels = { a: "A固定候補", b: "B本線候補", c: "Cゾーン候補", d: "D爆発候補" };
+        const zoneClasses = { a: "candidate--a", b: "candidate--b", c: "candidate--c", d: "candidate--d" };
+        const zoneRoles = { a: "AI最上位×危険低", b: "AI上位", c: "神穴指数高", d: "人気薄＋神穴" };
+        const formatZone = (items) => items.length ? items.map((horse) => `${formatHorse(horse)}（AI${horse.aiIndex} / 神穴${horse.kamianaIndex} / 危険${horse.dangerIndex}）`).join(" / ") : "該当なし";
+        win5CandidateOutput.innerHTML = Object.entries(payload.zones).map(([key, horses]) => `
+          <article class="candidate ${zoneClasses[key]}"><span>${zoneLabels[key]}</span><strong>${escapeHtml(formatZone(horses))}</strong><small>${escapeHtml(zoneRoles[key])}｜${escapeHtml(horses.map((horse) => horse.win5Reason).join(" / ") || payload.rules[key])}</small></article>
+        `).join("") + `<article class="candidate candidate--danger"><span>危険人気馬</span><strong>${escapeHtml(formatZone(payload.dangerExcluded))}</strong><small>危険人気馬指数80以上はWIN5候補から自動除外</small></article>`;
+        win5SystemStatus.textContent = payload.summary.totalCandidates ? `AI連動 ${payload.summary.totalCandidates}頭分類` : "候補不足";
       };
 
       const renderTrifectaPayload = (payload) => {
@@ -3756,7 +3690,7 @@
         const renderGroup = (label, groupTickets, className) => `
           <section class="trifecta-ticket-group ${className}">
             <h4>${label}<span>${groupTickets.length}点</span></h4>
-            ${groupTickets.length ? `<ol>${groupTickets.map((ticket) => `<li><code>${escapeHtml(ticket.notation)}</code><small>${escapeHtml(formatHorseWithZone(ticket.first))} → ${escapeHtml(formatHorseWithZone(ticket.second))} → ${escapeHtml(formatHorseWithZone(ticket.third))}</small></li>`).join("")}</ol>` : '<p class="empty-state">該当買い目なし</p>'}
+            ${groupTickets.length ? `<ol>${groupTickets.map((ticket) => `<li><code>${escapeHtml(ticket.notation)}</code><small>${escapeHtml(formatHorseWithZone(ticket.first))} → ${escapeHtml(formatHorseWithZone(ticket.second))} → ${escapeHtml(formatHorseWithZone(ticket.third))}</small><small class="ticket-reason">採用理由: ${escapeHtml(ticket.reason)}｜${escapeHtml(formatTicketEvidence(ticket))}</small></li>`).join("")}</ol>` : '<p class="empty-state">該当買い目なし</p>'}
           </section>
         `;
         trifectaTicketOutput.innerHTML = [
@@ -3773,7 +3707,15 @@
         const longshots = kamianaTop.filter((horse) => horse.popularity >= 6 || horse.odds >= 15).slice(0, 3);
         const dangerousPopular = dangerTop.filter((horse) => horse.popularity <= 5).slice(0, 3);
         renderTrifectaPayload(buildTrifectaPayload());
-        generatedWin5.textContent = aiTop.length ? aiTop.slice(0, 2).map(formatHorse).join(" / ") : "レース登録後に生成";
+        const win5Classification = betEngine.buildWin5ClassificationPayload(raceHorses, { race: getFormData(raceForm), provider: activeMode });
+        const win5SummaryText = [
+          ["A", win5Classification.zones.a],
+          ["B", win5Classification.zones.b],
+          ["C", win5Classification.zones.c],
+          ["D", win5Classification.zones.d],
+        ].map(([label, horses]) => `${label}:${horses.length ? horses.map(formatHorse).join("・") : "なし"}`).join(" / ");
+        generatedWin5.textContent = raceHorses.length ? win5SummaryText : "レース登録後に生成";
+        renderAutoWin5Classification(win5Classification);
         generatedLongshots.textContent = longshots.length ? longshots.map(formatHorse).join(" / ") : "該当なし";
         generatedDanger.textContent = dangerousPopular.length ? dangerousPopular.map(formatHorse).join(" / ") : "該当なし";
       };

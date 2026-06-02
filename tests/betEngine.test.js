@@ -1,0 +1,57 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+
+const sandbox = {
+  console,
+  URL,
+  Blob,
+  setTimeout,
+  clearTimeout,
+  window: {},
+  document: {
+    readyState: 'loading',
+    querySelector: () => null,
+    querySelectorAll: () => [],
+  },
+};
+sandbox.window = {
+  localStorage: {
+    getItem: () => null,
+    setItem: () => undefined,
+    removeItem: () => undefined,
+  },
+  addEventListener: () => undefined,
+};
+sandbox.window.window = sandbox.window;
+sandbox.window.document = sandbox.document;
+sandbox.globalThis = sandbox.window;
+vm.createContext(sandbox);
+vm.runInContext(fs.readFileSync('src/dashboard.js', 'utf8'), sandbox, { filename: 'src/dashboard.js' });
+
+const scoreEngine = sandbox.window.HashimotoKeibaAiScoreEngine;
+const betEngine = sandbox.window.HashimotoBetEngine;
+assert.ok(scoreEngine, 'AI指数エンジンが公開されている');
+assert.ok(betEngine, '買い目生成エンジンが公開されている');
+
+const horses = scoreEngine.calculateAllHorseScores([
+  { number: 1, name: '危険トップ', popularity: 1, odds: 2.0, runningStyle: '逃げ', training: 'C', aiIndex: 99, kamianaIndex: 45, dangerIndex: 92 },
+  { number: 2, name: '指数二位', popularity: 2, odds: 4.0, runningStyle: '先行', training: 'A', aiIndex: 95, kamianaIndex: 55, dangerIndex: 20 },
+  { number: 3, name: '指数三位', popularity: 3, odds: 6.0, runningStyle: '好位', training: 'B', aiIndex: 90, kamianaIndex: 50, dangerIndex: 30 },
+  { number: 4, name: '指数四位', popularity: 4, odds: 8.0, runningStyle: '自在', training: 'B', aiIndex: 85, kamianaIndex: 52, dangerIndex: 40 },
+  { number: 5, name: '神穴一位', popularity: 9, odds: 28.0, runningStyle: '差し', training: 'A', aiIndex: 70, kamianaIndex: 97, dangerIndex: 25 },
+  { number: 6, name: '神穴二位', popularity: 12, odds: 45.0, runningStyle: '追込', training: 'B', aiIndex: 68, kamianaIndex: 94, dangerIndex: 35 },
+], { course: '東京', distance: 1600, surface: '芝', going: '良', fieldSize: 12 });
+
+const trifecta = betEngine.buildTrifectaPayload(horses, { fieldSize: 12 });
+assert.equal(trifecta.targetPoints, 12, '11〜14頭は12点制御になる');
+assert.ok(trifecta.summary.total > 0, 'AI指数計算後に三連単買い目候補が生成される');
+assert.ok(!trifecta.candidates.firstCandidates.some((horse) => horse.number === 1), '危険人気馬は1着候補から外れる');
+assert.ok(trifecta.candidates.thirdCandidates.some((horse) => horse.number === 5), '神穴指数上位は3着候補へ入る');
+assert.ok(trifecta.candidates.thirdCandidates.some((horse) => horse.number === 6), '神穴指数2位も3着候補へ入る');
+assert.ok([...trifecta.tickets.main, ...trifecta.tickets.attack, ...trifecta.tickets.jackpot].every((ticket) => ticket.evidence.length === 3), '各買い目に指数根拠が付与される');
+
+const win5 = betEngine.buildWin5ClassificationPayload(horses);
+assert.ok(!Object.values(win5.zones).flat().some((horse) => horse.number === 1), '危険人気馬はWIN5候補から外れる');
+assert.ok(win5.zones.c.some((horse) => horse.number === 5) || win5.zones.d.some((horse) => horse.number === 5), '神穴はWIN5 C/Dゾーンへ入る');
+console.log('betEngine tests passed');

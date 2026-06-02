@@ -323,6 +323,172 @@
 })();
 
 (() => {
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const sortByScore = (horses, field) => [...horses].sort((a, b) => toNumber(b[field]) - toNumber(a[field]));
+  const uniqueByHorseNumber = (horses) => [...new Map(horses.filter(Boolean).map((horse) => [horse.number, horse])).values()];
+  const formatHorse = (horse) => horse ? `${horse.number} ${horse.name}` : "該当なし";
+  const isDangerPopular = (horse) => toNumber(horse?.dangerIndex) >= 80;
+  const isLongshot = (horse) => toNumber(horse?.popularity, 99) >= 6 || toNumber(horse?.odds, 0) >= 15;
+  const describeScores = (horse) => `AI${toNumber(horse.aiIndex).toFixed(1)} / 神穴${toNumber(horse.kamianaIndex).toFixed(1)} / 危険${toNumber(horse.dangerIndex).toFixed(1)}`;
+  const horseReason = (horse, reason) => ({
+    number: horse.number,
+    name: horse.name,
+    aiIndex: toNumber(horse.aiIndex),
+    kamianaIndex: toNumber(horse.kamianaIndex),
+    dangerIndex: toNumber(horse.dangerIndex),
+    popularity: toNumber(horse.popularity),
+    odds: toNumber(horse.odds),
+    reason,
+  });
+
+  const getTrifectaTargetPointCount = (fieldSize, horseCount = 0) => {
+    const size = Number(fieldSize) || horseCount;
+    if (size <= 10) return 8;
+    if (size <= 14) return 12;
+    return 16;
+  };
+
+  const createTrifectaTicket = (first, second, third, type, reason) => {
+    if (!first || !second || !third) return null;
+    if (first.number === second.number || first.number === third.number || second.number === third.number) return null;
+    return {
+      key: `${first.number}-${second.number}-${third.number}`,
+      first,
+      second,
+      third,
+      type,
+      reason,
+      notation: `${first.number} → ${second.number} → ${third.number}`,
+      evidence: [
+        horseReason(first, `1着: ${reason}`),
+        horseReason(second, "2着: AI指数上位4頭から危険人気馬指数80以上を除外"),
+        horseReason(third, isDangerPopular(third) ? "3着: 危険人気馬だがAI上位5頭または神穴上位2頭のため条件付き残し" : "3着: AI上位5頭＋神穴上位2頭の採用枠"),
+      ],
+    };
+  };
+
+  const pushTrifectaTickets = (tickets, sourceTickets, limit) => {
+    sourceTickets.some((ticket) => {
+      if (!ticket || tickets.some((item) => item.key === ticket.key)) return false;
+      tickets.push(ticket);
+      return tickets.length >= limit;
+    });
+  };
+
+  const buildTrifectaPayload = (horses = [], options = {}) => {
+    const fieldSize = Number(options.fieldSize) || horses.length;
+    const targetPoints = getTrifectaTargetPointCount(fieldSize, horses.length);
+    const aiTop = sortByScore(horses, "aiIndex");
+    const kamianaTop = sortByScore(horses, "kamianaIndex");
+    const dangerExcluded = horses.filter(isDangerPopular);
+    const isNotDanger = (horse) => horse && !isDangerPopular(horse);
+    const firstCandidates = uniqueByHorseNumber(aiTop.slice(0, 2).filter(isNotDanger));
+    const secondCandidates = uniqueByHorseNumber(aiTop.slice(0, 4).filter(isNotDanger));
+    const kamianaThird = uniqueByHorseNumber(kamianaTop.slice(0, 2));
+    const thirdCandidates = uniqueByHorseNumber([...aiTop.slice(0, 5), ...kamianaThird]);
+    const attackHeads = uniqueByHorseNumber([...firstCandidates, ...kamianaThird.filter(isNotDanger)]);
+    const jackpotHeads = uniqueByHorseNumber(kamianaThird.filter((horse) => isNotDanger(horse) && isLongshot(horse)));
+    const base = {
+      storageVersion: 2,
+      provider: options.provider || "localStorage",
+      extensibleProvider: "github-ready",
+      repositoryPath: "万馬券DB/三連単買い目/",
+      generatedAt: new Date().toISOString(),
+      race: options.race || {},
+      fieldSize,
+      targetPoints,
+      rules: {
+        firstRule: "1着候補はAI指数上位2頭から危険人気馬指数80以上を除外",
+        secondRule: "2着候補はAI指数上位4頭から危険人気馬指数80以上を除外",
+        thirdRule: "3着候補はAI指数上位5頭＋神穴指数上位2頭。危険人気馬も3着では条件付き残し",
+        pointControl: "10頭以下8点 / 11〜14頭12点 / 15〜18頭16点",
+      },
+      candidates: {
+        firstCandidates,
+        secondCandidates,
+        thirdCandidates,
+        kamianaThird,
+        dangerHeadExcluded: dangerExcluded,
+        aZone: firstCandidates,
+        bZone: secondCandidates.filter((horse) => !firstCandidates.some((first) => first.number === horse.number)),
+        cZone: kamianaThird.filter(isNotDanger),
+        dangerExcluded,
+      },
+      tickets: { main: [], attack: [], jackpot: [] },
+      summary: { total: 0, stakeYen: 0 },
+    };
+
+    if (horses.length < 3) return base;
+
+    const mainSource = firstCandidates.flatMap((first) => secondCandidates.flatMap((second) => thirdCandidates.map((third) => createTrifectaTicket(first, second, third, "本線", "AI指数上位2頭の頭固定で指数信頼度を優先"))));
+    const attackSource = attackHeads.flatMap((first) => secondCandidates.flatMap((second) => thirdCandidates.map((third) => createTrifectaTicket(first, second, third, "攻撃型", "神穴上位2頭を頭または3着に混ぜて高配当化"))));
+    const jackpotThird = kamianaThird.length ? kamianaThird : thirdCandidates;
+    const jackpotSource = uniqueByHorseNumber([...jackpotHeads, ...attackHeads]).flatMap((first) => secondCandidates.flatMap((second) => jackpotThird.map((third) => createTrifectaTicket(first, second, third, "万馬券型", "人気薄＋神穴指数高の爆発力を3着候補へ厚め反映"))));
+
+    const tickets = [];
+    pushTrifectaTickets(tickets, mainSource, Math.ceil(targetPoints * 0.5));
+    pushTrifectaTickets(tickets, attackSource, Math.ceil(targetPoints * 0.75));
+    pushTrifectaTickets(tickets, jackpotSource, targetPoints);
+    if (tickets.length < targetPoints) pushTrifectaTickets(tickets, [...mainSource, ...attackSource, ...jackpotSource], targetPoints);
+
+    base.tickets.main = tickets.filter((ticket) => ticket.type === "本線");
+    base.tickets.attack = tickets.filter((ticket) => ticket.type === "攻撃型");
+    base.tickets.jackpot = tickets.filter((ticket) => ticket.type === "万馬券型");
+    base.summary.total = tickets.length;
+    base.summary.stakeYen = tickets.length * 100;
+    return base;
+  };
+
+  const buildWin5ClassificationPayload = (horses = [], options = {}) => {
+    const aiTop = sortByScore(horses, "aiIndex");
+    const kamianaTop = sortByScore(horses, "kamianaIndex");
+    const dangerExcluded = horses.filter(isDangerPopular);
+    const available = (horse) => horse && !isDangerPopular(horse);
+    const alreadyIn = (zones, horse) => Object.values(zones).some((items) => items.some((item) => item.number === horse.number));
+    const zones = { a: [], b: [], c: [], d: [] };
+    const add = (key, source, limit, reason) => {
+      source.forEach((horse) => {
+        if (zones[key].length >= limit || !available(horse) || alreadyIn(zones, horse)) return;
+        zones[key].push({ ...horse, win5Reason: reason(horse) });
+      });
+    };
+
+    add("a", aiTop.slice(0, 1), 1, (horse) => `AI指数最上位かつ危険指数${horse.dangerIndex}で低リスクのA固定候補`);
+    add("b", aiTop.slice(0, 4), 3, (horse) => `AI指数上位評価（${describeScores(horse)}）で本線候補`);
+    add("c", kamianaTop.filter((horse) => toNumber(horse.kamianaIndex) >= 70), 2, (horse) => `神穴指数上位（${horse.kamianaIndex}）でCゾーンへ自動追加`);
+    add("d", kamianaTop.filter((horse) => isLongshot(horse) && toNumber(horse.kamianaIndex) >= 70), 2, (horse) => `人気薄＋神穴指数${horse.kamianaIndex}の爆発候補`);
+
+    return {
+      storageVersion: 2,
+      provider: options.provider || "localStorage",
+      repositoryPath: "WIN5/買い目/",
+      generatedAt: new Date().toISOString(),
+      race: options.race || {},
+      zones,
+      dangerExcluded,
+      summary: {
+        totalCandidates: Object.values(zones).reduce((total, items) => total + items.length, 0),
+        zoneCounts: Object.fromEntries(Object.entries(zones).map(([key, items]) => [key, items.length])),
+      },
+      rules: {
+        a: "AI指数最上位かつ危険指数80未満",
+        b: "AI指数上位。ただし危険人気馬指数80以上は除外",
+        c: "神穴指数上位。ただし危険人気馬指数80以上は除外",
+        d: "人気薄＋神穴指数高。ただし危険人気馬指数80以上は除外",
+      },
+    };
+  };
+
+  window.HashimotoBetEngine = {
+    buildTrifectaPayload,
+    buildWin5ClassificationPayload,
+    getTrifectaTargetPointCount,
+    isDangerPopular,
+    formatHorse,
+  };
+})();
+
+(() => {
   const STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
   const DATA_URL = "./data/selfEvolutionLogs.json";
 
