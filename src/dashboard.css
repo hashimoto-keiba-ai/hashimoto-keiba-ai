@@ -3074,3 +3074,114 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.self-evolution-form {
+  margin-top: 22px;
+}
+
+.self-evolution-fieldset {
+  border-color: rgba(248, 196, 79, 0.34);
+  background: linear-gradient(145deg, rgba(14, 11, 5, 0.82), rgba(6, 18, 12, 0.78));
+}
+
+.self-evolution-required-panel {
+  position: relative;
+  z-index: 1;
+  margin-top: 26px;
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.28);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(10, 8, 4, 0.86), rgba(9, 30, 18, 0.72));
+}
+
+.self-evolution-required-log-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.self-evolution-required-card {
+  padding: 16px;
+  border: 1px solid rgba(248, 196, 79, 0.24);
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(7, 7, 8, 0.9), rgba(17, 12, 4, 0.82));
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.08), 0 16px 40px rgba(0, 0, 0, 0.26);
+}
+
+.self-evolution-required-card--採用 {
+  border-color: rgba(248, 196, 79, 0.46);
+}
+
+.self-evolution-required-card--保留 {
+  border-color: rgba(120, 240, 163, 0.32);
+}
+
+.self-evolution-required-card--却下 {
+  border-color: rgba(255, 120, 120, 0.32);
+}
+
+.self-evolution-required-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.self-evolution-required-card__meta strong {
+  padding: 4px 10px;
+  border: 1px solid rgba(248, 196, 79, 0.34);
+  border-radius: 999px;
+  color: var(--gold-light);
+  background: rgba(248, 196, 79, 0.1);
+}
+
+.self-evolution-required-card h3 {
+  margin: 12px 0;
+  color: var(--gold-light);
+  font-size: 1.08rem;
+}
+
+.self-evolution-required-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.self-evolution-required-card dl > div {
+  display: grid;
+  gap: 4px;
+}
+
+.self-evolution-required-card dt {
+  color: var(--green);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.self-evolution-required-card dd {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.self-evolution-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (max-width: 880px) {
+  .self-evolution-required-log-list {
+    grid-template-columns: 1fr;
+  }
+
+  .self-evolution-required-panel {
+    padding: 14px;
+  }
+}

@@ -485,8 +485,34 @@
             <button class="button button--ghost" id="save-evolution-improvements" type="button">改善提案保存</button>
           </div>
 
+          <form id="self-evolution-form" class="self-evolution-form result-form" aria-label="AI自己進化ログ追加フォーム">
+            <fieldset class="result-fieldset self-evolution-fieldset">
+              <legend>④ 自己進化ログ追加保存</legend>
+              <label><span>日付</span><input name="date" type="date" required /></label>
+              <label><span>競馬場</span><select name="course" required><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
+              <label><span>距離</span><input name="distance" type="text" placeholder="例: 芝1600m" required /></label>
+              <label><span>改善対象AI</span><select name="targetAi" required><option value="AI指数エンジン">AI指数エンジン</option><option value="展開AI">展開AI</option><option value="神穴AI">神穴AI</option><option value="危険人気馬AI">危険人気馬AI</option><option value="WIN5 AI">WIN5 AI</option><option value="馬場バイアスAI">馬場バイアスAI</option><option value="騎手AI">騎手AI</option><option value="調教師AI">調教師AI</option></select></label>
+              <label><span>採用/保留/却下</span><select name="status" required><option value="採用">採用</option><option value="保留">保留</option><option value="却下">却下</option></select></label>
+              <label class="result-form__wide"><span>改善内容</span><textarea name="improvement" rows="3" placeholder="例: 東京芝1600mの高速馬場で上がり3F上位馬のAI指数を+3補正" required></textarea></label>
+              <label class="result-form__wide"><span>根拠レース</span><textarea name="evidenceRace" rows="3" placeholder="例: 2026/06/02 東京11R 安田記念 / 外差し決着" required></textarea></label>
+              <label class="result-form__wide"><span>次回反映メモ</span><textarea name="nextReflectionMemo" rows="3" placeholder="例: 次回東京芝1600m良馬場で展開AIとAI指数に同時反映" required></textarea></label>
+            </fieldset>
+            <div class="self-evolution-actions">
+              <button class="button button--primary" type="submit">自己進化ログをlocalStorageへ保存</button>
+              <button class="button button--ghost" id="reset-self-evolution-form" type="button">フォーム初期化</button>
+            </div>
+          </form>
+
           <div class="self-evolution-summary" id="self-evolution-summary" aria-live="polite"></div>
           <div class="self-evolution-log-list" id="self-evolution-log-list" aria-live="polite"></div>
+
+          <div class="self-evolution-required-panel" aria-label="自己進化ログ一覧">
+            <div class="entry-heading">
+              <span>⑤ 自己進化ログ一覧</span>
+              <small id="self-evolution-required-count">data/selfEvolutionLogs.json または localStorage から読込</small>
+            </div>
+            <div id="self-evolution-required-log-list" class="self-evolution-required-log-list" aria-live="polite"></div>
+          </div>
         </div>
       </section>
 
@@ -3371,5 +3397,6 @@
       });
       updateLogResults();
     </script>
+    <script src="./src/dashboard.js"></script>
   </body>
 </html>
