@@ -50,6 +50,17 @@ Phase2-1の実データ連携設計は [`DATA_IMPORT_DESIGN.md`](DATA_IMPORT_DES
 
 Phase2-2のAI指数自動計算エンジン設計は [`AI_SCORE_ENGINE_DESIGN.md`](AI_SCORE_ENGINE_DESIGN.md) に整理しています。CSVで取り込んだ出馬表データから、AI指数・神穴指数・危険人気馬指数を自動計算し、ランキング更新と三連単生成へ接続する流れを定義しています。
 
+#### Phase2-2 競馬場別・距離別補正テーブル
+
+AI指数自動計算エンジンは、基本点に対して `src/dashboard.js` の4種類の補正テーブルを加算して最終指数を算出します。
+
+- `COURSE_CORRECTION_TABLE`: 中山・東京・京都・阪神・中京・新潟・福島・小倉の主要8場に対し、前有利補正、差し有利補正、内枠補正、外枠補正、坂適性、小回り適性、直線長さを保持します。
+- `DISTANCE_CORRECTION_TABLE`: 芝短距離、芝マイル、芝中距離、芝長距離、ダート短距離、ダート1400、ダート1800、ダート中長距離を保持し、芝/ダートと距離から自動カテゴリ判定します。
+- `SURFACE_CORRECTION_TABLE`: 芝・ダート・障害の馬場種別ごとの前後バイアス、枠、スピード/スタミナ、危険度補正を保持します。
+- `PACE_STYLE_CORRECTION_TABLE`: 逃げ、先行、好位、中団、差し、追込（既存入力の自在は好位相当でも扱う）に対し、AI指数・神穴指数・危険人気馬指数それぞれの脚質補正と、競馬場/距離バイアスへの重みを保持します。
+
+自動計算時は、各馬ごとに「基本点」「競馬場補正」「距離補正」「脚質補正」「最終指数」を `scoreBreakdown` に保存し、出走馬テーブルと各ランキングに補正内訳を表示します。手入力指数がある場合は手入力値を最終指数として優先しつつ、比較用の補正内訳も保持します。
+
 Phase2-3のGitHub JSON保存本実装設計は [`GITHUB_JSON_STORAGE_DESIGN.md`](GITHUB_JSON_STORAGE_DESIGN.md) に整理しています。localStorage中心の保存から、`data/*.json`、GitHub API読込/保存、差分更新、バックアップ、保存方式切替へ段階移行する流れを定義しています。
 
 Phase2-4の自己進化AI強化設計は [`SELF_EVOLUTION_AI_DESIGN.md`](SELF_EVOLUTION_AI_DESIGN.md) に整理しています。バックテスト、結果検証、OSアップデートを使って、AI指数や各AI補正、危険人気馬、神穴、WIN5、競馬場OS、距離別OSを継続的に改善する流れを定義しています。
