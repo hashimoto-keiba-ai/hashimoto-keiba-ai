@@ -69,6 +69,8 @@
     },
   };
 
+  // 保存アダプターはここで一元管理します。現在はlocalStorageを既定にし、
+  // 将来GitHub保存を有効化する時も呼び出し側はtypeを変えずにadapterだけ差し替えます。
   const adapters = {
     localStorage: global.HashimotoLocalStorageAdapter,
     github: global.HashimotoGithubAdapter,
@@ -99,12 +101,23 @@
       return activeAdapterName;
     },
 
+    getAdapterNames() {
+      return Object.keys(adapters);
+    },
+
     setActiveAdapter(adapterName) {
       getAdapter(adapterName);
       activeAdapterName = adapterName;
     },
 
     getDefinition,
+
+    getRepositoryFileMap() {
+      return Object.values(storageTypes).reduce((accumulator, definition) => {
+        accumulator[definition.type] = definition.repositoryPath;
+        return accumulator;
+      }, {});
+    },
 
     saveData(type, data, adapterName) {
       const definition = getDefinition(type);

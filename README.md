@@ -37,7 +37,8 @@ AI指数ランキング、今日のレース一覧、実データ入力フォー
 現在のダッシュボード保存は `src/storage/dataStorageService.js` を入口にし、共通関数 `saveData(type, data)`、`loadData(type)`、`exportData(type)`、`importData(type, data)` で扱います。実体の保存先はアダプターで切り替える設計です。
 
 - **現在の保存先**: `src/storage/localStorageAdapter.js` がブラウザの `localStorage` へJSON保存します。既存の保存キーは維持しているため、これまで保存したレース、買い目、結果検証、OSルール、回収率データを壊さず読み込めます。
-- **将来のGitHub保存**: `src/storage/githubAdapter.js` は未接続の雛形です。将来、GitHub Contents APIへ接続し、`/data/*.json` を読み書きする実装を追加します。
+- **将来のGitHub保存**: `src/storage/githubAdapter.js` は未接続の雛形です。将来、GitHub Contents APIへ接続し、`/data/*.json` を読み書きする実装を追加します。未接続状態では保存・読込・エクスポート・インポートをエラーにして、誤送信を防ぎます。
+- **保存先マッピング確認**: `HashimotoDataStorage.getRepositoryFileMap()` で `raceEntries` → `/data/raceEntries.json` のようなタイプ別保存先を取得できるため、GitHub連携実装時も対象ファイルを共通定義から参照できます。
 - **アダプター切り替え**: `HashimotoDataStorage.setActiveAdapter("localStorage")` / `HashimotoDataStorage.setActiveAdapter("github")` の形で保存先を切り替えられる構造にしています。GitHub側は現在エラーを返し、誤って未実装APIへ送信しないようにしています。
 - **対象タイプ**: `raceEntries`、`horseEntries`、`predictions`、`results`、`osUpdates`、`win5Tickets`、`roiRecords`、`betTickets`、`backupData` を共通タイプとして定義しています。
 
