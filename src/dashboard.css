@@ -1495,6 +1495,7 @@ h1 {
 .csv-validation-panel,
 .ranking-panel,
 .bet-generator-panel,
+.capital-allocation-panel,
 .storage-actions {
   border: 1px solid rgba(248, 196, 79, 0.24);
   border-radius: 22px;
@@ -1650,7 +1651,9 @@ h1 {
 .race-entry-form input,
 .race-entry-form select,
 .horse-entry-form input,
-.horse-entry-form select {
+.horse-entry-form select,
+.capital-settings-grid input,
+.capital-settings-grid select {
   width: 100%;
   min-height: 44px;
   padding: 0 12px;
@@ -1664,7 +1667,9 @@ h1 {
 .race-entry-form input:focus,
 .race-entry-form select:focus,
 .horse-entry-form input:focus,
-.horse-entry-form select:focus {
+.horse-entry-form select:focus,
+.capital-settings-grid input:focus,
+.capital-settings-grid select:focus {
   border-color: var(--gold-light);
   box-shadow: 0 0 0 3px rgba(248, 196, 79, 0.16);
 }
@@ -1676,6 +1681,7 @@ h1 {
 
 .runner-table-panel,
 .bet-generator-panel,
+.capital-allocation-panel,
 .storage-actions {
   margin-top: 18px;
   padding: 18px;
@@ -4088,6 +4094,96 @@ h1 {
 
 @media (max-width: 760px) {
   .ev-monitor-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.capital-allocation-panel {
+  margin: 22px 0;
+  padding: 20px;
+  border-color: rgba(120, 240, 163, 0.3);
+  background: linear-gradient(145deg, rgba(5, 24, 15, 0.88), rgba(7, 7, 7, 0.9));
+}
+
+.capital-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: 12px;
+  margin: 14px 0 16px;
+}
+
+.capital-settings-grid label {
+  display: grid;
+  gap: 7px;
+}
+
+.capital-settings-grid span {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.capital-allocation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.capital-allocation-grid section {
+  padding: 16px;
+  border: 1px solid rgba(120, 240, 163, 0.2);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.capital-allocation-grid h4 {
+  margin: 0 0 12px;
+  color: #d9ffe4;
+}
+
+.capital-allocation-grid ol {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.capital-item strong,
+.capital-item small {
+  display: block;
+}
+
+.capital-item small {
+  margin-top: 4px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.capital-item--strong strong {
+  color: #d9ffe4;
+}
+
+.capital-item--normal strong,
+.capital-item--light strong {
+  color: var(--gold-light);
+}
+
+.capital-item--skip strong {
+  color: #ff9c8f;
+}
+
+@media (max-width: 1180px) {
+  .capital-settings-grid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .capital-settings-grid,
+  .capital-allocation-grid {
     grid-template-columns: 1fr;
   }
 }
