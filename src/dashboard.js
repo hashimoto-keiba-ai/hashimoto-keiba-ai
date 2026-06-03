@@ -624,6 +624,152 @@
 })();
 
 (() => {
+  const STORAGE_KEY = "godRaceJudgementResults";
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, toNumber(value)));
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const average = (items = [], getter = (item) => item) => {
+    const values = items.map(getter).filter((value) => Number.isFinite(Number(value)));
+    return values.length ? values.reduce((sum, value) => sum + Number(value), 0) / values.length : 0;
+  };
+  const sortBy = (items = [], field = "score") => [...items].sort((a, b) => toNumber(b[field]) - toNumber(a[field]));
+
+  const saveToLocalStorage = (payload) => {
+    if (!window.localStorage) return false;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    return true;
+  };
+
+  const loadFromLocalStorage = (fallback = null) => {
+    if (!window.localStorage) return fallback;
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  };
+
+  const evaluateGrade = (score = 0, blockerCount = 0) => {
+    if (blockerCount >= 2 || score < 52) return { grade: "C", label: "C 見送り", action: "見送り", battle: false, skip: true };
+    if (score >= 88) return { grade: "S", label: "S 神勝負", action: "強勝負", battle: true, skip: false };
+    if (score >= 76) return { grade: "A", label: "A 勝負", action: "通常勝負", battle: true, skip: false };
+    if (score >= 62) return { grade: "B", label: "B 条件付き", action: "小額勝負", battle: false, skip: false };
+    return { grade: "C", label: "C 見送り", action: "見送り", battle: false, skip: true };
+  };
+
+  const buildGodRacePayload = ({ horses = [], evPayload = {}, capitalPayload = null, simulationPayload = null, race = {}, roi = 0, persist = false } = {}) => {
+    const normalizedHorses = Array.isArray(horses) ? horses : [];
+    const evRanking = evPayload.evRanking || evPayload.horseEVs || [];
+    const trifectaEV = evPayload.trifectaEV || [];
+    const win5EV = evPayload.win5EV || {};
+    const simulationRankings = simulationPayload?.rankings || {};
+    const fieldSize = Math.max(1, toNumber(race.fieldSize || normalizedHorses.length, normalizedHorses.length || 1));
+
+    const topEV = evRanking[0] || null;
+    const topTrifectaEV = trifectaEV[0] || null;
+    const topWinRate = Math.max(
+      toNumber(topEV?.aiWinRate),
+      toNumber(simulationRankings.winRate?.[0]?.firstRate),
+      average(normalizedHorses.slice(0, 3), (horse) => horse.aiWinRate),
+    );
+    const overlayCount = evPayload.summary?.overlayCount ?? evRanking.filter((item) => item.overlay || toNumber(item.ev) >= 100).length;
+    const strongOverlayCount = evRanking.filter((item) => toNumber(item.ev) >= 120).length;
+    const topEvValue = Math.max(toNumber(topEV?.ev), toNumber(topTrifectaEV?.ev), toNumber(win5EV.ev));
+    const avgTopEv = average(evRanking.slice(0, 3), (item) => item.ev);
+    const dangerPopular = normalizedHorses.filter((horse) => toNumber(horse.popularity, 99) <= 5 && toNumber(horse.dangerIndex) >= 75);
+    const maxPopularDanger = dangerPopular.reduce((max, horse) => Math.max(max, toNumber(horse.dangerIndex)), 0);
+    const darkHorseCount = normalizedHorses.filter((horse) => (toNumber(horse.popularity, 99) >= 6 || toNumber(horse.odds) >= 15) && toNumber(horse.kamianaIndex) >= 70 && toNumber(horse.dangerIndex) < 65).length;
+    const oddsSpread = normalizedHorses.length ? Math.max(...normalizedHorses.map((horse) => toNumber(horse.odds, 1))) - Math.min(...normalizedHorses.map((horse) => toNumber(horse.odds, 1))) : 0;
+    const simulationTop = simulationRankings.winRate?.[0] || null;
+    const simulationPlace = simulationRankings.placeRate?.[0] || null;
+    const simulationConfidence = Math.max(toNumber(simulationTop?.firstRate), toNumber(simulationPlace?.placeRate) * 0.42);
+    const capitalStrongCount = capitalPayload?.summary?.strongCount ?? 0;
+    const capitalNormalCount = capitalPayload?.summary?.normalCount ?? 0;
+
+    const components = {
+      ev: clamp((topEvValue * 0.42) + (avgTopEv * 0.28) + (overlayCount * 4) + (strongOverlayCount * 5), 0, 100),
+      aiWinRate: clamp((topWinRate * 2.25) + average(normalizedHorses.slice(0, 3), (horse) => horse.aiIndex) * 0.18, 0, 100),
+      roi: clamp(50 + (toNumber(roi) * 0.75), 0, 100),
+      dangerPopular: clamp(100 - (maxPopularDanger * 0.85) - (dangerPopular.length * 8), 0, 100),
+      chaos: clamp((darkHorseCount / fieldSize) * 80 + Math.min(20, oddsSpread * 0.35), 0, 100),
+      simulation: clamp(simulationConfidence * 1.15 + (simulationPayload?.simulationCount >= 1000 ? 8 : simulationPayload?.simulationCount >= 300 ? 4 : 0), 0, 100),
+      capital: clamp(48 + (capitalStrongCount * 14) + (capitalNormalCount * 6) - (capitalPayload?.summary?.skipCount || 0) * 0.8, 0, 100),
+    };
+
+    const score = round(
+      components.ev * 0.28
+      + components.aiWinRate * 0.18
+      + components.roi * 0.13
+      + components.dangerPopular * 0.17
+      + components.chaos * 0.09
+      + components.simulation * 0.10
+      + components.capital * 0.05,
+      1,
+    );
+    const blockers = [
+      topEvValue < 90 ? "EV90未満" : null,
+      maxPopularDanger >= 90 ? "危険人気馬指数90以上" : null,
+      toNumber(roi) < -25 ? "ROI大幅マイナス" : null,
+      topWinRate < 8 && overlayCount === 0 ? "AI勝率・オーバーレイ不足" : null,
+    ].filter(Boolean);
+    const judgement = evaluateGrade(score, blockers.length);
+    const payload = {
+      generatedAt: new Date().toISOString(),
+      storageVersion: 1,
+      provider: "localStorage",
+      race,
+      score,
+      godRaceScore: score,
+      grade: judgement.grade,
+      label: judgement.label,
+      action: judgement.action,
+      battleRace: judgement.battle,
+      skip: judgement.skip,
+      components,
+      blockers,
+      metrics: {
+        topEV: round(topEvValue, 1),
+        avgTopEV: round(avgTopEv, 1),
+        topAiWinRate: round(topWinRate, 1),
+        roi: round(roi, 1),
+        overlayCount,
+        strongOverlayCount,
+        dangerPopularCount: dangerPopular.length,
+        maxPopularDanger: round(maxPopularDanger, 1),
+        darkHorseCount,
+        simulationCount: simulationPayload?.simulationCount || 0,
+        capitalStrongCount,
+        capitalNormalCount,
+      },
+      linked: {
+        topEV,
+        dangerPopular: sortBy(dangerPopular, "dangerIndex").slice(0, 5),
+        topSimulation: simulationTop,
+        capitalGodRaceCandidates: capitalPayload?.godRaceCandidates || [],
+      },
+      reasons: [
+        topEvValue >= 120 ? "EVエンジンが強オーバーレイを検出" : topEvValue >= 100 ? "EVエンジンがオーバーレイを検出" : "EV妙味が不足",
+        maxPopularDanger >= 75 ? "危険人気馬指数が人気馬リスクを警告" : "危険人気馬リスクは許容圏",
+        darkHorseCount > 0 ? "荒れ度・神穴候補が配当妙味を補強" : "荒れ度は低めで堅め想定",
+        simulationPayload ? `未来シミュレーション${simulationPayload.simulationCount}回を反映` : "未来シミュレーション未反映",
+        capitalPayload ? "資金配分AIの強弱判定を連動" : "資金配分AI連動前",
+      ],
+    };
+    if (persist) saveToLocalStorage(payload);
+    return payload;
+  };
+
+  window.HashimotoGodRaceEngine = {
+    STORAGE_KEY,
+    buildGodRacePayload,
+    saveToLocalStorage,
+    loadFromLocalStorage,
+  };
+})();
+
+
+(() => {
   const FUND_SETTINGS_KEY = "fundManagementSettings";
   const FUND_RESULTS_KEY = "fundAllocationResults";
   const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;

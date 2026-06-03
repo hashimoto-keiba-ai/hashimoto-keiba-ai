@@ -41,11 +41,13 @@ const betEngine = sandbox.window.HashimotoBetEngine;
 const evEngine = sandbox.window.HashimotoEVEngine;
 const raceSimulator = sandbox.window.HashimotoRaceSimulator;
 const capitalEngine = sandbox.window.HashimotoCapitalEngine;
+const godRaceEngine = sandbox.window.HashimotoGodRaceEngine;
 assert.ok(scoreEngine, 'AI指数エンジンが公開されている');
 assert.ok(betEngine, '買い目生成エンジンが公開されている');
 assert.ok(evEngine, 'AIオッズEV監視エンジンが公開されている');
 assert.ok(raceSimulator, 'AIレース未来シミュレーターが公開されている');
 assert.ok(capitalEngine, 'AI資金配分エンジンが公開されている');
+assert.ok(godRaceEngine, '神レース検出AIが公開されている');
 
 const horses = scoreEngine.calculateAllHorseScores([
   { number: 1, name: '危険トップ', popularity: 1, odds: 2.0, runningStyle: '逃げ', training: 'C', aiIndex: 99, kamianaIndex: 45, dangerIndex: 92, aiWinRate: 18, aiQuinellaRate: 34, aiPlaceRate: 48 },
@@ -102,6 +104,23 @@ assert.ok(capitalPayload.trifecta.some((item) => ['strong', 'normal', 'light', '
 assert.ok(capitalPayload.godRaceCandidates.every((item) => item.ev >= 110 && item.dangerIndex < 60), '神レース候補はEV上位かつ低危険度で抽出される');
 assert.ok(localStorageMock.getItem('fundManagementSettings'), '資金配分設定がlocalStorageに保存される');
 assert.ok(localStorageMock.getItem('fundAllocationResults'), '資金配分結果がlocalStorageに保存される');
+
+
+const godRacePayload = godRaceEngine.buildGodRacePayload({
+  horses,
+  evPayload: evDashboard,
+  capitalPayload,
+  simulationPayload: raceSimulator.runMonteCarloSimulation(horses, { simulationCount: 300, raceContext: { course: '東京競馬場', distance: 1600, surface: '芝', fieldSize: 12 }, seed: 24 }),
+  race: { course: '東京', raceNumber: 11, fieldSize: 12 },
+  roi: 12,
+  persist: true,
+});
+assert.ok(Number.isFinite(godRacePayload.score) && godRacePayload.score >= 0 && godRacePayload.score <= 100, '神レーススコアが0〜100で算出される');
+assert.ok(['S', 'A', 'B', 'C'].includes(godRacePayload.grade), '神レースS/A/B/C評価が返る');
+assert.equal(typeof godRacePayload.skip, 'boolean', '神レース見送り判定が返る');
+assert.ok(godRacePayload.components.ev > 0 && godRacePayload.components.dangerPopular >= 0, 'EV・危険人気馬連動コンポーネントが算出される');
+assert.ok(godRacePayload.metrics.capitalStrongCount >= 0, '資金配分AI連動メトリクスが算出される');
+assert.ok(localStorageMock.getItem('godRaceJudgementResults'), '神レース判定結果がlocalStorageに保存される');
 
 const capitalCurve = capitalEngine.buildCapitalCurveMonitorPayload({
   results: [
