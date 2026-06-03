@@ -488,6 +488,141 @@
   };
 })();
 
+
+(() => {
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const clampRate = (value, fallback = 0) => Math.max(0, Math.min(100, toNumber(value, fallback)));
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const sortBy = (items, field) => [...items].sort((a, b) => toNumber(b[field]) - toNumber(a[field]));
+  const probabilityFromPercent = (value) => clampRate(value) / 100;
+  const normalizeProbability = (score, total) => total > 0 ? Math.max(0.001, toNumber(score) / total) : 0;
+
+  const inferAiWinRate = (horse = {}) => {
+    if (horse.aiWinRate !== undefined && horse.aiWinRate !== "") return clampRate(horse.aiWinRate);
+    const ai = clampRate(horse.aiIndex, 50);
+    const danger = clampRate(horse.dangerIndex, 50);
+    const popularityLift = Math.max(0, 8 - toNumber(horse.popularity, 12)) * 1.2;
+    return clampRate((ai * 0.32) - (danger * 0.08) + popularityLift, 0);
+  };
+
+  const inferAiQuinellaRate = (horse = {}) => {
+    if (horse.aiQuinellaRate !== undefined && horse.aiQuinellaRate !== "") return clampRate(horse.aiQuinellaRate);
+    return clampRate(inferAiWinRate(horse) * 1.75 + clampRate(horse.aiIndex) * 0.08, 0);
+  };
+
+  const inferAiPlaceRate = (horse = {}) => {
+    if (horse.aiPlaceRate !== undefined && horse.aiPlaceRate !== "") return clampRate(horse.aiPlaceRate);
+    return clampRate(inferAiWinRate(horse) * 2.35 + clampRate(horse.kamianaIndex) * 0.08 - clampRate(horse.dangerIndex) * 0.05, 0);
+  };
+
+  const classifyEV = (ev) => {
+    if (ev >= 120) return "strong-overlay";
+    if (ev >= 100) return "overlay";
+    if (ev < 80) return "underlay";
+    return "fair";
+  };
+
+  const calculateEV = (input = {}) => {
+    const currentOdds = Math.max(1, toNumber(input.currentOdds ?? input.odds, 1));
+    const aiWinRate = inferAiWinRate(input);
+    const aiQuinellaRate = inferAiQuinellaRate(input);
+    const aiPlaceRate = inferAiPlaceRate(input);
+    const marketImpliedRate = currentOdds > 0 ? round((1 / currentOdds) * 100, 1) : 0;
+    const winEV = round(currentOdds * probabilityFromPercent(aiWinRate) * 100, 1);
+    const quinellaEV = round(currentOdds * 0.62 * probabilityFromPercent(aiQuinellaRate) * 100, 1);
+    const placeEV = round(currentOdds * 0.38 * probabilityFromPercent(aiPlaceRate) * 100, 1);
+    const blendedEV = round((winEV * 0.52) + (quinellaEV * 0.25) + (placeEV * 0.23), 1);
+    const ev = round(input.mode === "win" ? winEV : blendedEV, 1);
+    const status = classifyEV(ev);
+    return {
+      number: input.number,
+      name: input.name,
+      popularity: toNumber(input.popularity),
+      currentOdds,
+      aiWinRate,
+      aiQuinellaRate,
+      aiPlaceRate,
+      marketImpliedRate,
+      fairOdds: aiWinRate > 0 ? round(100 / aiWinRate, 2) : null,
+      winEV,
+      quinellaEV,
+      placeEV,
+      ev,
+      status,
+      overlay: status === "overlay" || status === "strong-overlay",
+      underlay: status === "underlay",
+      valueGap: round(aiWinRate - marketImpliedRate, 1),
+      recommendation: status === "strong-overlay" ? "強オーバーレイ" : status === "overlay" ? "オーバーレイ" : status === "underlay" ? "アンダーレイ" : "適正圏",
+    };
+  };
+
+  const calculateTrifectaEV = (tickets = [], horses = []) => {
+    const scoreTotal = horses.reduce((total, horse) => total + Math.max(1, toNumber(horse.aiIndex)), 0);
+    const byNumber = new Map(horses.map((horse) => [horse.number, horse]));
+    return tickets.map((ticket) => {
+      const first = byNumber.get(ticket.first?.number) || ticket.first;
+      const second = byNumber.get(ticket.second?.number) || ticket.second;
+      const third = byNumber.get(ticket.third?.number) || ticket.third;
+      const probability = normalizeProbability(first?.aiIndex, scoreTotal)
+        * normalizeProbability(second?.aiIndex, scoreTotal - Math.max(1, toNumber(first?.aiIndex)))
+        * normalizeProbability(third?.aiIndex, scoreTotal - Math.max(1, toNumber(first?.aiIndex)) - Math.max(1, toNumber(second?.aiIndex)));
+      const estimatedOdds = round(Math.max(1, toNumber(first?.odds, 1) * toNumber(second?.odds, 1) * toNumber(third?.odds, 1) * 0.7), 1);
+      const ev = round(estimatedOdds * probability * 100, 1);
+      return { ...ticket, estimatedOdds, probability: round(probability * 100, 3), ev, status: classifyEV(ev), overlay: ev >= 100, underlay: ev < 80 };
+    }).sort((a, b) => b.ev - a.ev);
+  };
+
+  const calculateWin5EV = (win5Payload = {}) => {
+    const zoneItems = Object.values(win5Payload.zones || {}).flat();
+    const candidates = zoneItems.map((horse) => {
+      const winRate = inferAiWinRate(horse);
+      const estimatedLegOdds = Math.max(1, toNumber(horse.odds, 1) * 0.82);
+      const ev = round(estimatedLegOdds * probabilityFromPercent(winRate) * 100, 1);
+      return { ...horse, aiWinRate: winRate, estimatedLegOdds: round(estimatedLegOdds, 1), ev, status: classifyEV(ev), overlay: ev >= 100, underlay: ev < 80 };
+    }).sort((a, b) => b.ev - a.ev);
+    const combinedProbability = candidates.slice(0, 5).reduce((probability, horse) => probability * probabilityFromPercent(horse.aiWinRate), candidates.length ? 1 : 0);
+    const estimatedPayoutOdds = round(candidates.slice(0, 5).reduce((odds, horse) => odds * Math.max(1, toNumber(horse.odds, 1)), candidates.length ? 0.55 : 0), 1);
+    const ev = round(estimatedPayoutOdds * combinedProbability * 100, 1);
+    return { candidates, combinedProbability: round(combinedProbability * 100, 4), estimatedPayoutOdds, ev, status: classifyEV(ev), overlay: ev >= 100, underlay: ev < 80 };
+  };
+
+  const buildEVDashboardPayload = (horses = [], options = {}) => {
+    const horseEVs = horses.map(calculateEV);
+    const evRanking = sortBy(horseEVs, "ev");
+    const kamianaEVRanking = sortBy(horseEVs.filter((item) => toNumber(horses.find((horse) => horse.number === item.number)?.kamianaIndex) >= 70 || toNumber(item.popularity, 99) >= 6 || item.currentOdds >= 15), "ev");
+    const dangerWarnings = sortBy(horseEVs.filter((item) => toNumber(item.popularity, 99) <= 5 && (item.underlay || toNumber(horses.find((horse) => horse.number === item.number)?.dangerIndex) >= 75)), "marketImpliedRate");
+    const allTickets = options.trifectaPayload ? Object.values(options.trifectaPayload.tickets || {}).flat() : [];
+    const trifectaEV = calculateTrifectaEV(allTickets, horses);
+    const win5EV = options.win5Payload ? calculateWin5EV(options.win5Payload) : calculateWin5EV({ zones: {} });
+    return {
+      generatedAt: new Date().toISOString(),
+      horseEVs,
+      evRanking,
+      kamianaEVRanking,
+      dangerWarnings,
+      trifectaEV,
+      win5EV,
+      summary: {
+        topOverlay: evRanking.find((item) => item.overlay) || null,
+        topUnderlay: sortBy(horseEVs.filter((item) => item.underlay), "marketImpliedRate")[0] || null,
+        overlayCount: horseEVs.filter((item) => item.overlay).length,
+        underlayCount: horseEVs.filter((item) => item.underlay).length,
+      },
+    };
+  };
+
+  window.HashimotoEVEngine = {
+    calculateEV,
+    buildEVDashboardPayload,
+    calculateTrifectaEV,
+    calculateWin5EV,
+    inferAiWinRate,
+    inferAiQuinellaRate,
+    inferAiPlaceRate,
+  };
+  window.calculateEV = calculateEV;
+})();
+
 (() => {
   const STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
   const DATA_URL = "./data/selfEvolutionLogs.json";

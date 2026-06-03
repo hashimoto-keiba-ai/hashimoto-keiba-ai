@@ -376,6 +376,9 @@
               <label><span>AI指数</span><input id="horse-ai" name="aiIndex" type="number" min="0" max="100" step="0.1" placeholder="空欄で自動計算" /></label>
               <label><span>神穴指数</span><input id="horse-kamiana" name="kamianaIndex" type="number" min="0" max="100" step="0.1" placeholder="空欄で自動計算" /></label>
               <label><span>危険人気馬指数</span><input id="horse-danger" name="dangerIndex" type="number" min="0" max="100" step="0.1" placeholder="空欄で自動計算" /></label>
+              <label><span>AI勝率</span><input id="horse-ai-win-rate" name="aiWinRate" type="number" min="0" max="100" step="0.1" placeholder="空欄で推定" /></label>
+              <label><span>AI連対率</span><input id="horse-ai-quinella-rate" name="aiQuinellaRate" type="number" min="0" max="100" step="0.1" placeholder="空欄で推定" /></label>
+              <label><span>AI複勝率</span><input id="horse-ai-place-rate" name="aiPlaceRate" type="number" min="0" max="100" step="0.1" placeholder="空欄で推定" /></label>
               <div class="entry-actions">
                 <button class="button button--primary" type="submit">出走馬を追加 / 更新</button>
                 <button class="button button--ghost" id="clear-horses" type="button">出走馬をクリア</button>
@@ -430,8 +433,8 @@
             </div>
             <div class="table-wrap">
               <table class="data-table data-table--compact runner-table">
-                <thead><tr><th>馬番</th><th>馬名</th><th>騎手</th><th>人気</th><th>オッズ</th><th>脚質</th><th>4角</th><th>調教</th><th>AI</th><th>神穴</th><th>危険</th><th>計算</th></tr></thead>
-                <tbody id="runner-table-body"><tr><td data-label="状態" colspan="12">まだ出走馬が入力されていません。</td></tr></tbody>
+                <thead><tr><th>馬番</th><th>馬名</th><th>騎手</th><th>人気</th><th>オッズ</th><th>脚質</th><th>4角</th><th>調教</th><th>AI</th><th>神穴</th><th>危険</th><th>AI勝率</th><th>AI連対</th><th>AI複勝</th><th>計算</th></tr></thead>
+                <tbody id="runner-table-body"><tr><td data-label="状態" colspan="15">まだ出走馬が入力されていません。</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -470,6 +473,32 @@
               <section><h4>危険人気馬ランキング</h4><ol id="simulation-danger-ranking"></ol></section>
               <section class="race-simulator-trifecta"><h4>三連単出現率 TOP</h4><ol id="simulation-trifecta-ranking"></ol></section>
               <section class="race-simulator-win5"><h4>WIN5候補率</h4><ol id="simulation-win5-ranking"></ol></section>
+            </div>
+          </div>
+
+
+
+          <div class="ev-monitor-panel" aria-label="AIオッズ監視ダッシュボード">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">AI ODDS EV MONITOR</p>
+                <h3>AIオッズ監視ダッシュボード</h3>
+                <p>現在オッズとAI勝率・AI連対率・AI複勝率を比較し、期待値EV、オーバーレイ、アンダーレイ、神穴EV、危険人気馬警告、三連単EV、WIN5EVを自動表示します。</p>
+              </div>
+              <span id="ev-monitor-status" class="status-pill">EV未計算</span>
+            </div>
+            <div id="ev-monitor-summary" class="race-simulation-summary" aria-live="polite">
+              <article><span>最上位EV</span><strong>未生成</strong><small>出走馬を入力してください</small></article>
+              <article><span>オーバーレイ</span><strong>0頭</strong><small>EV100以上を買い妙味として抽出</small></article>
+              <article><span>アンダーレイ</span><strong>0頭</strong><small>EV80未満を過剰人気として警告</small></article>
+              <article><span>三連単/WIN5EV</span><strong>未生成</strong><small>買い目生成後に連動</small></article>
+            </div>
+            <div class="ev-monitor-grid">
+              <section><h4>EVランキング</h4><ol id="ev-ranking-list"></ol></section>
+              <section><h4>神穴EVランキング</h4><ol id="kamiana-ev-ranking-list"></ol></section>
+              <section class="ev-monitor-danger"><h4>危険人気馬EV警告</h4><ol id="danger-ev-warning-list"></ol></section>
+              <section><h4>三連単EV TOP</h4><ol id="trifecta-ev-ranking-list"></ol></section>
+              <section><h4>WIN5EV</h4><ol id="win5-ev-ranking-list"></ol></section>
             </div>
           </div>
 
@@ -1553,6 +1582,13 @@
       const simulationDangerRanking = document.querySelector("#simulation-danger-ranking");
       const simulationTrifectaRanking = document.querySelector("#simulation-trifecta-ranking");
       const simulationWin5Ranking = document.querySelector("#simulation-win5-ranking");
+      const evMonitorStatus = document.querySelector("#ev-monitor-status");
+      const evMonitorSummary = document.querySelector("#ev-monitor-summary");
+      const evRankingList = document.querySelector("#ev-ranking-list");
+      const kamianaEvRankingList = document.querySelector("#kamiana-ev-ranking-list");
+      const dangerEvWarningList = document.querySelector("#danger-ev-warning-list");
+      const trifectaEvRankingList = document.querySelector("#trifecta-ev-ranking-list");
+      const win5EvRankingList = document.querySelector("#win5-ev-ranking-list");
       let selectedSimulationCount = 1000;
       let currentSimulationPayload = null;
       const trifectaCandidateOutput = document.querySelector("#trifecta-candidate-output");
@@ -1647,9 +1683,10 @@
       let currentWin5Payload = null;
 
       const getFormData = (form) => Object.fromEntries(new FormData(form).entries());
-      const numericFields = ["number", "popularity", "odds", "cornerPosition", "aiIndex", "kamianaIndex", "dangerIndex"];
+      const numericFields = ["number", "popularity", "odds", "cornerPosition", "aiIndex", "kamianaIndex", "dangerIndex", "aiWinRate", "aiQuinellaRate", "aiPlaceRate"];
       const scoreEngine = window.HashimotoKeibaAiScoreEngine;
       const betEngine = window.HashimotoBetEngine;
+      const evEngine = window.HashimotoEVEngine;
       const scoreSourceLabel = (source) => source === "manual" ? "手入力" : "自動計算";
       const scoreSourceSummary = (horse) => [
         `AI:${scoreSourceLabel(horse.scoreSource?.aiIndex)}`,
@@ -3662,7 +3699,7 @@
         runnerTableBody.innerHTML = "";
         runnerCount.textContent = `${raceHorses.length}頭`;
         if (!raceHorses.length) {
-          runnerTableBody.innerHTML = '<tr><td data-label="状態" colspan="12">まだ出走馬が入力されていません。</td></tr>';
+          runnerTableBody.innerHTML = '<tr><td data-label="状態" colspan="15">まだ出走馬が入力されていません。</td></tr>';
           return;
         }
         [...raceHorses].sort((a, b) => a.number - b.number).forEach((horse) => {
@@ -3679,6 +3716,9 @@
             <td data-label="AI">${horse.aiIndex}</td>
             <td data-label="神穴">${horse.kamianaIndex}</td>
             <td data-label="危険">${horse.dangerIndex}</td>
+            <td data-label="AI勝率">${horse.aiWinRate ?? "推定"}</td>
+            <td data-label="AI連対">${horse.aiQuinellaRate ?? "推定"}</td>
+            <td data-label="AI複勝">${horse.aiPlaceRate ?? "推定"}</td>
             <td data-label="計算">
               <span class="badge ${horse.scoreSource?.aiIndex === "manual" || horse.scoreSource?.kamianaIndex === "manual" || horse.scoreSource?.dangerIndex === "manual" ? "badge--gold" : "badge--warning"}">${escapeHtml(scoreSourceSummary(horse))}</span>
               <small class="score-breakdown">AI ${escapeHtml(getScoreBreakdownSummary(horse, "aiIndex"))}</small>
@@ -3695,7 +3735,7 @@
         return betEngine.buildTrifectaPayload(raceHorses, {
           race,
           fieldSize: Number(race.fieldSize) || raceHorses.length,
-          provider: activeMode,
+          provider: dataStorage.getActiveAdapterName(),
         });
       };
 
@@ -3742,6 +3782,44 @@
           renderGroup("攻撃型", tickets.attack, "trifecta-ticket-group--attack"),
           renderGroup("万馬券型", tickets.jackpot, "trifecta-ticket-group--jackpot"),
         ].join("");
+      };
+
+
+      const evStatusLabel = (item) => item.status === "strong-overlay" ? "強オーバーレイ" : item.status === "overlay" ? "オーバーレイ" : item.status === "underlay" ? "アンダーレイ" : "適正圏";
+
+      const renderEVList = (target, items, formatter) => {
+        if (!target) return;
+        target.innerHTML = items.length
+          ? items.slice(0, 8).map((item) => `<li class="ev-item ev-item--${escapeHtml(item.status || "fair")}"><strong>${escapeHtml(formatter(item))}</strong><small>EV${item.ev}% / ${escapeHtml(evStatusLabel(item))} / 勝率${item.aiWinRate ?? "-"}% / 連対${item.aiQuinellaRate ?? "-"}% / 複勝${item.aiPlaceRate ?? "-"}% / 市場${item.marketImpliedRate ?? "-"}%</small></li>`).join("")
+          : '<li class="empty-state">EV対象がありません。</li>';
+      };
+
+      const renderTicketEVList = (target, items) => {
+        if (!target) return;
+        target.innerHTML = items.length
+          ? items.slice(0, 8).map((item) => `<li class="ev-item ev-item--${escapeHtml(item.status || "fair")}"><strong>${escapeHtml(item.notation || formatHorse(item))}</strong><small>EV${item.ev}% / 推定${item.estimatedOdds || item.estimatedLegOdds}倍 / AI確率${item.probability ?? item.aiWinRate}% / ${escapeHtml(evStatusLabel(item))}</small></li>`).join("")
+          : '<li class="empty-state">買い目EVが生成されていません。</li>';
+      };
+
+      const renderEVDashboard = (trifectaPayload, win5Payload) => {
+        if (!evEngine) return null;
+        const payload = evEngine.buildEVDashboardPayload(raceHorses, { trifectaPayload, win5Payload });
+        if (evMonitorStatus) evMonitorStatus.textContent = raceHorses.length ? `EV監視 ${raceHorses.length}頭` : "EV未計算";
+        if (evMonitorSummary) {
+          const top = payload.summary.topOverlay || payload.evRanking[0];
+          evMonitorSummary.innerHTML = `
+            <article><span>最上位EV</span><strong>${escapeHtml(top ? `${top.number} ${top.name} EV${top.ev}%` : "未生成")}</strong><small>${escapeHtml(top ? `${top.recommendation} / 適正単勝${top.fairOdds ?? "-"}倍` : "出走馬を入力してください")}</small></article>
+            <article><span>オーバーレイ</span><strong>${payload.summary.overlayCount}頭</strong><small>市場オッズよりAI理論値が高い馬</small></article>
+            <article><span>アンダーレイ</span><strong>${payload.summary.underlayCount}頭</strong><small>過剰人気・見送り候補</small></article>
+            <article><span>三連単/WIN5EV</span><strong>三連単${payload.trifectaEV.length}点 / WIN5 EV${payload.win5EV.ev}%</strong><small>買い目生成と連動して自動算出</small></article>
+          `;
+        }
+        renderEVList(evRankingList, payload.evRanking, (item) => `${item.number} ${item.name}（${item.currentOdds}倍）`);
+        renderEVList(kamianaEvRankingList, payload.kamianaEVRanking, (item) => `${item.number} ${item.name}（神穴EV / ${item.currentOdds}倍）`);
+        renderEVList(dangerEvWarningList, payload.dangerWarnings, (item) => `${item.number} ${item.name}（危険人気馬EV警告）`);
+        renderTicketEVList(trifectaEvRankingList, payload.trifectaEV);
+        renderTicketEVList(win5EvRankingList, payload.win5EV.candidates);
+        return payload;
       };
 
       const formatRateHorse = (horse) => `${formatHorse(horse)}（1着${horse.firstRate}% / 2着${horse.secondRate}% / 3着${horse.thirdRate}% / 連対${horse.quinellaRate}% / 複勝${horse.placeRate}%）`;
@@ -3797,9 +3875,10 @@
         const dangerTop = rankBy("dangerIndex");
         const longshots = kamianaTop.filter((horse) => horse.popularity >= 6 || horse.odds >= 15).slice(0, 3);
         const dangerousPopular = dangerTop.filter((horse) => horse.popularity <= 5).slice(0, 3);
-        renderTrifectaPayload(buildTrifectaPayload());
+        const trifectaPayload = buildTrifectaPayload();
+        renderTrifectaPayload(trifectaPayload);
         runRaceFutureSimulation();
-        const win5Classification = betEngine.buildWin5ClassificationPayload(raceHorses, { race: getFormData(raceForm), provider: activeMode });
+        const win5Classification = betEngine.buildWin5ClassificationPayload(raceHorses, { race: getFormData(raceForm), provider: dataStorage.getActiveAdapterName() });
         const win5SummaryText = [
           ["A", win5Classification.zones.a],
           ["B", win5Classification.zones.b],
@@ -3808,6 +3887,7 @@
         ].map(([label, horses]) => `${label}:${horses.length ? horses.map(formatHorse).join("・") : "なし"}`).join(" / ");
         generatedWin5.textContent = raceHorses.length ? win5SummaryText : "レース登録後に生成";
         renderAutoWin5Classification(win5Classification);
+        renderEVDashboard(trifectaPayload, win5Classification);
         generatedLongshots.textContent = longshots.length ? longshots.map(formatHorse).join(" / ") : "該当なし";
         generatedDanger.textContent = dangerousPopular.length ? dangerousPopular.map(formatHorse).join(" / ") : "該当なし";
       };
