@@ -1361,6 +1361,148 @@
 
 
 (() => {
+  const RACE_DATABASE_STORAGE_KEY = "raceDatabase";
+  const PRODUCTION_RACE_STORAGE_KEY = "hashimoto-keiba-ai:production-race-entry:v1";
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const normalizeText = (value) => String(value || "").trim();
+
+  const normalizeRace = (race = {}) => ({
+    date: race.date || new Date().toISOString().slice(0, 10),
+    course: normalizeText(race.course || race.racecourse || "未設定"),
+    raceNumber: toNumber(race.raceNumber, race.raceNo || 0),
+    raceName: normalizeText(race.raceName || race.name || "本番入力レース"),
+    distance: toNumber(race.distance, 0),
+    surface: normalizeText(race.surface || race["芝ダート"] || ""),
+    going: normalizeText(race.going || race.trackCondition || race["馬場状態"] || "良"),
+    weather: normalizeText(race.weather || ""),
+    fieldSize: toNumber(race.fieldSize, race.runnerCount || 0),
+  });
+
+  const normalizeHorse = (horse = {}) => ({
+    ...horse,
+    number: toNumber(horse.number ?? horse["馬番"], 0),
+    name: normalizeText(horse.name ?? horse["馬名"]),
+    popularity: toNumber(horse.popularity ?? horse["人気"], 18),
+    odds: toNumber(horse.odds ?? horse["オッズ"], 99),
+    jockey: normalizeText(horse.jockey ?? horse["騎手"]),
+    trainer: normalizeText(horse.trainer ?? horse["調教師"]),
+    runningStyle: normalizeText(horse.runningStyle ?? horse["脚質"]),
+    training: normalizeText((horse.training ?? horse["調教評価"]) || "B"),
+    cornerPosition: toNumber(horse.cornerPosition ?? horse["想定4角位置"], horse.number ?? horse["馬番"] ?? 18),
+  });
+
+  const buildAiAnalysisPayload = ({ race = {}, horses = [], simulationCount = 1000, capitalSettings = {}, persistEngines = true } = {}) => {
+    const scoreEngine = window.HashimotoKeibaAiScoreEngine;
+    const betEngine = window.HashimotoBetEngine;
+    const evEngine = window.HashimotoEVEngine;
+    const capitalEngine = window.HashimotoCapitalEngine;
+    const godRaceEngine = window.HashimotoGodRaceEngine;
+    const raceSimulator = window.HashimotoRaceSimulator;
+    if (!scoreEngine || !betEngine || !evEngine || !capitalEngine || !godRaceEngine) {
+      throw new Error("本番レースAI実行に必要なエンジンが未読込です");
+    }
+
+    const normalizedRace = normalizeRace(race);
+    const normalizedHorses = horses.map(normalizeHorse).filter((horse) => horse.number && horse.name);
+    const raceContext = { ...normalizedRace, fieldSize: normalizedRace.fieldSize || normalizedHorses.length };
+    const scoredHorses = scoreEngine.calculateAllHorseScores(normalizedHorses, raceContext);
+    const aiIndexRanking = [...scoredHorses].sort((a, b) => b.aiIndex - a.aiIndex);
+    const kamianaRanking = [...scoredHorses].sort((a, b) => b.kamianaIndex - a.kamianaIndex);
+    const dangerPopularRanking = [...scoredHorses].sort((a, b) => b.dangerIndex - a.dangerIndex);
+    const kamiana = kamianaRanking.filter((horse) => toNumber(horse.popularity, 99) >= 6 || toNumber(horse.odds) >= 15);
+    const dangerPopular = dangerPopularRanking.filter((horse) => toNumber(horse.popularity, 99) <= 5);
+    const trifectaPayload = betEngine.buildTrifectaPayload(scoredHorses, { race: raceContext, fieldSize: raceContext.fieldSize });
+    const win5Payload = betEngine.buildWin5ClassificationPayload(scoredHorses, { race: raceContext });
+    const simulationPayload = raceSimulator && scoredHorses.length >= 3
+      ? raceSimulator.runMonteCarloSimulation(scoredHorses, { simulationCount, raceContext, seed: `${raceContext.date}:${raceContext.course}:${raceContext.raceNumber}:${scoredHorses.length}`.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) })
+      : null;
+    const evPayload = evEngine.buildEVDashboardPayload(scoredHorses, { trifectaPayload, win5Payload });
+    const preliminaryGodRace = godRaceEngine.buildGodRacePayload({ horses: scoredHorses, evPayload, simulationPayload, race: raceContext, persist: false });
+    const capitalPayload = capitalEngine.buildCapitalAllocationPayload({
+      trifectaEV: evPayload.trifectaEV,
+      win5EV: evPayload.win5EV,
+      raceEV: evPayload.evRanking,
+      race: raceContext,
+      godRaceIndex: preliminaryGodRace.score,
+      persist: persistEngines,
+      ...capitalSettings,
+    });
+    const godRacePayload = godRaceEngine.buildGodRacePayload({ horses: scoredHorses, evPayload, capitalPayload, simulationPayload, race: raceContext, persist: persistEngines });
+
+    return {
+      id: `production:${raceContext.date}:${raceContext.course}:${raceContext.raceNumber}`,
+      mode: "production-race-input",
+      source: "netkeiba-entry-manual",
+      storageKeys: { production: PRODUCTION_RACE_STORAGE_KEY, raceDatabase: RACE_DATABASE_STORAGE_KEY },
+      generatedAt: new Date().toISOString(),
+      storageVersion: 1,
+      race: raceContext,
+      horses: scoredHorses,
+      aiIndexRanking,
+      kamiana,
+      kamianaRanking,
+      dangerPopular,
+      dangerPopularRanking,
+      trifecta: trifectaPayload,
+      win5: win5Payload,
+      ev: evPayload,
+      capital: capitalPayload,
+      godRace: godRacePayload,
+      raceSimulation: simulationPayload,
+      summary: {
+        runnerCount: scoredHorses.length,
+        topAi: aiIndexRanking[0] || null,
+        topKamiana: kamiana[0] || kamianaRanking[0] || null,
+        topDangerPopular: dangerPopular[0] || dangerPopularRanking[0] || null,
+        trifectaTicketCount: trifectaPayload.summary?.total || 0,
+        win5CandidateCount: Object.values(win5Payload.zones || {}).flat().length,
+        topEV: evPayload.evRanking?.[0]?.ev || 0,
+        recommendedAmount: capitalPayload.summary?.totalRecommended || 0,
+        godRaceScore: godRacePayload.score,
+        godRaceLabel: godRacePayload.label,
+      },
+    };
+  };
+
+  const loadRaceDatabase = (storage = window.localStorage) => {
+    try {
+      const raw = storage?.getItem?.(RACE_DATABASE_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : Array.isArray(parsed.races) ? parsed.races : [];
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const saveProductionRace = (payload, storage = window.localStorage) => {
+    if (!storage?.setItem) return payload;
+    storage.setItem(PRODUCTION_RACE_STORAGE_KEY, JSON.stringify(payload));
+    const existing = loadRaceDatabase(storage).filter((race) => race.id !== payload.id);
+    storage.setItem(RACE_DATABASE_STORAGE_KEY, JSON.stringify([payload, ...existing].slice(0, 200)));
+    return payload;
+  };
+
+  const buildAndSaveProductionRace = (options = {}, storage = window.localStorage) => {
+    const payload = buildAiAnalysisPayload(options);
+    return saveProductionRace(payload, storage);
+  };
+
+  window.HashimotoProductionRaceEngine = {
+    RACE_DATABASE_STORAGE_KEY,
+    PRODUCTION_RACE_STORAGE_KEY,
+    normalizeRace,
+    normalizeHorse,
+    buildAiAnalysisPayload,
+    loadRaceDatabase,
+    saveProductionRace,
+    buildAndSaveProductionRace,
+  };
+})();
+
+
+(() => {
   const STORAGE_KEY = "sampleRaceResultValidationLog";
   const SELF_EVOLUTION_STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
   const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
