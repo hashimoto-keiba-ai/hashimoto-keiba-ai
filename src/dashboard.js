@@ -1363,6 +1363,7 @@
 (() => {
   const RACE_DATABASE_STORAGE_KEY = "raceDatabase";
   const PRODUCTION_RACE_STORAGE_KEY = "hashimoto-keiba-ai:production-race-entry:v1";
+  const PRODUCTION_RUN_REPORT_STORAGE_KEY = "productionRunReports";
   const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
   const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
   const normalizeText = (value) => String(value || "").trim();
@@ -1391,6 +1392,119 @@
     training: normalizeText((horse.training ?? horse["調教評価"]) || "B"),
     cornerPosition: toNumber(horse.cornerPosition ?? horse["想定4角位置"], horse.number ?? horse["馬番"] ?? 18),
   });
+
+  const validateProductionInput = ({ race = {}, horses = [] } = {}) => {
+    const normalizedRace = normalizeRace(race);
+    const normalizedHorses = horses.map(normalizeHorse).filter((horse) => horse.number && horse.name);
+    const errors = [
+      !normalizedRace.course || normalizedRace.course === "未設定" ? "競馬場を入力してください" : null,
+      !normalizedRace.raceNumber ? "レース番号を入力してください" : null,
+      !normalizedRace.raceName || normalizedRace.raceName === "本番入力レース" ? "レース名を入力してください" : null,
+      normalizedHorses.length < 3 ? "出走馬を3頭以上入力してください" : null,
+    ].filter(Boolean);
+    const warnings = [
+      !normalizedRace.distance ? "距離が未入力です" : null,
+      !normalizedRace.surface ? "芝/ダートが未入力です" : null,
+      normalizedHorses.some((horse) => !horse.jockey) ? "騎手未入力の馬がいます" : null,
+      normalizedHorses.some((horse) => !horse.runningStyle) ? "脚質未入力の馬がいます" : null,
+    ].filter(Boolean);
+    return { ok: errors.length === 0, errors, warnings, race: normalizedRace, horses: normalizedHorses };
+  };
+
+  const requireProductionInput = (options = {}) => {
+    const validation = validateProductionInput(options);
+    if (!validation.ok) {
+      const error = new Error(`本番AI一括実行の入力チェックで停止: ${validation.errors.join(" / ")}`);
+      error.validation = validation;
+      throw error;
+    }
+    return validation;
+  };
+
+  const flattenTickets = (tickets = {}) => [
+    ...(Array.isArray(tickets.main) ? tickets.main : []),
+    ...(Array.isArray(tickets.attack) ? tickets.attack : []),
+    ...(Array.isArray(tickets.jackpot) ? tickets.jackpot : []),
+  ];
+
+  const flattenWin5Candidates = (zones = {}) => Object.entries(zones).flatMap(([zone, horses]) => (Array.isArray(horses) ? horses : []).map((horse) => ({ ...horse, zone: zone.toUpperCase() })));
+
+  const summarizeTicket = (ticket = null) => ticket?.notation || [ticket?.first, ticket?.second, ticket?.third]
+    .filter(Boolean)
+    .map((horse) => horse?.number ?? horse)
+    .join("→") || "該当なし";
+
+  const buildProductionPredictionLog = (payload = {}) => ({
+    generatedAt: payload.generatedAt,
+    race: payload.race,
+    aiTop5: (payload.aiIndexRanking || []).slice(0, 5),
+    kamianaTop5: (payload.kamianaRanking || payload.kamiana || []).slice(0, 5),
+    dangerTop5: (payload.dangerPopularRanking || payload.dangerPopular || []).slice(0, 5),
+    trifectaCandidates: flattenTickets(payload.trifecta?.tickets).slice(0, 8),
+    win5Candidates: flattenWin5Candidates(payload.win5?.zones).slice(0, 8),
+    simulationWinTop5: (payload.raceSimulation?.rankings?.winRate || []).slice(0, 5),
+    simulationCount: payload.raceSimulation?.simulationCount || null,
+    evTop: (payload.ev?.evRanking || []).slice(0, 8),
+    capitalSummary: payload.capital?.summary || {},
+    recommendedInvestments: Object.values(payload.capital?.ticketGroups || {}).flat().slice(0, 8),
+    godRace: payload.godRace,
+  });
+
+  const buildProductionRunReport = ({ payload, validation = null, operationReportEngine = window.HashimotoOperationDiagnosticReportEngine } = {}) => {
+    if (!payload) throw new Error("本番AI一括実行レポートのpayloadがありません");
+    const inputCheck = validation || validateProductionInput({ race: payload.race, horses: payload.horses });
+    const predictionLog = buildProductionPredictionLog(payload);
+    const diagnosticReport = operationReportEngine?.buildOperationDiagnosticReport
+      ? operationReportEngine.buildOperationDiagnosticReport({ predictionLog, source: "production-ai-batch-run", generatedAt: payload.generatedAt })
+      : null;
+    const mainTrifecta = payload.trifecta?.tickets?.main?.[0] || flattenTickets(payload.trifecta?.tickets)[0] || null;
+    const attackTrifecta = payload.trifecta?.tickets?.attack?.[0] || flattenTickets(payload.trifecta?.tickets).find((ticket) => ticket.type === "攻撃型") || null;
+    const win5Candidates = flattenWin5Candidates(payload.win5?.zones).slice(0, 5);
+    const evTop = (payload.ev?.evRanking || []).slice(0, 5);
+    const operationMode = inputCheck.ok && (payload.godRace?.skip === false || toNumber(payload.summary?.topEV) >= 100) && toNumber(payload.capital?.summary?.totalRecommended) > 0
+      ? "本番運用可能"
+      : "要確認";
+    return {
+      id: `production-run-${(payload.generatedAt || new Date().toISOString()).replace(/[:.]/g, "-")}`,
+      generatedAt: payload.generatedAt || new Date().toISOString(),
+      storageKey: PRODUCTION_RUN_REPORT_STORAGE_KEY,
+      source: "production-ai-batch-run",
+      inputCheck,
+      executionSteps: [
+        "入力チェック",
+        "AI指数自動計算",
+        "神穴指数計算",
+        "危険人気馬指数計算",
+        "AI指数ランキング更新",
+        "神穴ランキング更新",
+        "危険人気馬ランキング更新",
+        "三連単生成",
+        "WIN5候補生成",
+        "未来シミュレーター",
+        "EV計算",
+        "資金配分",
+        "神レース判定",
+        "診断レポート生成",
+      ].map((label, index) => ({ order: index + 1, label, status: "完了" })),
+      race: payload.race,
+      summary: {
+        aiIndexTop: payload.summary?.topAi || payload.aiIndexRanking?.[0] || null,
+        kamianaTop: payload.summary?.topKamiana || payload.kamiana?.[0] || payload.kamianaRanking?.[0] || null,
+        dangerPopularTop: payload.summary?.topDangerPopular || payload.dangerPopular?.[0] || payload.dangerPopularRanking?.[0] || null,
+        mainTrifecta,
+        attackTrifecta,
+        mainTrifectaText: summarizeTicket(mainTrifecta),
+        attackTrifectaText: summarizeTicket(attackTrifecta),
+        win5Candidates,
+        evTop,
+        recommendedInvestmentAmount: toNumber(payload.capital?.summary?.totalRecommended, 0),
+        godRaceJudgement: payload.godRace || null,
+        operationMode,
+      },
+      diagnosticReport,
+      productionPayload: payload,
+    };
+  };
 
   const buildAiAnalysisPayload = ({ race = {}, horses = [], simulationCount = 1000, capitalSettings = {}, persistEngines = true } = {}) => {
     const scoreEngine = window.HashimotoKeibaAiScoreEngine;
@@ -1434,7 +1548,7 @@
       id: `production:${raceContext.date}:${raceContext.course}:${raceContext.raceNumber}`,
       mode: "production-race-input",
       source: "netkeiba-entry-manual",
-      storageKeys: { production: PRODUCTION_RACE_STORAGE_KEY, raceDatabase: RACE_DATABASE_STORAGE_KEY },
+      storageKeys: { production: PRODUCTION_RACE_STORAGE_KEY, raceDatabase: RACE_DATABASE_STORAGE_KEY, productionRunReports: PRODUCTION_RUN_REPORT_STORAGE_KEY },
       generatedAt: new Date().toISOString(),
       storageVersion: 1,
       race: raceContext,
@@ -1489,15 +1603,47 @@
     return saveProductionRace(payload, storage);
   };
 
+  const loadProductionRunReports = (storage = window.localStorage) => {
+    try {
+      const parsed = JSON.parse(storage?.getItem?.(PRODUCTION_RUN_REPORT_STORAGE_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const saveProductionRunReport = (report, storage = window.localStorage) => {
+    if (!storage?.setItem) return [report];
+    const reports = [report, ...loadProductionRunReports(storage).filter((item) => item.id !== report.id)].slice(0, 50);
+    storage.setItem(PRODUCTION_RUN_REPORT_STORAGE_KEY, JSON.stringify(reports));
+    return reports;
+  };
+
+  const buildAndSaveProductionRunReport = (options = {}, storage = window.localStorage) => {
+    const validation = requireProductionInput(options);
+    const payload = buildAiAnalysisPayload(options);
+    saveProductionRace(payload, storage);
+    const report = buildProductionRunReport({ payload, validation });
+    saveProductionRunReport(report, storage);
+    return report;
+  };
+
   window.HashimotoProductionRaceEngine = {
     RACE_DATABASE_STORAGE_KEY,
     PRODUCTION_RACE_STORAGE_KEY,
+    PRODUCTION_RUN_REPORT_STORAGE_KEY,
     normalizeRace,
     normalizeHorse,
+    validateProductionInput,
     buildAiAnalysisPayload,
+    buildProductionPredictionLog,
+    buildProductionRunReport,
     loadRaceDatabase,
     saveProductionRace,
     buildAndSaveProductionRace,
+    loadProductionRunReports,
+    saveProductionRunReport,
+    buildAndSaveProductionRunReport,
   };
 })();
 

@@ -43,6 +43,7 @@ vm.runInContext(fs.readFileSync('src/raceSimulator.js', 'utf8'), sandbox, { file
 const productionEngine = sandbox.window.HashimotoProductionRaceEngine;
 const dataStorage = sandbox.window.HashimotoDataStorage;
 assert.ok(productionEngine, '本番レース入力エンジンが公開されている');
+assert.equal(productionEngine.PRODUCTION_RUN_REPORT_STORAGE_KEY, 'productionRunReports', '本番一括実行レポート保存キーがproductionRunReportsである');
 assert.equal(dataStorage.getDefinition('raceDatabase').storageKey, 'raceDatabase', 'raceDatabase保存定義がある');
 
 const race = {
@@ -75,6 +76,25 @@ assert.ok(Object.values(payload.win5.zones).flat().length > 0, 'WIN5候補が生
 assert.ok(payload.ev.evRanking.length > 0 && Number.isFinite(payload.ev.win5EV.ev), 'EVが計算される');
 assert.ok(Number.isFinite(payload.capital.summary.totalRecommended), '資金配分が計算される');
 assert.ok(payload.godRace.label && Number.isFinite(payload.godRace.score), '神レース判定が計算される');
+
+const inputCheck = productionEngine.validateProductionInput({ race, horses });
+assert.equal(inputCheck.ok, true, '本番AI一括実行の入力チェックが通る');
+const runReport = productionEngine.buildProductionRunReport({ payload, validation: inputCheck });
+assert.equal(runReport.storageKey, 'productionRunReports', '本番一括実行レポートの保存先がproductionRunReportsになる');
+assert.equal(runReport.executionSteps.length, 14, '本番一括実行の14工程が記録される');
+assert.ok(runReport.summary.aiIndexTop.name, '実行結果サマリーにAI指数1位が入る');
+assert.ok(runReport.summary.kamianaTop.name, '実行結果サマリーに神穴1位が入る');
+assert.ok(runReport.summary.dangerPopularTop.name, '実行結果サマリーに危険人気馬1位が入る');
+assert.ok(runReport.summary.mainTrifectaText.includes('→'), '実行結果サマリーに本線三連単が入る');
+assert.ok(runReport.summary.attackTrifectaText === '該当なし' || runReport.summary.attackTrifectaText.includes('→'), '実行結果サマリーに攻撃型三連単が入る');
+assert.ok(runReport.summary.win5Candidates.length > 0, '実行結果サマリーにWIN5候補が入る');
+assert.ok(runReport.summary.evTop.length > 0, '実行結果サマリーにEV上位が入る');
+assert.ok(Number.isFinite(runReport.summary.recommendedInvestmentAmount), '実行結果サマリーに推奨投資額が入る');
+assert.ok(runReport.summary.godRaceJudgement.label, '実行結果サマリーに神レース判定が入る');
+assert.ok(['本番運用可能', '要確認'].includes(runReport.summary.operationMode), '本番運用可能/要確認の判定が入る');
+productionEngine.saveProductionRunReport(runReport, localStorageMock);
+const restoredRunReports = JSON.parse(localStorageMock.getItem('productionRunReports'));
+assert.equal(restoredRunReports[0].id, runReport.id, 'localStorage productionRunReportsへ本番一括実行レポートが保存される');
 
 productionEngine.saveProductionRace(payload, localStorageMock);
 const restoredProduction = JSON.parse(localStorageMock.getItem(productionEngine.PRODUCTION_RACE_STORAGE_KEY));
