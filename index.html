@@ -502,6 +502,29 @@
             </div>
           </div>
 
+
+          <div class="god-race-panel" aria-label="神レース検出AI">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">GOD RACE DETECTOR</p>
+                <h3>神レース検出AI</h3>
+                <p>EV・AI勝率・ROI・危険人気馬指数・荒れ度・未来シミュレーション・資金配分AIを統合し、勝負レースと見送りレースを自動判定します。</p>
+              </div>
+              <span id="god-race-status" class="status-pill">神レース未判定</span>
+            </div>
+            <div id="god-race-summary" class="race-simulation-summary" aria-live="polite">
+              <article><span>神レーススコア</span><strong>未生成</strong><small>EV監視後に自動採点</small></article>
+              <article><span>S/A/B/C評価</span><strong>未生成</strong><small>S/Aは勝負、Cは見送り</small></article>
+              <article><span>見送り判定</span><strong>未生成</strong><small>危険人気馬・低EVをブロック</small></article>
+              <article><span>資金配分連動</span><strong>未生成</strong><small>AI資金配分へ神レース指数を反映</small></article>
+            </div>
+            <div class="god-race-grid">
+              <section><h4>統合スコア内訳</h4><ol id="god-race-component-list"></ol></section>
+              <section class="god-race-danger"><h4>見送り・危険人気馬連動</h4><ol id="god-race-blocker-list"></ol></section>
+              <section><h4>AI判断理由</h4><ol id="god-race-reason-list"></ol></section>
+            </div>
+          </div>
+
           <div class="capital-allocation-panel" aria-label="AI資金配分エンジン">
             <div class="entry-heading">
               <span>AI資金配分エンジン</span>
@@ -1662,6 +1685,12 @@
       const dangerEvWarningList = document.querySelector("#danger-ev-warning-list");
       const trifectaEvRankingList = document.querySelector("#trifecta-ev-ranking-list");
       const win5EvRankingList = document.querySelector("#win5-ev-ranking-list");
+      const godRaceEngine = window.HashimotoGodRaceEngine;
+      const godRaceStatus = document.querySelector("#god-race-status");
+      const godRaceSummary = document.querySelector("#god-race-summary");
+      const godRaceComponentList = document.querySelector("#god-race-component-list");
+      const godRaceBlockerList = document.querySelector("#god-race-blocker-list");
+      const godRaceReasonList = document.querySelector("#god-race-reason-list");
       const capitalAllocationStatus = document.querySelector("#capital-allocation-status");
       const capitalDailyBudgetInput = document.querySelector("#capital-daily-budget");
       const capitalRaceLimitInput = document.querySelector("#capital-race-limit");
@@ -1680,6 +1709,7 @@
       const capitalGodRaceList = document.querySelector("#capital-god-race-list");
       let selectedSimulationCount = 1000;
       let currentSimulationPayload = null;
+      let currentGodRacePayload = null;
       const trifectaCandidateOutput = document.querySelector("#trifecta-candidate-output");
       const trifectaTicketOutput = document.querySelector("#trifecta-ticket-output");
       const trifectaSaveStatus = document.querySelector("#trifecta-save-status");
@@ -3939,7 +3969,7 @@
         riskCoefficient: Number(capitalRiskCoefficientInput?.value) || 0.25,
         fractionalKelly: Number(capitalRiskCoefficientInput?.value) || 0.25,
         battleRaceCount: Number(capitalBattleRaceCountInput?.value) || 3,
-        godRaceIndex: Number(capitalGodRaceIndexInput?.value) || 0,
+        godRaceIndex: currentGodRacePayload?.score ?? (Number(capitalGodRaceIndexInput?.value) || 0),
         trifectaROI: Number(capitalTrifectaRoiInput?.value) || 0,
         win5ROI: Number(capitalWin5RoiInput?.value) || 0,
       });
@@ -3984,8 +4014,49 @@
         if (capitalWin5RoiInput) capitalWin5RoiInput.value = settings.win5ROI ?? 0;
       };
 
-      const renderCapitalAllocation = (evPayload) => {
+
+      const renderGodRaceList = (target, items, emptyText = "神レース判定待ちです。") => {
+        if (!target) return;
+        target.innerHTML = items.length
+          ? items.map((item) => `<li><strong>${escapeHtml(item.title || item.label)}</strong><small>${escapeHtml(item.detail || "")}</small></li>`).join("")
+          : `<li class="empty-state">${escapeHtml(emptyText)}</li>`;
+      };
+
+      const renderGodRaceDashboard = (evPayload, capitalPayload = null) => {
+        if (!godRaceEngine || !evPayload) return null;
+        const settings = getCapitalSettings();
+        const payload = godRaceEngine.buildGodRacePayload({
+          horses: raceHorses,
+          evPayload,
+          capitalPayload,
+          simulationPayload: currentSimulationPayload,
+          race: getFormData(raceForm),
+          roi: ((settings.trifectaROI || 0) + (settings.win5ROI || 0)) / 2,
+          persist: true,
+        });
+        currentGodRacePayload = payload;
+        if (capitalGodRaceIndexInput) capitalGodRaceIndexInput.value = Math.round(payload.score);
+        if (godRaceStatus) godRaceStatus.textContent = `${payload.label} / ${payload.score}`;
+        if (godRaceSummary) {
+          godRaceSummary.innerHTML = `
+            <article><span>神レーススコア</span><strong>${payload.score}</strong><small>EV${payload.metrics.topEV}% / AI勝率${payload.metrics.topAiWinRate}% / ROI${payload.metrics.roi}%</small></article>
+            <article><span>S/A/B/C評価</span><strong>${escapeHtml(payload.label)}</strong><small>${escapeHtml(payload.action)}：${payload.battleRace ? "勝負レース" : payload.skip ? "見送りレース" : "条件付き"}</small></article>
+            <article><span>見送り判定</span><strong>${payload.skip ? "見送り" : "投資可"}</strong><small>${escapeHtml(payload.blockers.length ? payload.blockers.join(" / ") : "重大ブロックなし")}</small></article>
+            <article><span>資金配分連動</span><strong>${payload.metrics.capitalStrongCount}強勝負</strong><small>localStorage保存済み / 神レース指数${payload.score}を反映</small></article>
+          `;
+        }
+        renderGodRaceList(godRaceComponentList, Object.entries(payload.components).map(([key, value]) => ({
+          title: ({ ev: "EVエンジン", aiWinRate: "AI勝率", roi: "ROI", dangerPopular: "危険人気馬", chaos: "荒れ度", simulation: "未来シミュレーション", capital: "資金配分AI" }[key] || key),
+          detail: `${Math.round(value)}点`,
+        })));
+        renderGodRaceList(godRaceBlockerList, payload.blockers.map((blocker) => ({ title: blocker, detail: "見送り条件に該当" })).concat(payload.linked.dangerPopular.map((horse) => ({ title: `${horse.number} ${horse.name}`, detail: `危険${horse.dangerIndex} / ${horse.popularity}人気 / ${horse.odds}倍` }))), "危険人気馬・見送りブロックはありません。");
+        renderGodRaceList(godRaceReasonList, payload.reasons.map((reason) => ({ title: reason, detail: `評価 ${payload.grade} / ${payload.action}` })));
+        return payload;
+      };
+
+      const renderCapitalAllocation = (evPayload, godRacePayload = currentGodRacePayload) => {
         if (!capitalEngine || !evPayload) return null;
+        if (godRacePayload?.score && capitalGodRaceIndexInput) capitalGodRaceIndexInput.value = Math.round(godRacePayload.score);
         const payload = capitalEngine.buildCapitalAllocationPayload({
           trifectaEV: evPayload.trifectaEV,
           win5EV: evPayload.win5EV,
@@ -4031,7 +4102,9 @@
         renderEVList(dangerEvWarningList, payload.dangerWarnings, (item) => `${item.number} ${item.name}（危険人気馬EV警告）`);
         renderTicketEVList(trifectaEvRankingList, payload.trifectaEV);
         renderTicketEVList(win5EvRankingList, payload.win5EV.candidates);
-        renderCapitalAllocation(payload);
+        const preliminaryGodRace = renderGodRaceDashboard(payload, null);
+        const capitalPayload = renderCapitalAllocation(payload, preliminaryGodRace);
+        renderGodRaceDashboard(payload, capitalPayload);
         return payload;
       };
 
