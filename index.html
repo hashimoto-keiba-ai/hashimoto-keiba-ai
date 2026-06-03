@@ -572,8 +572,9 @@
               <article><span>神レース判定</span><strong>未生成</strong><small>raceDatabase保存対象</small></article>
             </div>
             <div class="entry-actions">
-              <button class="button button--primary" id="run-production-ai" type="button">③ 本番AIを今すぐ実行</button>
-              <small>保存ボタンで <code>hashimoto-keiba-ai:real-race-entry:v1</code> と <code>raceDatabase</code> に保存します。</small>
+              <button class="button button--primary" id="run-production-ai-batch" type="button">本番AI一括実行</button>
+              <button class="button button--ghost" id="run-production-ai" type="button">③ 本番AIを今すぐ実行</button>
+              <small>一括実行はAI分析・買い目・診断レポートを <code>productionRunReports</code> に保存します。保存ボタンでは <code>hashimoto-keiba-ai:real-race-entry:v1</code> と <code>raceDatabase</code> に保存します。</small>
             </div>
           </div>
 
@@ -1939,6 +1940,7 @@
       const productionAiStatus = document.querySelector("#production-ai-status");
       const productionAiSummary = document.querySelector("#production-ai-summary");
       const runProductionAiButton = document.querySelector("#run-production-ai");
+      const runProductionAiBatchButton = document.querySelector("#run-production-ai-batch");
       let currentProductionRacePayload = null;
       let selectedSimulationCount = 1000;
       let currentSimulationPayload = null;
@@ -4417,26 +4419,40 @@
         return payload;
       };
 
-      const renderProductionAiSummary = (payload = currentProductionRacePayload) => {
+      const renderProductionAiSummary = (payload = currentProductionRacePayload, runReport = null) => {
         if (!productionAiSummary) return;
         if (!payload || !payload.horses?.length) {
           productionAiSummary.innerHTML = `
-            <article><span>AI指数</span><strong>未生成</strong><small>出走馬を入力してください</small></article>
+            <article><span>AI指数1位</span><strong>未生成</strong><small>出走馬を入力してください</small></article>
             <article><span>三連単/WIN5</span><strong>未生成</strong><small>3頭以上で自動生成</small></article>
             <article><span>EV・資金配分</span><strong>未生成</strong><small>買い目生成後に連動</small></article>
-            <article><span>神レース判定</span><strong>未生成</strong><small>raceDatabase保存対象</small></article>
+            <article><span>神レース判定</span><strong>未生成</strong><small>productionRunReports保存待ち</small></article>
           `;
           if (productionAiStatus) productionAiStatus.textContent = "出走馬入力待ち";
           return;
         }
+        const reportSummary = runReport?.summary || null;
         const summary = payload.summary || {};
+        const mainTrifecta = reportSummary?.mainTrifectaText || payload.trifecta?.tickets?.main?.[0]?.notation || Object.values(payload.trifecta?.tickets || {}).flat()[0]?.notation || "該当なし";
+        const attackTrifecta = reportSummary?.attackTrifectaText || payload.trifecta?.tickets?.attack?.[0]?.notation || "該当なし";
+        const win5Text = (reportSummary?.win5Candidates || Object.entries(payload.win5?.zones || {}).flatMap(([zone, horses]) => (horses || []).map((horse) => ({ ...horse, zone: zone.toUpperCase() })))).slice(0, 4).map((horse) => `${horse.zone}:${formatHorse(horse)}`).join(" / ") || "該当なし";
+        const evText = (reportSummary?.evTop || payload.ev?.evRanking || []).slice(0, 3).map((item) => `${item.number} ${item.name} EV${item.ev}%`).join(" / ") || "該当なし";
+        const operationMode = reportSummary?.operationMode || "要確認";
         productionAiSummary.innerHTML = `
-          <article><span>AI指数</span><strong>${escapeHtml(summary.topAi ? `${formatHorse(summary.topAi)} AI${summary.topAi.aiIndex}` : "未生成")}</strong><small>${summary.runnerCount}頭を本番入力から自動採点</small></article>
-          <article><span>神穴 / 危険人気馬</span><strong>${escapeHtml(summary.topKamiana ? formatHorse(summary.topKamiana) : "該当なし")} / ${escapeHtml(summary.topDangerPopular ? formatHorse(summary.topDangerPopular) : "該当なし")}</strong><small>神穴${summary.topKamiana?.kamianaIndex ?? "-"} / 危険${summary.topDangerPopular?.dangerIndex ?? "-"}</small></article>
-          <article><span>三連単 / WIN5 / EV</span><strong>${summary.trifectaTicketCount}点 / ${summary.win5CandidateCount}頭 / EV${summary.topEV}%</strong><small>買い目生成・EV監視まで連動</small></article>
-          <article><span>資金配分 / 神レース</span><strong>${Number(summary.recommendedAmount || 0).toLocaleString("ja-JP")}円 / ${escapeHtml(summary.godRaceLabel || "未判定")}</strong><small>神レース指数${summary.godRaceScore ?? "-"} / 保存対象: raceDatabase</small></article>
+          <article><span>AI指数1位</span><strong>${escapeHtml(summary.topAi ? `${formatHorse(summary.topAi)} AI${summary.topAi.aiIndex}` : "未生成")}</strong><small>${summary.runnerCount}頭を本番入力から自動採点</small></article>
+          <article><span>神穴1位</span><strong>${escapeHtml(summary.topKamiana ? formatHorse(summary.topKamiana) : "該当なし")}</strong><small>神穴${summary.topKamiana?.kamianaIndex ?? "-"} / ${summary.topKamiana?.popularity ?? "-"}人気</small></article>
+          <article><span>危険人気馬1位</span><strong>${escapeHtml(summary.topDangerPopular ? formatHorse(summary.topDangerPopular) : "該当なし")}</strong><small>危険${summary.topDangerPopular?.dangerIndex ?? "-"} / ${summary.topDangerPopular?.popularity ?? "-"}人気</small></article>
+          <article><span>本線三連単</span><strong>${escapeHtml(mainTrifecta)}</strong><small>${summary.trifectaTicketCount}点生成</small></article>
+          <article><span>攻撃型三連単</span><strong>${escapeHtml(attackTrifecta)}</strong><small>神穴混合フォーメーション</small></article>
+          <article><span>WIN5候補</span><strong>${escapeHtml(win5Text)}</strong><small>${summary.win5CandidateCount}頭をA-D分類</small></article>
+          <article><span>EV上位</span><strong>${escapeHtml(evText)}</strong><small>EV計算・オーバーレイ確認</small></article>
+          <article><span>推奨投資額</span><strong>${Number(reportSummary?.recommendedInvestmentAmount ?? summary.recommendedAmount ?? 0).toLocaleString("ja-JP")}円</strong><small>資金配分AIから自動算出</small></article>
+          <article><span>神レース判定</span><strong>${escapeHtml(summary.godRaceLabel || "未判定")}</strong><small>神レース指数${summary.godRaceScore ?? "-"}</small></article>
+          <article><span>本番運用判定</span><strong>${escapeHtml(operationMode)}</strong><small>保存先: productionRunReports</small></article>
         `;
-        if (productionAiStatus) productionAiStatus.textContent = `本番AI実行済 ${new Date(payload.generatedAt).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+        if (productionAiStatus) productionAiStatus.textContent = runReport
+          ? `本番AI一括実行・保存済 ${new Date(runReport.generatedAt).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`
+          : `本番AI実行済 ${new Date(payload.generatedAt).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
       };
 
       const buildProductionRacePayload = () => {
@@ -4454,6 +4470,29 @@
         });
         renderProductionAiSummary(currentProductionRacePayload);
         return currentProductionRacePayload;
+      };
+
+      const runProductionAiBatch = () => {
+        if (!productionRaceEngine) throw new Error("本番レース入力エンジンが未読込です");
+        const options = {
+          race: getFormData(raceForm),
+          horses: raceHorses,
+          simulationCount: selectedSimulationCount,
+          capitalSettings: getCapitalSettings(),
+          persistEngines: true,
+        };
+        const validation = productionRaceEngine.validateProductionInput(options);
+        if (!validation.ok) throw new Error(validation.errors.join(" / "));
+        currentProductionRacePayload = productionRaceEngine.buildAiAnalysisPayload(options);
+        productionRaceEngine.saveProductionRace(currentProductionRacePayload, window.localStorage);
+        const runReport = productionRaceEngine.buildProductionRunReport({
+          payload: currentProductionRacePayload,
+          validation,
+          operationReportEngine,
+        });
+        productionRaceEngine.saveProductionRunReport(runReport, window.localStorage);
+        renderProductionAiSummary(currentProductionRacePayload, runReport);
+        return runReport;
       };
 
       const renderCapitalAllocation = (evPayload, godRacePayload = currentGodRacePayload) => {
@@ -5030,6 +5069,17 @@
       runProductionAiButton?.addEventListener("click", () => {
         renderRaceEntry();
         saveStatus.textContent = currentProductionRacePayload ? "本番AI自動実行完了" : "本番AI実行には出走馬入力が必要です";
+      });
+
+      runProductionAiBatchButton?.addEventListener("click", () => {
+        try {
+          const runReport = runProductionAiBatch();
+          const savedCount = productionRaceEngine.loadProductionRunReports(window.localStorage).length;
+          saveStatus.textContent = `本番AI一括実行完了 / productionRunReports ${savedCount}件保存 / ${runReport.summary.operationMode}`;
+        } catch (error) {
+          if (productionAiStatus) productionAiStatus.textContent = `一括実行エラー: ${error.message}`;
+          saveStatus.textContent = `本番AI一括実行エラー: ${error.message}`;
+        }
       });
 
       horseForm.addEventListener("submit", (event) => {
