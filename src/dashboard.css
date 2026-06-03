@@ -4551,3 +4551,136 @@ h1 {
     width: 100%;
   }
 }
+
+.command-dashboard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: min(100%, 360px);
+}
+
+.command-dashboard__actions .status-pill {
+  white-space: nowrap;
+}
+
+.sample-race-test-panel {
+  display: grid;
+  gap: 16px;
+  grid-column: 1 / -1;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.38);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 100% 0, rgba(248, 196, 79, 0.18), transparent 20rem),
+    linear-gradient(145deg, rgba(18, 13, 6, 0.92), rgba(0, 0, 0, 0.52));
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.12);
+}
+
+.sample-race-test-summary,
+.sample-race-test-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.sample-race-test-summary {
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+}
+
+.sample-race-test-summary article,
+.sample-race-test-grid section {
+  padding: 14px;
+  border: 1px solid rgba(248, 196, 79, 0.2);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sample-race-test-summary span,
+.sample-race-test-grid h4 {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--gold);
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.sample-race-test-summary strong,
+.sample-god-race-judgement strong {
+  display: block;
+  color: var(--gold-light);
+  font-size: 1.05rem;
+}
+
+.sample-race-test-summary small,
+.sample-race-test-grid small,
+.sample-god-race-judgement small {
+  display: block;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.sample-race-test-grid {
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+}
+
+.sample-race-test-grid ol {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.sample-race-test-grid li strong {
+  color: var(--text);
+}
+
+.sample-danger {
+  border-color: rgba(255, 107, 95, 0.35) !important;
+  background: rgba(80, 16, 11, 0.26) !important;
+}
+
+.sample-god-race {
+  grid-column: span 3;
+}
+
+.sample-god-race-judgement {
+  padding: 14px;
+  border: 1px solid rgba(248, 196, 79, 0.22);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+@media (max-width: 980px) {
+  .command-dashboard__actions {
+    justify-content: flex-start;
+  }
+
+  .sample-race-test-summary,
+  .sample-race-test-grid {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+
+  .sample-god-race {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .command-dashboard__actions,
+  .command-dashboard__actions .button,
+  .command-dashboard__actions .status-pill {
+    width: 100%;
+  }
+
+  .sample-race-test-summary,
+  .sample-race-test-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sample-god-race {
+    grid-column: auto;
+  }
+}
