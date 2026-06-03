@@ -1451,8 +1451,32 @@
               </section>
             </div>
 
+
+            <section class="capital-curve-monitor" aria-label="AI資金曲線・回収率モニター">
+              <div class="form-section-heading">
+                <span>⑦ AI資金曲線・回収率モニター</span>
+                <small id="capital-curve-status">資金曲線待機中</small>
+              </div>
+              <div class="capital-curve-summary" id="capital-curve-summary">
+                <article><span>累計ROI</span><strong>0%</strong><small>投資結果を保存すると監視開始</small></article>
+                <article><span>資金曲線</span><strong>0円</strong><small>累計損益ベース</small></article>
+                <article><span>最大DD</span><strong>0%</strong><small>ドローダウン監視</small></article>
+              </div>
+              <div class="capital-curve-chart" id="capital-curve-chart" aria-label="累計資金曲線チャート"></div>
+              <div class="capital-monitor-grid">
+                <section>
+                  <h3>AI運用判定</h3>
+                  <p id="capital-monitor-verdict">投資結果を蓄積すると、攻撃・標準・防御・停止を自動判定します。</p>
+                </section>
+                <section>
+                  <h3>回収率アラート</h3>
+                  <ul id="capital-monitor-recommendations"><li>ROI・直近ROI・最大DDから資金配分ルールを提示します。</li></ul>
+                </section>
+              </div>
+            </section>
+
             <section class="investment-log-panel" aria-label="投資結果保存ログ">
-              <div class="form-section-heading"><span>⑦ localStorage保存ログ</span><small>GitHub保存へ拡張可能なpayload構造</small></div>
+              <div class="form-section-heading"><span>⑧ localStorage保存ログ</span><small>GitHub保存へ拡張可能なpayload構造</small></div>
               <div class="table-wrap"><table class="data-table"><thead><tr><th>日付</th><th>競馬場</th><th>R</th><th>券種</th><th>点数</th><th>投資</th><th>払戻</th><th>結果</th><th>メモ</th></tr></thead><tbody id="investment-log-body"></tbody></table></div>
             </section>
           </div>
@@ -1804,6 +1828,11 @@
       const monthlySummaryBody = document.querySelector("#monthly-summary-body");
       const monthlyRoiChart = document.querySelector("#monthly-roi-chart");
       const investmentLogBody = document.querySelector("#investment-log-body");
+      const capitalCurveStatus = document.querySelector("#capital-curve-status");
+      const capitalCurveSummary = document.querySelector("#capital-curve-summary");
+      const capitalCurveChart = document.querySelector("#capital-curve-chart");
+      const capitalMonitorVerdict = document.querySelector("#capital-monitor-verdict");
+      const capitalMonitorRecommendations = document.querySelector("#capital-monitor-recommendations");
       const investmentClearFormButton = document.querySelector("#investment-clear-form");
       const investmentClearStorageButton = document.querySelector("#investment-clear-storage");
       const ticketTypeOrder = ["三連単", "WIN5", "馬連", "三連複", "単勝", "複勝"];
@@ -1910,6 +1939,40 @@
         }).join("");
       };
 
+      const renderCapitalCurveMonitor = () => {
+        if (!capitalEngine?.buildCapitalCurveMonitorPayload) return;
+        const monitorPayload = capitalEngine.buildCapitalCurveMonitorPayload({
+          results: investmentResults,
+          startingBankroll: 0,
+          warningRoi: 85,
+          stopRoi: 70,
+          targetRoi: 110,
+          drawdownLimit: 20,
+        });
+        const total = monitorPayload.total;
+        const latest = monitorPayload.latest;
+        const statusClass = `capital-curve-status--${monitorPayload.monitor.status}`;
+        capitalCurveStatus.textContent = `${monitorPayload.monitor.label} / ROI ${formatPercent(total.roi)}`;
+        capitalCurveStatus.className = `status-pill status-pill--live ${statusClass}`;
+        capitalCurveSummary.innerHTML = `
+          <article><span>累計ROI</span><strong>${formatPercent(total.roi)}</strong><small>直近5戦ROI ${formatPercent(latest.recentRoi || 0)} / ${total.total}戦</small></article>
+          <article><span>資金曲線</span><strong>${formatYen(total.profit)}</strong><small>終点資金 ${formatYen(total.endingBankroll)} / トレンド ${escapeHtml(total.trend)}</small></article>
+          <article><span>最大DD</span><strong>${formatPercent(total.maxDrawdownRate)}</strong><small>AI判定: ${escapeHtml(monitorPayload.monitor.label)}</small></article>
+        `;
+        const minProfit = Math.min(0, ...monitorPayload.curve.map((point) => point.profit));
+        const maxProfit = Math.max(1000, ...monitorPayload.curve.map((point) => point.profit));
+        const range = Math.max(1, maxProfit - minProfit);
+        capitalCurveChart.innerHTML = monitorPayload.curve.length
+          ? monitorPayload.curve.map((point) => {
+              const height = Math.max(10, Math.round(((point.profit - minProfit) / range) * 100));
+              const tone = point.profit >= 0 ? "is-profit" : "is-loss";
+              return `<span class="${tone}" style="height:${height}%"><b>${escapeHtml(String(point.index))}</b><small>${formatPercent(point.roi)}</small></span>`;
+            }).join("")
+          : '<span class="is-empty" style="height:12%"><b>0</b><small>待機</small></span>';
+        capitalMonitorVerdict.innerHTML = `<strong>${escapeHtml(monitorPayload.monitor.label)}</strong><br>${escapeHtml(monitorPayload.monitor.action)}`;
+        capitalMonitorRecommendations.innerHTML = monitorPayload.recommendations.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+      };
+
       const renderInvestmentDashboard = () => {
         const summary = summarizeInvestmentResults();
         const total = summary.total;
@@ -1944,6 +2007,7 @@
           : '<tr><td data-label="保存ログ" colspan="9">投資結果を入力するとブラウザ内に保存されます。</td></tr>';
 
         renderBankrollAi(total);
+        renderCapitalCurveMonitor();
       };
 
       const createInvestmentResult = () => {

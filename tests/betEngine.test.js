@@ -103,6 +103,22 @@ assert.ok(capitalPayload.godRaceCandidates.every((item) => item.ev >= 110 && ite
 assert.ok(localStorageMock.getItem('fundManagementSettings'), '資金配分設定がlocalStorageに保存される');
 assert.ok(localStorageMock.getItem('fundAllocationResults'), '資金配分結果がlocalStorageに保存される');
 
+const capitalCurve = capitalEngine.buildCapitalCurveMonitorPayload({
+  results: [
+    { date: '2026-05-01', course: '東京', raceNumber: 11, ticketType: '三連単', stake: 3600, payout: 0, hit: false },
+    { date: '2026-05-02', course: '京都', raceNumber: 10, ticketType: '馬連', stake: 2000, payout: 8200, hit: true },
+    { date: '2026-05-03', course: '阪神', raceNumber: 11, ticketType: 'WIN5', stake: 4800, payout: 0, hit: false },
+    { date: '2026-05-04', course: '東京', raceNumber: 12, ticketType: '三連単', stake: 2400, payout: 18400, hit: true },
+  ],
+  allocationPayload: capitalPayload,
+  warningRoi: 85,
+  targetRoi: 110,
+});
+assert.equal(capitalCurve.curve.length, 4, '投資ログから資金曲線ポイントが生成される');
+assert.ok(capitalCurve.total.roi > 0 && Number.isFinite(capitalCurve.total.maxDrawdownRate), '累計ROIと最大ドローダウンが算出される');
+assert.ok(['grow', 'neutral', 'protect', 'stop'].includes(capitalCurve.monitor.status), '資金曲線モニターが運用ステータスを返す');
+assert.ok(capitalCurve.bestTicketType && capitalCurve.recommendations.length >= 3, '券種別ROIとAI推奨コメントが返る');
+
 const win5 = betEngine.buildWin5ClassificationPayload(horses);
 assert.ok(!Object.values(win5.zones).flat().some((horse) => horse.number === 1), '危険人気馬はWIN5候補から外れる');
 assert.ok(win5.zones.c.some((horse) => horse.number === 5) || win5.zones.d.some((horse) => horse.number === 5), '神穴はWIN5 C/Dゾーンへ入る');

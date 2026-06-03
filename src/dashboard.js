@@ -831,6 +831,123 @@
     }
   };
 
+
+  const normalizeInvestmentRecord = (record = {}, index = 0) => {
+    const stake = Math.max(0, toNumber(record.stake, 0));
+    const payout = Math.max(0, toNumber(record.payout, 0));
+    const date = record.date || record.savedAt || "未設定";
+    return {
+      ...record,
+      sortKey: `${date}:${String(index).padStart(4, "0")}`,
+      date,
+      course: record.course || "未設定",
+      raceNumber: record.raceNumber || "-",
+      ticketType: record.ticketType || "未設定",
+      stake,
+      payout,
+      profit: toNumber(record.profit ?? record.computed?.profit, payout - stake),
+      hit: Boolean(record.hit || payout > 0),
+    };
+  };
+
+  const summarizeRecordGroup = (records = []) => records.reduce((stats, record) => {
+    stats.stake += record.stake;
+    stats.payout += record.payout;
+    stats.profit += record.profit;
+    stats.total += 1;
+    if (record.hit) stats.hits += 1;
+    stats.roi = stats.stake > 0 ? (stats.payout / stats.stake) * 100 : 0;
+    stats.hitRate = stats.total > 0 ? (stats.hits / stats.total) * 100 : 0;
+    return stats;
+  }, { stake: 0, payout: 0, profit: 0, total: 0, hits: 0, roi: 0, hitRate: 0 });
+
+  const classifyCapitalMonitor = ({ roi = 0, drawdownRate = 0, recentRoi = 0, profit = 0, warningRoi = 85, stopRoi = 70, targetRoi = 110, drawdownLimit = 20 } = {}) => {
+    if (drawdownRate >= drawdownLimit || roi < stopRoi) {
+      return { status: "stop", label: "投資停止", action: "危険水準。次レースは見送り、AI指数SかつEV120以上のみ少額再開。" };
+    }
+    if (roi < warningRoi || recentRoi < warningRoi || profit < 0) {
+      return { status: "protect", label: "防御運用", action: "基準資金を50%へ圧縮し、危険人気馬・低EV券種を除外。" };
+    }
+    if (roi >= targetRoi && recentRoi >= 100 && drawdownRate < drawdownLimit * 0.5) {
+      return { status: "grow", label: "攻撃運用", action: "神レースA/Sのみ上限内で増額。利益分の一部だけを再投資。" };
+    }
+    return { status: "neutral", label: "標準運用", action: "現行資金配分を維持し、券種別ROIの高い買い目へ優先配分。" };
+  };
+
+  const buildCapitalCurveMonitorPayload = ({ results = [], startingBankroll = 0, allocationPayload = null, warningRoi = 85, stopRoi = 70, targetRoi = 110, drawdownLimit = 20, movingWindow = 5 } = {}) => {
+    const normalized = (Array.isArray(results) ? results : [])
+      .map(normalizeInvestmentRecord)
+      .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+    const initialBankroll = Math.max(0, toNumber(startingBankroll, 0)) || normalized.reduce((sum, record) => sum + record.stake, 0);
+    let cumulativeStake = 0;
+    let cumulativePayout = 0;
+    let cumulativeProfit = 0;
+    let peakBankroll = initialBankroll;
+    let maxDrawdownRate = 0;
+
+    const curve = normalized.map((record, index) => {
+      cumulativeStake += record.stake;
+      cumulativePayout += record.payout;
+      cumulativeProfit += record.profit;
+      const bankroll = Math.max(0, initialBankroll + cumulativeProfit);
+      peakBankroll = Math.max(peakBankroll, bankroll);
+      const drawdown = bankroll - peakBankroll;
+      const drawdownRate = peakBankroll > 0 ? Math.abs(drawdown / peakBankroll) * 100 : 0;
+      maxDrawdownRate = Math.max(maxDrawdownRate, drawdownRate);
+      const roi = cumulativeStake > 0 ? (cumulativePayout / cumulativeStake) * 100 : 0;
+      const windowRecords = normalized.slice(Math.max(0, index + 1 - movingWindow), index + 1);
+      const recent = summarizeRecordGroup(windowRecords);
+      return {
+        index: index + 1,
+        date: record.date,
+        label: `${record.date} ${record.course}${record.raceNumber}R ${record.ticketType}`,
+        stake: round(cumulativeStake, 0),
+        payout: round(cumulativePayout, 0),
+        profit: round(cumulativeProfit, 0),
+        bankroll: round(bankroll, 0),
+        roi: round(roi, 1),
+        drawdown: round(drawdown, 0),
+        drawdownRate: round(drawdownRate, 1),
+        recentRoi: round(recent.roi, 1),
+        record,
+      };
+    });
+
+    const total = summarizeRecordGroup(normalized);
+    const latest = curve.at(-1) || { roi: 0, profit: 0, bankroll: initialBankroll, drawdownRate: 0, recentRoi: 0 };
+    const previous = curve.at(-2) || latest;
+    const trend = latest.roi > previous.roi ? "up" : latest.roi < previous.roi ? "down" : "flat";
+    const ticketTypes = normalized.reduce((accumulator, record) => {
+      accumulator[record.ticketType] = accumulator[record.ticketType] || [];
+      accumulator[record.ticketType].push(record);
+      return accumulator;
+    }, {});
+    const ticketTypeSummary = Object.fromEntries(Object.entries(ticketTypes).map(([type, records]) => [type, summarizeRecordGroup(records)]));
+    const bestTicketType = Object.entries(ticketTypeSummary).sort(([, a], [, b]) => b.roi - a.roi || b.profit - a.profit)[0] || null;
+    const worstTicketType = Object.entries(ticketTypeSummary).sort(([, a], [, b]) => a.roi - b.roi || a.profit - b.profit)[0] || null;
+    const monitor = classifyCapitalMonitor({ roi: total.roi, drawdownRate: maxDrawdownRate, recentRoi: latest.recentRoi, profit: total.profit, warningRoi, stopRoi, targetRoi, drawdownLimit });
+    const allocationSummary = allocationPayload?.summary || null;
+
+    return {
+      generatedAt: new Date().toISOString(),
+      storageVersion: 1,
+      settings: { startingBankroll: initialBankroll, warningRoi, stopRoi, targetRoi, drawdownLimit, movingWindow },
+      total: { ...total, roi: round(total.roi, 1), hitRate: round(total.hitRate, 1), maxDrawdownRate: round(maxDrawdownRate, 1), endingBankroll: latest.bankroll, trend },
+      latest,
+      curve,
+      ticketTypeSummary,
+      bestTicketType: bestTicketType ? { ticketType: bestTicketType[0], ...bestTicketType[1], roi: round(bestTicketType[1].roi, 1), hitRate: round(bestTicketType[1].hitRate, 1) } : null,
+      worstTicketType: worstTicketType ? { ticketType: worstTicketType[0], ...worstTicketType[1], roi: round(worstTicketType[1].roi, 1), hitRate: round(worstTicketType[1].hitRate, 1) } : null,
+      monitor,
+      recommendations: [
+        monitor.action,
+        bestTicketType ? `${bestTicketType[0]}はROI ${round(bestTicketType[1].roi, 1)}%。次回の優先券種候補。` : "券種別ROIを蓄積してください。",
+        worstTicketType && bestTicketType && worstTicketType[0] !== bestTicketType[0] ? `${worstTicketType[0]}はROI ${round(worstTicketType[1].roi, 1)}%。点数削減または見送り候補。` : "低ROI券種の判定待ち。",
+        allocationSummary ? `現在のAI推奨投資合計は${round(allocationSummary.totalRecommended, 0).toLocaleString("ja-JP")}円。資金曲線ステータスに合わせて調整。` : "AI資金配分エンジン連携待ち。",
+      ],
+    };
+  };
+
   const buildCapitalAllocationPayload = ({ trifectaEV = [], win5EV = {}, raceEV = [], evRanking = [], godRaceIndex = 0, bankroll, dailyBudget = 50000, raceLimit = 10000, win5Limit = 5000, riskCoefficient, fractionalKelly = 0.25, battleRaceCount = 3, ticketTypeROI = {}, trifectaROI = 0, win5ROI = 0, race = {}, persist = false } = {}) => {
     const budget = Math.max(0, toNumber(bankroll ?? dailyBudget, 50000));
     const commonOptions = { bankroll: budget, dailyBudget: budget, raceLimit, win5Limit, riskCoefficient: riskCoefficient ?? fractionalKelly, fractionalKelly, battleRaceCount, godRaceIndex, ticketTypeROI, trifectaROI, win5ROI, race };
@@ -888,6 +1005,8 @@
     calculateKellyStake,
     calculateStake,
     buildCapitalAllocationPayload,
+    buildCapitalCurveMonitorPayload,
+    classifyCapitalMonitor,
     saveToLocalStorage,
     loadFromLocalStorage,
   };
