@@ -169,7 +169,11 @@
             <h2>黒×金の総合司令塔UI</h2>
             <p>神レース、勝負レース、AI指数、神穴、危険人気馬、WIN5、ログ検索、ROI、自己進化ログをトップ画面で横断監視します。</p>
           </div>
-          <span class="status-pill status-pill--live">COMMAND READY</span>
+          <div class="command-dashboard__actions">
+            <button id="load-sample-race" class="button button--primary" type="button">サンプルレースを読み込む</button>
+            <a class="button button--ghost" href="#sample-race-test-panel">一括テスト結果を見る</a>
+            <span id="sample-race-load-status" class="status-pill status-pill--live">COMMAND READY</span>
+          </div>
         </div>
 
         <div class="command-dashboard__grid">
@@ -385,6 +389,33 @@
               </div>
             </form>
           </div>
+
+          <section id="sample-race-test-panel" class="sample-race-test-panel" aria-label="サンプルレース一括テスト結果">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">SAMPLE RACE OPERATION TEST</p>
+                <h3>サンプルレース一括テスト結果</h3>
+                <p>サンプル出馬表を読み込むと、AI指数、神穴、危険人気馬、三連単、WIN5、未来シミュレーター、EV、資金配分、神レース判定まで自動連動します。</p>
+              </div>
+              <span id="sample-race-test-status" class="status-pill">未実行</span>
+            </div>
+            <div id="sample-race-test-summary" class="sample-race-test-summary" aria-live="polite">
+              <article><span>読込状態</span><strong>未実行</strong><small>「サンプルレースを読み込む」を押してください</small></article>
+              <article><span>自動処理</span><strong>待機中</strong><small>指数・買い目・EV・資金配分・神レース判定</small></article>
+              <article><span>保存ログ</span><strong>sampleRaceTestLog</strong><small>localStorage保存待ち</small></article>
+            </div>
+            <div class="sample-race-test-grid">
+              <section><h4>AI指数TOP5</h4><ol id="sample-ai-top5"></ol></section>
+              <section><h4>神穴TOP5</h4><ol id="sample-kamiana-top5"></ol></section>
+              <section class="sample-danger"><h4>危険人気馬TOP5</h4><ol id="sample-danger-top5"></ol></section>
+              <section><h4>三連単候補</h4><ol id="sample-trifecta-candidates"></ol></section>
+              <section><h4>WIN5候補</h4><ol id="sample-win5-candidates"></ol></section>
+              <section><h4>シミュレーション勝率TOP5</h4><ol id="sample-simulation-top5"></ol></section>
+              <section><h4>EV上位</h4><ol id="sample-ev-top"></ol></section>
+              <section><h4>推奨投資額</h4><ol id="sample-capital-allocation"></ol></section>
+              <section class="sample-god-race"><h4>神レース判定</h4><div id="sample-god-race-judgement" class="sample-god-race-judgement">未判定</div></section>
+            </div>
+          </section>
 
           <div class="csv-validation-panel" aria-label="CSV取込バリデーション">
             <div class="entry-heading">
@@ -1644,6 +1675,8 @@
       const safeAutoGithubBackup = document.querySelector("#safe-auto-github-backup");
       const SAFE_MODE_STORAGE_KEY = "hashimoto-keiba-ai:safe-mode-settings:v1";
       const BACKUP_HISTORY_STORAGE_KEY = "hashimoto-keiba-ai:backup-history:v1";
+      const SAMPLE_RACE_URL = "./data/sampleRace.json";
+      const SAMPLE_RACE_TEST_LOG_KEY = "sampleRaceTestLog";
       const defaultSafeModeSettings = {
         confirmBeforeSave: true,
         confirmBeforeRestore: true,
@@ -1679,6 +1712,19 @@
       const runnerTableBody = document.querySelector("#runner-table-body");
       const runnerCount = document.querySelector("#runner-count");
       const saveStatus = document.querySelector("#save-status");
+      const loadSampleRaceButton = document.querySelector("#load-sample-race");
+      const sampleRaceLoadStatus = document.querySelector("#sample-race-load-status");
+      const sampleRaceTestStatus = document.querySelector("#sample-race-test-status");
+      const sampleRaceTestSummary = document.querySelector("#sample-race-test-summary");
+      const sampleAiTop5 = document.querySelector("#sample-ai-top5");
+      const sampleKamianaTop5 = document.querySelector("#sample-kamiana-top5");
+      const sampleDangerTop5 = document.querySelector("#sample-danger-top5");
+      const sampleTrifectaCandidates = document.querySelector("#sample-trifecta-candidates");
+      const sampleWin5Candidates = document.querySelector("#sample-win5-candidates");
+      const sampleSimulationTop5 = document.querySelector("#sample-simulation-top5");
+      const sampleEvTop = document.querySelector("#sample-ev-top");
+      const sampleCapitalAllocation = document.querySelector("#sample-capital-allocation");
+      const sampleGodRaceJudgement = document.querySelector("#sample-god-race-judgement");
       const aiRanking = document.querySelector("#ai-ranking");
       const kamianaRankingLive = document.querySelector("#kamiana-ranking-live");
       const dangerRankingLive = document.querySelector("#danger-ranking-live");
@@ -1786,6 +1832,9 @@
       };
       let activeTrifectaStorageAdapter = trifectaStorageAdapters.local;
       let currentTrifectaPayload = null;
+      let currentWin5ClassificationPayload = null;
+      let currentEVPayload = null;
+      let currentCapitalPayload = null;
 
       const WIN5_STORAGE_KEY = dataStorage.getDefinition("win5Tickets").storageKey;
       const win5Form = document.querySelector("#win5-generator-form");
@@ -4050,6 +4099,7 @@
       const formatTicketEvidence = (ticket) => (ticket.evidence || []).map((item) => `${item.number} ${item.name}: AI${item.aiIndex} / 神穴${item.kamianaIndex} / 危険${item.dangerIndex}｜${item.reason}`).join("\n");
 
       const renderAutoWin5Classification = (payload) => {
+        currentWin5ClassificationPayload = payload;
         const zoneLabels = { a: "A固定候補", b: "B本線候補", c: "Cゾーン候補", d: "D爆発候補" };
         const zoneClasses = { a: "candidate--a", b: "candidate--b", c: "candidate--c", d: "candidate--d" };
         const zoneRoles = { a: "AI最上位×危険低", b: "AI上位", c: "神穴指数高", d: "人気薄＋神穴" };
@@ -4229,12 +4279,14 @@
         renderCapitalList(capitalBasicList, [...payload.win, ...payload.place].sort((a, b) => b.recommendedAmount - a.recommendedAmount));
         renderCapitalList(capitalCombinationList, [...payload.quinella, ...payload.wide].sort((a, b) => b.recommendedAmount - a.recommendedAmount));
         renderCapitalList(capitalGodRaceList, payload.godRaceCandidates);
+        currentCapitalPayload = payload;
         return payload;
       };
 
       const renderEVDashboard = (trifectaPayload, win5Payload) => {
         if (!evEngine) return null;
         const payload = evEngine.buildEVDashboardPayload(raceHorses, { trifectaPayload, win5Payload });
+        currentEVPayload = payload;
         if (evMonitorStatus) evMonitorStatus.textContent = raceHorses.length ? `EV監視 ${raceHorses.length}頭` : "EV未計算";
         if (evMonitorSummary) {
           const top = payload.summary.topOverlay || payload.evRanking[0];
@@ -4301,6 +4353,130 @@
         renderTrifectaSimulationList(simulationTrifectaRanking, trifectaRates);
         renderSimulationList(simulationWin5Ranking, rankings.win5Candidate, (horse) => `${formatHorse(horse)}（WIN5候補率${horse.win5CandidateRate}% / 勝率${horse.firstRate}%）`);
         return currentSimulationPayload;
+      };
+
+      const normalizeSampleRacePayload = (sample = {}) => {
+        const race = {
+          date: sample.date || sample["開催日"] || "",
+          course: sample.course || sample["競馬場"] || "東京競馬場",
+          raceNumber: sample.raceNumber ?? sample["レース番号"] ?? 11,
+          raceName: sample.raceName || sample["レース名"] || "サンプルレース",
+          distance: sample.distance ?? sample["距離"] ?? 1600,
+          surface: sample.surface || sample["芝ダート"] || "芝",
+          going: sample.going || sample["馬場状態"] || "良",
+          weather: sample.weather || sample["天候"] || "晴",
+          fieldSize: sample.fieldSize ?? sample["頭数"] ?? (sample.horses || sample["出走馬"] || []).length,
+        };
+        const horses = (sample.horses || sample["出走馬"] || []).map((horse, index) => ({
+          number: horse.number ?? horse["馬番"] ?? index + 1,
+          name: horse.name || horse["馬名"] || `サンプル馬${index + 1}`,
+          jockey: horse.jockey || horse["騎手"] || "未設定",
+          trainer: horse.trainer || horse["調教師"] || "未設定",
+          popularity: horse.popularity ?? horse["人気"] ?? index + 1,
+          odds: horse.odds ?? horse["オッズ"] ?? 99,
+          runningStyle: horse.runningStyle || horse["脚質"] || "未設定",
+          cornerPosition: horse.cornerPosition ?? horse["想定4角位置"] ?? horse["4角位置"] ?? index + 1,
+          training: horse.training || horse["調教評価"] || "B",
+          course: race.course,
+          distance: Number(race.distance) || 0,
+          surface: race.surface,
+          going: race.going,
+          fieldSize: Number(race.fieldSize) || (sample.horses || sample["出走馬"] || []).length || 18,
+        }));
+        return { race, horses, source: "data/sampleRace.json" };
+      };
+
+      const renderSampleList = (target, items, formatter, emptyText = "対象なし") => {
+        if (!target) return;
+        target.innerHTML = items.length
+          ? items.slice(0, 5).map((item) => `<li><strong>${escapeHtml(formatter(item))}</strong></li>`).join("")
+          : `<li class="empty-state">${escapeHtml(emptyText)}</li>`;
+      };
+
+      const summarizeTicket = (ticket) => ticket?.notation || [ticket?.first, ticket?.second, ticket?.third].filter(Boolean).map((horse) => horse.number).join("→") || "買い目なし";
+
+      const buildSampleRaceTestLog = () => {
+        const allCapitalItems = Object.values(currentCapitalPayload?.ticketGroups || {}).flat().sort((a, b) => b.recommendedAmount - a.recommendedAmount || b.ev - a.ev);
+        const trifectaTickets = Object.values(currentTrifectaPayload?.tickets || {}).flat();
+        const win5Zones = Object.entries(currentWin5ClassificationPayload?.zones || {}).flatMap(([zone, horses]) => horses.map((horse) => ({ ...horse, zone: zone.toUpperCase() })));
+        return {
+          generatedAt: new Date().toISOString(),
+          storageKey: SAMPLE_RACE_TEST_LOG_KEY,
+          sampleSource: SAMPLE_RACE_URL,
+          race: getFormData(raceForm),
+          aiTop5: rankBy("aiIndex").slice(0, 5),
+          kamianaTop5: rankBy("kamianaIndex").slice(0, 5),
+          dangerTop5: rankBy("dangerIndex").slice(0, 5),
+          trifectaCandidates: trifectaTickets.slice(0, 8),
+          win5Candidates: win5Zones.slice(0, 8),
+          simulationWinTop5: currentSimulationPayload?.rankings?.winRate?.slice(0, 5) || [],
+          evTop: currentEVPayload?.evRanking?.slice(0, 8) || [],
+          recommendedInvestments: allCapitalItems.slice(0, 8),
+          capitalSummary: currentCapitalPayload?.summary || null,
+          godRace: currentGodRacePayload || null,
+          checks: {
+            aiIndexCalculated: raceHorses.every((horse) => Number.isFinite(Number(horse.aiIndex))),
+            kamianaCalculated: raceHorses.every((horse) => Number.isFinite(Number(horse.kamianaIndex))),
+            dangerCalculated: raceHorses.every((horse) => Number.isFinite(Number(horse.dangerIndex))),
+            rankingsUpdated: rankBy("aiIndex").length === raceHorses.length,
+            trifectaGenerated: trifectaTickets.length > 0,
+            win5Generated: win5Zones.length > 0,
+            simulationExecuted: Boolean(currentSimulationPayload?.simulationCount),
+            evCalculated: Boolean(currentEVPayload?.evRanking?.length),
+            capitalCalculated: Boolean(currentCapitalPayload?.summary),
+            godRaceJudged: Boolean(currentGodRacePayload?.label),
+          },
+        };
+      };
+
+      const renderSampleRaceTestPanel = (log) => {
+        if (!log) return;
+        if (sampleRaceTestStatus) sampleRaceTestStatus.textContent = `${log.race.course}${log.race.raceNumber}R 一括テスト完了`;
+        if (sampleRaceLoadStatus) sampleRaceLoadStatus.textContent = "SAMPLE TEST DONE";
+        if (sampleRaceTestSummary) {
+          const passedCount = Object.values(log.checks).filter(Boolean).length;
+          const totalRecommended = log.capitalSummary?.totalRecommended || 0;
+          sampleRaceTestSummary.innerHTML = `
+            <article><span>読込レース</span><strong>${escapeHtml(`${log.race.course}${log.race.raceNumber}R`)}</strong><small>${escapeHtml(log.race.raceName)} / ${escapeHtml(log.race.surface)}${escapeHtml(log.race.distance)}m / ${escapeHtml(log.race.going)}</small></article>
+            <article><span>自動処理</span><strong>${passedCount}/10 PASS</strong><small>AI指数・神穴・危険人気馬・買い目・EV・資金配分を連動</small></article>
+            <article><span>推奨投資額</span><strong>${totalRecommended.toLocaleString("ja-JP")}円</strong><small>localStorage: ${escapeHtml(SAMPLE_RACE_TEST_LOG_KEY)} 保存済</small></article>
+          `;
+        }
+        renderSampleList(sampleAiTop5, log.aiTop5, (horse) => `${formatHorse(horse)} AI${horse.aiIndex} / ${horse.popularity}人気`);
+        renderSampleList(sampleKamianaTop5, log.kamianaTop5, (horse) => `${formatHorse(horse)} 神穴${horse.kamianaIndex} / ${horse.odds}倍`);
+        renderSampleList(sampleDangerTop5, log.dangerTop5, (horse) => `${formatHorse(horse)} 危険${horse.dangerIndex} / ${horse.popularity}人気`);
+        renderSampleList(sampleTrifectaCandidates, log.trifectaCandidates, (ticket) => `${summarizeTicket(ticket)}（${ticket.type || "候補"} / ${ticket.reason || "AI生成"}）`, "三連単候補なし");
+        renderSampleList(sampleWin5Candidates, log.win5Candidates, (horse) => `${horse.zone}: ${formatHorse(horse)} AI${horse.aiIndex} / 神穴${horse.kamianaIndex}`, "WIN5候補なし");
+        renderSampleList(sampleSimulationTop5, log.simulationWinTop5, (horse) => `${formatHorse(horse)} 勝率${horse.firstRate}% / 複勝${horse.placeRate}%`, "シミュレーション未実行");
+        renderSampleList(sampleEvTop, log.evTop, (item) => `${item.number} ${item.name} EV${item.ev}% / ${item.currentOdds}倍`, "EV上位なし");
+        renderSampleList(sampleCapitalAllocation, log.recommendedInvestments, (item) => `${item.notation || item.number + " " + item.name}：${item.recommendedAmount.toLocaleString("ja-JP")}円 / ${item.decisionLabel}`, "推奨投資なし");
+        if (sampleGodRaceJudgement) {
+          const god = log.godRace;
+          sampleGodRaceJudgement.innerHTML = god
+            ? `<strong>${escapeHtml(god.label)} / ${god.score}</strong><small>${escapeHtml(god.action)} / ${god.blockers?.length ? god.blockers.join(" / ") : "重大ブロックなし"}</small>`
+            : "未判定";
+        }
+      };
+
+      const loadSampleRace = async () => {
+        if (sampleRaceLoadStatus) sampleRaceLoadStatus.textContent = "SAMPLE LOADING";
+        if (sampleRaceTestStatus) sampleRaceTestStatus.textContent = "読込中";
+        try {
+          const response = await fetch(`${SAMPLE_RACE_URL}?t=${Date.now()}`);
+          if (!response.ok) throw new Error(`sampleRace.json HTTP ${response.status}`);
+          const sample = await response.json();
+          const payload = normalizeSampleRacePayload(sample);
+          applyRacePayload(payload);
+          const log = buildSampleRaceTestLog();
+          window.localStorage.setItem(SAMPLE_RACE_TEST_LOG_KEY, JSON.stringify(log));
+          renderSampleRaceTestPanel(log);
+          saveStatus.textContent = "サンプルレース一括テスト完了";
+          document.querySelector("#sample-race-test-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        } catch (error) {
+          if (sampleRaceLoadStatus) sampleRaceLoadStatus.textContent = "SAMPLE LOAD ERROR";
+          if (sampleRaceTestStatus) sampleRaceTestStatus.textContent = `読込エラー: ${error.message}`;
+          saveStatus.textContent = `サンプル読込エラー: ${error.message}`;
+        }
       };
 
       const generateBets = () => {
@@ -4373,6 +4549,7 @@
         if (scoreVerificationStatus) scoreVerificationStatus.textContent = "補正値をlocalStorage保存済";
       });
 
+      loadSampleRaceButton?.addEventListener("click", loadSampleRace);
       raceCsvFileInput.addEventListener("change", () => handleRaceCsvFile(raceCsvFileInput.files?.[0]));
       importRaceCsvButton.addEventListener("click", applyCsvValidationToRace);
       resultCsvFileInput.addEventListener("change", () => handleResultCsvFile(resultCsvFileInput.files?.[0]));
