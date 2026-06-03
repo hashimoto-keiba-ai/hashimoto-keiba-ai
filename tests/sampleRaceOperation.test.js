@@ -43,12 +43,14 @@ const evEngine = sandbox.window.HashimotoEVEngine;
 const capitalEngine = sandbox.window.HashimotoCapitalEngine;
 const godRaceEngine = sandbox.window.HashimotoGodRaceEngine;
 const raceSimulator = sandbox.window.HashimotoRaceSimulator;
+const sampleValidationEngine = sandbox.window.HashimotoSampleRaceValidationEngine;
 assert.ok(scoreEngine, 'AI指数エンジンが公開されている');
 assert.ok(betEngine, '買い目生成エンジンが公開されている');
 assert.ok(evEngine, 'EVエンジンが公開されている');
 assert.ok(capitalEngine, '資金配分エンジンが公開されている');
 assert.ok(godRaceEngine, '神レース判定エンジンが公開されている');
 assert.ok(raceSimulator, '未来シミュレーターが公開されている');
+assert.ok(sampleValidationEngine, 'サンプル結果検証エンジンが公開されている');
 
 const sample = JSON.parse(fs.readFileSync('data/sampleRace.json', 'utf8'));
 assert.equal(sample['出走馬'].length, 12, 'sampleRace.jsonは12頭立て');
@@ -140,4 +142,28 @@ localStorageMock.setItem('sampleRaceTestLog', JSON.stringify(testLog));
 const restored = JSON.parse(localStorageMock.getItem('sampleRaceTestLog'));
 assert.equal(restored.aiTop5.length, 5, 'localStorage sampleRaceTestLogにAI指数TOP5が保存される');
 assert.ok(restored.godRace.label, 'localStorage sampleRaceTestLogに神レース判定が保存される');
+
+const hitTicket = restored.trifectaCandidates[0];
+const validation = sampleValidationEngine.validateSampleRaceResult({
+  predictionLog: restored,
+  resultInput: {
+    firstNumber: hitTicket.first.number,
+    secondNumber: hitTicket.second.number,
+    thirdNumber: hitTicket.third.number,
+    trifectaPayout: 125430,
+    actualPace: '平均',
+    trackBias: '内先行有利',
+    memo: 'サンプル結果入力テスト',
+  },
+});
+assert.equal(validation.judgements.trifectaHit, true, '結果入力後に三連単候補と照合される');
+assert.ok(Number.isFinite(validation.roi) && validation.roi > 0, 'ROIが計算される');
+assert.ok(validation.selfEvolutionLog.date && validation.selfEvolutionLog.racecourse && validation.selfEvolutionLog.afterRule, '自己進化ログ必須項目が生成される');
+assert.ok(validation.osUpdateCandidates.adopt.length > 0, 'OSアップデート採用候補が生成される');
+sampleValidationEngine.saveValidationLog(validation, localStorageMock);
+sampleValidationEngine.appendSelfEvolutionLog(validation, localStorageMock);
+const validationLog = JSON.parse(localStorageMock.getItem('sampleRaceResultValidationLog'));
+const evolutionPayload = JSON.parse(localStorageMock.getItem(sampleValidationEngine.SELF_EVOLUTION_STORAGE_KEY));
+assert.equal(validationLog.roi, validation.roi, 'localStorage sampleRaceResultValidationLogへROI付きで保存される');
+assert.equal(evolutionPayload.logs.resultVerifications[0].source, 'sample-race-result-validation', 'selfEvolutionLogsへ保存される');
 console.log('sample race operation test passed');
