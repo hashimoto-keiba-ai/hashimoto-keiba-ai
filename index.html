@@ -44,6 +44,7 @@
           <a href="#ai-backtest-lab">AI精度テスト</a>
           <a href="#self-evolution-loop">AI自己進化</a>
           <a href="#os-update-manager">OSアップデート</a>
+          <a href="#operation-readiness-checklist">運用チェック</a>
           <a href="#operations-board">運用</a>
           <a href="#backup-restore">バックアップ</a>
           <a href="#github-storage-settings">保存設定</a>
@@ -84,6 +85,7 @@
           <a href="#backup-restore"><span>⑯</span>バックアップ／復元</a>
           <a href="#github-storage-settings"><span>⑰</span>GitHub保存設定</a>
           <a href="#pages-publish-check"><span>⑱</span>Pages公開チェック</a>
+          <a href="#operation-readiness-checklist"><span>⑲</span>実戦運用チェック</a>
         </div>
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
@@ -492,6 +494,29 @@
               <section><h4>自己進化ログ</h4><div id="operation-report-evolution" class="sample-god-race-judgement">未生成</div></section>
               <section><h4>OSアップデート候補</h4><ol id="operation-report-os-updates"></ol></section>
             </div>
+          </section>
+
+
+          <section id="operation-readiness-checklist" class="operation-readiness-panel sample-race-test-panel" aria-label="実戦運用チェックリスト">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">OPERATION READINESS CHECKLIST</p>
+                <h3>実戦運用チェックリスト</h3>
+                <p>サンプルレース読込から診断レポート生成まで、実戦投入に必要な流れを自動判定と手動チェックで確認します。</p>
+              </div>
+              <span id="operation-readiness-mode" class="status-pill">準備不足</span>
+            </div>
+            <div class="operation-readiness-meter" aria-live="polite">
+              <div>
+                <span>完成度</span>
+                <strong id="operation-readiness-percent">0%</strong>
+                <small id="operation-readiness-count">0/21項目 OK</small>
+              </div>
+              <div class="operation-readiness-progress" aria-hidden="true"><span id="operation-readiness-progress-bar"></span></div>
+              <button id="refresh-operation-readiness" class="button button--ghost" type="button">自動チェック更新</button>
+            </div>
+            <div id="operation-readiness-list" class="operation-readiness-list"></div>
+            <p class="operation-readiness-note">手動項目は実画面で確認後にチェックしてください。状態は <code>operationReadinessChecklist</code> としてlocalStorageへ保存されます。</p>
           </section>
 
           <div class="csv-validation-panel" aria-label="CSV取込バリデーション">
@@ -1850,6 +1875,13 @@
       const operationReportRoi = document.querySelector("#operation-report-roi");
       const operationReportEvolution = document.querySelector("#operation-report-evolution");
       const operationReportOsUpdates = document.querySelector("#operation-report-os-updates");
+      const operationReadinessEngine = window.HashimotoOperationReadinessChecklistEngine;
+      const operationReadinessList = document.querySelector("#operation-readiness-list");
+      const operationReadinessMode = document.querySelector("#operation-readiness-mode");
+      const operationReadinessPercent = document.querySelector("#operation-readiness-percent");
+      const operationReadinessCount = document.querySelector("#operation-readiness-count");
+      const operationReadinessProgressBar = document.querySelector("#operation-readiness-progress-bar");
+      const refreshOperationReadinessButton = document.querySelector("#refresh-operation-readiness");
       let currentOperationDiagnosticReport = null;
       const aiRanking = document.querySelector("#ai-ranking");
       const kamianaRankingLive = document.querySelector("#kamiana-ranking-live");
@@ -3810,6 +3842,7 @@
         })));
         saveStatus.textContent = `CSV取込済 ${raceHorses.length}頭`;
         renderRaceEntry();
+        refreshOperationReadinessChecklist();
       };
 
       const handleRaceCsvFile = (file) => {
@@ -4687,6 +4720,37 @@
           : `<li class="empty-state">${escapeHtml(emptyText)}</li>`;
       };
 
+
+      const readinessStatusClass = (item) => item.checked ? "operation-readiness-item--ok" : item.type === "manual" ? "operation-readiness-item--manual" : "operation-readiness-item--pending";
+      const renderOperationReadinessChecklist = (state) => {
+        if (!operationReadinessList || !operationReadinessEngine || !state) return;
+        const completion = state.completion || operationReadinessEngine.calculateCompletion(state.items || []);
+        operationReadinessMode.textContent = completion.mode;
+        operationReadinessMode.classList.toggle("status-pill--live", completion.percentage >= 90);
+        operationReadinessMode.classList.toggle("status-pill--danger", completion.percentage < 50);
+        operationReadinessPercent.textContent = `${completion.percentage}%`;
+        operationReadinessCount.textContent = `${completion.checked}/${completion.total}項目 OK`;
+        operationReadinessProgressBar.style.width = `${completion.percentage}%`;
+        operationReadinessList.innerHTML = (state.items || []).map((item) => `
+          <label class="operation-readiness-item ${readinessStatusClass(item)}" data-checklist-id="${escapeHtml(item.id)}">
+            <input type="checkbox" ${item.checked ? "checked" : ""} ${item.type === "auto" ? "disabled" : ""} data-operation-readiness-check="${escapeHtml(item.id)}" />
+            <span class="operation-readiness-item__body">
+              <strong>${escapeHtml(item.label)}</strong>
+              <small>${escapeHtml(item.type === "auto" ? "自動チェック" : "手動チェック")} / ${escapeHtml(item.reason || item.status)}</small>
+            </span>
+            <span class="operation-readiness-item__status">${escapeHtml(item.status)}</span>
+          </label>
+        `).join("");
+      };
+
+      const refreshOperationReadinessChecklist = () => {
+        if (!operationReadinessEngine || !operationReadinessList) return null;
+        const state = operationReadinessEngine.saveChecklistState(operationReadinessEngine.buildChecklistState({ storage: window.localStorage }), window.localStorage);
+        renderOperationReadinessChecklist(state);
+        return state;
+      };
+      window.HashimotoRefreshOperationReadinessChecklist = refreshOperationReadinessChecklist;
+
       const renderOperationDiagnosticReport = (report) => {
         if (!report) return;
         currentOperationDiagnosticReport = report;
@@ -4746,6 +4810,7 @@
         const report = operationReportEngine.buildOperationDiagnosticReport({ predictionLog, validation, source: "operation-diagnostic-panel" });
         operationReportEngine.saveReport(report, window.localStorage);
         renderOperationDiagnosticReport(report);
+        refreshOperationReadinessChecklist();
         return report;
       };
 
@@ -4775,6 +4840,10 @@
         URL.revokeObjectURL(link.href);
         link.remove();
         if (operationDiagnosticStatus) operationDiagnosticStatus.textContent = "JSON出力完了";
+        if (operationReadinessEngine) {
+          const state = operationReadinessEngine.updateManualCheck("jsonExport", true, window.localStorage);
+          renderOperationReadinessChecklist(state);
+        }
       };
 
       const appendSampleValidationToSelfEvolutionState = (validation) => {
@@ -4795,6 +4864,7 @@
         const validation = sampleValidationEngine.validateSampleRaceResult({ predictionLog, resultInput });
         sampleValidationEngine.saveValidationLog(validation, window.localStorage);
         sampleValidationEngine.appendSelfEvolutionLog(validation, window.localStorage);
+        refreshOperationReadinessChecklist();
         appendSampleValidationToSelfEvolutionState(validation);
         renderSampleRaceResultValidation(validation);
         return validation;
@@ -4812,6 +4882,7 @@
           const log = buildSampleRaceTestLog();
           window.localStorage.setItem(SAMPLE_RACE_TEST_LOG_KEY, JSON.stringify(log));
           renderSampleRaceTestPanel(log);
+          refreshOperationReadinessChecklist();
           saveStatus.textContent = "サンプルレース一括テスト完了";
           document.querySelector("#sample-race-test-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
         } catch (error) {
@@ -4922,6 +4993,15 @@
       exportOperationDiagnosticReportButton?.addEventListener("click", exportOperationDiagnosticReport);
       const restoredOperationReport = operationReportEngine?.loadReports(window.localStorage)?.[0];
       if (restoredOperationReport) renderOperationDiagnosticReport(restoredOperationReport);
+
+      operationReadinessList?.addEventListener("change", (event) => {
+        const input = event.target.closest("[data-operation-readiness-check]");
+        if (!input || !operationReadinessEngine) return;
+        const state = operationReadinessEngine.updateManualCheck(input.dataset.operationReadinessCheck, input.checked, window.localStorage);
+        renderOperationReadinessChecklist(state);
+      });
+      refreshOperationReadinessButton?.addEventListener("click", refreshOperationReadinessChecklist);
+      refreshOperationReadinessChecklist();
 
       loadSampleRaceButton?.addEventListener("click", loadSampleRace);
       raceCsvFileInput.addEventListener("change", () => handleRaceCsvFile(raceCsvFileInput.files?.[0]));
