@@ -417,6 +417,42 @@
             </div>
           </section>
 
+          <section id="sample-race-result-validation" class="sample-race-test-panel sample-race-result-panel" aria-label="サンプルレース結果入力と自己進化反映">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">SAMPLE RESULT VALIDATION</p>
+                <h3>サンプル結果入力・自己進化反映</h3>
+                <p>サンプルレース読込で生成したAI指数TOP、三連単、WIN5、神レース、危険人気馬、神穴、EV、推奨投資額を実着順・払戻と照合します。</p>
+              </div>
+              <span id="sample-result-validation-status" class="status-pill">結果未入力</span>
+            </div>
+            <form id="sample-result-validation-form" class="sample-result-form">
+              <label><span>1着馬番</span><input name="firstNumber" type="number" min="1" step="1" required /></label>
+              <label><span>2着馬番</span><input name="secondNumber" type="number" min="1" step="1" required /></label>
+              <label><span>3着馬番</span><input name="thirdNumber" type="number" min="1" step="1" required /></label>
+              <label><span>三連単配当</span><input name="trifectaPayout" type="number" min="0" step="10" placeholder="例: 125430" /></label>
+              <label><span>実ペース</span><input name="actualPace" type="text" placeholder="平均 / ハイ / スロー" /></label>
+              <label><span>馬場傾向</span><input name="trackBias" type="text" placeholder="内先行有利 / 差し届く" /></label>
+              <label class="sample-result-form__memo"><span>メモ</span><textarea name="memo" rows="3" placeholder="検証メモ、敗因、次回補正ポイント"></textarea></label>
+              <div class="entry-actions">
+                <button class="button button--primary" type="submit">結果を照合して自己進化へ保存</button>
+                <a class="button button--ghost" href="#self-evolution-loop">自己進化ログを見る</a>
+              </div>
+            </form>
+            <div id="sample-result-validation-summary" class="sample-race-test-summary" aria-live="polite">
+              <article><span>照合状態</span><strong>未検証</strong><small>サンプルレース読込後に実結果を入力</small></article>
+              <article><span>ROI</span><strong>未計算</strong><small>払戻 ÷ 推奨投資額 × 100</small></article>
+              <article><span>保存ログ</span><strong>sampleRaceResultValidationLog</strong><small>localStorage保存待ち</small></article>
+            </div>
+            <div class="sample-race-test-grid sample-validation-grid">
+              <section><h4>検証結果</h4><ol id="sample-validation-result-list"></ol></section>
+              <section><h4>自己進化ログ</h4><div id="sample-self-evolution-log" class="sample-god-race-judgement">未生成</div></section>
+              <section><h4>採用候補</h4><ol id="sample-os-adopt-candidates"></ol></section>
+              <section><h4>保留候補</h4><ol id="sample-os-pending-candidates"></ol></section>
+              <section class="sample-danger"><h4>削除候補</h4><ol id="sample-os-delete-candidates"></ol></section>
+            </div>
+          </section>
+
           <div class="csv-validation-panel" aria-label="CSV取込バリデーション">
             <div class="entry-heading">
               <span>③ CSV取込バリデーション</span>
@@ -1664,6 +1700,7 @@
 
       const dataStorage = window.HashimotoDataStorage;
       const githubAdapter = window.HashimotoGithubAdapter;
+      const sampleValidationEngine = window.HashimotoSampleRaceValidationEngine;
       const githubSettingsForm = document.querySelector("#github-settings-form");
       const storageModeSelect = document.querySelector("#storage-mode-select");
       const githubConnectionStatus = document.querySelector("#github-connection-status");
@@ -1725,6 +1762,14 @@
       const sampleEvTop = document.querySelector("#sample-ev-top");
       const sampleCapitalAllocation = document.querySelector("#sample-capital-allocation");
       const sampleGodRaceJudgement = document.querySelector("#sample-god-race-judgement");
+      const sampleResultValidationForm = document.querySelector("#sample-result-validation-form");
+      const sampleResultValidationStatus = document.querySelector("#sample-result-validation-status");
+      const sampleResultValidationSummary = document.querySelector("#sample-result-validation-summary");
+      const sampleValidationResultList = document.querySelector("#sample-validation-result-list");
+      const sampleSelfEvolutionLog = document.querySelector("#sample-self-evolution-log");
+      const sampleOsAdoptCandidates = document.querySelector("#sample-os-adopt-candidates");
+      const sampleOsPendingCandidates = document.querySelector("#sample-os-pending-candidates");
+      const sampleOsDeleteCandidates = document.querySelector("#sample-os-delete-candidates");
       const aiRanking = document.querySelector("#ai-ranking");
       const kamianaRankingLive = document.querySelector("#kamiana-ranking-live");
       const dangerRankingLive = document.querySelector("#danger-ranking-live");
@@ -4458,6 +4503,69 @@
         }
       };
 
+
+
+      const renderSampleValidationList = (target, items, emptyText = "候補なし") => {
+        if (!target) return;
+        target.innerHTML = items.length
+          ? items.map((item) => `<li><strong>${escapeHtml(item)}</strong></li>`).join("")
+          : `<li class="empty-state">${escapeHtml(emptyText)}</li>`;
+      };
+
+      const renderSampleRaceResultValidation = (validation) => {
+        if (!validation) return;
+        if (sampleResultValidationStatus) sampleResultValidationStatus.textContent = `ROI ${validation.roi}% / 自己進化保存済`;
+        if (sampleResultValidationSummary) {
+          sampleResultValidationSummary.innerHTML = `
+            <article><span>照合レース</span><strong>${escapeHtml(`${validation.race.course || "未競馬場"}${validation.race.raceNumber || "?"}R`)}</strong><small>1-2-3着 ${escapeHtml(`${validation.result.firstNumber}-${validation.result.secondNumber}-${validation.result.thirdNumber}`)} / ${escapeHtml(validation.result.actualPace || "ペース未入力")}</small></article>
+            <article><span>ROI</span><strong>${validation.roi}%</strong><small>投資 ${validation.totalInvestment.toLocaleString("ja-JP")}円 / 払戻 ${validation.payout.toLocaleString("ja-JP")}円</small></article>
+            <article><span>保存ログ</span><strong>${escapeHtml(validation.storageKey)}</strong><small>selfEvolutionLogsへ ${escapeHtml(validation.selfEvolutionLog.status)} 候補として反映</small></article>
+          `;
+        }
+        const resultLabels = [
+          validation.labels.mainHit,
+          validation.labels.trifectaHit,
+          validation.labels.win5Hit,
+          validation.labels.kamianaHit,
+          validation.labels.dangerPopularSuccess,
+          validation.labels.godRaceSuccess,
+          validation.labels.evSuccess,
+          validation.labels.capitalSuccess,
+          `ROI ${validation.roi}%`,
+        ];
+        renderSampleValidationList(sampleValidationResultList, resultLabels, "検証結果なし");
+        if (sampleSelfEvolutionLog) {
+          const log = validation.selfEvolutionLog;
+          sampleSelfEvolutionLog.innerHTML = `<strong>${escapeHtml(log.status)}｜${escapeHtml(log.targetAi)}</strong><small>${escapeHtml(log.reason)} / ${escapeHtml(log.nextUsageNote)}</small>`;
+        }
+        renderSampleValidationList(sampleOsAdoptCandidates, validation.osUpdateCandidates.adopt, "採用候補なし");
+        renderSampleValidationList(sampleOsPendingCandidates, validation.osUpdateCandidates.pending, "保留候補なし");
+        renderSampleValidationList(sampleOsDeleteCandidates, validation.osUpdateCandidates.delete, "削除候補なし");
+      };
+
+      const appendSampleValidationToSelfEvolutionState = (validation) => {
+        if (!validation?.selfEvolutionLog || !selfEvolutionLogs?.logs) return;
+        const collection = selfEvolutionLogs.logs.resultVerifications || [];
+        const index = collection.findIndex((item) => item.id === validation.selfEvolutionLog.id);
+        if (index >= 0) collection[index] = validation.selfEvolutionLog;
+        else collection.unshift(validation.selfEvolutionLog);
+        selfEvolutionLogs.logs.resultVerifications = collection.slice(0, 100);
+        saveSelfEvolutionLogs("サンプルレース結果検証を自己進化ログへ保存しました");
+      };
+
+      const validateSampleRaceResultFromForm = () => {
+        if (!sampleValidationEngine) throw new Error("サンプル結果検証エンジンが読み込まれていません");
+        const predictionLog = JSON.parse(window.localStorage.getItem(SAMPLE_RACE_TEST_LOG_KEY) || "null");
+        if (!predictionLog) throw new Error("先にサンプルレースを読み込んでください");
+        const resultInput = Object.fromEntries(new FormData(sampleResultValidationForm).entries());
+        const validation = sampleValidationEngine.validateSampleRaceResult({ predictionLog, resultInput });
+        sampleValidationEngine.saveValidationLog(validation, window.localStorage);
+        sampleValidationEngine.appendSelfEvolutionLog(validation, window.localStorage);
+        appendSampleValidationToSelfEvolutionState(validation);
+        renderSampleRaceResultValidation(validation);
+        return validation;
+      };
+
       const loadSampleRace = async () => {
         if (sampleRaceLoadStatus) sampleRaceLoadStatus.textContent = "SAMPLE LOADING";
         if (sampleRaceTestStatus) sampleRaceTestStatus.textContent = "読込中";
@@ -4547,6 +4655,17 @@
         scoreVerificationAdjustments = collectScoreVerificationAdjustments();
         scoreVerificationEngine?.saveAdjustments?.(scoreVerificationAdjustments);
         if (scoreVerificationStatus) scoreVerificationStatus.textContent = "補正値をlocalStorage保存済";
+      });
+
+      sampleResultValidationForm?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        try {
+          validateSampleRaceResultFromForm();
+          saveStatus.textContent = "サンプル結果検証を保存しました";
+        } catch (error) {
+          if (sampleResultValidationStatus) sampleResultValidationStatus.textContent = `検証エラー: ${error.message}`;
+          saveStatus.textContent = `サンプル結果検証エラー: ${error.message}`;
+        }
       });
 
       loadSampleRaceButton?.addEventListener("click", loadSampleRace);

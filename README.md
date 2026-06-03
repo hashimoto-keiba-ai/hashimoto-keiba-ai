@@ -837,4 +837,15 @@ Phase3-2では、Phase3-1のAIオッズEV監視結果を受け取り、**EV・AI
 5. **「サンプルレース一括テスト結果」** パネルで、AI指数TOP5、神穴TOP5、危険人気馬TOP5、三連単候補、WIN5候補、シミュレーション勝率TOP5、EV上位、推奨投資額、神レース判定を確認します。
 6. 実行ログはブラウザのlocalStorageへ `sampleRaceTestLog` として保存されます。開発者ツールのApplication/Storage画面から保存内容を確認できます。
 
+### サンプル結果入力と自己進化反映
+
+サンプルレース読込後は、同じパネル内の **「サンプル結果入力・自己進化反映」** で実着順と払戻を入力できます。
+
+1. 1着馬番、2着馬番、3着馬番、三連単配当、実ペース、馬場傾向、メモを入力します。
+2. **「結果を照合して自己進化へ保存」** を押すと、`sampleRaceTestLog` に保存された予想内容と実結果を自動照合します。
+3. 照合対象は、AI指数TOP、三連単候補、WIN5候補、神レース判定、危険人気馬判定、神穴候補、EV上位、推奨投資額です。
+4. 画面には、本命的中/不的中、三連単的中/不的中、WIN5候補的中/不的中、神穴的中/不的中、危険人気馬判定成功/失敗、EV判定成功/失敗、資金配分成功/失敗、ROIが表示されます。
+5. 検証ログはlocalStorageへ `sampleRaceResultValidationLog` として保存され、同時に `hashimoto-keiba-ai:self-evolution-logs:v1` の `selfEvolutionLogs.logs.resultVerifications` へ自己進化ログが追加されます。自己進化ログには `date`、`racecourse`、`raceNumber`、`targetAi`、`beforeRule`、`afterRule`、`reason`、`evidenceRace`、`status`、`nextUsageNote` が入ります。
+6. OSアップデート候補として、採用候補、保留候補、削除候補が自動生成されます。採用候補は的中・ROIプラスのルール、保留候補はEV/神穴/展開補正の追加検証、削除候補は不的中買い目や回収不足の資金配分を中心に分類します。
+
 このテストはサンプルデータだけを読み込み、既存の手入力・CSV取込・保存済み買い目の機能を壊さずに、黒×金デザインとスマホ対応レイアウト内で実行できます。
