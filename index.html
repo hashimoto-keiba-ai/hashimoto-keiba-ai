@@ -502,21 +502,25 @@
             </div>
           </div>
 
-          <div class="capital-allocation-panel" aria-label="AI資金配分パネル">
+          <div class="capital-allocation-panel" aria-label="AI資金配分エンジン">
             <div class="entry-heading">
-              <span>AI資金配分パネル</span>
-              <small>Kelly stake engine / EV・勝率・ROI・神レース指数連動</small>
+              <span>AI資金配分エンジン</span>
+              <small>EV・AI勝率・ROI・神レース指数・危険度から券種別に推奨投資額を自動計算</small>
               <span id="capital-allocation-status" class="status-pill">資金配分未計算</span>
             </div>
             <div class="capital-settings-grid">
-              <label><span>運用資金</span><input id="capital-bankroll" type="number" min="1000" step="1000" value="50000" /></label>
-              <label><span>分数ケリー</span>
-                <select id="capital-fractional-kelly">
-                  <option value="0.25">1/4ケリー（推奨）</option>
-                  <option value="0.5">1/2ケリー</option>
-                  <option value="1">フルケリー</option>
+              <label><span>本日の予算</span><input id="capital-daily-budget" type="number" min="1000" step="1000" value="50000" /></label>
+              <label><span>1レース上限額</span><input id="capital-race-limit" type="number" min="100" step="100" value="10000" /></label>
+              <label><span>WIN5上限額</span><input id="capital-win5-limit" type="number" min="100" step="100" value="5000" /></label>
+              <label><span>リスク係数</span>
+                <select id="capital-risk-coefficient">
+                  <option value="0.25">0.25（1/4ケリー推奨）</option>
+                  <option value="0.5">0.50（攻撃型）</option>
+                  <option value="0.1">0.10（守備型）</option>
+                  <option value="1">1.00（フルケリー）</option>
                 </select>
               </label>
+              <label><span>勝負レース数</span><input id="capital-battle-race-count" type="number" min="1" max="12" step="1" value="3" /></label>
               <label><span>神レース指数</span><input id="capital-god-race-index" type="number" min="0" max="100" step="1" value="75" /></label>
               <label><span>三連単ROI</span><input id="capital-trifecta-roi" type="number" step="1" value="0" /></label>
               <label><span>WIN5 ROI</span><input id="capital-win5-roi" type="number" step="1" value="0" /></label>
@@ -525,11 +529,25 @@
               <article><span>推奨総額</span><strong>未生成</strong><small>EV監視と買い目生成後に自動計算</small></article>
               <article><span>三連単</span><strong>未生成</strong><small>三連単EVを別管理</small></article>
               <article><span>WIN5</span><strong>未生成</strong><small>WIN5EVを別管理</small></article>
-              <article><span>見送り</span><strong>未生成</strong><small>ケリー基準・EV・ROIで停止判定</small></article>
+              <article><span>神レース候補</span><strong>未生成</strong><small>EV上位かつ危険度が低いレースを抽出</small></article>
+            </div>
+            <div class="capital-table-panel">
+              <div class="form-section-heading"><span>券種別AI資金配分</span><small>強勝負 / 通常勝負 / 小額勝負 / 見送り</small></div>
+              <div class="table-wrap">
+                <table class="data-table data-table--compact capital-allocation-table">
+                  <thead>
+                    <tr><th>対象レース</th><th>券種</th><th>AI勝率</th><th>期待値EV</th><th>ROI</th><th>神レース指数</th><th>危険度</th><th>推奨投資額</th><th>判定</th></tr>
+                  </thead>
+                  <tbody id="capital-allocation-table-body"><tr><td data-label="状態" colspan="9">EV監視と買い目生成後に表示します。</td></tr></tbody>
+                </table>
+              </div>
             </div>
             <div class="capital-allocation-grid">
               <section><h4>三連単 推奨投資額</h4><ol id="capital-trifecta-list"></ol></section>
               <section><h4>WIN5 推奨投資額</h4><ol id="capital-win5-list"></ol></section>
+              <section><h4>単勝・複勝</h4><ol id="capital-basic-list"></ol></section>
+              <section><h4>馬連・ワイド</h4><ol id="capital-combination-list"></ol></section>
+              <section class="capital-god-race"><h4>神レース候補</h4><ol id="capital-god-race-list"></ol></section>
             </div>
           </div>
 
@@ -1621,14 +1639,21 @@
       const trifectaEvRankingList = document.querySelector("#trifecta-ev-ranking-list");
       const win5EvRankingList = document.querySelector("#win5-ev-ranking-list");
       const capitalAllocationStatus = document.querySelector("#capital-allocation-status");
-      const capitalBankrollInput = document.querySelector("#capital-bankroll");
-      const capitalFractionalKellyInput = document.querySelector("#capital-fractional-kelly");
+      const capitalDailyBudgetInput = document.querySelector("#capital-daily-budget");
+      const capitalRaceLimitInput = document.querySelector("#capital-race-limit");
+      const capitalWin5LimitInput = document.querySelector("#capital-win5-limit");
+      const capitalRiskCoefficientInput = document.querySelector("#capital-risk-coefficient");
+      const capitalBattleRaceCountInput = document.querySelector("#capital-battle-race-count");
       const capitalGodRaceIndexInput = document.querySelector("#capital-god-race-index");
       const capitalTrifectaRoiInput = document.querySelector("#capital-trifecta-roi");
       const capitalWin5RoiInput = document.querySelector("#capital-win5-roi");
       const capitalAllocationSummary = document.querySelector("#capital-allocation-summary");
+      const capitalAllocationTableBody = document.querySelector("#capital-allocation-table-body");
       const capitalTrifectaList = document.querySelector("#capital-trifecta-list");
       const capitalWin5List = document.querySelector("#capital-win5-list");
+      const capitalBasicList = document.querySelector("#capital-basic-list");
+      const capitalCombinationList = document.querySelector("#capital-combination-list");
+      const capitalGodRaceList = document.querySelector("#capital-god-race-list");
       let selectedSimulationCount = 1000;
       let currentSimulationPayload = null;
       const trifectaCandidateOutput = document.querySelector("#trifecta-candidate-output");
@@ -3843,8 +3868,13 @@
       };
 
       const getCapitalSettings = () => ({
-        bankroll: Number(capitalBankrollInput?.value) || 50000,
-        fractionalKelly: Number(capitalFractionalKellyInput?.value) || 0.25,
+        dailyBudget: Number(capitalDailyBudgetInput?.value) || 50000,
+        bankroll: Number(capitalDailyBudgetInput?.value) || 50000,
+        raceLimit: Number(capitalRaceLimitInput?.value) || 10000,
+        win5Limit: Number(capitalWin5LimitInput?.value) || 5000,
+        riskCoefficient: Number(capitalRiskCoefficientInput?.value) || 0.25,
+        fractionalKelly: Number(capitalRiskCoefficientInput?.value) || 0.25,
+        battleRaceCount: Number(capitalBattleRaceCountInput?.value) || 3,
         godRaceIndex: Number(capitalGodRaceIndexInput?.value) || 0,
         trifectaROI: Number(capitalTrifectaRoiInput?.value) || 0,
         win5ROI: Number(capitalWin5RoiInput?.value) || 0,
@@ -3853,8 +3883,41 @@
       const renderCapitalList = (target, items) => {
         if (!target) return;
         target.innerHTML = items.length
-          ? items.slice(0, 10).map((item) => `<li class="capital-item capital-item--${escapeHtml(item.decision)}"><strong>${escapeHtml(item.notation || formatHorse(item))}：${item.recommendedAmount.toLocaleString()}円</strong><small>${escapeHtml(item.decisionLabel)} / Kelly${item.rawKellyFraction}%→${item.adjustedKellyFraction}% / EV${item.ev}% / ROI${item.roi}% / 神${item.godRaceIndex} / ${escapeHtml(item.decisionReason)}</small></li>`).join("")
+          ? items.slice(0, 10).map((item) => `<li class="capital-item capital-item--${escapeHtml(item.decision)}"><strong>${escapeHtml(item.notation || formatHorse(item))}：${item.recommendedAmount.toLocaleString()}円</strong><small>${escapeHtml(item.decisionLabel)} / Kelly${item.rawKellyFraction}%→${item.adjustedKellyFraction}% / EV${item.ev}% / ROI${item.roi}% / 神${item.godRaceIndex} / 危険${item.dangerIndex} / ${escapeHtml(item.decisionReason)}</small></li>`).join("")
           : '<li class="empty-state">資金配分対象がありません。</li>';
+      };
+
+      const renderCapitalTable = (items) => {
+        if (!capitalAllocationTableBody) return;
+        capitalAllocationTableBody.innerHTML = items.length
+          ? items.slice(0, 18).map((item) => `
+            <tr class="capital-row capital-row--${escapeHtml(item.decision)}">
+              <td data-label="対象レース">${escapeHtml(item.raceName || "対象レース")}</td>
+              <td data-label="券種">${escapeHtml(item.ticketTypeLabel || item.ticketType)}</td>
+              <td data-label="AI勝率">${item.aiWinRate}%</td>
+              <td data-label="期待値EV"><strong>${item.ev}%</strong></td>
+              <td data-label="ROI">${item.roi}%</td>
+              <td data-label="神レース指数">${item.godRaceIndex}</td>
+              <td data-label="危険度">${item.dangerIndex}</td>
+              <td data-label="推奨投資額"><strong>${item.recommendedAmount.toLocaleString()}円</strong></td>
+              <td data-label="判定"><span class="badge badge--${item.decision === "strong" ? "gold" : item.decision === "skip" ? "danger" : "dark"}">${escapeHtml(item.decisionLabel)}</span></td>
+            </tr>
+          `).join("")
+          : '<tr><td data-label="状態" colspan="9">資金配分対象がありません。</td></tr>';
+      };
+
+      const restoreCapitalSettings = () => {
+        if (!capitalEngine?.loadFromLocalStorage) return;
+        const settings = capitalEngine.loadFromLocalStorage(capitalEngine.FUND_SETTINGS_KEY, null);
+        if (!settings) return;
+        if (capitalDailyBudgetInput) capitalDailyBudgetInput.value = settings.dailyBudget ?? settings.bankroll ?? 50000;
+        if (capitalRaceLimitInput) capitalRaceLimitInput.value = settings.raceLimit ?? 10000;
+        if (capitalWin5LimitInput) capitalWin5LimitInput.value = settings.win5Limit ?? 5000;
+        if (capitalRiskCoefficientInput) capitalRiskCoefficientInput.value = settings.riskCoefficient ?? settings.fractionalKelly ?? 0.25;
+        if (capitalBattleRaceCountInput) capitalBattleRaceCountInput.value = settings.battleRaceCount ?? 3;
+        if (capitalGodRaceIndexInput) capitalGodRaceIndexInput.value = settings.godRaceIndex ?? 75;
+        if (capitalTrifectaRoiInput) capitalTrifectaRoiInput.value = settings.trifectaROI ?? 0;
+        if (capitalWin5RoiInput) capitalWin5RoiInput.value = settings.win5ROI ?? 0;
       };
 
       const renderCapitalAllocation = (evPayload) => {
@@ -3862,19 +3925,27 @@
         const payload = capitalEngine.buildCapitalAllocationPayload({
           trifectaEV: evPayload.trifectaEV,
           win5EV: evPayload.win5EV,
+          raceEV: evPayload.evRanking,
+          race: getFormData(raceForm),
+          persist: true,
           ...getCapitalSettings(),
         });
-        if (capitalAllocationStatus) capitalAllocationStatus.textContent = `推奨 ${payload.summary.totalRecommended.toLocaleString()}円`;
+        const allItems = Object.values(payload.ticketGroups || {}).flat();
+        if (capitalAllocationStatus) capitalAllocationStatus.textContent = `推奨 ${payload.summary.totalRecommended.toLocaleString()}円 / 保存済み`;
         if (capitalAllocationSummary) {
           capitalAllocationSummary.innerHTML = `
-            <article><span>推奨総額</span><strong>${payload.summary.totalRecommended.toLocaleString()}円</strong><small>${payload.summary.strongCount}点が強勝負 / 分数ケリー${payload.settings.fractionalKelly}</small></article>
-            <article><span>三連単</span><strong>${payload.summary.trifectaRecommended.toLocaleString()}円</strong><small>三連単EV TOPをケリー基準で個別配分</small></article>
-            <article><span>WIN5</span><strong>${payload.summary.win5Recommended.toLocaleString()}円</strong><small>WIN5候補EVを別枠で管理</small></article>
-            <article><span>見送り</span><strong>${payload.summary.skipCount}点</strong><small>EV・ROI・神レース指数不足は自動停止</small></article>
+            <article><span>推奨総額</span><strong>${payload.summary.totalRecommended.toLocaleString()}円</strong><small>${payload.summary.strongCount}点が強勝負 / リスク係数${payload.settings.riskCoefficient}</small></article>
+            <article><span>三連単</span><strong>${payload.summary.trifectaRecommended.toLocaleString()}円</strong><small>1レース上限 ${payload.settings.raceLimit.toLocaleString()}円で管理</small></article>
+            <article><span>WIN5</span><strong>${payload.summary.win5Recommended.toLocaleString()}円</strong><small>WIN5上限 ${payload.settings.win5Limit.toLocaleString()}円で別管理</small></article>
+            <article><span>神レース候補</span><strong>${payload.godRaceCandidates.length}件</strong><small>EV上位かつ危険度60未満を抽出</small></article>
           `;
         }
+        renderCapitalTable(allItems.sort((a, b) => b.recommendedAmount - a.recommendedAmount || b.ev - a.ev));
         renderCapitalList(capitalTrifectaList, payload.trifecta);
         renderCapitalList(capitalWin5List, payload.win5);
+        renderCapitalList(capitalBasicList, [...payload.win, ...payload.place].sort((a, b) => b.recommendedAmount - a.recommendedAmount));
+        renderCapitalList(capitalCombinationList, [...payload.quinella, ...payload.wide].sort((a, b) => b.recommendedAmount - a.recommendedAmount));
+        renderCapitalList(capitalGodRaceList, payload.godRaceCandidates);
         return payload;
       };
 
@@ -4019,7 +4090,8 @@
         });
       });
 
-      [capitalBankrollInput, capitalFractionalKellyInput, capitalGodRaceIndexInput, capitalTrifectaRoiInput, capitalWin5RoiInput].forEach((input) => {
+      restoreCapitalSettings();
+      [capitalDailyBudgetInput, capitalRaceLimitInput, capitalWin5LimitInput, capitalRiskCoefficientInput, capitalBattleRaceCountInput, capitalGodRaceIndexInput, capitalTrifectaRoiInput, capitalWin5RoiInput].forEach((input) => {
         input?.addEventListener("input", generateBets);
       });
 
