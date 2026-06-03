@@ -1844,6 +1844,137 @@
 })();
 
 (() => {
+  const STORAGE_KEY = "operationReadinessChecklist";
+  const VERSION = 1;
+  const CHECKLIST_ITEMS = [
+    { id: "sampleRaceLoad", label: "サンプルレース読込", type: "auto", source: "sampleRaceTestLog" },
+    { id: "raceCsvImport", label: "CSV取込", type: "manual", source: "CSV取込画面" },
+    { id: "raceCsvValidation", label: "CSVバリデーション", type: "manual", source: "CSVバリデーション表示" },
+    { id: "aiIndexAutoCalculation", label: "AI指数自動計算", type: "auto", source: "sampleRaceTestLog.aiTop5" },
+    { id: "aiIndexVerification", label: "AI指数検証", type: "auto", source: "scoreVerificationAdjustments" },
+    { id: "kamianaRanking", label: "神穴ランキング", type: "auto", source: "sampleRaceTestLog.kamianaTop5" },
+    { id: "dangerPopularRanking", label: "危険人気馬ランキング", type: "auto", source: "sampleRaceTestLog.dangerTop5" },
+    { id: "trifectaGeneration", label: "三連単生成", type: "auto", source: "sampleRaceTestLog.trifectaCandidates" },
+    { id: "win5Generation", label: "WIN5生成", type: "auto", source: "sampleRaceTestLog.win5Candidates" },
+    { id: "futureSimulator", label: "未来シミュレーター", type: "auto", source: "sampleRaceTestLog.simulationWinTop5" },
+    { id: "evMonitoring", label: "EV監視", type: "auto", source: "sampleRaceTestLog.evTop" },
+    { id: "capitalAllocation", label: "資金配分", type: "auto", source: "sampleRaceTestLog.recommendedInvestments" },
+    { id: "fundCurveRoi", label: "資金曲線/ROI", type: "auto", source: "sampleRaceResultValidationLog / roiRecords" },
+    { id: "godRaceJudgement", label: "神レース判定", type: "auto", source: "sampleRaceTestLog.godRace" },
+    { id: "dangerPopularExclusion", label: "危険人気馬除外", type: "manual", source: "画面確認" },
+    { id: "resultInput", label: "結果入力", type: "auto", source: "sampleRaceResultValidationLog / raceResults" },
+    { id: "resultVerification", label: "結果検証", type: "auto", source: "sampleRaceResultValidationLog.judgements" },
+    { id: "selfEvolutionLog", label: "自己進化ログ", type: "auto", source: "selfEvolutionLogs" },
+    { id: "osUpdateCandidates", label: "OSアップデート候補", type: "auto", source: "sampleRaceResultValidationLog.osUpdateCandidates" },
+    { id: "diagnosticReport", label: "診断レポート生成", type: "auto", source: "operationDiagnosticReports" },
+    { id: "jsonExport", label: "JSONエクスポート", type: "manual", source: "JSON出力ボタン確認" },
+  ];
+
+  const safeParse = (value, fallback = null) => {
+    try {
+      return value ? JSON.parse(value) : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const readStorageJson = (storage, key, fallback = null) => safeParse(storage?.getItem?.(key), fallback);
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const hasItems = (value) => asArray(value).length > 0;
+  const hasObjectItems = (value) => value && typeof value === "object" && Object.keys(value).length > 0;
+  const latestArrayItem = (value) => asArray(value)[0] || null;
+
+  const loadState = (storage = window.localStorage) => {
+    const state = readStorageJson(storage, STORAGE_KEY, {});
+    return state && typeof state === "object" ? state : {};
+  };
+
+  const detectAutoStatus = (id, storage = window.localStorage) => {
+    const sample = readStorageJson(storage, "sampleRaceTestLog", null);
+    const validation = readStorageJson(storage, "sampleRaceResultValidationLog", null);
+    const reports = readStorageJson(storage, "operationDiagnosticReports", []);
+    const latestReport = latestArrayItem(reports);
+    const raceResults = readStorageJson(storage, "raceResults", null);
+    const roiRecords = readStorageJson(storage, "roiRecords", []);
+    const scoreAdjustments = readStorageJson(storage, "hashimoto-keiba-ai:score-verification-adjustments:v1", {});
+    const selfEvolutionV1 = readStorageJson(storage, "hashimoto-keiba-ai:self-evolution-logs:v1", null);
+    const selfEvolutionLegacy = readStorageJson(storage, "selfEvolutionLogs", null);
+    const godRace = readStorageJson(storage, "godRaceJudgementResults", null);
+    const resultInputExists = Boolean(validation?.result || validation?.resultInput || hasItems(raceResults?.items) || hasItems(raceResults?.races));
+    const osCandidates = validation?.osUpdateCandidates || latestReport?.osUpdateCandidates || sample?.osUpdateCandidates;
+    const hasOsCandidates = ["adopt", "pending", "delete"].some((key) => hasItems(osCandidates?.[key]));
+
+    const checks = {
+      sampleRaceLoad: [Boolean(sample?.race), "サンプルレースログを確認"],
+      aiIndexAutoCalculation: [hasItems(sample?.aiTop5), "AI指数TOP5を確認"],
+      aiIndexVerification: [hasObjectItems(scoreAdjustments) || hasItems(latestReport?.aiIndexTop5) || hasItems(sample?.aiTop5), "AI指数検証データを確認"],
+      kamianaRanking: [hasItems(sample?.kamianaTop5), "神穴TOP5を確認"],
+      dangerPopularRanking: [hasItems(sample?.dangerTop5), "危険人気馬TOP5を確認"],
+      trifectaGeneration: [hasItems(sample?.trifectaCandidates), "三連単候補を確認"],
+      win5Generation: [hasItems(sample?.win5Candidates), "WIN5候補を確認"],
+      futureSimulator: [hasItems(sample?.simulationWinTop5), "未来シミュレーション結果を確認"],
+      evMonitoring: [hasItems(sample?.evTop), "EVランキングを確認"],
+      capitalAllocation: [hasItems(sample?.recommendedInvestments), "推奨投資額を確認"],
+      fundCurveRoi: [Number.isFinite(Number(validation?.roi)) || hasItems(roiRecords) || Number.isFinite(Number(latestReport?.roi)), "ROIデータを確認"],
+      godRaceJudgement: [Boolean(sample?.godRace?.label || godRace?.label || latestReport?.godRaceJudgement?.label), "神レース判定を確認"],
+      resultInput: [resultInputExists, "結果入力データを確認"],
+      resultVerification: [Boolean(validation?.judgements || latestReport?.resultMatching?.status === "照合済"), "結果照合ログを確認"],
+      selfEvolutionLog: [Boolean(validation?.selfEvolutionLog || hasItems(selfEvolutionV1?.logs?.resultVerifications) || hasItems(selfEvolutionLegacy?.logs?.resultVerifications)), "自己進化ログを確認"],
+      osUpdateCandidates: [hasOsCandidates, "OSアップデート候補を確認"],
+      diagnosticReport: [hasItems(reports), "診断レポート保存を確認"],
+    };
+    const [checked = false, okReason = "データ確認済"] = checks[id] || [];
+    return { checked: Boolean(checked), reason: checked ? okReason : "localStorageデータ未確認" };
+  };
+
+  const calculateCompletion = (items) => {
+    const total = items.length;
+    const checked = items.filter((item) => item.checked).length;
+    const percentage = total ? Math.round((checked / total) * 100) : 0;
+    const mode = percentage >= 90 ? "本番運用可能" : percentage >= 75 ? "実戦投入可能" : percentage >= 50 ? "テスト可能" : "準備不足";
+    return { checked, total, percentage, mode };
+  };
+
+  const buildChecklistState = ({ storage = window.localStorage, manualChecks = null } = {}) => {
+    const previous = loadState(storage);
+    const nextManualChecks = manualChecks || previous.manualChecks || {};
+    const autoStatuses = {};
+    const items = CHECKLIST_ITEMS.map((item) => {
+      if (item.type === "auto") {
+        const auto = detectAutoStatus(item.id, storage);
+        autoStatuses[item.id] = auto;
+        return { ...item, checked: auto.checked, status: auto.checked ? "OK" : "未確認", reason: auto.reason };
+      }
+      const checked = Boolean(nextManualChecks[item.id]);
+      return { ...item, checked, status: checked ? "OK" : "手動確認待ち", reason: checked ? "手動チェック済み" : "画面で確認後にチェックしてください" };
+    });
+    const completion = calculateCompletion(items);
+    return { version: VERSION, storageKey: STORAGE_KEY, updatedAt: new Date().toISOString(), manualChecks: nextManualChecks, autoStatuses, items, completion };
+  };
+
+  const saveChecklistState = (state, storage = window.localStorage) => {
+    storage?.setItem?.(STORAGE_KEY, JSON.stringify(state));
+    return state;
+  };
+
+  const updateManualCheck = (id, checked, storage = window.localStorage) => {
+    const previous = loadState(storage);
+    const manualChecks = { ...(previous.manualChecks || {}), [id]: Boolean(checked) };
+    return saveChecklistState(buildChecklistState({ storage, manualChecks }), storage);
+  };
+
+  window.HashimotoOperationReadinessChecklistEngine = {
+    STORAGE_KEY,
+    CHECKLIST_ITEMS,
+    loadState,
+    detectAutoStatus,
+    calculateCompletion,
+    buildChecklistState,
+    saveChecklistState,
+    updateManualCheck,
+  };
+})();
+
+(() => {
   const STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
   const DATA_URL = "./data/selfEvolutionLogs.json";
 
