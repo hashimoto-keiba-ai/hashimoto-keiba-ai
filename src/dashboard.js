@@ -41,6 +41,22 @@
     追込: { ai: 0.4, darkHorse: 1.9, risk: 0.4, frontAdvantageWeight: -0.75, closerAdvantageWeight: 1.05, longStraightWeight: 0.75, tightTurnWeight: -0.58 },
   };
 
+  const JOCKEY_RISK_CORRECTION_TABLE = {
+    ルメール: -8,
+    川田: -7,
+    武豊: -5,
+    戸崎: -4,
+    横山武: -3,
+    松山: -3,
+    坂井: -2,
+    モレイラ: -8,
+    レーン: -6,
+    新人: 10,
+    若手: 7,
+    乗替: 6,
+    未設定: 8,
+  };
+
   const scorePresenceKeys = {
     aiIndex: ["aiIndex", "AI指数"],
     kamianaIndex: ["kamianaIndex", "神穴指数"],
@@ -135,6 +151,61 @@
     return numeric > 0 ? `+${numeric}` : String(numeric);
   };
   const roundCorrection = (value) => Math.round(toNumber(value, 0) * 10) / 10;
+  const clampDangerScore = (value) => clampScore(value);
+
+  const getJockeyRiskCorrection = (jockey) => {
+    const normalized = normalizeText(jockey) || "未設定";
+    const matchedKey = Object.keys(JOCKEY_RISK_CORRECTION_TABLE).find((key) => normalized.includes(key));
+    return JOCKEY_RISK_CORRECTION_TABLE[matchedKey] ?? 2;
+  };
+
+  const createDangerReason = (label, score, detail) => ({ label, score: roundCorrection(score), detail });
+
+  const calculateDangerPopularAssessment = (horse = {}) => {
+    const popularity = toNumber(horse.popularity, 99);
+    const odds = toNumber(horse.odds, 99);
+    const fieldSize = Math.max(1, toNumber(horse.fieldSize, 18));
+    const style = normalizeRunningStyleKey(horse.runningStyle);
+    const corner = toNumber(horse.cornerPosition, fieldSize);
+    const distance = toNumber(horse.distance ?? horse.raceDistance, 0);
+    const going = normalizeText(horse.going || "良");
+    const aiWinRate = toNumber(horse.aiWinRate, 0);
+    const marketWinRate = odds > 0 ? 100 / odds : 0;
+    const isPopularTarget = popularity >= 1 && popularity <= 3;
+    const components = {
+      overPopularity: isPopularTarget ? (popularity === 1 ? 26 : popularity === 2 ? 22 : 18) + (odds <= 2.5 ? 12 : odds <= 4 ? 8 : odds <= 6 ? 4 : 0) + (aiWinRate && marketWinRate - aiWinRate >= 8 ? 10 : 0) : 0,
+      paceMismatch: unfavorableStylePenalty({ ...horse, fieldSize }),
+      positionMismatch: (["逃げ", "先行", "好位"].includes(style) && corner > Math.ceil(fieldSize * 0.45)) || (["差し", "追込"].includes(style) && corner > Math.ceil(fieldSize * 0.78)) ? 12 : 0,
+      distanceMismatch: !distance ? 10 : distance <= 1400 && ["差し", "追込"].includes(style) ? 7 : distance >= 2200 && ["逃げ", "先行"].includes(style) ? 8 : 0,
+      goingMismatch: trackStyleBonus(horse.runningStyle, going) < 0 ? 12 : 0,
+      jockeyCorrection: getJockeyRiskCorrection(horse.jockey),
+    };
+    const rawScore = Object.values(components).reduce((total, value) => total + toNumber(value), 8);
+    const dangerScore = isPopularTarget ? clampDangerScore(rawScore) : 0;
+    const reasons = [
+      components.overPopularity > 0 ? createDangerReason("過剰人気", components.overPopularity, `${popularity}人気 ${odds}倍で市場評価が先行`) : null,
+      components.paceMismatch > 0 ? createDangerReason("展開不一致", components.paceMismatch, `${normalizeText(horse.runningStyle) || "脚質未設定"}と想定位置が噛み合わない`) : null,
+      components.positionMismatch > 0 ? createDangerReason("位置取り不一致", components.positionMismatch, `想定4角${corner}番手が脚質の理想位置から外れる`) : null,
+      components.distanceMismatch > 0 ? createDangerReason("距離不一致", components.distanceMismatch, distance ? `${distance}mで${style}の適性に不安` : "距離データ不足で適性不明") : null,
+      components.goingMismatch > 0 ? createDangerReason("馬場不一致", components.goingMismatch, `${going}馬場と${style}の相性が悪い`) : null,
+      components.jockeyCorrection > 0 ? createDangerReason("騎手補正", components.jockeyCorrection, `${normalizeText(horse.jockey) || "騎手未設定"}で人気馬リスクを加点`) : null,
+      components.jockeyCorrection < 0 ? createDangerReason("騎手補正", components.jockeyCorrection, `${normalizeText(horse.jockey)}で人気馬リスクを軽減`) : null,
+    ].filter(Boolean);
+    return {
+      isDangerPopularTarget: isPopularTarget,
+      dangerScore,
+      components: Object.fromEntries(Object.entries(components).map(([key, value]) => [key, roundCorrection(value)])),
+      reasons,
+      reasonText: reasons.length ? reasons.map((reason) => `${reason.label}:${reason.detail}`).join(" / ") : "危険材料なし",
+      trifectaHeadExcluded: dangerScore >= 75,
+      win5Excluded: dangerScore >= 70,
+    };
+  };
+
+  const detectDangerPopularHorses = (horses = [], raceContext = {}) => horses
+    .map((horse) => ({ ...horse, dangerPopularAssessment: calculateDangerPopularAssessment({ ...raceContext, ...horse, fieldSize: raceContext.fieldSize || horse.fieldSize || horses.length || 18 }) }))
+    .filter((horse) => horse.dangerPopularAssessment.isDangerPopularTarget && horse.dangerPopularAssessment.dangerScore > 0)
+    .sort((a, b) => b.dangerPopularAssessment.dangerScore - a.dangerPopularAssessment.dangerScore);
 
   const calculateCourseCorrection = (horse = {}, scoreType = "ai") => {
     const course = COURSE_CORRECTION_TABLE[normalizeCourseKey(horse.course ?? horse.raceCourse)] || null;
@@ -235,6 +306,7 @@
         trainingConcern: ["D", ""].includes(normalizeText(horse.training).toUpperCase()) ? 18 : normalizeText(horse.training).toUpperCase() === "C" ? 12 : 0,
         goingMismatch: trackStyleBonus(horse.runningStyle, horse.going) < 0 ? 12 : 0,
         distanceConcern: !toNumber(horse.distance ?? horse.raceDistance, 0) ? 10 : Math.max(0, calculateDistanceCorrection(horse, "risk")),
+        jockeyConcern: Math.max(0, getJockeyRiskCorrection(horse.jockey)),
       },
     };
   };
@@ -316,15 +388,18 @@
     const aiBreakdown = calculateAiScoreBreakdown(scoringBase);
     const kamianaBreakdown = calculateDarkHorseScoreBreakdown(scoringBase);
     const dangerBreakdown = calculateRiskScoreBreakdown(scoringBase);
+    const dangerPopularAssessment = calculateDangerPopularAssessment(scoringBase);
     const namedComponents = buildNamedScoreComponents(scoringBase, dangerBreakdown.finalScore);
     const aiIndex = aiManual ? clampScore(horse.aiIndex ?? horse["AI指数"]) : aiBreakdown.finalScore;
     const kamianaIndex = kamianaManual ? clampScore(horse.kamianaIndex ?? horse["神穴指数"]) : kamianaBreakdown.finalScore;
-    const dangerIndex = dangerManual ? clampScore(horse.dangerIndex ?? horse["危険人気馬指数"]) : dangerBreakdown.finalScore;
+    const dangerIndex = dangerManual ? clampScore(horse.dangerIndex ?? horse["危険人気馬指数"]) : Math.max(dangerBreakdown.finalScore, dangerPopularAssessment.dangerScore);
     return {
       ...horse,
       aiIndex,
       kamianaIndex,
       dangerIndex,
+      dangerPopularAssessment,
+      dangerReasons: dangerPopularAssessment.reasons,
       scoreBreakdown: {
         aiIndex: { ...(aiManual ? applyManualScoreToBreakdown(aiBreakdown, aiIndex) : aiBreakdown), components: namedComponents.aiIndex },
         kamianaIndex: { ...(kamianaManual ? applyManualScoreToBreakdown(kamianaBreakdown, kamianaIndex) : kamianaBreakdown), components: namedComponents.kamianaIndex },
@@ -345,6 +420,9 @@
     calculateAiScoreBreakdown,
     calculateDarkHorseScoreBreakdown,
     calculateRiskScoreBreakdown,
+    calculateDangerPopularAssessment,
+    detectDangerPopularHorses,
+    getJockeyRiskCorrection,
     calculateAllHorseScores,
     formatScoreBreakdown,
     buildNamedScoreComponents,
@@ -352,6 +430,7 @@
     DISTANCE_CORRECTION_TABLE,
     SURFACE_CORRECTION_TABLE,
     PACE_STYLE_CORRECTION_TABLE,
+    JOCKEY_RISK_CORRECTION_TABLE,
   };
   window.calculateAiScore = calculateAiScore;
   window.calculateDarkHorseScore = calculateDarkHorseScore;
@@ -446,7 +525,9 @@
   const sortByScore = (horses, field) => [...horses].sort((a, b) => toNumber(b[field]) - toNumber(a[field]));
   const uniqueByHorseNumber = (horses) => [...new Map(horses.filter(Boolean).map((horse) => [horse.number, horse])).values()];
   const formatHorse = (horse) => horse ? `${horse.number} ${horse.name}` : "該当なし";
-  const isDangerPopular = (horse) => toNumber(horse?.dangerIndex) >= 80;
+  const dangerReasonSummary = (horse) => horse?.dangerPopularAssessment?.reasonText || (horse?.dangerReasons || []).map((reason) => `${reason.label}:${reason.detail}`).join(" / ") || `危険人気馬指数${toNumber(horse?.dangerIndex).toFixed(1)}`;
+  const isDangerPopular = (horse) => toNumber(horse?.dangerIndex) >= 80 || Boolean(horse?.dangerPopularAssessment?.trifectaHeadExcluded);
+  const isWin5DangerExcluded = (horse) => isDangerPopular(horse) || Boolean(horse?.dangerPopularAssessment?.win5Excluded);
   const isLongshot = (horse) => toNumber(horse?.popularity, 99) >= 6 || toNumber(horse?.odds, 0) >= 15;
   const describeScores = (horse) => `AI${toNumber(horse.aiIndex).toFixed(1)} / 神穴${toNumber(horse.kamianaIndex).toFixed(1)} / 危険${toNumber(horse.dangerIndex).toFixed(1)}`;
   const horseReason = (horse, reason) => ({
@@ -480,8 +561,8 @@
       notation: `${first.number} → ${second.number} → ${third.number}`,
       evidence: [
         horseReason(first, `1着: ${reason}`),
-        horseReason(second, "2着: AI指数上位4頭から危険人気馬指数80以上を除外"),
-        horseReason(third, isDangerPopular(third) ? "3着: 危険人気馬だがAI上位5頭または神穴上位2頭のため条件付き残し" : "3着: AI上位5頭＋神穴上位2頭の採用枠"),
+        horseReason(second, "2着: AI指数上位4頭から危険人気馬検出馬を除外"),
+        horseReason(third, isDangerPopular(third) ? `3着: 危険人気馬だが条件付き残し（${dangerReasonSummary(third)}）` : "3着: AI上位5頭＋神穴上位2頭の採用枠"),
       ],
     };
   };
@@ -517,8 +598,8 @@
       fieldSize,
       targetPoints,
       rules: {
-        firstRule: "1着候補はAI指数上位2頭から危険人気馬指数80以上を除外",
-        secondRule: "2着候補はAI指数上位4頭から危険人気馬指数80以上を除外",
+        firstRule: "1着候補はAI指数上位2頭から危険人気馬検出馬を除外",
+        secondRule: "2着候補はAI指数上位4頭から危険人気馬検出馬を除外",
         thirdRule: "3着候補はAI指数上位5頭＋神穴指数上位2頭。危険人気馬も3着では条件付き残し",
         pointControl: "10頭以下8点 / 11〜14頭12点 / 15〜18頭16点",
       },
@@ -561,8 +642,8 @@
   const buildWin5ClassificationPayload = (horses = [], options = {}) => {
     const aiTop = sortByScore(horses, "aiIndex");
     const kamianaTop = sortByScore(horses, "kamianaIndex");
-    const dangerExcluded = horses.filter(isDangerPopular);
-    const available = (horse) => horse && !isDangerPopular(horse);
+    const dangerExcluded = horses.filter(isWin5DangerExcluded);
+    const available = (horse) => horse && !isWin5DangerExcluded(horse);
     const alreadyIn = (zones, horse) => Object.values(zones).some((items) => items.some((item) => item.number === horse.number));
     const zones = { a: [], b: [], c: [], d: [] };
     const add = (key, source, limit, reason) => {
@@ -591,9 +672,9 @@
       },
       rules: {
         a: "AI指数最上位かつ危険指数80未満",
-        b: "AI指数上位。ただし危険人気馬指数80以上は除外",
-        c: "神穴指数上位。ただし危険人気馬指数80以上は除外",
-        d: "人気薄＋神穴指数高。ただし危険人気馬指数80以上は除外",
+        b: "AI指数上位。ただし危険人気馬検出馬は除外",
+        c: "神穴指数上位。ただし危険人気馬検出馬は除外",
+        d: "人気薄＋神穴指数高。ただし危険人気馬検出馬は除外",
       },
     };
   };

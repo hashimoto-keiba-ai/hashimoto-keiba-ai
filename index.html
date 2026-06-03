@@ -1071,10 +1071,10 @@
                 <p class="card__kicker">DANGER POPULAR AUTO JUDGE</p>
                 <h2>危険人気馬自動判定</h2>
               </div>
-              <span class="status-pill status-pill--danger">自動判定 6頭</span>
+              <span id="danger-popular-status" class="status-pill status-pill--danger">自動判定 待機</span>
             </div>
             <p class="card__lead">過剰人気、展開不利、馬場ミスマッチ、騎手替わりの不安を危険度スコアで表示します。</p>
-            <ol class="timeline" aria-label="危険人気馬ランキング">
+            <ol id="danger-popular-ranking" class="timeline" aria-label="危険人気馬ランキング">
               <li><time>92</time><div><strong>東京10R 1番 サンライズノヴァ</strong><small>1人気 2.4倍 / 逃げ過多で差し有利、内枠揉まれリスク。</small></div></li>
               <li><time>88</time><div><strong>京都12R 6番 ミヤビクラウン</strong><small>2人気 4.1倍 / 昇級初戦、上がり指数が同組平均-0.8。</small></div></li>
               <li><time>81</time><div><strong>阪神8R 10番 ブルーアロー</strong><small>3人気 5.6倍 / 道悪適性C、外差しバイアスと脚質不一致。</small></div></li>
@@ -1682,6 +1682,8 @@
       const aiRanking = document.querySelector("#ai-ranking");
       const kamianaRankingLive = document.querySelector("#kamiana-ranking-live");
       const dangerRankingLive = document.querySelector("#danger-ranking-live");
+      const dangerPopularStatus = document.querySelector("#danger-popular-status");
+      const dangerPopularRanking = document.querySelector("#danger-popular-ranking");
       const generatedTrifecta = document.querySelector("#generated-trifecta");
       const generatedWin5 = document.querySelector("#generated-win5");
       const generatedLongshots = document.querySelector("#generated-longshots");
@@ -3884,7 +3886,8 @@
         }
         horses.slice(0, 6).forEach((horse) => {
           const item = document.createElement("li");
-          item.innerHTML = `<strong>${escapeHtml(formatHorse(horse))}</strong><span>${horse[field]}${suffix} / ${horse.popularity}人気 / ${horse.odds}倍</span><small class="score-breakdown">${escapeHtml(getScoreBreakdownSummary(horse, field))}</small>`;
+          const dangerReason = field === "dangerIndex" ? `<small class="score-breakdown">危険理由: ${escapeHtml(formatDangerReasonSummary(horse))}</small>` : "";
+          item.innerHTML = `<strong>${escapeHtml(formatHorse(horse))}</strong><span>${horse[field]}${suffix} / ${horse.popularity}人気 / ${horse.odds}倍</span><small class="score-breakdown">${escapeHtml(getScoreBreakdownSummary(horse, field))}</small>${dangerReason}`;
           target.append(item);
         });
       };
@@ -3922,6 +3925,7 @@
             ["trainingConcern", "調教不安"],
             ["goingMismatch", "馬場不一致"],
             ["distanceConcern", "距離不安"],
+            ["jockeyConcern", "騎手補正"],
           ],
         };
         return (componentLabels[field] || []).map(([key, label]) => [label, components[key] ?? 0]);
@@ -3983,6 +3987,22 @@
         return scoreVerificationEngine?.normalizeAdjustmentMap?.(nextAdjustments) || nextAdjustments;
       };
 
+      const formatDangerReasonSummary = (horse) => horse.dangerPopularAssessment?.reasonText || (horse.dangerReasons || []).map((reason) => `${reason.label}:${reason.detail}`).join(" / ") || "危険理由なし";
+
+      const renderDangerPopularDetection = () => {
+        if (!dangerPopularRanking || !dangerPopularStatus) return;
+        const detected = scoreEngine.detectDangerPopularHorses?.(raceHorses, getRaceScoreContext()) || [];
+        dangerPopularStatus.textContent = detected.length ? `自動判定 ${detected.length}頭` : "危険人気馬なし";
+        dangerPopularRanking.innerHTML = detected.length
+          ? detected.slice(0, 6).map((horse) => {
+            const assessment = horse.dangerPopularAssessment;
+            const score = assessment.dangerScore;
+            const badge = score >= 85 ? "S" : score >= 75 ? "A" : "B";
+            return `<li><time>${escapeHtml(score)}</time><div><strong>${escapeHtml(formatHorse(horse))} <span class="badge badge--red">${badge}</span></strong><small>${escapeHtml(horse.popularity)}人気 ${escapeHtml(horse.odds)}倍 / 危険度スコア${escapeHtml(score)} / ${escapeHtml(assessment.reasonText)}</small></div></li>`;
+          }).join("")
+          : '<li><time>OK</time><div><strong>1〜3人気の過剰人気は未検出</strong><small>展開・位置取り・距離・馬場・騎手補正の危険条件を満たす馬はいません。</small></div></li>';
+      };
+
       const renderRunnerTable = () => {
         runnerTableBody.innerHTML = "";
         runnerCount.textContent = `${raceHorses.length}頭`;
@@ -4036,7 +4056,7 @@
         const formatZone = (items) => items.length ? items.map((horse) => `${formatHorse(horse)}（AI${horse.aiIndex} / 神穴${horse.kamianaIndex} / 危険${horse.dangerIndex}）`).join(" / ") : "該当なし";
         win5CandidateOutput.innerHTML = Object.entries(payload.zones).map(([key, horses]) => `
           <article class="candidate ${zoneClasses[key]}"><span>${zoneLabels[key]}</span><strong>${escapeHtml(formatZone(horses))}</strong><small>${escapeHtml(zoneRoles[key])}｜${escapeHtml(horses.map((horse) => horse.win5Reason).join(" / ") || payload.rules[key])}</small></article>
-        `).join("") + `<article class="candidate candidate--danger"><span>危険人気馬</span><strong>${escapeHtml(formatZone(payload.dangerExcluded))}</strong><small>危険人気馬指数80以上はWIN5候補から自動除外</small></article>`;
+        `).join("") + `<article class="candidate candidate--danger"><span>危険人気馬</span><strong>${escapeHtml(formatZone(payload.dangerExcluded))}</strong><small>1〜3人気の過剰人気検出馬と危険指数80以上はWIN5候補から自動除外</small></article>`;
         win5SystemStatus.textContent = payload.summary.totalCandidates ? `AI連動 ${payload.summary.totalCandidates}頭分類` : "候補不足";
       };
 
@@ -4056,7 +4076,7 @@
           <article><span>1着候補</span><strong>${escapeHtml(formatList(candidates.firstCandidates))}</strong><small>A:${escapeHtml(formatList(candidates.aZone))} / B:${escapeHtml(formatList(candidates.bZone))} / C:${escapeHtml(formatList(candidates.cZone))}</small></article>
           <article><span>2着候補</span><strong>${escapeHtml(formatList(candidates.secondCandidates))}</strong><small>1人気は2着候補から自動除外</small></article>
           <article><span>3着候補</span><strong>${escapeHtml(formatList(candidates.thirdCandidates))}</strong><small>神穴3着: ${escapeHtml(formatList(candidates.kamianaThird))}</small></article>
-          <article><span>危険人気馬</span><strong>${escapeHtml(formatList(candidates.dangerHeadExcluded))}</strong><small>危険指数80以上の人気馬は1着候補から除外</small></article>
+          <article><span>危険人気馬</span><strong>${escapeHtml(formatList(candidates.dangerHeadExcluded))}</strong><small>危険人気馬検出馬は1着候補から除外し、理由を買い目根拠へ連動</small></article>
         `;
 
         const renderGroup = (label, groupTickets, className) => `
@@ -4310,6 +4330,7 @@
         raceHorses = calculateHorseScores(raceHorses);
         renderRunnerTable();
         renderScoreVerificationPanel();
+        renderDangerPopularDetection();
         renderRanking(aiRanking, rankBy("aiIndex"), "aiIndex");
         renderRanking(kamianaRankingLive, rankBy("kamianaIndex"), "kamianaIndex");
         renderRanking(dangerRankingLive, rankBy("dangerIndex"), "dangerIndex");
