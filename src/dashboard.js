@@ -204,6 +204,41 @@
     ? `基本${breakdown.baseScore} / 競馬場${signed(breakdown.courseCorrection)} / 距離${signed(breakdown.distanceCorrection)} / 脚質${signed(breakdown.styleCorrection)} / 最終${breakdown.finalScore}`
     : "補正内訳なし";
 
+  const buildNamedScoreComponents = (horse = {}, riskScore = calculateRiskScore(horse)) => {
+    const fieldSize = toNumber(horse.fieldSize, 18);
+    const popularity = toNumber(horse.popularity, 18);
+    const odds = toNumber(horse.odds, 99);
+    const riskPenalty = riskScore >= 80 ? -14 : riskScore >= 65 ? -8 : riskScore >= 50 ? -4 : 0;
+    return {
+      aiIndex: {
+        popularityCorrection: roundCorrection(popularityBonus(popularity)),
+        oddsCorrection: roundCorrection(oddsBonus(odds)),
+        styleCorrection: roundCorrection(styleBonus(horse.runningStyle)),
+        cornerCorrection: roundCorrection(cornerBonus(horse.cornerPosition, fieldSize)),
+        trainingCorrection: roundCorrection(trainingBonus(horse.training)),
+        courseCorrection: calculateCourseCorrection(horse, "ai"),
+        distanceCorrection: roundCorrection(distanceBonus(horse) + calculateDistanceCorrection(horse, "ai")),
+        goingCorrection: roundCorrection(trackStyleBonus(horse.runningStyle, horse.going) + calculateSurfaceCorrection(horse, "ai")),
+        dangerPopularPenalty: riskPenalty,
+      },
+      kamianaIndex: {
+        popularityValue: popularity >= 10 ? 22 : popularity >= 6 ? 18 : popularity >= 4 ? 10 : 0,
+        oddsValue: odds > 50 ? 7 : odds > 20 ? 15 : odds >= 8 ? 18 : 0,
+        stylePaceFit: roundCorrection(Math.max(0, styleBonus(horse.runningStyle) - 2) + Math.max(0, cornerBonus(horse.cornerPosition, fieldSize))),
+        kamianaConditionFit: roundCorrection(Math.max(0, trainingBonus(horse.training)) + calculateCourseCorrection(horse, "darkHorse") + calculateDistanceCorrection(horse, "darkHorse")),
+        jackpotPatternFit: roundCorrection((odds >= 12 ? 8 : odds >= 6 ? 4 : -5) + (riskScore < 50 ? 10 : riskScore >= 70 ? -14 : 0)),
+      },
+      dangerIndex: {
+        overPopularity: popularity <= 3 && odds <= 3 ? 28 : popularity <= 3 && odds <= 5 ? 22 : popularity <= 5 && odds <= 8 ? 14 : 0,
+        paceMismatch: roundCorrection(unfavorableStylePenalty({ ...horse, fieldSize })),
+        positionDisadvantage: cornerBonus(horse.cornerPosition, fieldSize) < 0 ? roundCorrection(Math.abs(cornerBonus(horse.cornerPosition, fieldSize)) + 5) : 0,
+        trainingConcern: ["D", ""].includes(normalizeText(horse.training).toUpperCase()) ? 18 : normalizeText(horse.training).toUpperCase() === "C" ? 12 : 0,
+        goingMismatch: trackStyleBonus(horse.runningStyle, horse.going) < 0 ? 12 : 0,
+        distanceConcern: !toNumber(horse.distance ?? horse.raceDistance, 0) ? 10 : Math.max(0, calculateDistanceCorrection(horse, "risk")),
+      },
+    };
+  };
+
 
   const calculateRiskScoreBase = (horse = {}) => {
     const popularity = toNumber(horse.popularity, 18);
@@ -281,6 +316,7 @@
     const aiBreakdown = calculateAiScoreBreakdown(scoringBase);
     const kamianaBreakdown = calculateDarkHorseScoreBreakdown(scoringBase);
     const dangerBreakdown = calculateRiskScoreBreakdown(scoringBase);
+    const namedComponents = buildNamedScoreComponents(scoringBase, dangerBreakdown.finalScore);
     const aiIndex = aiManual ? clampScore(horse.aiIndex ?? horse["AI指数"]) : aiBreakdown.finalScore;
     const kamianaIndex = kamianaManual ? clampScore(horse.kamianaIndex ?? horse["神穴指数"]) : kamianaBreakdown.finalScore;
     const dangerIndex = dangerManual ? clampScore(horse.dangerIndex ?? horse["危険人気馬指数"]) : dangerBreakdown.finalScore;
@@ -290,9 +326,9 @@
       kamianaIndex,
       dangerIndex,
       scoreBreakdown: {
-        aiIndex: aiManual ? applyManualScoreToBreakdown(aiBreakdown, aiIndex) : aiBreakdown,
-        kamianaIndex: kamianaManual ? applyManualScoreToBreakdown(kamianaBreakdown, kamianaIndex) : kamianaBreakdown,
-        dangerIndex: dangerManual ? applyManualScoreToBreakdown(dangerBreakdown, dangerIndex) : dangerBreakdown,
+        aiIndex: { ...(aiManual ? applyManualScoreToBreakdown(aiBreakdown, aiIndex) : aiBreakdown), components: namedComponents.aiIndex },
+        kamianaIndex: { ...(kamianaManual ? applyManualScoreToBreakdown(kamianaBreakdown, kamianaIndex) : kamianaBreakdown), components: namedComponents.kamianaIndex },
+        dangerIndex: { ...(dangerManual ? applyManualScoreToBreakdown(dangerBreakdown, dangerIndex) : dangerBreakdown), components: namedComponents.dangerIndex },
       },
       scoreSource: {
         aiIndex: aiManual ? "manual" : "auto",
@@ -311,6 +347,7 @@
     calculateRiskScoreBreakdown,
     calculateAllHorseScores,
     formatScoreBreakdown,
+    buildNamedScoreComponents,
     COURSE_CORRECTION_TABLE,
     DISTANCE_CORRECTION_TABLE,
     SURFACE_CORRECTION_TABLE,
@@ -320,6 +357,88 @@
   window.calculateDarkHorseScore = calculateDarkHorseScore;
   window.calculateRiskScore = calculateRiskScore;
   window.calculateAllHorseScores = calculateAllHorseScores;
+})();
+
+
+(() => {
+  const STORAGE_KEY = "hashimoto-keiba-ai:score-verification-adjustments:v1";
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const clampScore = (value) => Math.max(0, Math.min(100, Math.round(Number(value || 0) * 10) / 10));
+  const roundAdjustment = (value) => Math.round(toNumber(value, 0) * 10) / 10;
+  const normalizeHorseNumber = (value) => String(value ?? "").trim();
+  const defaultAdjustment = () => ({ aiIndex: 0, kamianaIndex: 0, dangerIndex: 0, memo: "" });
+
+  const normalizeAdjustment = (adjustment = {}) => ({
+    aiIndex: roundAdjustment(adjustment.aiIndex),
+    kamianaIndex: roundAdjustment(adjustment.kamianaIndex),
+    dangerIndex: roundAdjustment(adjustment.dangerIndex),
+    memo: String(adjustment.memo || ""),
+  });
+
+  const normalizeAdjustmentMap = (adjustments = {}) => Object.fromEntries(
+    Object.entries(adjustments || {})
+      .filter(([horseNumber]) => normalizeHorseNumber(horseNumber))
+      .map(([horseNumber, adjustment]) => [normalizeHorseNumber(horseNumber), normalizeAdjustment(adjustment)]),
+  );
+
+  const loadAdjustments = (storage = window.localStorage) => {
+    try {
+      return normalizeAdjustmentMap(JSON.parse(storage?.getItem(STORAGE_KEY) || "{}"));
+    } catch (error) {
+      return {};
+    }
+  };
+
+  const saveAdjustments = (adjustments = {}, storage = window.localStorage) => {
+    const normalized = normalizeAdjustmentMap(adjustments);
+    storage?.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    return normalized;
+  };
+
+  const hasAdjustment = (adjustment = {}) => ["aiIndex", "kamianaIndex", "dangerIndex"].some((field) => roundAdjustment(adjustment[field]) !== 0) || String(adjustment.memo || "").trim() !== "";
+
+  const applyScoreAdjustment = (horse, field, value) => {
+    const baseField = `verificationBase${field.charAt(0).toUpperCase()}${field.slice(1)}`;
+    const baseScore = toNumber(horse[baseField] ?? horse[field], 0);
+    const adjustment = roundAdjustment(value);
+    horse[baseField] = Math.round(baseScore * 10) / 10;
+    horse[field] = clampScore(baseScore + adjustment);
+    if (horse.scoreBreakdown?.[field]) {
+      horse.scoreBreakdown[field] = {
+        ...horse.scoreBreakdown[field],
+        baseFinalScore: Math.round(baseScore * 10) / 10,
+        manualAdjustment: adjustment,
+        finalScore: horse[field],
+      };
+    }
+  };
+
+  const applyManualAdjustments = (horses = [], adjustments = {}) => {
+    const normalizedAdjustments = normalizeAdjustmentMap(adjustments);
+    return horses.map((horse) => {
+      const horseNumber = normalizeHorseNumber(horse.number);
+      const adjustment = normalizedAdjustments[horseNumber] || defaultAdjustment();
+      const adjustedHorse = { ...horse, scoreBreakdown: { ...(horse.scoreBreakdown || {}) }, manualScoreAdjustment: adjustment, correctionMemo: adjustment.memo };
+      ["aiIndex", "kamianaIndex", "dangerIndex"].forEach((field) => applyScoreAdjustment(adjustedHorse, field, adjustment[field]));
+      adjustedHorse.scoreSource = {
+        ...(horse.scoreSource || {}),
+        aiIndex: roundAdjustment(adjustment.aiIndex) !== 0 ? "adjusted" : horse.scoreSource?.aiIndex,
+        kamianaIndex: roundAdjustment(adjustment.kamianaIndex) !== 0 ? "adjusted" : horse.scoreSource?.kamianaIndex,
+        dangerIndex: roundAdjustment(adjustment.dangerIndex) !== 0 ? "adjusted" : horse.scoreSource?.dangerIndex,
+      };
+      adjustedHorse.hasManualScoreAdjustment = hasAdjustment(adjustment);
+      return adjustedHorse;
+    });
+  };
+
+  window.HashimotoScoreVerificationEngine = {
+    STORAGE_KEY,
+    loadAdjustments,
+    saveAdjustments,
+    normalizeAdjustment,
+    normalizeAdjustmentMap,
+    applyManualAdjustments,
+  };
 })();
 
 (() => {

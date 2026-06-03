@@ -4400,3 +4400,154 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.score-verification-panel {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.28);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(248, 196, 79, 0.10), rgba(5, 5, 5, 0.84));
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.08);
+}
+
+.score-verification-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+}
+
+.score-verification-list {
+  display: grid;
+  gap: 14px;
+}
+
+.score-verification-card {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(248, 196, 79, 0.24);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.score-verification-card header,
+.score-verification-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.score-verification-card header span,
+.score-verification-card header small,
+.score-verification-metrics span {
+  color: var(--muted);
+}
+
+.score-verification-card header strong,
+.score-verification-metrics strong {
+  display: block;
+  color: var(--gold-light);
+  font-size: 1.08rem;
+}
+
+.score-verification-metrics span {
+  min-width: 150px;
+  padding: 10px 12px;
+  border: 1px solid rgba(248, 196, 79, 0.18);
+  border-radius: 14px;
+  background: rgba(248, 196, 79, 0.08);
+}
+
+.score-verification-breakdowns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.score-verification-breakdowns section {
+  padding: 12px;
+  border: 1px solid rgba(248, 196, 79, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 233, 163, 0.05);
+}
+
+.score-verification-breakdowns h4 {
+  margin: 0 0 10px;
+  color: var(--gold);
+}
+
+.score-verification-breakdowns ol {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.score-verification-breakdowns li span,
+.score-verification-breakdowns li strong {
+  display: inline-flex;
+  justify-content: space-between;
+}
+
+.score-verification-breakdowns li strong {
+  float: right;
+  color: var(--gold-light);
+}
+
+.score-adjustment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.score-adjustment-grid label {
+  display: grid;
+  gap: 7px;
+}
+
+.score-adjustment-grid label span {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.score-adjustment-grid input,
+.score-adjustment-grid textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--text);
+  border: 1px solid rgba(248, 196, 79, 0.34);
+  border-radius: 14px;
+  background: rgba(5, 5, 5, 0.78);
+  outline: none;
+}
+
+.score-adjustment-grid input:focus,
+.score-adjustment-grid textarea:focus {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 3px rgba(248, 196, 79, 0.16);
+}
+
+.score-adjustment-note {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .score-verification-breakdowns,
+  .score-adjustment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .score-verification-metrics span {
+    width: 100%;
+  }
+}
