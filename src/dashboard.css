@@ -4187,3 +4187,36 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.capital-table-panel {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.capital-allocation-table .capital-row--strong td {
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.capital-allocation-table .capital-row--skip td {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.capital-god-race {
+  grid-column: 1 / -1;
+}
+
+.capital-row--light strong,
+.capital-row--normal strong {
+  color: var(--gold-light);
+}
+
+.capital-row--strong strong {
+  color: #d9ffe4;
+}
+
+.capital-row--skip strong {
+  color: #ff9c8f;
+}

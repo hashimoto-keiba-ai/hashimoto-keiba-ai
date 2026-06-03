@@ -624,10 +624,30 @@
 })();
 
 (() => {
+  const FUND_SETTINGS_KEY = "fundManagementSettings";
+  const FUND_RESULTS_KEY = "fundAllocationResults";
   const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
   const clamp = (value, min, max) => Math.max(min, Math.min(max, toNumber(value)));
   const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
   const roundStake = (value, unit = 100) => Math.max(0, Math.floor(toNumber(value) / unit) * unit);
+
+  const ticketTypeLabels = {
+    trifecta: "三連単",
+    win5: "WIN5",
+    win: "単勝",
+    place: "複勝",
+    quinella: "馬連",
+    wide: "ワイド",
+  };
+
+  const ticketTypeCaps = {
+    trifecta: 0.025,
+    win5: 0.035,
+    win: 0.018,
+    place: 0.014,
+    quinella: 0.02,
+    wide: 0.016,
+  };
 
   const getKellyFraction = ({ probability = 0, odds = 1 } = {}) => {
     const p = clamp(probability, 0, 1);
@@ -635,6 +655,24 @@
     const b = decimalOdds - 1;
     if (b <= 0 || p <= 0) return 0;
     return Math.max(0, ((b * p) - (1 - p)) / b);
+  };
+
+  const calculateKellyStake = ({ hitProbability = 0, probability, odds = 1, bankroll = 0, riskCoefficient = 0.25, unit = 100 } = {}) => {
+    const normalizedProbability = toNumber(probability ?? hitProbability, 0);
+    const p = normalizedProbability > 1 ? clamp(normalizedProbability / 100, 0, 1) : clamp(normalizedProbability, 0, 1);
+    const rawKellyFraction = getKellyFraction({ probability: p, odds });
+    const recommendedRatio = clamp(rawKellyFraction * clamp(riskCoefficient, 0, 1), 0, 1);
+    return {
+      hitProbability: round(p * 100, 3),
+      odds: Math.max(1, toNumber(odds, 1)),
+      bankroll: Math.max(0, toNumber(bankroll, 0)),
+      riskCoefficient: clamp(riskCoefficient, 0, 1),
+      rawKellyRatio: round(rawKellyFraction, 6),
+      recommendedRatio: round(recommendedRatio, 6),
+      rawKellyPercent: round(rawKellyFraction * 100, 3),
+      recommendedPercent: round(recommendedRatio * 100, 3),
+      recommendedAmount: roundStake(Math.max(0, toNumber(bankroll, 0)) * recommendedRatio, unit),
+    };
   };
 
   const normalizeProbability = (item = {}) => {
@@ -646,6 +684,15 @@
     const ev = toNumber(item.ev);
     const odds = Math.max(1, toNumber(item.estimatedOdds ?? item.estimatedLegOdds ?? item.currentOdds ?? item.odds, 1));
     return odds > 0 ? clamp((ev / 100) / odds, 0, 1) : 0;
+  };
+
+  const getDangerMultiplier = (dangerIndex = 0) => {
+    const danger = clamp(dangerIndex, 0, 100);
+    if (danger >= 90) return 0;
+    if (danger >= 80) return 0.25;
+    if (danger >= 70) return 0.55;
+    if (danger >= 55) return 0.8;
+    return 1;
   };
 
   const getGodRaceMultiplier = (godRaceIndex = 0) => {
@@ -666,78 +713,186 @@
     return 0.45;
   };
 
-  const classifyStake = ({ ev = 0, kellyFraction = 0, roi = 0, godRaceIndex = 0, amount = 0 } = {}) => {
+  const classifyStake = ({ ev = 0, aiWinRate = 0, kellyFraction = 0, roi = 0, godRaceIndex = 0, dangerIndex = 0, amount = 0 } = {}) => {
+    if (dangerIndex >= 90) return { status: "skip", label: "見送り", reason: "危険人気馬指数90以上のため投資停止" };
     if (ev < 90) return { status: "skip", label: "見送り", reason: "EV90未満のため投資停止" };
     if (kellyFraction <= 0) return { status: "skip", label: "見送り", reason: "ケリー基準が0以下" };
     if (ev < 100 && godRaceIndex < 85) return { status: "skip", label: "見送り", reason: "EV100未満かつ神レース指数不足" };
-    if (roi < -20 && godRaceIndex < 90) return { status: "skip", label: "見送り", reason: "券種ROIが大幅マイナス" };
+    if (roi < 0 && ev < 115) return { status: "skip", label: "見送り", reason: "ROIマイナスかつEV補強不足" };
     if (amount <= 0) return { status: "skip", label: "見送り", reason: "推奨額が100円未満" };
-    if (ev >= 130 && godRaceIndex >= 80) return { status: "strong", label: "強勝負", reason: "高EV＋神レース連動" };
-    if (ev >= 110) return { status: "normal", label: "標準投資", reason: "EVとケリー基準が投資条件を満たす" };
-    return { status: "light", label: "軽め投資", reason: "条件クリアだが資金配分を抑制" };
+    if (dangerIndex >= 80) return { status: "light", label: "小額勝負", reason: "危険人気馬指数が高いため減額" };
+    if (ev >= 135 && aiWinRate >= 18 && roi >= 0 && godRaceIndex >= 80 && dangerIndex < 55) return { status: "strong", label: "強勝負", reason: "高EV＋高AI勝率＋低危険度＋神レース連動" };
+    if (ev >= 110 && roi >= 0 && dangerIndex < 70) return { status: "normal", label: "通常勝負", reason: "EV・ROI・危険度が投資条件を満たす" };
+    return { status: "light", label: "小額勝負", reason: "条件クリアだがリスクを抑制" };
+  };
+
+  const formatRaceName = (item = {}, fallback = "対象レース") => {
+    const race = item.race || {};
+    const course = race.course || item.course || "";
+    const raceNumber = race.raceNumber || item.raceNumber || "";
+    const raceName = race.raceName || item.raceName || item.name || fallback;
+    const number = raceNumber ? `${raceNumber}R` : "";
+    return `${course}${number} ${raceName}`.trim() || fallback;
+  };
+
+  const getTicketROI = (ticketType, options = {}, item = {}) => {
+    const map = options.ticketTypeROI || {};
+    if (options.roi !== undefined) return toNumber(options.roi, 0);
+    if (map[ticketType] !== undefined) return toNumber(map[ticketType], 0);
+    if (ticketType === "trifecta") return toNumber(options.trifectaROI ?? item.roi, 0);
+    if (ticketType === "win5") return toNumber(options.win5ROI ?? item.roi, 0);
+    return toNumber(options[`${ticketType}ROI`] ?? item.roi, 0);
   };
 
   const calculateStake = (item = {}, options = {}) => {
-    const bankroll = Math.max(0, toNumber(options.bankroll, 50000));
-    const fractionalKelly = clamp(options.fractionalKelly ?? 0.25, 0.05, 1);
+    const bankroll = Math.max(0, toNumber(options.bankroll ?? options.dailyBudget, 50000));
+    const riskCoefficient = clamp(options.riskCoefficient ?? options.fractionalKelly ?? 0.25, 0.05, 1);
     const unit = Math.max(100, toNumber(options.unit, 100));
     const ticketType = item.ticketType || options.ticketType || "trifecta";
     const odds = Math.max(1, toNumber(item.estimatedOdds ?? item.estimatedLegOdds ?? item.currentOdds ?? item.odds, 1));
     const probability = normalizeProbability(item);
     const ev = round(toNumber(item.ev, odds * probability * 100), 1);
-    const roi = toNumber(options.roi ?? item.roi, ev - 100);
+    const aiWinRate = round(toNumber(item.aiWinRate, probability * 100), 1);
+    const roi = getTicketROI(ticketType, options, item);
     const godRaceIndex = clamp(options.godRaceIndex ?? item.godRaceIndex ?? item.kamianaIndex ?? 0, 0, 100);
-    const rawKellyFraction = getKellyFraction({ probability, odds });
-    const adjustedFraction = rawKellyFraction * fractionalKelly * getGodRaceMultiplier(godRaceIndex) * getROIMultiplier(roi);
-    const cappedFraction = Math.min(adjustedFraction, ticketType === "win5" ? 0.035 : 0.025);
-    const amount = roundStake(bankroll * cappedFraction, unit);
-    const decision = classifyStake({ ev, kellyFraction: rawKellyFraction, roi, godRaceIndex, amount });
+    const dangerIndex = clamp(item.dangerIndex ?? item.dangerPopularIndex ?? options.dangerIndex ?? 0, 0, 100);
+    const kelly = calculateKellyStake({ hitProbability: probability, odds, bankroll, riskCoefficient, unit });
+    const adjustedFraction = kelly.rawKellyRatio * riskCoefficient * getGodRaceMultiplier(godRaceIndex) * getROIMultiplier(roi) * getDangerMultiplier(dangerIndex);
+    const capRatio = ticketTypeCaps[ticketType] ?? 0.018;
+    const maxPerTicket = Math.max(unit, toNumber(options.maxPerTicket ?? options.raceLimit, bankroll));
+    const typeCap = ticketType === "win5" ? toNumber(options.win5Limit, maxPerTicket) : maxPerTicket;
+    const battleRaceCap = Math.max(unit, bankroll / Math.max(1, toNumber(options.battleRaceCount, 1)));
+    const cappedFraction = Math.min(adjustedFraction, capRatio);
+    const rawAmount = roundStake(bankroll * cappedFraction, unit);
+    const amount = Math.min(rawAmount, roundStake(typeCap, unit), roundStake(battleRaceCap, unit));
+    const decision = classifyStake({ ev, aiWinRate, kellyFraction: kelly.rawKellyRatio, roi, godRaceIndex, dangerIndex, amount });
     return {
       ...item,
+      raceName: formatRaceName(item),
       ticketType,
+      ticketTypeLabel: ticketTypeLabels[ticketType] || ticketType,
       bankroll,
       odds,
       probability: round(probability * 100, 3),
+      aiWinRate,
       ev,
       roi: round(roi, 1),
       godRaceIndex,
-      rawKellyFraction: round(rawKellyFraction * 100, 3),
+      dangerIndex,
+      rawKellyFraction: kelly.rawKellyPercent,
       adjustedKellyFraction: round(cappedFraction * 100, 3),
+      recommendedRatio: decision.status === "skip" ? 0 : round(cappedFraction, 6),
       recommendedAmount: decision.status === "skip" ? 0 : amount,
       decision: decision.status,
       decisionLabel: decision.label,
       decisionReason: decision.reason,
+      godRaceCandidate: ev >= 110 && godRaceIndex >= 80 && dangerIndex < 60,
     };
   };
 
-  const buildCapitalAllocationPayload = ({ trifectaEV = [], win5EV = {}, godRaceIndex = 0, bankroll = 50000, fractionalKelly = 0.25, trifectaROI = 0, win5ROI = 0 } = {}) => {
-    const trifecta = (trifectaEV || []).slice(0, 12).map((item) => calculateStake(item, { bankroll, fractionalKelly, godRaceIndex, roi: trifectaROI, ticketType: "trifecta" }));
-    const win5Candidates = Array.isArray(win5EV) ? win5EV : (win5EV.candidates || []);
-    const win5 = win5Candidates.slice(0, 8).map((item) => calculateStake(item, { bankroll, fractionalKelly, godRaceIndex, roi: win5ROI, ticketType: "win5" }));
-    const totalTrifecta = trifecta.reduce((sum, item) => sum + item.recommendedAmount, 0);
-    const totalWin5 = win5.reduce((sum, item) => sum + item.recommendedAmount, 0);
+  const buildSingleTicketCandidates = (raceEV = [], options = {}) => {
+    const horseEVs = Array.isArray(raceEV) ? raceEV : [];
+    const raceMeta = options.race || {};
+    const create = (horse, ticketType, oddsFactor, probabilityField, evField) => {
+      const probability = clamp(toNumber(horse[probabilityField] ?? horse.aiWinRate, 0) / 100, 0, 1);
+      const odds = Math.max(1, toNumber(horse.currentOdds ?? horse.odds, 1) * oddsFactor);
+      return {
+        ...horse,
+        race: raceMeta,
+        ticketType,
+        notation: `${horse.number ?? ""} ${horse.name ?? "候補"}`.trim(),
+        probability: round(probability * 100, 3),
+        aiWinRate: toNumber(horse.aiWinRate, probability * 100),
+        estimatedOdds: round(odds, 1),
+        ev: round(toNumber(horse[evField], odds * probability * 100), 1),
+      };
+    };
     return {
+      win: horseEVs.slice(0, 8).map((horse) => create(horse, "win", 1, "aiWinRate", "winEV")),
+      place: horseEVs.slice(0, 8).map((horse) => create(horse, "place", 0.38, "aiPlaceRate", "placeEV")),
+      quinella: horseEVs.slice(0, 8).map((horse) => create(horse, "quinella", 0.62, "aiQuinellaRate", "quinellaEV")),
+      wide: horseEVs.slice(0, 8).map((horse) => create(horse, "wide", 0.42, "aiPlaceRate", "placeEV")),
+    };
+  };
+
+  const saveToLocalStorage = (key, payload) => {
+    if (!window.localStorage) return false;
+    window.localStorage.setItem(key, JSON.stringify(payload));
+    return true;
+  };
+
+  const loadFromLocalStorage = (key, fallback = null) => {
+    if (!window.localStorage) return fallback;
+    try {
+      const raw = window.localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  };
+
+  const buildCapitalAllocationPayload = ({ trifectaEV = [], win5EV = {}, raceEV = [], evRanking = [], godRaceIndex = 0, bankroll, dailyBudget = 50000, raceLimit = 10000, win5Limit = 5000, riskCoefficient, fractionalKelly = 0.25, battleRaceCount = 3, ticketTypeROI = {}, trifectaROI = 0, win5ROI = 0, race = {}, persist = false } = {}) => {
+    const budget = Math.max(0, toNumber(bankroll ?? dailyBudget, 50000));
+    const commonOptions = { bankroll: budget, dailyBudget: budget, raceLimit, win5Limit, riskCoefficient: riskCoefficient ?? fractionalKelly, fractionalKelly, battleRaceCount, godRaceIndex, ticketTypeROI, trifectaROI, win5ROI, race };
+    const singleCandidates = buildSingleTicketCandidates(raceEV.length ? raceEV : evRanking, { race });
+    const trifecta = (trifectaEV || []).slice(0, 12).map((item) => calculateStake({ ...item, race }, { ...commonOptions, ticketType: "trifecta" }));
+    const win5Candidates = Array.isArray(win5EV) ? win5EV : (win5EV.candidates || []);
+    const win5 = win5Candidates.slice(0, 8).map((item) => calculateStake({ ...item, race }, { ...commonOptions, ticketType: "win5" }));
+    const win = singleCandidates.win.map((item) => calculateStake(item, { ...commonOptions, ticketType: "win" }));
+    const place = singleCandidates.place.map((item) => calculateStake(item, { ...commonOptions, ticketType: "place" }));
+    const quinella = singleCandidates.quinella.map((item) => calculateStake(item, { ...commonOptions, ticketType: "quinella" }));
+    const wide = singleCandidates.wide.map((item) => calculateStake(item, { ...commonOptions, ticketType: "wide" }));
+    const ticketGroups = { trifecta, win5, win, place, quinella, wide };
+    const allItems = Object.values(ticketGroups).flat();
+    const godRaceCandidates = allItems
+      .filter((item) => item.godRaceCandidate)
+      .sort((a, b) => (b.ev - a.ev) || (a.dangerIndex - b.dangerIndex))
+      .slice(0, 5);
+    const totalByTicketType = Object.fromEntries(Object.entries(ticketGroups).map(([key, items]) => [key, items.reduce((sum, item) => sum + item.recommendedAmount, 0)]));
+    const payload = {
       generatedAt: new Date().toISOString(),
-      settings: { bankroll, fractionalKelly, godRaceIndex, trifectaROI, win5ROI },
+      storageVersion: 2,
+      provider: "localStorage",
+      settings: { dailyBudget: budget, bankroll: budget, raceLimit, win5Limit, riskCoefficient: commonOptions.riskCoefficient, fractionalKelly, battleRaceCount, godRaceIndex, ticketTypeROI, trifectaROI, win5ROI },
+      ticketGroups,
       trifecta,
       win5,
+      win,
+      place,
+      quinella,
+      wide,
+      godRaceCandidates,
       summary: {
-        totalRecommended: totalTrifecta + totalWin5,
-        trifectaRecommended: totalTrifecta,
-        win5Recommended: totalWin5,
-        skipCount: [...trifecta, ...win5].filter((item) => item.decision === "skip").length,
-        strongCount: [...trifecta, ...win5].filter((item) => item.decision === "strong").length,
+        totalRecommended: allItems.reduce((sum, item) => sum + item.recommendedAmount, 0),
+        trifectaRecommended: totalByTicketType.trifecta,
+        win5Recommended: totalByTicketType.win5,
+        totalByTicketType,
+        skipCount: allItems.filter((item) => item.decision === "skip").length,
+        strongCount: allItems.filter((item) => item.decision === "strong").length,
+        normalCount: allItems.filter((item) => item.decision === "normal").length,
+        lightCount: allItems.filter((item) => item.decision === "light").length,
       },
     };
+    if (persist) {
+      saveToLocalStorage(FUND_SETTINGS_KEY, payload.settings);
+      saveToLocalStorage(FUND_RESULTS_KEY, payload);
+    }
+    return payload;
   };
 
   window.HashimotoCapitalEngine = {
+    FUND_SETTINGS_KEY,
+    FUND_RESULTS_KEY,
+    ticketTypeLabels,
     getKellyFraction,
+    calculateKellyStake,
     calculateStake,
     buildCapitalAllocationPayload,
+    saveToLocalStorage,
+    loadFromLocalStorage,
   };
+  window.calculateKellyStake = calculateKellyStake;
 })();
-
 
 (() => {
   const STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
