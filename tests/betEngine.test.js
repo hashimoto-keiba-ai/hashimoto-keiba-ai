@@ -28,11 +28,14 @@ sandbox.window.document = sandbox.document;
 sandbox.globalThis = sandbox.window;
 vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync('src/dashboard.js', 'utf8'), sandbox, { filename: 'src/dashboard.js' });
+vm.runInContext(fs.readFileSync('src/raceSimulator.js', 'utf8'), sandbox, { filename: 'src/raceSimulator.js' });
 
 const scoreEngine = sandbox.window.HashimotoKeibaAiScoreEngine;
 const betEngine = sandbox.window.HashimotoBetEngine;
+const raceSimulator = sandbox.window.HashimotoRaceSimulator;
 assert.ok(scoreEngine, 'AI指数エンジンが公開されている');
 assert.ok(betEngine, '買い目生成エンジンが公開されている');
+assert.ok(raceSimulator, 'AIレース未来シミュレーターが公開されている');
 
 const horses = scoreEngine.calculateAllHorseScores([
   { number: 1, name: '危険トップ', popularity: 1, odds: 2.0, runningStyle: '逃げ', training: 'C', aiIndex: 99, kamianaIndex: 45, dangerIndex: 92 },
@@ -54,4 +57,19 @@ assert.ok([...trifecta.tickets.main, ...trifecta.tickets.attack, ...trifecta.tic
 const win5 = betEngine.buildWin5ClassificationPayload(horses);
 assert.ok(!Object.values(win5.zones).flat().some((horse) => horse.number === 1), '危険人気馬はWIN5候補から外れる');
 assert.ok(win5.zones.c.some((horse) => horse.number === 5) || win5.zones.d.some((horse) => horse.number === 5), '神穴はWIN5 C/Dゾーンへ入る');
-console.log('betEngine tests passed');
+
+const singleRace = raceSimulator.simulateRace(horses, { raceContext: { course: '東京競馬場', distance: 1600, surface: '芝', fieldSize: 12 }, seed: 7 });
+assert.equal(singleRace.length, horses.length, 'simulateRaceは全出走馬の着順を返す');
+assert.deepEqual(singleRace.slice(0, 3).map((horse) => horse.finishPosition), [1, 2, 3], '上位3頭に着順が付与される');
+
+const simulation100 = raceSimulator.runMonteCarloSimulation(horses, { simulationCount: 100, raceContext: { course: '東京競馬場', distance: 1600, surface: '芝', fieldSize: 12 }, seed: 42 });
+const simulation300 = raceSimulator.runMonteCarloSimulation(horses, { simulationCount: 300, raceContext: { course: '東京競馬場', distance: 1600, surface: '芝', fieldSize: 12 }, seed: 42 });
+const simulation1000 = raceSimulator.runMonteCarloSimulation(horses, { simulationCount: 1000, raceContext: { course: '東京競馬場', distance: 1600, surface: '芝', fieldSize: 12 }, seed: 42 });
+assert.equal(simulation100.simulationCount, 100, '100回シミュレーションへ切替できる');
+assert.equal(simulation300.simulationCount, 300, '300回シミュレーションへ切替できる');
+assert.equal(simulation1000.simulationCount, 1000, '1000回シミュレーションへ切替できる');
+assert.ok(simulation1000.rankings.winRate[0].firstRate >= simulation1000.rankings.winRate.at(-1).firstRate, '勝率ランキングが降順になる');
+assert.ok(simulation1000.rankings.placeRate.every((horse) => Number.isFinite(horse.placeRate) && Number.isFinite(horse.quinellaRate)), '複勝率・連対率が算出される');
+assert.ok(simulation1000.trifectaRates.length > 0 && Number.isFinite(simulation1000.trifectaRates[0].rate), '三連単出現率が算出される');
+assert.ok(simulation1000.rankings.win5Candidate.every((horse) => Number.isFinite(horse.win5CandidateRate)), 'WIN5候補率が算出される');
+console.log('betEngine and raceSimulator tests passed');

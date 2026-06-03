@@ -442,6 +442,37 @@
             <section class="ranking-panel ranking-panel--danger"><h3>危険人気馬指数順</h3><ol id="danger-ranking-live"></ol></section>
           </div>
 
+
+          <div class="race-simulator-panel" aria-label="AIレース未来シミュレーター">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">AI RACE FUTURE SIMULATOR</p>
+                <h3>AIレース未来シミュレーター</h3>
+                <p>出馬表データを100回・300回・1000回でモンテカルロ解析し、勝率・連対率・複勝率・三連単出現率・WIN5候補率を買い目生成へ連動します。</p>
+              </div>
+              <span id="race-simulation-status" class="status-pill">未実行</span>
+            </div>
+            <div class="race-simulator-controls" role="group" aria-label="シミュレーション回数切替">
+              <button class="button button--ghost race-simulation-count" type="button" data-simulation-count="100">100回</button>
+              <button class="button button--ghost race-simulation-count" type="button" data-simulation-count="300">300回</button>
+              <button class="button button--primary race-simulation-count is-active" type="button" data-simulation-count="1000">1000回</button>
+            </div>
+            <div id="race-simulation-summary" class="race-simulation-summary" aria-live="polite">
+              <article><span>勝率ランキング</span><strong>未生成</strong><small>出走馬を3頭以上入力してください</small></article>
+              <article><span>複勝率ランキング</span><strong>未生成</strong><small>AI指数・脚質・補正を反映</small></article>
+              <article><span>神穴期待ランキング</span><strong>未生成</strong><small>神穴指数×複勝率×オッズ妙味</small></article>
+              <article><span>危険人気馬ランキング</span><strong>未生成</strong><small>危険指数の高い人気馬を警告</small></article>
+            </div>
+            <div class="race-simulator-detail-grid">
+              <section><h4>勝率ランキング</h4><ol id="simulation-win-ranking"></ol></section>
+              <section><h4>複勝率ランキング</h4><ol id="simulation-place-ranking"></ol></section>
+              <section><h4>神穴期待ランキング</h4><ol id="simulation-darkhorse-ranking"></ol></section>
+              <section><h4>危険人気馬ランキング</h4><ol id="simulation-danger-ranking"></ol></section>
+              <section class="race-simulator-trifecta"><h4>三連単出現率 TOP</h4><ol id="simulation-trifecta-ranking"></ol></section>
+              <section class="race-simulator-win5"><h4>WIN5候補率</h4><ol id="simulation-win5-ranking"></ol></section>
+            </div>
+          </div>
+
           <div class="bet-generator-panel" aria-label="買い目生成エリア">
             <div class="entry-heading">
               <span>④ 買い目生成エリア</span>
@@ -1454,6 +1485,7 @@
     </footer>
 
     <script src="./src/dashboard.js"></script>
+    <script src="./src/raceSimulator.js"></script>
     <script>
 
       const dataStorage = window.HashimotoDataStorage;
@@ -1511,6 +1543,18 @@
       const generatedWin5 = document.querySelector("#generated-win5");
       const generatedLongshots = document.querySelector("#generated-longshots");
       const generatedDanger = document.querySelector("#generated-danger");
+      const raceSimulator = window.HashimotoRaceSimulator;
+      const raceSimulationStatus = document.querySelector("#race-simulation-status");
+      const raceSimulationButtons = Array.from(document.querySelectorAll(".race-simulation-count"));
+      const raceSimulationSummary = document.querySelector("#race-simulation-summary");
+      const simulationWinRanking = document.querySelector("#simulation-win-ranking");
+      const simulationPlaceRanking = document.querySelector("#simulation-place-ranking");
+      const simulationDarkhorseRanking = document.querySelector("#simulation-darkhorse-ranking");
+      const simulationDangerRanking = document.querySelector("#simulation-danger-ranking");
+      const simulationTrifectaRanking = document.querySelector("#simulation-trifecta-ranking");
+      const simulationWin5Ranking = document.querySelector("#simulation-win5-ranking");
+      let selectedSimulationCount = 1000;
+      let currentSimulationPayload = null;
       const trifectaCandidateOutput = document.querySelector("#trifecta-candidate-output");
       const trifectaTicketOutput = document.querySelector("#trifecta-ticket-output");
       const trifectaSaveStatus = document.querySelector("#trifecta-save-status");
@@ -3700,6 +3744,53 @@
         ].join("");
       };
 
+      const formatRateHorse = (horse) => `${formatHorse(horse)}（1着${horse.firstRate}% / 2着${horse.secondRate}% / 3着${horse.thirdRate}% / 連対${horse.quinellaRate}% / 複勝${horse.placeRate}%）`;
+
+      const renderSimulationList = (target, items, formatter) => {
+        if (!target) return;
+        target.innerHTML = items.length
+          ? items.slice(0, 6).map((item) => `<li><strong>${escapeHtml(formatter(item))}</strong><small>AI${item.aiIndex} / 神穴${item.kamianaIndex} / 危険${item.dangerIndex} / ${item.popularity}人気 / ${item.odds}倍</small></li>`).join("")
+          : '<li class="empty-state">シミュレーション結果がありません。</li>';
+      };
+
+      const renderTrifectaSimulationList = (target, items) => {
+        if (!target) return;
+        target.innerHTML = items.length
+          ? items.slice(0, 8).map((item) => `<li><strong>${escapeHtml(item.notation)}</strong><small>${item.rate}% / ${item.count}回出現</small></li>`).join("")
+          : '<li class="empty-state">三連単パターンが生成されていません。</li>';
+      };
+
+      const runRaceFutureSimulation = () => {
+        if (!raceSimulator || raceHorses.length < 3) {
+          currentSimulationPayload = null;
+          if (raceSimulationStatus) raceSimulationStatus.textContent = raceSimulator ? "入力待ち" : "SIM未読込";
+          return null;
+        }
+        const raceContext = getFormData(raceForm);
+        currentSimulationPayload = raceSimulator.runMonteCarloSimulation(raceHorses, {
+          simulationCount: selectedSimulationCount,
+          raceContext: { ...raceContext, fieldSize: raceContext.fieldSize || raceHorses.length },
+          seed: `${raceContext.date || "race"}${raceContext.course || ""}${raceContext.raceNumber || ""}${raceHorses.length}${selectedSimulationCount}`.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0),
+        });
+        const { summary, rankings, trifectaRates, simulationCount } = currentSimulationPayload;
+        if (raceSimulationStatus) raceSimulationStatus.textContent = `${simulationCount}回完了`;
+        if (raceSimulationSummary) {
+          raceSimulationSummary.innerHTML = `
+            <article><span>勝率ランキング</span><strong>${escapeHtml(summary.topWin ? `${formatHorse(summary.topWin)} ${summary.topWin.firstRate}%` : "未生成")}</strong><small>1着率・2着率・3着率を集計</small></article>
+            <article><span>複勝率ランキング</span><strong>${escapeHtml(summary.topPlace ? `${formatHorse(summary.topPlace)} ${summary.topPlace.placeRate}%` : "未生成")}</strong><small>3着以内の安定度</small></article>
+            <article><span>神穴期待ランキング</span><strong>${escapeHtml(summary.topDarkHorse ? `${formatHorse(summary.topDarkHorse)} ${summary.topDarkHorse.darkHorseExpectation}` : "未生成")}</strong><small>神穴指数・複勝率・オッズ妙味</small></article>
+            <article><span>危険人気馬ランキング</span><strong>${escapeHtml(summary.topDangerPopular ? `${formatHorse(summary.topDangerPopular)} 危険${summary.topDangerPopular.dangerIndex}` : "未生成")}</strong><small>人気上位の飛びリスク</small></article>
+          `;
+        }
+        renderSimulationList(simulationWinRanking, rankings.winRate, formatRateHorse);
+        renderSimulationList(simulationPlaceRanking, rankings.placeRate, formatRateHorse);
+        renderSimulationList(simulationDarkhorseRanking, rankings.darkHorseExpectation, (horse) => `${formatHorse(horse)}（神穴期待${horse.darkHorseExpectation} / 複勝${horse.placeRate}%）`);
+        renderSimulationList(simulationDangerRanking, rankings.dangerPopular, (horse) => `${formatHorse(horse)}（危険${horse.dangerIndex} / 複勝${horse.placeRate}%）`);
+        renderTrifectaSimulationList(simulationTrifectaRanking, trifectaRates);
+        renderSimulationList(simulationWin5Ranking, rankings.win5Candidate, (horse) => `${formatHorse(horse)}（WIN5候補率${horse.win5CandidateRate}% / 勝率${horse.firstRate}%）`);
+        return currentSimulationPayload;
+      };
+
       const generateBets = () => {
         const aiTop = rankBy("aiIndex");
         const kamianaTop = rankBy("kamianaIndex");
@@ -3707,6 +3798,7 @@
         const longshots = kamianaTop.filter((horse) => horse.popularity >= 6 || horse.odds >= 15).slice(0, 3);
         const dangerousPopular = dangerTop.filter((horse) => horse.popularity <= 5).slice(0, 3);
         renderTrifectaPayload(buildTrifectaPayload());
+        runRaceFutureSimulation();
         const win5Classification = betEngine.buildWin5ClassificationPayload(raceHorses, { race: getFormData(raceForm), provider: activeMode });
         const win5SummaryText = [
           ["A", win5Classification.zones.a],
@@ -3733,6 +3825,7 @@
         race: getFormData(raceForm),
         horses: raceHorses,
         generatedTickets: buildTrifectaPayload(),
+        raceSimulation: currentSimulationPayload,
         generatedAt: new Date().toISOString(),
         storageVersion: 1,
         provider: "localStorage",
@@ -3755,6 +3848,18 @@
       resultCsvFileInput.addEventListener("change", () => handleResultCsvFile(resultCsvFileInput.files?.[0]));
       importResultCsvButton.addEventListener("click", importResultCsvPayload);
       downloadResultCsvTemplateButton.addEventListener("click", downloadResultCsvTemplate);
+
+      raceSimulationButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedSimulationCount = Number(button.dataset.simulationCount) || 1000;
+          raceSimulationButtons.forEach((item) => {
+            item.classList.toggle("is-active", item === button);
+            item.classList.toggle("button--primary", item === button);
+            item.classList.toggle("button--ghost", item !== button);
+          });
+          renderRaceEntry();
+        });
+      });
 
       horseForm.addEventListener("submit", (event) => {
         event.preventDefault();

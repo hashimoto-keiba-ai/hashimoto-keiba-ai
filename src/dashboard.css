@@ -3904,3 +3904,121 @@ h1 {
 .runner-table .score-breakdown {
   max-width: 320px;
 }
+
+.race-simulator-panel {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.34);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 0 0, rgba(248, 196, 79, 0.16), transparent 20rem),
+    rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.12);
+}
+
+.race-simulator-panel__head {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.race-simulator-panel__head h3 {
+  margin: 0 0 8px;
+  color: var(--gold-light);
+}
+
+.race-simulator-panel__head p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.race-simulator-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.race-simulation-count.is-active {
+  box-shadow: 0 0 0 3px rgba(248, 196, 79, 0.16);
+}
+
+.race-simulation-summary,
+.race-simulator-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.race-simulation-summary article,
+.race-simulator-detail-grid section {
+  padding: 14px;
+  border: 1px solid rgba(248, 196, 79, 0.2);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.race-simulation-summary span,
+.race-simulator-detail-grid h4 {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--gold);
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.race-simulation-summary strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 1.05rem;
+}
+
+.race-simulation-summary small,
+.race-simulator-detail-grid small {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.race-simulator-detail-grid ol {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.race-simulator-detail-grid li strong {
+  display: block;
+  color: var(--text);
+}
+
+.race-simulator-trifecta,
+.race-simulator-win5 {
+  grid-column: span 2;
+}
+
+@media (max-width: 980px) {
+  .race-simulation-summary,
+  .race-simulator-detail-grid {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .race-simulator-panel__head {
+    display: grid;
+  }
+
+  .race-simulation-summary,
+  .race-simulator-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .race-simulator-trifecta,
+  .race-simulator-win5 {
+    grid-column: auto;
+  }
+}
