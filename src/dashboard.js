@@ -1552,6 +1552,155 @@
   };
 })();
 
+
+(() => {
+  const STORAGE_KEY = "operationDiagnosticReports";
+
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const safeClone = (value) => value == null ? value : JSON.parse(JSON.stringify(value));
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const summarizeTicket = (ticket = {}) => ticket.notation || [ticket.first, ticket.second, ticket.third]
+    .filter(Boolean)
+    .map((horse) => horse?.number ?? horse)
+    .join("→") || "買い目なし";
+
+  const normalizeRaceBasicInfo = (race = {}) => ({
+    date: race.date || race["開催日"] || "",
+    course: race.course || race["競馬場"] || "未設定",
+    raceNumber: race.raceNumber ?? race["レース番号"] ?? "?",
+    raceName: race.raceName || race["レース名"] || "未設定レース",
+    distance: race.distance ?? race["距離"] ?? "",
+    surface: race.surface || race["芝ダート"] || "",
+    going: race.going || race["馬場状態"] || "",
+    weather: race.weather || race["天候"] || "",
+    fieldSize: race.fieldSize ?? race["頭数"] ?? "",
+  });
+
+  const normalizeHorseSummary = (horse = {}) => ({
+    number: horse.number,
+    name: horse.name,
+    jockey: horse.jockey,
+    popularity: horse.popularity,
+    odds: horse.odds,
+    aiIndex: horse.aiIndex,
+    kamianaIndex: horse.kamianaIndex,
+    dangerIndex: horse.dangerIndex,
+  });
+
+  const normalizeTicketSummary = (ticket = {}) => ({
+    notation: summarizeTicket(ticket),
+    type: ticket.type || ticket.mode || "候補",
+    reason: ticket.reason || ticket.comment || "AI生成",
+    ev: ticket.ev,
+    stake: ticket.stake || ticket.recommendedAmount,
+  });
+
+  const normalizeInvestment = (item = {}) => ({
+    notation: item.notation || [item.number, item.name].filter(Boolean).join(" ") || item.ticketType || "投資候補",
+    recommendedAmount: toNumber(item.recommendedAmount, 0),
+    ev: item.ev,
+    decision: item.decision,
+    decisionLabel: item.decisionLabel || item.decision || "判定なし",
+    ticketType: item.ticketType,
+  });
+
+  const buildResultMatching = (validation) => {
+    if (!validation) return { status: "未照合", labels: [], result: null };
+    return {
+      status: "照合済",
+      result: safeClone(validation.result),
+      labels: Object.values(validation.labels || {}),
+      judgements: safeClone(validation.judgements || {}),
+      totalInvestment: toNumber(validation.totalInvestment, 0),
+      payout: toNumber(validation.payout, 0),
+    };
+  };
+
+  const buildOperationDiagnosticReport = ({ predictionLog = {}, validation = null, source = "operation-panel", generatedAt = new Date().toISOString() } = {}) => {
+    const race = normalizeRaceBasicInfo(predictionLog.race || validation?.race || {});
+    const capitalSummary = predictionLog.capitalSummary || {};
+    const osUpdateCandidates = validation?.osUpdateCandidates || predictionLog.osUpdateCandidates || { adopt: [], pending: [], delete: [] };
+    return {
+      id: `operation-diagnostic-${generatedAt.replace(/[:.]/g, "-")}`,
+      generatedAt,
+      storageKey: STORAGE_KEY,
+      source,
+      raceBasicInfo: race,
+      aiIndexTop5: asArray(predictionLog.aiTop5).slice(0, 5).map(normalizeHorseSummary),
+      kamianaTop5: asArray(predictionLog.kamianaTop5).slice(0, 5).map(normalizeHorseSummary),
+      dangerPopularTop5: asArray(predictionLog.dangerTop5).slice(0, 5).map(normalizeHorseSummary),
+      trifectaCandidates: asArray(predictionLog.trifectaCandidates).slice(0, 8).map(normalizeTicketSummary),
+      win5Candidates: asArray(predictionLog.win5Candidates).slice(0, 8).map((horse) => ({ zone: horse.zone, ...normalizeHorseSummary(horse) })),
+      futureSimulationResult: {
+        winTop5: asArray(predictionLog.simulationWinTop5).slice(0, 5).map((horse) => ({ ...normalizeHorseSummary(horse), firstRate: horse.firstRate, placeRate: horse.placeRate })),
+        simulationCount: predictionLog.simulationCount || predictionLog.simulation?.simulationCount || null,
+      },
+      evRanking: asArray(predictionLog.evTop).slice(0, 8).map((item) => ({
+        number: item.number,
+        name: item.name,
+        ev: item.ev,
+        currentOdds: item.currentOdds,
+        fairOdds: item.fairOdds,
+        recommendation: item.recommendation,
+      })),
+      fundAllocation: {
+        summary: safeClone(capitalSummary),
+        recommendedInvestments: asArray(predictionLog.recommendedInvestments).slice(0, 8).map(normalizeInvestment),
+      },
+      godRaceJudgement: safeClone(predictionLog.godRace || null),
+      resultMatching: buildResultMatching(validation),
+      roi: validation ? toNumber(validation.roi, 0) : null,
+      selfEvolutionLog: safeClone(validation?.selfEvolutionLog || predictionLog.selfEvolutionLog || null),
+      osUpdateCandidates: {
+        adopt: asArray(osUpdateCandidates.adopt),
+        pending: asArray(osUpdateCandidates.pending),
+        delete: asArray(osUpdateCandidates.delete),
+      },
+      checks: {
+        sampleLoaded: Boolean(predictionLog.race),
+        aiCalculated: asArray(predictionLog.aiTop5).length >= 5,
+        betsGenerated: asArray(predictionLog.trifectaCandidates).length > 0 && asArray(predictionLog.win5Candidates).length > 0,
+        resultValidated: Boolean(validation),
+        evolutionLogged: Boolean(validation?.selfEvolutionLog || predictionLog.selfEvolutionLog),
+      },
+    };
+  };
+
+  const loadReports = (storage = window.localStorage) => {
+    if (!storage) return [];
+    try {
+      const parsed = JSON.parse(storage.getItem(STORAGE_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const saveReport = (report, storage = window.localStorage) => {
+    if (!storage) return [report];
+    const reports = [report, ...loadReports(storage).filter((item) => item.id !== report.id)].slice(0, 50);
+    storage.setItem(STORAGE_KEY, JSON.stringify(reports));
+    return reports;
+  };
+
+  const toExportJson = (report) => JSON.stringify(report, null, 2);
+  const createExportFileName = (report) => {
+    const race = report?.raceBasicInfo || {};
+    const raceLabel = `${race.course || "race"}${race.raceNumber || ""}R`.replace(/[\\/:*?"<>|\s]/g, "_");
+    const dateLabel = (race.date || report?.generatedAt || new Date().toISOString()).slice(0, 10);
+    return `operation-diagnostic-report_${dateLabel}_${raceLabel}.json`;
+  };
+
+  window.HashimotoOperationDiagnosticReportEngine = {
+    STORAGE_KEY,
+    buildOperationDiagnosticReport,
+    loadReports,
+    saveReport,
+    toExportJson,
+    createExportFileName,
+  };
+})();
+
 (() => {
   const STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
   const DATA_URL = "./data/selfEvolutionLogs.json";

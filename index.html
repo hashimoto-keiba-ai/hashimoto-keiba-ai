@@ -453,6 +453,46 @@
             </div>
           </section>
 
+
+
+          <section id="operation-diagnostic-report-panel" class="sample-race-test-panel operation-diagnostic-panel" aria-label="実戦診断レポート">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">OPERATION DIAGNOSTIC REPORT</p>
+                <h3>実戦診断レポートパネル</h3>
+                <p>サンプルレース読込→AI計算→買い目生成→結果照合→ROI→自己進化ログ→OSアップデート候補までを1つの実戦運用レポートとして保存・コピー・JSON出力します。</p>
+              </div>
+              <span id="operation-diagnostic-status" class="status-pill">未生成</span>
+            </div>
+            <div class="operation-diagnostic-actions">
+              <button id="generate-operation-diagnostic-report" class="button button--primary" type="button">実戦診断レポート生成</button>
+              <button id="copy-operation-diagnostic-report" class="button button--ghost" type="button" disabled>レポートをコピー</button>
+              <button id="export-operation-diagnostic-report" class="button button--ghost" type="button" disabled>JSONエクスポート</button>
+              <small>保存キー: <code>operationDiagnosticReports</code></small>
+            </div>
+            <div id="operation-diagnostic-summary" class="sample-race-test-summary" aria-live="polite">
+              <article><span>レース基本情報</span><strong>未生成</strong><small>サンプル読込・結果照合後に生成してください</small></article>
+              <article><span>検証/ROI</span><strong>未照合</strong><small>結果入力後は照合結果とROIを統合</small></article>
+              <article><span>保存状態</span><strong>未保存</strong><small>operationDiagnosticReportsへ保存待ち</small></article>
+            </div>
+            <div class="sample-race-test-grid operation-diagnostic-grid">
+              <section><h4>レース基本情報</h4><div id="operation-report-race-info" class="operation-report-text">未生成</div></section>
+              <section><h4>AI指数TOP5</h4><ol id="operation-report-ai-top5"></ol></section>
+              <section><h4>神穴TOP5</h4><ol id="operation-report-kamiana-top5"></ol></section>
+              <section class="sample-danger"><h4>危険人気馬TOP5</h4><ol id="operation-report-danger-top5"></ol></section>
+              <section><h4>三連単候補</h4><ol id="operation-report-trifecta"></ol></section>
+              <section><h4>WIN5候補</h4><ol id="operation-report-win5"></ol></section>
+              <section><h4>未来シミュレーション結果</h4><ol id="operation-report-simulation"></ol></section>
+              <section><h4>EVランキング</h4><ol id="operation-report-ev"></ol></section>
+              <section><h4>資金配分</h4><ol id="operation-report-fund"></ol></section>
+              <section class="sample-god-race"><h4>神レース判定</h4><div id="operation-report-god-race" class="sample-god-race-judgement">未生成</div></section>
+              <section><h4>結果照合</h4><ol id="operation-report-result"></ol></section>
+              <section><h4>ROI</h4><div id="operation-report-roi" class="operation-report-text">未計算</div></section>
+              <section><h4>自己進化ログ</h4><div id="operation-report-evolution" class="sample-god-race-judgement">未生成</div></section>
+              <section><h4>OSアップデート候補</h4><ol id="operation-report-os-updates"></ol></section>
+            </div>
+          </section>
+
           <div class="csv-validation-panel" aria-label="CSV取込バリデーション">
             <div class="entry-heading">
               <span>③ CSV取込バリデーション</span>
@@ -1714,6 +1754,7 @@
       const BACKUP_HISTORY_STORAGE_KEY = "hashimoto-keiba-ai:backup-history:v1";
       const SAMPLE_RACE_URL = "./data/sampleRace.json";
       const SAMPLE_RACE_TEST_LOG_KEY = "sampleRaceTestLog";
+      const OPERATION_DIAGNOSTIC_REPORT_KEY = "operationDiagnosticReports";
       const defaultSafeModeSettings = {
         confirmBeforeSave: true,
         confirmBeforeRestore: true,
@@ -1770,6 +1811,27 @@
       const sampleOsAdoptCandidates = document.querySelector("#sample-os-adopt-candidates");
       const sampleOsPendingCandidates = document.querySelector("#sample-os-pending-candidates");
       const sampleOsDeleteCandidates = document.querySelector("#sample-os-delete-candidates");
+      const operationReportEngine = window.HashimotoOperationDiagnosticReportEngine;
+      const operationDiagnosticStatus = document.querySelector("#operation-diagnostic-status");
+      const operationDiagnosticSummary = document.querySelector("#operation-diagnostic-summary");
+      const generateOperationDiagnosticReportButton = document.querySelector("#generate-operation-diagnostic-report");
+      const copyOperationDiagnosticReportButton = document.querySelector("#copy-operation-diagnostic-report");
+      const exportOperationDiagnosticReportButton = document.querySelector("#export-operation-diagnostic-report");
+      const operationReportRaceInfo = document.querySelector("#operation-report-race-info");
+      const operationReportAiTop5 = document.querySelector("#operation-report-ai-top5");
+      const operationReportKamianaTop5 = document.querySelector("#operation-report-kamiana-top5");
+      const operationReportDangerTop5 = document.querySelector("#operation-report-danger-top5");
+      const operationReportTrifecta = document.querySelector("#operation-report-trifecta");
+      const operationReportWin5 = document.querySelector("#operation-report-win5");
+      const operationReportSimulation = document.querySelector("#operation-report-simulation");
+      const operationReportEv = document.querySelector("#operation-report-ev");
+      const operationReportFund = document.querySelector("#operation-report-fund");
+      const operationReportGodRace = document.querySelector("#operation-report-god-race");
+      const operationReportResult = document.querySelector("#operation-report-result");
+      const operationReportRoi = document.querySelector("#operation-report-roi");
+      const operationReportEvolution = document.querySelector("#operation-report-evolution");
+      const operationReportOsUpdates = document.querySelector("#operation-report-os-updates");
+      let currentOperationDiagnosticReport = null;
       const aiRanking = document.querySelector("#ai-ranking");
       const kamianaRankingLive = document.querySelector("#kamiana-ranking-live");
       const dangerRankingLive = document.querySelector("#danger-ranking-live");
@@ -4543,6 +4605,114 @@
         renderSampleValidationList(sampleOsDeleteCandidates, validation.osUpdateCandidates.delete, "削除候補なし");
       };
 
+
+
+      const readJsonFromLocalStorage = (key, fallback = null) => {
+        try {
+          const value = window.localStorage.getItem(key);
+          return value ? JSON.parse(value) : fallback;
+        } catch (error) {
+          return fallback;
+        }
+      };
+
+      const renderOperationReportList = (target, items, formatter, emptyText = "未生成") => {
+        if (!target) return;
+        target.innerHTML = items.length
+          ? items.map((item) => `<li><strong>${escapeHtml(formatter(item))}</strong></li>`).join("")
+          : `<li class="empty-state">${escapeHtml(emptyText)}</li>`;
+      };
+
+      const renderOperationDiagnosticReport = (report) => {
+        if (!report) return;
+        currentOperationDiagnosticReport = report;
+        const race = report.raceBasicInfo || {};
+        const raceLabel = `${race.course || "未競馬場"}${race.raceNumber || "?"}R`;
+        const roiLabel = report.roi === null ? "未計算" : `${report.roi}%`;
+        const savedCount = operationReportEngine?.loadReports(window.localStorage).length || readJsonFromLocalStorage(OPERATION_DIAGNOSTIC_REPORT_KEY, []).length || 0;
+        if (operationDiagnosticStatus) operationDiagnosticStatus.textContent = `生成済 ${new Date(report.generatedAt).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+        if (copyOperationDiagnosticReportButton) copyOperationDiagnosticReportButton.disabled = false;
+        if (exportOperationDiagnosticReportButton) exportOperationDiagnosticReportButton.disabled = false;
+        if (operationDiagnosticSummary) {
+          operationDiagnosticSummary.innerHTML = `
+            <article><span>レース基本情報</span><strong>${escapeHtml(raceLabel)}</strong><small>${escapeHtml(race.raceName || "未設定")} / ${escapeHtml(race.surface || "")}${escapeHtml(race.distance || "")}m / ${escapeHtml(race.going || "")}</small></article>
+            <article><span>検証/ROI</span><strong>${escapeHtml(report.resultMatching?.status || "未照合")} / ${escapeHtml(roiLabel)}</strong><small>投資 ${Number(report.resultMatching?.totalInvestment || 0).toLocaleString("ja-JP")}円 / 払戻 ${Number(report.resultMatching?.payout || 0).toLocaleString("ja-JP")}円</small></article>
+            <article><span>保存状態</span><strong>${savedCount}件保存</strong><small>localStorage: ${escapeHtml(OPERATION_DIAGNOSTIC_REPORT_KEY)}</small></article>
+          `;
+        }
+        if (operationReportRaceInfo) {
+          operationReportRaceInfo.innerHTML = `<strong>${escapeHtml(raceLabel)} ${escapeHtml(race.raceName || "")}</strong><small>${escapeHtml(race.date || "日付未設定")} / ${escapeHtml(race.weather || "天候未設定")} / ${escapeHtml(race.fieldSize || "?")}頭</small>`;
+        }
+        renderOperationReportList(operationReportAiTop5, report.aiIndexTop5, (horse) => `${horse.number} ${horse.name} AI${horse.aiIndex} / ${horse.popularity}人気`);
+        renderOperationReportList(operationReportKamianaTop5, report.kamianaTop5, (horse) => `${horse.number} ${horse.name} 神穴${horse.kamianaIndex} / ${horse.odds}倍`);
+        renderOperationReportList(operationReportDangerTop5, report.dangerPopularTop5, (horse) => `${horse.number} ${horse.name} 危険${horse.dangerIndex} / ${horse.popularity}人気`);
+        renderOperationReportList(operationReportTrifecta, report.trifectaCandidates, (ticket) => `${ticket.notation}（${ticket.type} / ${ticket.reason}）`, "三連単候補なし");
+        renderOperationReportList(operationReportWin5, report.win5Candidates, (horse) => `${horse.zone || "候補"}: ${horse.number} ${horse.name} AI${horse.aiIndex} / 神穴${horse.kamianaIndex}`, "WIN5候補なし");
+        renderOperationReportList(operationReportSimulation, report.futureSimulationResult?.winTop5 || [], (horse) => `${horse.number} ${horse.name} 勝率${horse.firstRate}% / 複勝${horse.placeRate}%`, "シミュレーションなし");
+        renderOperationReportList(operationReportEv, report.evRanking, (item) => `${item.number} ${item.name} EV${item.ev}% / ${item.currentOdds}倍`, "EVなし");
+        renderOperationReportList(operationReportFund, report.fundAllocation?.recommendedInvestments || [], (item) => `${item.notation}: ${Number(item.recommendedAmount || 0).toLocaleString("ja-JP")}円 / ${item.decisionLabel}`, "資金配分なし");
+        if (operationReportGodRace) {
+          const god = report.godRaceJudgement;
+          operationReportGodRace.innerHTML = god
+            ? `<strong>${escapeHtml(god.label)} / ${god.score}</strong><small>${escapeHtml(god.action || "")} / ${god.blockers?.length ? god.blockers.join(" / ") : "重大ブロックなし"}</small>`
+            : "未判定";
+        }
+        renderOperationReportList(operationReportResult, report.resultMatching?.labels || [], (label) => label, "結果未照合");
+        if (operationReportRoi) operationReportRoi.innerHTML = `<strong>${escapeHtml(roiLabel)}</strong><small>検証状態: ${escapeHtml(report.resultMatching?.status || "未照合")}</small>`;
+        if (operationReportEvolution) {
+          const log = report.selfEvolutionLog;
+          operationReportEvolution.innerHTML = log
+            ? `<strong>${escapeHtml(log.status)}｜${escapeHtml(log.targetAi)}</strong><small>${escapeHtml(log.reason)} / ${escapeHtml(log.nextUsageNote)}</small>`
+            : "未生成";
+        }
+        const osItems = [
+          ...(report.osUpdateCandidates?.adopt || []).map((item) => `採用: ${item}`),
+          ...(report.osUpdateCandidates?.pending || []).map((item) => `保留: ${item}`),
+          ...(report.osUpdateCandidates?.delete || []).map((item) => `削除: ${item}`),
+        ];
+        renderOperationReportList(operationReportOsUpdates, osItems, (item) => item, "OSアップデート候補なし");
+      };
+
+      const generateOperationDiagnosticReport = () => {
+        if (!operationReportEngine) throw new Error("実戦診断レポートエンジンが読み込まれていません");
+        let predictionLog = readJsonFromLocalStorage(SAMPLE_RACE_TEST_LOG_KEY, null);
+        if (!predictionLog && raceHorses.length) predictionLog = buildSampleRaceTestLog();
+        if (!predictionLog) throw new Error("先にサンプルレースを読み込んでください");
+        const validation = readJsonFromLocalStorage(sampleValidationEngine?.STORAGE_KEY || "sampleRaceResultValidationLog", null);
+        const report = operationReportEngine.buildOperationDiagnosticReport({ predictionLog, validation, source: "operation-diagnostic-panel" });
+        operationReportEngine.saveReport(report, window.localStorage);
+        renderOperationDiagnosticReport(report);
+        return report;
+      };
+
+      const copyOperationDiagnosticReport = async () => {
+        if (!currentOperationDiagnosticReport || !operationReportEngine) return;
+        const text = operationReportEngine.toExportJson(currentOperationDiagnosticReport);
+        if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+        else {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          textarea.remove();
+        }
+        if (operationDiagnosticStatus) operationDiagnosticStatus.textContent = "コピー完了";
+      };
+
+      const exportOperationDiagnosticReport = () => {
+        if (!currentOperationDiagnosticReport || !operationReportEngine) return;
+        const blob = new Blob([operationReportEngine.toExportJson(currentOperationDiagnosticReport)], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = operationReportEngine.createExportFileName(currentOperationDiagnosticReport);
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        link.remove();
+        if (operationDiagnosticStatus) operationDiagnosticStatus.textContent = "JSON出力完了";
+      };
+
       const appendSampleValidationToSelfEvolutionState = (validation) => {
         if (!validation?.selfEvolutionLog || !selfEvolutionLogs?.logs) return;
         const collection = selfEvolutionLogs.logs.resultVerifications || [];
@@ -4661,12 +4831,31 @@
         event.preventDefault();
         try {
           validateSampleRaceResultFromForm();
+          if (currentOperationDiagnosticReport) generateOperationDiagnosticReport();
           saveStatus.textContent = "サンプル結果検証を保存しました";
         } catch (error) {
           if (sampleResultValidationStatus) sampleResultValidationStatus.textContent = `検証エラー: ${error.message}`;
           saveStatus.textContent = `サンプル結果検証エラー: ${error.message}`;
         }
       });
+
+      generateOperationDiagnosticReportButton?.addEventListener("click", () => {
+        try {
+          generateOperationDiagnosticReport();
+          saveStatus.textContent = "実戦診断レポートを保存しました";
+        } catch (error) {
+          if (operationDiagnosticStatus) operationDiagnosticStatus.textContent = `生成エラー: ${error.message}`;
+          saveStatus.textContent = `実戦診断レポート生成エラー: ${error.message}`;
+        }
+      });
+      copyOperationDiagnosticReportButton?.addEventListener("click", () => {
+        copyOperationDiagnosticReport().catch((error) => {
+          if (operationDiagnosticStatus) operationDiagnosticStatus.textContent = `コピーエラー: ${error.message}`;
+        });
+      });
+      exportOperationDiagnosticReportButton?.addEventListener("click", exportOperationDiagnosticReport);
+      const restoredOperationReport = operationReportEngine?.loadReports(window.localStorage)?.[0];
+      if (restoredOperationReport) renderOperationDiagnosticReport(restoredOperationReport);
 
       loadSampleRaceButton?.addEventListener("click", loadSampleRace);
       raceCsvFileInput.addEventListener("change", () => handleRaceCsvFile(raceCsvFileInput.files?.[0]));
