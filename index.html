@@ -341,11 +341,11 @@
           <div class="card-heading">
             <div>
               <p class="card__kicker">REAL DATA ENTRY MODE</p>
-              <h2>レース登録・出走馬入力フォーム</h2>
+              <h2>Phase4-1 本番レース入力モード</h2>
             </div>
             <span class="status-pill status-pill--live" id="save-status">LOCAL READY</span>
           </div>
-          <p class="card__lead">レース条件と出走馬の実データを入力し、AI指数・神穴指数・危険人気馬指数のランキング、買い目候補を即時生成します。保存処理はStorage Adapterで分離し、現在はlocalStorage、将来はGitHub保存へ差し替えできます。</p>
+          <p class="card__lead">netkeiba出馬表を見ながら、サンプルではない本番レースの条件と出走馬を手入力し、AI指数・神穴・危険人気馬・三連単・WIN5・EV・資金配分・神レース判定まで一括自動実行します。保存時はlocalStorageの<code>raceDatabase</code>にも本番分析ログを蓄積します。</p>
 
           <div class="entry-layout">
             <form id="race-form" class="race-entry-form" aria-label="レース登録フォーム">
@@ -372,6 +372,7 @@
               <label><span>馬番</span><input id="horse-number" name="number" type="number" min="1" max="18" required /></label>
               <label><span>馬名</span><input id="horse-name" name="name" type="text" placeholder="例: ゴールドブリッツ" required /></label>
               <label><span>騎手</span><input id="horse-jockey" name="jockey" type="text" placeholder="例: ルメール" required /></label>
+              <label><span>調教師</span><input id="horse-trainer" name="trainer" type="text" placeholder="例: 木村哲也" required /></label>
               <label><span>人気</span><input id="horse-popularity" name="popularity" type="number" min="1" max="18" required /></label>
               <label><span>オッズ</span><input id="horse-odds" name="odds" type="number" min="1" step="0.1" required /></label>
               <label><span>脚質</span><select id="horse-style" name="runningStyle"><option value="逃げ">逃げ</option><option value="先行">先行</option><option value="差し">差し</option><option value="追込">追込</option><option value="自在">自在</option></select></label>
@@ -533,6 +534,24 @@
             </div>
           </div>
 
+          <div class="production-ai-panel" aria-label="本番レースAI自動実行">
+            <div class="entry-heading">
+              <span>③ AI自動実行</span>
+              <small id="production-ai-status">出走馬入力と同時に自動更新 / raceDatabase保存待ち</small>
+            </div>
+            <p class="production-ai-lead">AI指数、神穴、危険人気馬、三連単、WIN5、EV、資金配分、神レース判定を本番入力データから一括生成します。</p>
+            <div id="production-ai-summary" class="production-ai-summary" aria-live="polite">
+              <article><span>AI指数</span><strong>未生成</strong><small>出走馬を入力してください</small></article>
+              <article><span>三連単/WIN5</span><strong>未生成</strong><small>3頭以上で自動生成</small></article>
+              <article><span>EV・資金配分</span><strong>未生成</strong><small>買い目生成後に連動</small></article>
+              <article><span>神レース判定</span><strong>未生成</strong><small>raceDatabase保存対象</small></article>
+            </div>
+            <div class="entry-actions">
+              <button class="button button--primary" id="run-production-ai" type="button">③ 本番AIを今すぐ実行</button>
+              <small>保存ボタンで <code>hashimoto-keiba-ai:real-race-entry:v1</code> と <code>raceDatabase</code> に保存します。</small>
+            </div>
+          </div>
+
           <div class="runner-table-panel" aria-label="入力済み出走馬">
             <div class="entry-heading">
               <span>入力済み出走馬</span>
@@ -540,8 +559,8 @@
             </div>
             <div class="table-wrap">
               <table class="data-table data-table--compact runner-table">
-                <thead><tr><th>馬番</th><th>馬名</th><th>騎手</th><th>人気</th><th>オッズ</th><th>脚質</th><th>4角</th><th>調教</th><th>AI</th><th>神穴</th><th>危険</th><th>AI勝率</th><th>AI連対</th><th>AI複勝</th><th>計算</th></tr></thead>
-                <tbody id="runner-table-body"><tr><td data-label="状態" colspan="15">まだ出走馬が入力されていません。</td></tr></tbody>
+                <thead><tr><th>馬番</th><th>馬名</th><th>騎手</th><th>調教師</th><th>人気</th><th>オッズ</th><th>脚質</th><th>4角</th><th>調教</th><th>AI</th><th>神穴</th><th>危険</th><th>AI勝率</th><th>AI連対</th><th>AI複勝</th><th>計算</th></tr></thead>
+                <tbody id="runner-table-body"><tr><td data-label="状態" colspan="16">まだ出走馬が入力されていません。</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -729,7 +748,7 @@
           <div class="storage-actions">
             <button class="button button--primary" id="save-race-data" type="button">⑤ 現在の保存方式で保存</button>
             <button class="button button--ghost" id="load-race-data" type="button">保存データを復元</button>
-            <p id="storage-note">保存キー: <code>hashimoto-keiba-ai:real-race-entry:v1</code> / 買い目キー: <code>hashimoto-keiba-ai:trifecta-tickets:v1</code> / 保存方式は「GitHub保存設定」で切り替えます。</p>
+            <p id="storage-note">保存キー: <code>hashimoto-keiba-ai:real-race-entry:v1</code> / 本番DB: <code>raceDatabase</code> / 買い目キー: <code>hashimoto-keiba-ai:trifecta-tickets:v1</code> / 保存方式は「GitHub保存設定」で切り替えます。</p>
           </div>
         </div>
       </section>
@@ -1884,6 +1903,11 @@
       const capitalBasicList = document.querySelector("#capital-basic-list");
       const capitalCombinationList = document.querySelector("#capital-combination-list");
       const capitalGodRaceList = document.querySelector("#capital-god-race-list");
+      const productionRaceEngine = window.HashimotoProductionRaceEngine;
+      const productionAiStatus = document.querySelector("#production-ai-status");
+      const productionAiSummary = document.querySelector("#production-ai-summary");
+      const runProductionAiButton = document.querySelector("#run-production-ai");
+      let currentProductionRacePayload = null;
       let selectedSimulationCount = 1000;
       let currentSimulationPayload = null;
       let currentGodRacePayload = null;
@@ -4163,7 +4187,7 @@
         runnerTableBody.innerHTML = "";
         runnerCount.textContent = `${raceHorses.length}頭`;
         if (!raceHorses.length) {
-          runnerTableBody.innerHTML = '<tr><td data-label="状態" colspan="15">まだ出走馬が入力されていません。</td></tr>';
+          runnerTableBody.innerHTML = '<tr><td data-label="状態" colspan="16">まだ出走馬が入力されていません。</td></tr>';
           return;
         }
         [...raceHorses].sort((a, b) => a.number - b.number).forEach((horse) => {
@@ -4172,6 +4196,7 @@
             <td data-label="馬番">${horse.number}</td>
             <td data-label="馬名"><strong>${escapeHtml(horse.name)}</strong></td>
             <td data-label="騎手">${escapeHtml(horse.jockey)}</td>
+            <td data-label="調教師">${escapeHtml(horse.trainer || "未設定")}</td>
             <td data-label="人気">${horse.popularity}</td>
             <td data-label="オッズ">${horse.odds}</td>
             <td data-label="脚質">${horse.runningStyle}</td>
@@ -4357,6 +4382,45 @@
         renderGodRaceList(godRaceBlockerList, payload.blockers.map((blocker) => ({ title: blocker, detail: "見送り条件に該当" })).concat(payload.linked.dangerPopular.map((horse) => ({ title: `${horse.number} ${horse.name}`, detail: `危険${horse.dangerIndex} / ${horse.popularity}人気 / ${horse.odds}倍` }))), "危険人気馬・見送りブロックはありません。");
         renderGodRaceList(godRaceReasonList, payload.reasons.map((reason) => ({ title: reason, detail: `評価 ${payload.grade} / ${payload.action}` })));
         return payload;
+      };
+
+      const renderProductionAiSummary = (payload = currentProductionRacePayload) => {
+        if (!productionAiSummary) return;
+        if (!payload || !payload.horses?.length) {
+          productionAiSummary.innerHTML = `
+            <article><span>AI指数</span><strong>未生成</strong><small>出走馬を入力してください</small></article>
+            <article><span>三連単/WIN5</span><strong>未生成</strong><small>3頭以上で自動生成</small></article>
+            <article><span>EV・資金配分</span><strong>未生成</strong><small>買い目生成後に連動</small></article>
+            <article><span>神レース判定</span><strong>未生成</strong><small>raceDatabase保存対象</small></article>
+          `;
+          if (productionAiStatus) productionAiStatus.textContent = "出走馬入力待ち";
+          return;
+        }
+        const summary = payload.summary || {};
+        productionAiSummary.innerHTML = `
+          <article><span>AI指数</span><strong>${escapeHtml(summary.topAi ? `${formatHorse(summary.topAi)} AI${summary.topAi.aiIndex}` : "未生成")}</strong><small>${summary.runnerCount}頭を本番入力から自動採点</small></article>
+          <article><span>神穴 / 危険人気馬</span><strong>${escapeHtml(summary.topKamiana ? formatHorse(summary.topKamiana) : "該当なし")} / ${escapeHtml(summary.topDangerPopular ? formatHorse(summary.topDangerPopular) : "該当なし")}</strong><small>神穴${summary.topKamiana?.kamianaIndex ?? "-"} / 危険${summary.topDangerPopular?.dangerIndex ?? "-"}</small></article>
+          <article><span>三連単 / WIN5 / EV</span><strong>${summary.trifectaTicketCount}点 / ${summary.win5CandidateCount}頭 / EV${summary.topEV}%</strong><small>買い目生成・EV監視まで連動</small></article>
+          <article><span>資金配分 / 神レース</span><strong>${Number(summary.recommendedAmount || 0).toLocaleString("ja-JP")}円 / ${escapeHtml(summary.godRaceLabel || "未判定")}</strong><small>神レース指数${summary.godRaceScore ?? "-"} / 保存対象: raceDatabase</small></article>
+        `;
+        if (productionAiStatus) productionAiStatus.textContent = `本番AI実行済 ${new Date(payload.generatedAt).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+      };
+
+      const buildProductionRacePayload = () => {
+        if (!productionRaceEngine || !raceHorses.length) {
+          currentProductionRacePayload = null;
+          renderProductionAiSummary(null);
+          return null;
+        }
+        currentProductionRacePayload = productionRaceEngine.buildAiAnalysisPayload({
+          race: getFormData(raceForm),
+          horses: raceHorses,
+          simulationCount: selectedSimulationCount,
+          capitalSettings: getCapitalSettings(),
+          persistEngines: false,
+        });
+        renderProductionAiSummary(currentProductionRacePayload);
+        return currentProductionRacePayload;
       };
 
       const renderCapitalAllocation = (evPayload, godRacePayload = currentGodRacePayload) => {
@@ -4789,6 +4853,7 @@
         renderRanking(kamianaRankingLive, rankBy("kamianaIndex"), "kamianaIndex");
         renderRanking(dangerRankingLive, rankBy("dangerIndex"), "dangerIndex");
         generateBets();
+        buildProductionRacePayload();
       };
 
       const createRacePayload = () => ({
@@ -4796,6 +4861,7 @@
         horses: raceHorses,
         generatedTickets: buildTrifectaPayload(),
         raceSimulation: currentSimulationPayload,
+        productionRace: currentProductionRacePayload,
         generatedAt: new Date().toISOString(),
         storageVersion: 1,
         provider: "localStorage",
@@ -4881,6 +4947,11 @@
         input?.addEventListener("input", generateBets);
       });
 
+      runProductionAiButton?.addEventListener("click", () => {
+        renderRaceEntry();
+        saveStatus.textContent = currentProductionRacePayload ? "本番AI自動実行完了" : "本番AI実行には出走馬入力が必要です";
+      });
+
       horseForm.addEventListener("submit", (event) => {
         event.preventDefault();
         const horse = calculateHorseScores([{ ...getFormData(horseForm), scoreSource: { aiIndex: "manual", kamianaIndex: "manual", dangerIndex: "manual" } }])[0];
@@ -4921,7 +4992,12 @@
             race: payload.race,
             horses: payload.horses,
           }, activeMode));
-          saveStatus.textContent = `${modeLabel(activeMode)}保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+          const productionPayload = buildProductionRacePayload();
+          if (productionPayload && productionRaceEngine) {
+            productionRaceEngine.saveProductionRace(productionPayload, window.localStorage);
+            await resolveMaybeAsync(dataStorage.saveData("raceDatabase", productionRaceEngine.loadRaceDatabase(window.localStorage), "localStorage"));
+          }
+          saveStatus.textContent = `${modeLabel(activeMode)}保存済 / raceDatabase ${productionPayload ? "保存済" : "未保存"} ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
         } catch (error) {
           saveStatus.textContent = `${modeLabel(activeMode)}保存エラー: ${error.message}`;
         }
