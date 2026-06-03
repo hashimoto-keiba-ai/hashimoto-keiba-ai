@@ -445,6 +445,24 @@
             <section class="ranking-panel ranking-panel--danger"><h3>危険人気馬指数順</h3><ol id="danger-ranking-live"></ol></section>
           </div>
 
+          <div id="ai-score-verification-panel" class="score-verification-panel" aria-label="AI指数検証パネル">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">PHASE2-2 AI SCORE VERIFICATION</p>
+                <h3>AI指数検証パネル</h3>
+                <p>AI指数・神穴指数・危険人気馬指数の内訳を各馬ごとに確認し、手動補正値と補正メモをlocalStorageへ保存してランキング、三連単候補、WIN5候補へ反映します。</p>
+              </div>
+              <span id="score-verification-status" class="status-pill">補正待機</span>
+            </div>
+            <div class="score-verification-actions">
+              <button class="button button--primary" id="recalculate-score-verification" type="button">手動補正を保存して再計算</button>
+              <small>保存キー: <code>hashimoto-keiba-ai:score-verification-adjustments:v1</code></small>
+            </div>
+            <div id="score-verification-list" class="score-verification-list" aria-live="polite">
+              <p class="empty-state">出走馬を入力すると、AI指数検証カードを表示します。</p>
+            </div>
+          </div>
+
 
           <div class="race-simulator-panel" aria-label="AIレース未来シミュレーター">
             <div class="race-simulator-panel__head">
@@ -1053,10 +1071,10 @@
                 <p class="card__kicker">DANGER POPULAR AUTO JUDGE</p>
                 <h2>危険人気馬自動判定</h2>
               </div>
-              <span class="status-pill status-pill--danger">自動判定 6頭</span>
+              <span id="danger-popular-status" class="status-pill status-pill--danger">自動判定 待機</span>
             </div>
             <p class="card__lead">過剰人気、展開不利、馬場ミスマッチ、騎手替わりの不安を危険度スコアで表示します。</p>
-            <ol class="timeline" aria-label="危険人気馬ランキング">
+            <ol id="danger-popular-ranking" class="timeline" aria-label="危険人気馬ランキング">
               <li><time>92</time><div><strong>東京10R 1番 サンライズノヴァ</strong><small>1人気 2.4倍 / 逃げ過多で差し有利、内枠揉まれリスク。</small></div></li>
               <li><time>88</time><div><strong>京都12R 6番 ミヤビクラウン</strong><small>2人気 4.1倍 / 昇級初戦、上がり指数が同組平均-0.8。</small></div></li>
               <li><time>81</time><div><strong>阪神8R 10番 ブルーアロー</strong><small>3人気 5.6倍 / 道悪適性C、外差しバイアスと脚質不一致。</small></div></li>
@@ -1664,10 +1682,16 @@
       const aiRanking = document.querySelector("#ai-ranking");
       const kamianaRankingLive = document.querySelector("#kamiana-ranking-live");
       const dangerRankingLive = document.querySelector("#danger-ranking-live");
+      const dangerPopularStatus = document.querySelector("#danger-popular-status");
+      const dangerPopularRanking = document.querySelector("#danger-popular-ranking");
       const generatedTrifecta = document.querySelector("#generated-trifecta");
       const generatedWin5 = document.querySelector("#generated-win5");
       const generatedLongshots = document.querySelector("#generated-longshots");
       const generatedDanger = document.querySelector("#generated-danger");
+      const scoreVerificationEngine = window.HashimotoScoreVerificationEngine;
+      const scoreVerificationStatus = document.querySelector("#score-verification-status");
+      const scoreVerificationList = document.querySelector("#score-verification-list");
+      const recalculateScoreVerificationButton = document.querySelector("#recalculate-score-verification");
       const raceSimulator = window.HashimotoRaceSimulator;
       const raceSimulationStatus = document.querySelector("#race-simulation-status");
       const raceSimulationButtons = Array.from(document.querySelectorAll(".race-simulation-count"));
@@ -1710,6 +1734,7 @@
       let selectedSimulationCount = 1000;
       let currentSimulationPayload = null;
       let currentGodRacePayload = null;
+      let scoreVerificationAdjustments = scoreVerificationEngine?.loadAdjustments?.() || {};
       const trifectaCandidateOutput = document.querySelector("#trifecta-candidate-output");
       const trifectaTicketOutput = document.querySelector("#trifecta-ticket-output");
       const trifectaSaveStatus = document.querySelector("#trifecta-save-status");
@@ -1807,7 +1832,7 @@
       const betEngine = window.HashimotoBetEngine;
       const evEngine = window.HashimotoEVEngine;
       const capitalEngine = window.HashimotoCapitalEngine;
-      const scoreSourceLabel = (source) => source === "manual" ? "手入力" : "自動計算";
+      const scoreSourceLabel = (source) => source === "manual" ? "手入力" : source === "adjusted" ? "手動補正" : "自動計算";
       const scoreSourceSummary = (horse) => [
         `AI:${scoreSourceLabel(horse.scoreSource?.aiIndex)}`,
         `神穴:${scoreSourceLabel(horse.scoreSource?.kamianaIndex)}`,
@@ -1831,7 +1856,18 @@
         return normalized;
       };
 
-      const calculateHorseScores = (horses) => scoreEngine.calculateAllHorseScores(horses.map(normalizeHorse), getRaceScoreContext()).map(normalizeHorse);
+      const resetAutoScoreInputs = (horse) => {
+        const normalized = { ...horse };
+        ["aiIndex", "kamianaIndex", "dangerIndex"].forEach((field) => {
+          if (["auto", "adjusted"].includes(normalized.scoreSource?.[field])) delete normalized[field];
+        });
+        return normalized;
+      };
+
+      const calculateHorseScores = (horses) => {
+        const calculated = scoreEngine.calculateAllHorseScores(horses.map((horse) => normalizeHorse(resetAutoScoreInputs(horse))), getRaceScoreContext()).map(normalizeHorse);
+        return scoreVerificationEngine?.applyManualAdjustments?.(calculated, scoreVerificationAdjustments) || calculated;
+      };
 
       const rankBy = (field) => [...raceHorses].sort((a, b) => b[field] - a[field]);
       const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
@@ -3850,9 +3886,121 @@
         }
         horses.slice(0, 6).forEach((horse) => {
           const item = document.createElement("li");
-          item.innerHTML = `<strong>${escapeHtml(formatHorse(horse))}</strong><span>${horse[field]}${suffix} / ${horse.popularity}人気 / ${horse.odds}倍</span><small class="score-breakdown">${escapeHtml(getScoreBreakdownSummary(horse, field))}</small>`;
+          const dangerReason = field === "dangerIndex" ? `<small class="score-breakdown">危険理由: ${escapeHtml(formatDangerReasonSummary(horse))}</small>` : "";
+          item.innerHTML = `<strong>${escapeHtml(formatHorse(horse))}</strong><span>${horse[field]}${suffix} / ${horse.popularity}人気 / ${horse.odds}倍</span><small class="score-breakdown">${escapeHtml(getScoreBreakdownSummary(horse, field))}</small>${dangerReason}`;
           target.append(item);
         });
+      };
+
+      const signedScore = (value) => {
+        const numeric = Math.round((Number(value) || 0) * 10) / 10;
+        return numeric > 0 ? `+${numeric}` : String(numeric);
+      };
+
+      const getScoreComponentEntries = (horse, field) => {
+        const components = horse.scoreBreakdown?.[field]?.components || {};
+        const componentLabels = {
+          aiIndex: [
+            ["popularityCorrection", "人気補正"],
+            ["oddsCorrection", "オッズ補正"],
+            ["styleCorrection", "脚質補正"],
+            ["cornerCorrection", "4角位置補正"],
+            ["trainingCorrection", "調教補正"],
+            ["courseCorrection", "競馬場補正"],
+            ["distanceCorrection", "距離補正"],
+            ["goingCorrection", "馬場補正"],
+            ["dangerPopularPenalty", "危険人気馬減点"],
+          ],
+          kamianaIndex: [
+            ["popularityValue", "人気妙味"],
+            ["oddsValue", "オッズ妙味"],
+            ["stylePaceFit", "脚質展開一致"],
+            ["kamianaConditionFit", "神穴条件一致"],
+            ["jackpotPatternFit", "万馬券パターン一致"],
+          ],
+          dangerIndex: [
+            ["overPopularity", "過剰人気"],
+            ["paceMismatch", "展開不一致"],
+            ["positionDisadvantage", "位置不利"],
+            ["trainingConcern", "調教不安"],
+            ["goingMismatch", "馬場不一致"],
+            ["distanceConcern", "距離不安"],
+            ["jockeyConcern", "騎手補正"],
+          ],
+        };
+        return (componentLabels[field] || []).map(([key, label]) => [label, components[key] ?? 0]);
+      };
+
+      const renderScoreComponentList = (horse, field) => getScoreComponentEntries(horse, field)
+        .map(([label, value]) => `<li><span>${escapeHtml(label)}</span><strong>${escapeHtml(signedScore(value))}</strong></li>`)
+        .join("");
+
+      const renderScoreVerificationPanel = () => {
+        if (!scoreVerificationList) return;
+        if (!raceHorses.length) {
+          scoreVerificationList.innerHTML = '<p class="empty-state">出走馬を入力すると、AI指数検証カードを表示します。</p>';
+          if (scoreVerificationStatus) scoreVerificationStatus.textContent = "入力待ち";
+          return;
+        }
+        scoreVerificationList.innerHTML = [...raceHorses].sort((a, b) => a.number - b.number).map((horse) => {
+          const adjustment = scoreVerificationAdjustments[String(horse.number)] || { aiIndex: 0, kamianaIndex: 0, dangerIndex: 0, memo: "" };
+          return `
+            <article class="score-verification-card" data-horse-number="${escapeHtml(horse.number)}">
+              <header>
+                <div><span>馬番 ${escapeHtml(horse.number)}</span><strong>${escapeHtml(horse.name)}</strong></div>
+                <small>${escapeHtml(horse.popularity)}人気 / ${escapeHtml(horse.odds)}倍 / 脚質 ${escapeHtml(horse.runningStyle)}</small>
+              </header>
+              <div class="score-verification-metrics">
+                <span>AI指数 <strong>${escapeHtml(horse.aiIndex)}</strong></span>
+                <span>神穴指数 <strong>${escapeHtml(horse.kamianaIndex)}</strong></span>
+                <span>危険人気馬指数 <strong>${escapeHtml(horse.dangerIndex)}</strong></span>
+              </div>
+              <div class="score-verification-breakdowns">
+                <section><h4>AI指数の内訳</h4><ol>${renderScoreComponentList(horse, "aiIndex")}</ol></section>
+                <section><h4>神穴指数の内訳</h4><ol>${renderScoreComponentList(horse, "kamianaIndex")}</ol></section>
+                <section><h4>危険人気馬指数の内訳</h4><ol>${renderScoreComponentList(horse, "dangerIndex")}</ol></section>
+              </div>
+              <div class="score-adjustment-grid">
+                <label><span>AI指数手動補正</span><input data-score-adjustment-field="aiIndex" type="number" step="0.1" value="${escapeHtml(adjustment.aiIndex || 0)}" /></label>
+                <label><span>神穴指数手動補正</span><input data-score-adjustment-field="kamianaIndex" type="number" step="0.1" value="${escapeHtml(adjustment.kamianaIndex || 0)}" /></label>
+                <label><span>危険人気馬指数手動補正</span><input data-score-adjustment-field="dangerIndex" type="number" step="0.1" value="${escapeHtml(adjustment.dangerIndex || 0)}" /></label>
+                <label class="score-adjustment-note"><span>補正メモ</span><textarea data-score-adjustment-field="memo" rows="2" placeholder="例: 直前気配良化のためAI指数+3">${escapeHtml(adjustment.memo || "")}</textarea></label>
+              </div>
+            </article>`;
+        }).join("");
+        if (scoreVerificationStatus) scoreVerificationStatus.textContent = `検証中 ${raceHorses.length}頭`;
+      };
+
+      const collectScoreVerificationAdjustments = () => {
+        if (!scoreVerificationList) return scoreVerificationAdjustments;
+        const nextAdjustments = { ...scoreVerificationAdjustments };
+        scoreVerificationList.querySelectorAll(".score-verification-card").forEach((card) => {
+          const horseNumber = String(card.dataset.horseNumber || "");
+          if (!horseNumber) return;
+          nextAdjustments[horseNumber] = {
+            aiIndex: Number(card.querySelector('[data-score-adjustment-field="aiIndex"]')?.value || 0),
+            kamianaIndex: Number(card.querySelector('[data-score-adjustment-field="kamianaIndex"]')?.value || 0),
+            dangerIndex: Number(card.querySelector('[data-score-adjustment-field="dangerIndex"]')?.value || 0),
+            memo: card.querySelector('[data-score-adjustment-field="memo"]')?.value || "",
+          };
+        });
+        return scoreVerificationEngine?.normalizeAdjustmentMap?.(nextAdjustments) || nextAdjustments;
+      };
+
+      const formatDangerReasonSummary = (horse) => horse.dangerPopularAssessment?.reasonText || (horse.dangerReasons || []).map((reason) => `${reason.label}:${reason.detail}`).join(" / ") || "危険理由なし";
+
+      const renderDangerPopularDetection = () => {
+        if (!dangerPopularRanking || !dangerPopularStatus) return;
+        const detected = scoreEngine.detectDangerPopularHorses?.(raceHorses, getRaceScoreContext()) || [];
+        dangerPopularStatus.textContent = detected.length ? `自動判定 ${detected.length}頭` : "危険人気馬なし";
+        dangerPopularRanking.innerHTML = detected.length
+          ? detected.slice(0, 6).map((horse) => {
+            const assessment = horse.dangerPopularAssessment;
+            const score = assessment.dangerScore;
+            const badge = score >= 85 ? "S" : score >= 75 ? "A" : "B";
+            return `<li><time>${escapeHtml(score)}</time><div><strong>${escapeHtml(formatHorse(horse))} <span class="badge badge--red">${badge}</span></strong><small>${escapeHtml(horse.popularity)}人気 ${escapeHtml(horse.odds)}倍 / 危険度スコア${escapeHtml(score)} / ${escapeHtml(assessment.reasonText)}</small></div></li>`;
+          }).join("")
+          : '<li><time>OK</time><div><strong>1〜3人気の過剰人気は未検出</strong><small>展開・位置取り・距離・馬場・騎手補正の危険条件を満たす馬はいません。</small></div></li>';
       };
 
       const renderRunnerTable = () => {
@@ -3908,7 +4056,7 @@
         const formatZone = (items) => items.length ? items.map((horse) => `${formatHorse(horse)}（AI${horse.aiIndex} / 神穴${horse.kamianaIndex} / 危険${horse.dangerIndex}）`).join(" / ") : "該当なし";
         win5CandidateOutput.innerHTML = Object.entries(payload.zones).map(([key, horses]) => `
           <article class="candidate ${zoneClasses[key]}"><span>${zoneLabels[key]}</span><strong>${escapeHtml(formatZone(horses))}</strong><small>${escapeHtml(zoneRoles[key])}｜${escapeHtml(horses.map((horse) => horse.win5Reason).join(" / ") || payload.rules[key])}</small></article>
-        `).join("") + `<article class="candidate candidate--danger"><span>危険人気馬</span><strong>${escapeHtml(formatZone(payload.dangerExcluded))}</strong><small>危険人気馬指数80以上はWIN5候補から自動除外</small></article>`;
+        `).join("") + `<article class="candidate candidate--danger"><span>危険人気馬</span><strong>${escapeHtml(formatZone(payload.dangerExcluded))}</strong><small>1〜3人気の過剰人気検出馬と危険指数80以上はWIN5候補から自動除外</small></article>`;
         win5SystemStatus.textContent = payload.summary.totalCandidates ? `AI連動 ${payload.summary.totalCandidates}頭分類` : "候補不足";
       };
 
@@ -3928,7 +4076,7 @@
           <article><span>1着候補</span><strong>${escapeHtml(formatList(candidates.firstCandidates))}</strong><small>A:${escapeHtml(formatList(candidates.aZone))} / B:${escapeHtml(formatList(candidates.bZone))} / C:${escapeHtml(formatList(candidates.cZone))}</small></article>
           <article><span>2着候補</span><strong>${escapeHtml(formatList(candidates.secondCandidates))}</strong><small>1人気は2着候補から自動除外</small></article>
           <article><span>3着候補</span><strong>${escapeHtml(formatList(candidates.thirdCandidates))}</strong><small>神穴3着: ${escapeHtml(formatList(candidates.kamianaThird))}</small></article>
-          <article><span>危険人気馬</span><strong>${escapeHtml(formatList(candidates.dangerHeadExcluded))}</strong><small>危険指数80以上の人気馬は1着候補から除外</small></article>
+          <article><span>危険人気馬</span><strong>${escapeHtml(formatList(candidates.dangerHeadExcluded))}</strong><small>危険人気馬検出馬は1着候補から除外し、理由を買い目根拠へ連動</small></article>
         `;
 
         const renderGroup = (label, groupTickets, className) => `
@@ -4181,6 +4329,8 @@
       const renderRaceEntry = () => {
         raceHorses = calculateHorseScores(raceHorses);
         renderRunnerTable();
+        renderScoreVerificationPanel();
+        renderDangerPopularDetection();
         renderRanking(aiRanking, rankBy("aiIndex"), "aiIndex");
         renderRanking(kamianaRankingLive, rankBy("kamianaIndex"), "kamianaIndex");
         renderRanking(dangerRankingLive, rankBy("dangerIndex"), "dangerIndex");
@@ -4208,6 +4358,20 @@
         raceHorses = calculateHorseScores(payload.horses || []);
         renderRaceEntry();
       };
+
+      recalculateScoreVerificationButton?.addEventListener("click", () => {
+        scoreVerificationAdjustments = collectScoreVerificationAdjustments();
+        scoreVerificationEngine?.saveAdjustments?.(scoreVerificationAdjustments);
+        saveStatus.textContent = "AI指数手動補正を反映";
+        if (scoreVerificationStatus) scoreVerificationStatus.textContent = `保存済 ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`;
+        renderRaceEntry();
+      });
+
+      scoreVerificationList?.addEventListener("change", () => {
+        scoreVerificationAdjustments = collectScoreVerificationAdjustments();
+        scoreVerificationEngine?.saveAdjustments?.(scoreVerificationAdjustments);
+        if (scoreVerificationStatus) scoreVerificationStatus.textContent = "補正値をlocalStorage保存済";
+      });
 
       raceCsvFileInput.addEventListener("change", () => handleRaceCsvFile(raceCsvFileInput.files?.[0]));
       importRaceCsvButton.addEventListener("click", applyCsvValidationToRace);
