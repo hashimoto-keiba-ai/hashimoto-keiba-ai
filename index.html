@@ -578,6 +578,52 @@
             </div>
           </div>
 
+
+          <section id="production-result-validation" class="sample-race-test-panel production-result-panel" aria-label="本番レース結果入力と検証">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">PHASE4-3 PRODUCTION RESULT VALIDATION</p>
+                <h3>本番レース結果入力・検証フロー</h3>
+                <p>本番AI一括実行後の<code>productionRunReports</code>と実結果を照合し、予想精度・ROI・危険人気馬・神穴・神レース・EV・資金配分を自己進化ログと資金曲線へ連動します。</p>
+              </div>
+              <span id="production-result-validation-status" class="status-pill">本番結果未入力</span>
+            </div>
+            <form id="production-result-validation-form" class="sample-result-form production-result-form">
+              <label><span>開催日</span><input name="date" type="date" required /></label>
+              <label><span>競馬場</span><select name="course" required><option value="東京競馬場">東京競馬場</option><option value="中山競馬場">中山競馬場</option><option value="京都競馬場">京都競馬場</option><option value="阪神競馬場">阪神競馬場</option><option value="中京競馬場">中京競馬場</option><option value="新潟競馬場">新潟競馬場</option><option value="福島競馬場">福島競馬場</option><option value="小倉競馬場">小倉競馬場</option><option value="札幌競馬場">札幌競馬場</option><option value="函館競馬場">函館競馬場</option></select></label>
+              <label><span>レース番号</span><input name="raceNumber" type="number" min="1" max="12" required /></label>
+              <label><span>1着馬番</span><input name="firstNumber" type="number" min="1" step="1" required /></label>
+              <label><span>2着馬番</span><input name="secondNumber" type="number" min="1" step="1" required /></label>
+              <label><span>3着馬番</span><input name="thirdNumber" type="number" min="1" step="1" required /></label>
+              <label><span>三連単配当</span><input name="trifectaPayout" type="number" min="0" step="10" placeholder="例: 125430" /></label>
+              <label><span>実ペース</span><input name="actualPace" type="text" placeholder="平均 / ハイ / スロー" /></label>
+              <label><span>4角位置メモ</span><input name="cornerMemo" type="text" placeholder="逃げ粘り / 外差し届く" /></label>
+              <label><span>馬場傾向</span><input name="trackBias" type="text" placeholder="内先行有利 / 差し届く" /></label>
+              <label><span>払戻額</span><input name="payoutAmount" type="number" min="0" step="100" placeholder="実払戻合計" /></label>
+              <label><span>投資額</span><input name="investmentAmount" type="number" min="0" step="100" placeholder="実投資合計" /></label>
+              <label class="sample-result-form__memo"><span>メモ</span><textarea name="memo" rows="3" placeholder="本番検証メモ、敗因、次回修正ポイント"></textarea></label>
+              <div class="entry-actions">
+                <button class="button button--primary" type="submit">本番結果を照合して保存</button>
+                <button class="button button--ghost" id="prefill-production-result-validation" type="button">レース情報を反映</button>
+                <small>保存キー: <code>productionResultValidationReports</code> / 自己進化: <code>selfEvolutionLogs</code> / 資金曲線: <code>fundCurveRecords</code></small>
+              </div>
+            </form>
+            <div id="production-result-validation-summary" class="sample-race-test-summary production-result-summary" aria-live="polite">
+              <article><span>照合状態</span><strong>未検証</strong><small>productionRunReports保存後に結果を入力</small></article>
+              <article><span>ROI</span><strong>未計算</strong><small>払戻額 ÷ 投資額 × 100</small></article>
+              <article><span>保存ログ</span><strong>productionResultValidationReports</strong><small>localStorage保存待ち</small></article>
+            </div>
+            <div class="sample-race-test-grid production-validation-grid">
+              <section><h4>検証結果サマリー</h4><ol id="production-validation-result-list"></ol></section>
+              <section><h4>良かった判定</h4><ol id="production-validation-good-list"></ol></section>
+              <section class="sample-danger"><h4>悪かった判定</h4><ol id="production-validation-bad-list"></ol></section>
+              <section><h4>次回修正ポイント</h4><ol id="production-validation-next-list"></ol></section>
+              <section><h4>採用候補</h4><ol id="production-os-adopt-candidates"></ol></section>
+              <section><h4>保留候補</h4><ol id="production-os-pending-candidates"></ol></section>
+              <section class="sample-danger"><h4>削除候補</h4><ol id="production-os-delete-candidates"></ol></section>
+            </div>
+          </section>
+
           <div class="runner-table-panel" aria-label="入力済み出走馬">
             <div class="entry-heading">
               <span>入力済み出走馬</span>
@@ -1786,6 +1832,7 @@
       const dataStorage = window.HashimotoDataStorage;
       const githubAdapter = window.HashimotoGithubAdapter;
       const sampleValidationEngine = window.HashimotoSampleRaceValidationEngine;
+      const productionResultValidationEngine = window.HashimotoProductionResultValidationEngine;
       const githubSettingsForm = document.querySelector("#github-settings-form");
       const storageModeSelect = document.querySelector("#storage-mode-select");
       const githubConnectionStatus = document.querySelector("#github-connection-status");
@@ -1856,6 +1903,17 @@
       const sampleOsAdoptCandidates = document.querySelector("#sample-os-adopt-candidates");
       const sampleOsPendingCandidates = document.querySelector("#sample-os-pending-candidates");
       const sampleOsDeleteCandidates = document.querySelector("#sample-os-delete-candidates");
+      const productionResultValidationForm = document.querySelector("#production-result-validation-form");
+      const productionResultValidationStatus = document.querySelector("#production-result-validation-status");
+      const productionResultValidationSummary = document.querySelector("#production-result-validation-summary");
+      const prefillProductionResultValidationButton = document.querySelector("#prefill-production-result-validation");
+      const productionValidationResultList = document.querySelector("#production-validation-result-list");
+      const productionValidationGoodList = document.querySelector("#production-validation-good-list");
+      const productionValidationBadList = document.querySelector("#production-validation-bad-list");
+      const productionValidationNextList = document.querySelector("#production-validation-next-list");
+      const productionOsAdoptCandidates = document.querySelector("#production-os-adopt-candidates");
+      const productionOsPendingCandidates = document.querySelector("#production-os-pending-candidates");
+      const productionOsDeleteCandidates = document.querySelector("#production-os-delete-candidates");
       const operationReportEngine = window.HashimotoOperationDiagnosticReportEngine;
       const operationDiagnosticStatus = document.querySelector("#operation-diagnostic-status");
       const operationDiagnosticSummary = document.querySelector("#operation-diagnostic-summary");
@@ -4741,6 +4799,58 @@
         renderSampleValidationList(sampleOsDeleteCandidates, validation.osUpdateCandidates.delete, "削除候補なし");
       };
 
+      const renderProductionResultValidation = (validation) => {
+        if (!validation) return;
+        if (productionResultValidationStatus) productionResultValidationStatus.textContent = `${validation.summary.hitLabel} / ROI ${validation.roi}% / 資金曲線保存済`;
+        if (productionResultValidationSummary) {
+          productionResultValidationSummary.innerHTML = `
+            <article><span>照合レース</span><strong>${escapeHtml(`${validation.result.course || "未競馬場"}${validation.result.raceNumber || "?"}R`)}</strong><small>productionRunReports: ${escapeHtml(validation.matchedRunReportId)} / 1-2-3着 ${escapeHtml(`${validation.result.firstNumber}-${validation.result.secondNumber}-${validation.result.thirdNumber}`)}</small></article>
+            <article><span>的中/ROI</span><strong>${escapeHtml(validation.summary.hitLabel)} / ${validation.roi}%</strong><small>投資 ${validation.totalInvestment.toLocaleString("ja-JP")}円 / 払戻 ${validation.payout.toLocaleString("ja-JP")}円</small></article>
+            <article><span>保存ログ</span><strong>${escapeHtml(validation.storageKey)}</strong><small>selfEvolutionLogs・fundCurveRecordsへ連動済み</small></article>
+          `;
+        }
+        const resultLabels = [
+          validation.labels.mainHit,
+          validation.labels.trifectaHit,
+          validation.labels.win5Hit,
+          validation.labels.kamianaHit,
+          validation.labels.dangerPopularFlew,
+          validation.labels.godRaceSuccess,
+          validation.labels.evSuccess,
+          validation.labels.capitalSuccess,
+          `ROI ${validation.roi}%`,
+        ];
+        renderSampleValidationList(productionValidationResultList, resultLabels, "検証結果なし");
+        renderSampleValidationList(productionValidationGoodList, validation.summary.goodJudgements, "良かった判定なし");
+        renderSampleValidationList(productionValidationBadList, validation.summary.badJudgements, "悪かった判定なし");
+        renderSampleValidationList(productionValidationNextList, validation.summary.nextFixPoints, "次回修正ポイントなし");
+        renderSampleValidationList(productionOsAdoptCandidates, validation.osUpdateCandidates.adopt, "採用候補なし");
+        renderSampleValidationList(productionOsPendingCandidates, validation.osUpdateCandidates.pending, "保留候補なし");
+        renderSampleValidationList(productionOsDeleteCandidates, validation.osUpdateCandidates.delete, "削除候補なし");
+      };
+
+      const prefillProductionResultValidation = () => {
+        if (!productionResultValidationForm || !raceForm) return;
+        const race = getFormData(raceForm);
+        ["date", "course", "raceNumber"].forEach((key) => {
+          if (productionResultValidationForm.elements[key] && race[key]) productionResultValidationForm.elements[key].value = race[key];
+        });
+        if (currentProductionRacePayload?.capital?.summary?.totalRecommended && productionResultValidationForm.elements.investmentAmount) {
+          productionResultValidationForm.elements.investmentAmount.value = Math.round(currentProductionRacePayload.capital.summary.totalRecommended);
+        }
+        if (productionResultValidationStatus) productionResultValidationStatus.textContent = "レース情報を反映済み";
+      };
+
+      const validateProductionResultFromForm = () => {
+        if (!productionResultValidationEngine) throw new Error("本番結果検証エンジンが読み込まれていません");
+        const resultInput = Object.fromEntries(new FormData(productionResultValidationForm).entries());
+        const validation = productionResultValidationEngine.validateAndPersistProductionResult({ resultInput }, window.localStorage);
+        renderProductionResultValidation(validation);
+        refreshOperationReadinessChecklist();
+        return validation;
+      };
+
+
 
 
       const readJsonFromLocalStorage = (key, fallback = null) => {
@@ -5012,6 +5122,19 @@
         } catch (error) {
           if (sampleResultValidationStatus) sampleResultValidationStatus.textContent = `検証エラー: ${error.message}`;
           saveStatus.textContent = `サンプル結果検証エラー: ${error.message}`;
+        }
+      });
+
+
+      prefillProductionResultValidationButton?.addEventListener("click", prefillProductionResultValidation);
+      productionResultValidationForm?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        try {
+          validateProductionResultFromForm();
+          saveStatus.textContent = "本番結果検証を保存しました";
+        } catch (error) {
+          if (productionResultValidationStatus) productionResultValidationStatus.textContent = `検証エラー: ${error.message}`;
+          saveStatus.textContent = `本番結果検証エラー: ${error.message}`;
         }
       });
 

@@ -1842,6 +1842,326 @@
 
 
 (() => {
+  const STORAGE_KEY = "productionResultValidationReports";
+  const PRODUCTION_RUN_REPORT_STORAGE_KEY = "productionRunReports";
+  const SELF_EVOLUTION_STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
+  const SELF_EVOLUTION_LEGACY_KEY = "selfEvolutionLogs";
+  const FUND_CURVE_STORAGE_KEY = "fundCurveRecords";
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const normalizeText = (value) => String(value || "").trim();
+  const normalizeNumber = (value) => String(value ?? "").trim();
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const horseNumber = (horse = {}) => normalizeNumber(horse.number ?? horse.horseNumber ?? horse["馬番"]);
+  const ticketNumbers = (ticket = {}) => [ticket.first, ticket.second, ticket.third].map((entry) => normalizeNumber(typeof entry === "object" ? entry?.number : entry));
+  const flattenTickets = (tickets = {}) => [
+    ...asArray(tickets.main),
+    ...asArray(tickets.attack),
+    ...asArray(tickets.jackpot),
+  ];
+  const flattenWin5Candidates = (zones = {}) => Object.entries(zones || {}).flatMap(([zone, horses]) => asArray(horses).map((horse) => ({ ...horse, zone: zone.toUpperCase() })));
+
+  const safeParse = (storage, key, fallback) => {
+    try {
+      const value = storage?.getItem?.(key);
+      return value ? JSON.parse(value) : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  };
+
+  const normalizeCourse = (value) => normalizeText(value).replace(/競馬場$/, "");
+
+  const normalizeResultInput = (input = {}) => ({
+    date: normalizeText(input.date || new Date().toISOString().slice(0, 10)),
+    course: normalizeText(input.course || input.racecourse),
+    raceNumber: toNumber(input.raceNumber, 0),
+    firstNumber: normalizeNumber(input.firstNumber),
+    secondNumber: normalizeNumber(input.secondNumber),
+    thirdNumber: normalizeNumber(input.thirdNumber),
+    trifectaPayout: toNumber(input.trifectaPayout, 0),
+    actualPace: normalizeText(input.actualPace),
+    cornerMemo: normalizeText(input.cornerMemo || input.fourthCornerMemo),
+    trackBias: normalizeText(input.trackBias || input.trackTrend),
+    payoutAmount: toNumber(input.payoutAmount ?? input.payout, 0),
+    investmentAmount: toNumber(input.investmentAmount ?? input.totalInvestment, 0),
+    memo: normalizeText(input.memo),
+  });
+
+  const normalizeReport = (report = {}) => {
+    const payload = report.productionPayload || {};
+    const predictionLog = {
+      race: report.race || payload.race || {},
+      aiTop: asArray(report.summary?.aiIndexTop ? [report.summary.aiIndexTop] : []).concat(asArray(payload.aiIndexRanking)).filter(Boolean),
+      trifectaCandidates: flattenTickets(payload.trifecta?.tickets).length ? flattenTickets(payload.trifecta?.tickets) : [report.summary?.mainTrifecta, report.summary?.attackTrifecta].filter(Boolean),
+      win5Candidates: asArray(report.summary?.win5Candidates).length ? asArray(report.summary.win5Candidates) : flattenWin5Candidates(payload.win5?.zones),
+      kamianaCandidates: asArray(payload.kamiana).length ? asArray(payload.kamiana) : asArray(payload.kamianaRanking),
+      dangerCandidates: asArray(payload.dangerPopular).length ? asArray(payload.dangerPopular) : asArray(payload.dangerPopularRanking),
+      evTop: asArray(report.summary?.evTop).length ? asArray(report.summary.evTop) : asArray(payload.ev?.evRanking),
+      recommendedInvestmentAmount: toNumber(report.summary?.recommendedInvestmentAmount ?? payload.capital?.summary?.totalRecommended, 0),
+      recommendedInvestments: Object.values(payload.capital?.ticketGroups || {}).flat(),
+      godRace: report.summary?.godRaceJudgement || payload.godRace || null,
+    };
+    predictionLog.aiTop = predictionLog.aiTop.filter((horse, index, array) => horse && array.findIndex((item) => horseNumber(item) === horseNumber(horse)) === index);
+    return { ...report, predictionLog };
+  };
+
+  const loadProductionRunReports = (storage = window.localStorage) => {
+    const parsed = safeParse(storage, PRODUCTION_RUN_REPORT_STORAGE_KEY, []);
+    return Array.isArray(parsed) ? parsed : [];
+  };
+
+  const findMatchingProductionRunReport = (resultInput = {}, storage = window.localStorage) => {
+    const result = normalizeResultInput(resultInput);
+    return loadProductionRunReports(storage).find((report) => {
+      const race = report.race || report.productionPayload?.race || {};
+      return normalizeText(race.date) === result.date
+        && normalizeCourse(race.course || race.racecourse) === normalizeCourse(result.course)
+        && toNumber(race.raceNumber, 0) === result.raceNumber;
+    }) || null;
+  };
+
+  const buildJudgements = (prediction, result, payout, totalInvestment) => {
+    const actualTop3 = [result.firstNumber, result.secondNumber, result.thirdNumber].filter(Boolean);
+    const aiTopNumber = horseNumber(prediction.aiTop[0]);
+    const aiTopRank = actualTop3.indexOf(aiTopNumber) >= 0 ? actualTop3.indexOf(aiTopNumber) + 1 : "4着以下";
+    const trifectaHit = prediction.trifectaCandidates.some((ticket) => ticketNumbers(ticket).join("-") === actualTop3.join("-"));
+    const win5Hit = prediction.win5Candidates.some((horse) => horseNumber(horse) === result.firstNumber);
+    const kamianaHit = prediction.kamianaCandidates.some((horse) => actualTop3.includes(horseNumber(horse)));
+    const dangerCandidates = prediction.dangerCandidates.filter((horse) => toNumber(horse.popularity, 99) <= 5 || toNumber(horse.dangerIndex, 0) >= 75);
+    const dangerPopularFlew = dangerCandidates.length ? dangerCandidates.every((horse) => !actualTop3.includes(horseNumber(horse))) : false;
+    const evSuccess = prediction.evTop.length ? prediction.evTop.slice(0, 5).some((item) => actualTop3.includes(horseNumber(item))) || payout > totalInvestment : payout > totalInvestment;
+    const recommendedAmount = toNumber(prediction.recommendedInvestmentAmount, 0);
+    const capitalSuccess = recommendedAmount > 0 ? totalInvestment > 0 && payout >= totalInvestment : totalInvestment === 0;
+    const godRace = prediction.godRace || {};
+    const godRaceBattle = Boolean(godRace.battle) || [godRace.grade, godRace.label, godRace.action].some((value) => /S|A|勝負|神/.test(String(value || "")) && !/見送り/.test(String(value || "")));
+    const godRaceSuccess = godRaceBattle ? (trifectaHit || win5Hit || payout > 0 || evSuccess) : payout === 0 || totalInvestment === 0;
+    return {
+      aiTopRank,
+      mainHit: aiTopRank === 1,
+      trifectaHit,
+      win5Hit,
+      kamianaHit,
+      dangerPopularFlew,
+      godRaceSuccess,
+      evSuccess,
+      capitalSuccess,
+    };
+  };
+
+  const labelsFromJudgements = (judgements = {}) => ({
+    mainHit: `AI指数1位: ${judgements.aiTopRank === "4着以下" ? "4着以下" : `${judgements.aiTopRank}着`}`,
+    trifectaHit: judgements.trifectaHit ? "三連単的中" : "三連単不的中",
+    win5Hit: judgements.win5Hit ? "WIN5候補的中" : "WIN5候補不的中",
+    kamianaHit: judgements.kamianaHit ? "神穴候補が馬券内" : "神穴候補は馬券外",
+    dangerPopularFlew: judgements.dangerPopularFlew ? "危険人気馬が飛んだ" : "危険人気馬が馬券内",
+    godRaceSuccess: judgements.godRaceSuccess ? "神レース判定成功" : "神レース判定失敗",
+    evSuccess: judgements.evSuccess ? "EV判定成功" : "EV判定失敗",
+    capitalSuccess: judgements.capitalSuccess ? "資金配分成功" : "資金配分失敗",
+  });
+
+  const buildOsUpdateCandidates = (judgements, result, roi) => ({
+    adopt: [
+      judgements.mainHit ? "AI指数1位の軸評価を採用" : null,
+      judgements.trifectaHit ? "的中三連単フォーメーションを採用" : null,
+      judgements.dangerPopularFlew ? "危険人気馬の消し条件を採用" : null,
+      roi >= 100 && judgements.capitalSuccess ? "資金配分ルールを採用" : null,
+    ].filter(Boolean),
+    pending: [
+      !judgements.kamianaHit ? "神穴条件と馬場傾向の相関を保留検証" : null,
+      !judgements.evSuccess ? "EV上位と実着順のズレを保留検証" : null,
+      result.actualPace ? `実ペース「${result.actualPace}」補正を保留検証` : null,
+      result.trackBias ? `馬場傾向「${result.trackBias}」補正を保留検証` : null,
+    ].filter(Boolean),
+    delete: [
+      !judgements.trifectaHit ? "不的中三連単の低EV・重複買い目を削除候補化" : null,
+      !judgements.dangerPopularFlew ? "危険人気馬の過剰な消し条件を削除候補化" : null,
+      !judgements.capitalSuccess ? "回収不足の資金配分を削除候補化" : null,
+    ].filter(Boolean),
+  });
+
+  const buildSelfEvolutionLog = ({ report, result, judgements, roi, totalInvestment, payout, osUpdateCandidates }) => {
+    const race = report.predictionLog.race || {};
+    const badKeys = Object.entries(judgements).filter(([key, value]) => key !== "aiTopRank" && !value).map(([key]) => key);
+    const status = roi >= 100 && badKeys.length <= 2 ? "採用" : roi >= 50 || judgements.evSuccess || judgements.kamianaHit ? "保留" : "削除";
+    const afterRule = osUpdateCandidates.adopt[0] || osUpdateCandidates.pending[0] || osUpdateCandidates.delete[0] || "本番結果検証を次回閾値調整へ反映";
+    return {
+      id: `production-validation:${result.date}:${result.course}:${result.raceNumber}`,
+      savedAt: new Date().toISOString(),
+      source: "production-result-validation",
+      date: result.date,
+      racecourse: result.course || race.course || "未設定",
+      raceNumber: result.raceNumber || race.raceNumber || "未設定",
+      targetAi: "橋本競馬AI 本番レース検証",
+      beforeRule: "productionRunReportsのAI指数・三連単・WIN5・神穴・危険人気馬・神レース・EV・資金配分を本番結果と照合",
+      afterRule,
+      reason: `三連単${judgements.trifectaHit ? "的中" : "不的中"} / AI指数1位 ${judgements.aiTopRank} / ROI ${round(roi, 1)}% / 投資${totalInvestment}円 / 払戻${payout}円`,
+      evidenceRace: `${result.date} ${result.course} ${result.raceNumber}R / 1-2-3着 ${result.firstNumber}-${result.secondNumber}-${result.thirdNumber}`,
+      status,
+      nextUsageNote: `次回修正: ${badKeys.length ? badKeys.join(" / ") : "現行ルール継続"}。実ペース「${result.actualPace || "未入力"}」/ 4角「${result.cornerMemo || "未入力"}」/ 馬場「${result.trackBias || "未入力"}」。${result.memo || ""}`.trim(),
+      race,
+      predictionCheck: judgements,
+      learningPoint: afterRule,
+      adoptRule: status === "採用" ? afterRule : "",
+      pendingRule: status === "保留" ? afterRule : "",
+      deleteRule: status === "削除" ? afterRule : "",
+    };
+  };
+
+  const buildFundCurveRecord = ({ report, result, totalInvestment, payout, roi }) => ({
+    id: `fund-curve:${result.date}:${result.course}:${result.raceNumber}`,
+    source: "production-result-validation",
+    savedAt: new Date().toISOString(),
+    date: result.date,
+    course: result.course || report.predictionLog.race?.course || "未設定",
+    raceNumber: result.raceNumber,
+    ticketType: "本番レース合計",
+    stake: totalInvestment,
+    payout,
+    profit: payout - totalInvestment,
+    roi,
+    hit: payout > 0,
+    memo: result.memo,
+  });
+
+  const validateProductionResult = ({ resultInput = {}, runReport = null, storage = window.localStorage } = {}) => {
+    const result = normalizeResultInput(resultInput);
+    const matchedReport = normalizeReport(runReport || findMatchingProductionRunReport(result, storage));
+    if (!matchedReport?.id) throw new Error("productionRunReportsに一致する本番予想レポートがありません");
+    const prediction = matchedReport.predictionLog;
+    const totalInvestment = result.investmentAmount || prediction.recommendedInvestmentAmount || prediction.recommendedInvestments.reduce((sum, item) => sum + toNumber(item.recommendedAmount, 0), 0);
+    const expectedTrifectaHit = prediction.trifectaCandidates.some((ticket) => ticketNumbers(ticket).join("-") === [result.firstNumber, result.secondNumber, result.thirdNumber].join("-"));
+    const payout = result.payoutAmount || (expectedTrifectaHit ? result.trifectaPayout : 0);
+    const roi = totalInvestment > 0 ? round((payout / totalInvestment) * 100, 1) : 0;
+    const judgements = buildJudgements(prediction, result, payout, totalInvestment);
+    const labels = labelsFromJudgements(judgements);
+    const goodJudgements = [
+      judgements.mainHit ? labels.mainHit : null,
+      judgements.trifectaHit ? labels.trifectaHit : null,
+      judgements.win5Hit ? labels.win5Hit : null,
+      judgements.kamianaHit ? labels.kamianaHit : null,
+      judgements.dangerPopularFlew ? labels.dangerPopularFlew : null,
+      judgements.godRaceSuccess ? labels.godRaceSuccess : null,
+      judgements.evSuccess ? labels.evSuccess : null,
+      judgements.capitalSuccess ? labels.capitalSuccess : null,
+    ].filter(Boolean);
+    const badJudgements = [
+      !judgements.mainHit ? labels.mainHit : null,
+      !judgements.trifectaHit ? labels.trifectaHit : null,
+      !judgements.win5Hit ? labels.win5Hit : null,
+      !judgements.kamianaHit ? labels.kamianaHit : null,
+      !judgements.dangerPopularFlew ? labels.dangerPopularFlew : null,
+      !judgements.godRaceSuccess ? labels.godRaceSuccess : null,
+      !judgements.evSuccess ? labels.evSuccess : null,
+      !judgements.capitalSuccess ? labels.capitalSuccess : null,
+    ].filter(Boolean);
+    const osUpdateCandidates = buildOsUpdateCandidates(judgements, result, roi);
+    const nextFixPoints = [
+      !judgements.trifectaHit ? "三連単フォーメーションの相手順序と点数を再調整" : null,
+      !judgements.kamianaHit ? "神穴候補の馬場傾向・4角条件を再学習" : null,
+      !judgements.dangerPopularFlew ? "危険人気馬の消し閾値を緩和" : null,
+      !judgements.evSuccess ? "EV上位のオッズ妙味閾値を再検証" : null,
+      !judgements.capitalSuccess ? "資金配分を防御寄りに補正" : null,
+      result.cornerMemo ? `4角位置メモ「${result.cornerMemo}」を展開補正へ反映` : null,
+      result.trackBias ? `馬場傾向「${result.trackBias}」を馬場バイアス補正へ反映` : null,
+    ].filter(Boolean);
+    const selfEvolutionLog = buildSelfEvolutionLog({ report: matchedReport, result, judgements, roi, totalInvestment, payout, osUpdateCandidates });
+    const fundCurveRecord = buildFundCurveRecord({ report: matchedReport, result, totalInvestment, payout, roi });
+    return {
+      id: `production-result-validation:${result.date}:${result.course}:${result.raceNumber}`,
+      generatedAt: new Date().toISOString(),
+      storageKey: STORAGE_KEY,
+      matchedRunReportId: matchedReport.id,
+      race: prediction.race || {},
+      result,
+      judgements,
+      labels,
+      summary: {
+        hit: judgements.trifectaHit || judgements.win5Hit || payout > 0,
+        hitLabel: judgements.trifectaHit || judgements.win5Hit || payout > 0 ? "的中" : "不的中",
+        roi,
+        goodJudgements,
+        badJudgements,
+        nextFixPoints,
+      },
+      totalInvestment,
+      payout,
+      roi,
+      osUpdateCandidates,
+      selfEvolutionLog,
+      fundCurveRecord,
+    };
+  };
+
+  const loadValidationReports = (storage = window.localStorage) => {
+    const parsed = safeParse(storage, STORAGE_KEY, []);
+    return Array.isArray(parsed) ? parsed : [];
+  };
+
+  const saveValidationReport = (validation, storage = window.localStorage) => {
+    if (!storage?.setItem) return [validation];
+    const reports = [validation, ...loadValidationReports(storage).filter((item) => item.id !== validation.id)].slice(0, 100);
+    storage.setItem(STORAGE_KEY, JSON.stringify(reports));
+    return reports;
+  };
+
+  const appendSelfEvolutionLog = (validation, storage = window.localStorage) => {
+    if (!validation?.selfEvolutionLog || !storage?.setItem) return null;
+    const current = safeParse(storage, SELF_EVOLUTION_STORAGE_KEY, null) || safeParse(storage, SELF_EVOLUTION_LEGACY_KEY, null) || {};
+    const logs = current.logs || { resultVerifications: [], backtests: [], improvementProposals: [] };
+    const collection = asArray(logs.resultVerifications);
+    const index = collection.findIndex((item) => item.id === validation.selfEvolutionLog.id);
+    if (index >= 0) collection[index] = validation.selfEvolutionLog;
+    else collection.unshift(validation.selfEvolutionLog);
+    const payload = {
+      storageVersion: 1,
+      type: "selfEvolutionLogs",
+      provider: "localStorage",
+      updatedAt: new Date().toISOString(),
+      logs: { ...logs, resultVerifications: collection.slice(0, 100) },
+    };
+    storage.setItem(SELF_EVOLUTION_STORAGE_KEY, JSON.stringify(payload));
+    storage.setItem(SELF_EVOLUTION_LEGACY_KEY, JSON.stringify(payload));
+    return payload;
+  };
+
+  const appendFundCurveRecord = (validation, storage = window.localStorage) => {
+    if (!validation?.fundCurveRecord || !storage?.setItem) return [];
+    const records = safeParse(storage, FUND_CURVE_STORAGE_KEY, []);
+    const collection = Array.isArray(records) ? records : asArray(records.records);
+    const nextRecords = [validation.fundCurveRecord, ...collection.filter((item) => item.id !== validation.fundCurveRecord.id)].slice(0, 500);
+    storage.setItem(FUND_CURVE_STORAGE_KEY, JSON.stringify(nextRecords));
+    return nextRecords;
+  };
+
+  const validateAndPersistProductionResult = (options = {}, storage = window.localStorage) => {
+    const validation = validateProductionResult({ ...options, storage });
+    saveValidationReport(validation, storage);
+    appendSelfEvolutionLog(validation, storage);
+    appendFundCurveRecord(validation, storage);
+    return validation;
+  };
+
+  window.HashimotoProductionResultValidationEngine = {
+    STORAGE_KEY,
+    PRODUCTION_RUN_REPORT_STORAGE_KEY,
+    SELF_EVOLUTION_STORAGE_KEY,
+    SELF_EVOLUTION_LEGACY_KEY,
+    FUND_CURVE_STORAGE_KEY,
+    normalizeResultInput,
+    loadProductionRunReports,
+    findMatchingProductionRunReport,
+    validateProductionResult,
+    loadValidationReports,
+    saveValidationReport,
+    appendSelfEvolutionLog,
+    appendFundCurveRecord,
+    validateAndPersistProductionResult,
+  };
+})();
+
+
+(() => {
   const STORAGE_KEY = "operationDiagnosticReports";
 
   const asArray = (value) => Array.isArray(value) ? value : [];
@@ -2005,13 +2325,13 @@
     { id: "futureSimulator", label: "未来シミュレーター", type: "auto", source: "sampleRaceTestLog.simulationWinTop5" },
     { id: "evMonitoring", label: "EV監視", type: "auto", source: "sampleRaceTestLog.evTop" },
     { id: "capitalAllocation", label: "資金配分", type: "auto", source: "sampleRaceTestLog.recommendedInvestments" },
-    { id: "fundCurveRoi", label: "資金曲線/ROI", type: "auto", source: "sampleRaceResultValidationLog / roiRecords" },
+    { id: "fundCurveRoi", label: "資金曲線/ROI", type: "auto", source: "sampleRaceResultValidationLog / productionResultValidationReports / fundCurveRecords / roiRecords" },
     { id: "godRaceJudgement", label: "神レース判定", type: "auto", source: "sampleRaceTestLog.godRace" },
     { id: "dangerPopularExclusion", label: "危険人気馬除外", type: "manual", source: "画面確認" },
-    { id: "resultInput", label: "結果入力", type: "auto", source: "sampleRaceResultValidationLog / raceResults" },
-    { id: "resultVerification", label: "結果検証", type: "auto", source: "sampleRaceResultValidationLog.judgements" },
+    { id: "resultInput", label: "結果入力", type: "auto", source: "sampleRaceResultValidationLog / productionResultValidationReports / raceResults" },
+    { id: "resultVerification", label: "結果検証", type: "auto", source: "sampleRaceResultValidationLog.judgements / productionResultValidationReports.judgements" },
     { id: "selfEvolutionLog", label: "自己進化ログ", type: "auto", source: "selfEvolutionLogs" },
-    { id: "osUpdateCandidates", label: "OSアップデート候補", type: "auto", source: "sampleRaceResultValidationLog.osUpdateCandidates" },
+    { id: "osUpdateCandidates", label: "OSアップデート候補", type: "auto", source: "sampleRaceResultValidationLog.osUpdateCandidates / productionResultValidationReports.osUpdateCandidates" },
     { id: "diagnosticReport", label: "診断レポート生成", type: "auto", source: "operationDiagnosticReports" },
     { id: "jsonExport", label: "JSONエクスポート", type: "manual", source: "JSON出力ボタン確認" },
   ];
@@ -2039,14 +2359,17 @@
     const validation = readStorageJson(storage, "sampleRaceResultValidationLog", null);
     const reports = readStorageJson(storage, "operationDiagnosticReports", []);
     const latestReport = latestArrayItem(reports);
+    const productionValidations = readStorageJson(storage, "productionResultValidationReports", []);
+    const latestProductionValidation = latestArrayItem(productionValidations);
+    const fundCurveRecords = readStorageJson(storage, "fundCurveRecords", []);
     const raceResults = readStorageJson(storage, "raceResults", null);
     const roiRecords = readStorageJson(storage, "roiRecords", []);
     const scoreAdjustments = readStorageJson(storage, "hashimoto-keiba-ai:score-verification-adjustments:v1", {});
     const selfEvolutionV1 = readStorageJson(storage, "hashimoto-keiba-ai:self-evolution-logs:v1", null);
     const selfEvolutionLegacy = readStorageJson(storage, "selfEvolutionLogs", null);
     const godRace = readStorageJson(storage, "godRaceJudgementResults", null);
-    const resultInputExists = Boolean(validation?.result || validation?.resultInput || hasItems(raceResults?.items) || hasItems(raceResults?.races));
-    const osCandidates = validation?.osUpdateCandidates || latestReport?.osUpdateCandidates || sample?.osUpdateCandidates;
+    const resultInputExists = Boolean(validation?.result || latestProductionValidation?.result || validation?.resultInput || hasItems(raceResults?.items) || hasItems(raceResults?.races));
+    const osCandidates = validation?.osUpdateCandidates || latestProductionValidation?.osUpdateCandidates || latestReport?.osUpdateCandidates || sample?.osUpdateCandidates;
     const hasOsCandidates = ["adopt", "pending", "delete"].some((key) => hasItems(osCandidates?.[key]));
 
     const checks = {
@@ -2060,11 +2383,11 @@
       futureSimulator: [hasItems(sample?.simulationWinTop5), "未来シミュレーション結果を確認"],
       evMonitoring: [hasItems(sample?.evTop), "EVランキングを確認"],
       capitalAllocation: [hasItems(sample?.recommendedInvestments), "推奨投資額を確認"],
-      fundCurveRoi: [Number.isFinite(Number(validation?.roi)) || hasItems(roiRecords) || Number.isFinite(Number(latestReport?.roi)), "ROIデータを確認"],
+      fundCurveRoi: [Number.isFinite(Number(validation?.roi)) || Number.isFinite(Number(latestProductionValidation?.roi)) || hasItems(fundCurveRecords) || hasItems(roiRecords) || Number.isFinite(Number(latestReport?.roi)), "ROIデータを確認"],
       godRaceJudgement: [Boolean(sample?.godRace?.label || godRace?.label || latestReport?.godRaceJudgement?.label), "神レース判定を確認"],
       resultInput: [resultInputExists, "結果入力データを確認"],
-      resultVerification: [Boolean(validation?.judgements || latestReport?.resultMatching?.status === "照合済"), "結果照合ログを確認"],
-      selfEvolutionLog: [Boolean(validation?.selfEvolutionLog || hasItems(selfEvolutionV1?.logs?.resultVerifications) || hasItems(selfEvolutionLegacy?.logs?.resultVerifications)), "自己進化ログを確認"],
+      resultVerification: [Boolean(validation?.judgements || latestProductionValidation?.judgements || latestReport?.resultMatching?.status === "照合済"), "結果照合ログを確認"],
+      selfEvolutionLog: [Boolean(validation?.selfEvolutionLog || latestProductionValidation?.selfEvolutionLog || hasItems(selfEvolutionV1?.logs?.resultVerifications) || hasItems(selfEvolutionLegacy?.logs?.resultVerifications)), "自己進化ログを確認"],
       osUpdateCandidates: [hasOsCandidates, "OSアップデート候補を確認"],
       diagnosticReport: [hasItems(reports), "診断レポート保存を確認"],
     };

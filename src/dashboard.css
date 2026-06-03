@@ -5009,3 +5009,34 @@ h1 {
     justify-self: start;
   }
 }
+
+.production-result-panel {
+  border-color: rgba(212, 175, 55, 0.42);
+  background: linear-gradient(145deg, rgba(18, 14, 7, 0.96), rgba(7, 7, 10, 0.98));
+}
+
+.production-result-form {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.production-result-summary article {
+  border-color: rgba(212, 175, 55, 0.34);
+}
+
+.production-validation-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 980px) {
+  .production-result-form,
+  .production-validation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .production-result-form,
+  .production-validation-grid {
+    grid-template-columns: 1fr;
+  }
+}
