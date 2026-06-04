@@ -6216,3 +6216,81 @@ h1 {
     width: 100%;
   }
 }
+
+/* Phase6-2 AI weight auto tuning engine */
+.ai-weight-card {
+  border-color: rgba(212, 175, 55, 0.42);
+  background: linear-gradient(145deg, rgba(12, 10, 4, 0.96), rgba(45, 33, 9, 0.9));
+}
+
+.ai-weight-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.ai-weight-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.ai-weight-item {
+  display: grid;
+  grid-template-columns: 1fr 7.5rem;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.9rem;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.ai-weight-item strong,
+.ai-weight-item small {
+  display: block;
+}
+
+.ai-weight-item small {
+  margin-top: 0.25rem;
+  color: rgba(245, 231, 177, 0.68);
+  line-height: 1.45;
+}
+
+.ai-weight-item input {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid rgba(212, 175, 55, 0.48);
+  border-radius: 12px;
+  background: rgba(10, 8, 3, 0.88);
+  color: #f9e8a7;
+  font-weight: 800;
+  text-align: right;
+}
+
+.ai-weight-item input:focus {
+  outline: 2px solid rgba(245, 198, 77, 0.45);
+  outline-offset: 2px;
+}
+
+.ai-weight-log-table {
+  margin-top: 1.2rem;
+}
+
+@media (max-width: 900px) {
+  .ai-weight-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .ai-weight-actions,
+  .ai-weight-actions .button {
+    width: 100%;
+  }
+
+  .ai-weight-item {
+    grid-template-columns: 1fr;
+  }
+}

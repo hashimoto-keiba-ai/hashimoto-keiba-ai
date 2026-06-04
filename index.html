@@ -33,6 +33,7 @@
           <a href="#race-database-panel">Race Database</a>
           <a href="#weakness-analysis-panel">AI弱点分析</a>
           <a href="#self-learning-engine-panel">自己学習</a>
+          <a href="#ai-weight-panel">AI重み</a>
           <a href="#today-races">今日のレース</a>
           <a href="#real-data-entry">実データ入力</a>
           <a href="#result-csv-import">結果CSV取込</a>
@@ -96,6 +97,7 @@
           <a href="#race-database-panel"><span>㉑</span>Race Database</a>
           <a href="#weakness-analysis-panel"><span>㉒</span>AI弱点分析</a>
           <a href="#self-learning-engine-panel"><span>㉓</span>自己学習エンジン</a>
+          <a href="#ai-weight-panel"><span>㉔</span>AI重み自動調整</a>
         </div>
 
         <section class="production-mode-switch" aria-label="本番運用モードスイッチ">
@@ -462,6 +464,41 @@
           </div>
 
           <p id="self-learning-source-count" class="self-learning-source-count">参照: raceDatabase / weaknessAnalysisReports / productionResultValidationReports / fundCurveRecords / selfEvolutionLogs / 保存先 selfLearningSuggestions</p>
+        </div>
+      </section>
+
+      <section id="ai-weight-panel" class="ai-weight-card card card--wide card--featured" aria-label="Phase6-2 AI重み自動調整エンジンパネル">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE6-2 AI WEIGHT AUTO TUNING</p>
+              <h2>AI重み自動調整エンジン</h2>
+              <p class="card__lead"><code>selfLearningSuggestions</code> の採用済み改善提案をもとに、AI指数・神穴指数・危険人気馬指数の重みを安全範囲 <code>0.3〜2.0</code> で微調整します。</p>
+            </div>
+            <span id="ai-weight-status" class="status-pill status-pill--live">重み管理待機</span>
+          </div>
+
+          <div class="ai-weight-actions">
+            <button id="ai-weight-auto-adjust" class="button button--primary" type="button">採用提案から自動調整</button>
+            <button id="ai-weight-save" class="button button--ghost" type="button">手動変更を保存</button>
+            <button id="ai-weight-reset" class="button button--ghost" type="button">初期値に戻す</button>
+            <button id="ai-weight-revert" class="button button--ghost" type="button">前回値に戻す</button>
+          </div>
+
+          <div id="ai-weight-grid" class="ai-weight-grid" aria-label="AI重み設定入力"></div>
+
+          <div class="table-wrap ai-weight-log-table">
+            <table class="data-table data-table--compact">
+              <thead>
+                <tr><th scope="col">日時</th><th scope="col">対象重み</th><th scope="col">変更</th><th scope="col">理由</th><th scope="col">モード</th></tr>
+              </thead>
+              <tbody id="ai-weight-log-body">
+                <tr><td data-label="履歴" colspan="5">重み変更履歴はまだありません。</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="self-learning-source-count">保存先: <code>aiWeightSettings</code> / 変更履歴: <code>aiWeightAdjustmentLogs</code> / 参照元: <code>selfLearningSuggestions</code></p>
         </div>
       </section>
 
