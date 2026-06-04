@@ -30,6 +30,7 @@
         <div class="nav-links">
           <a href="#command-dashboard">司令塔</a>
           <a href="#complete-integration-dashboard">完全統合</a>
+          <a href="#final-health-check-panel">最終ヘルス</a>
           <a href="#production-operation-mode">本番運用モード</a>
           <a href="#race-database-panel">Race Database</a>
           <a href="#weakness-analysis-panel">AI弱点分析</a>
@@ -78,6 +79,7 @@
         <div class="operation-launcher" aria-label="実運用モード操作メニュー">
           <a href="#command-dashboard"><span>①</span>総合司令塔UI</a>
           <a href="#complete-integration-dashboard"><span>㉕</span>完全統合ダッシュボード</a>
+          <a href="#final-health-check-panel"><span>㉖</span>最終統合ヘルスチェック</a>
           <a href="#today-races"><span>②</span>今日のレース一覧</a>
           <a href="#real-data-entry"><span>③</span>実データ入力フォーム</a>
           <a href="#result-csv-import"><span>③-2</span>結果CSV取込</a>
@@ -206,6 +208,61 @@
             </section>
           </div>
           <p id="complete-dashboard-source-keys" class="complete-dashboard-source-keys">参照: productionRaceEntries / productionRunReports / raceDatabase / raceSelectionReports / fundManagementReports / roiOptimizationReports / weaknessAnalysisReports / selfLearningSuggestions / courseEvolutionReports / fundCurveRecords / productionOperationLogs</p>
+        </div>
+      </section>
+
+      <section id="final-health-check-panel" class="final-health-card card card--wide card--featured" aria-label="Phase7-2 最終統合ヘルスチェック">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE7-2 FINAL INTEGRATION HEALTH CHECK</p>
+              <h2>最終統合ヘルスチェック</h2>
+              <p class="card__lead">完全統合ダッシュボード導入後に、全AI機能・localStorage・データ連動・画面表示をまとめて確認する最終診断パネルです。</p>
+            </div>
+            <span id="final-health-status" class="status-pill status-pill--live">ヘルスチェック待機</span>
+          </div>
+
+          <div class="final-health-summary" aria-label="総合ヘルススコア">
+            <article class="final-health-score-card"><span>総合ヘルススコア</span><strong id="final-health-score">0</strong><small>0〜100点 / finalHealthCheckReports保存</small></article>
+            <article><span>正常</span><strong id="final-health-normal-count">0</strong><small>全機能・保存キー</small></article>
+            <article><span>要確認</span><strong id="final-health-review-count">0</strong><small>データ不足・注意ログ</small></article>
+            <article><span>未実行</span><strong id="final-health-idle-count">0</strong><small>未保存・未生成</small></article>
+            <article><span>エラー</span><strong id="final-health-error-count">0</strong><small>読込失敗・失敗ログ</small></article>
+          </div>
+
+          <div class="complete-dashboard-actions" aria-label="最終ヘルスチェック操作">
+            <button id="final-health-run" class="button button--primary" type="button">最終ヘルスチェック実行</button>
+            <button id="final-health-scroll-issues" class="button button--ghost" type="button">問題一覧へ移動</button>
+          </div>
+
+          <div class="final-health-layout">
+            <section class="final-health-panel">
+              <h3>AI機能・画面表示ヘルス</h3>
+              <ul id="final-health-item-list" class="final-health-list"></ul>
+            </section>
+            <section class="final-health-panel">
+              <h3>localStorageキー確認</h3>
+              <div class="table-wrap">
+                <table class="data-table data-table--compact">
+                  <thead><tr><th scope="col">キー</th><th scope="col">判定</th><th scope="col">件数/状態</th><th scope="col">メッセージ</th></tr></thead>
+                  <tbody id="final-health-storage-body"><tr><td data-label="状態" colspan="4">localStorage確認待ち</td></tr></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <div class="final-health-layout final-health-layout--issues">
+            <section id="final-health-issues" class="final-health-panel">
+              <h3>問題一覧</h3>
+              <ul id="final-health-issue-list" class="final-health-list final-health-list--issues"></ul>
+            </section>
+            <section class="final-health-panel">
+              <h3>修復ガイド</h3>
+              <div id="final-health-repair-guide" class="final-health-repair-guide"></div>
+            </section>
+          </div>
+
+          <p id="final-health-source-keys" class="complete-dashboard-source-keys">保存先: finalHealthCheckReports / 確認対象: 本番運用・自己学習・資金管理・バックアップ・完全統合ダッシュボード</p>
         </div>
       </section>
 
