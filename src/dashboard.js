@@ -6069,3 +6069,289 @@
   documentRef.querySelector("#race-selection-export")?.addEventListener("click", downloadReport);
   render({ persist: true });
 })();
+
+(() => {
+  const REPORT_STORAGE_KEY = "fundManagementReports";
+  const SETTINGS_STORAGE_KEY = "fundManagementSettings";
+  const MAX_STORED_REPORTS = 50;
+  const SOURCE_KEYS = ["raceSelectionReports", "dailyRaceRankings", "roiOptimizationReports", "raceDatabase", "fundCurveRecords", "productionResultValidationReports"];
+  const TICKET_TYPES = ["三連単", "WIN5", "単勝", "複勝", "馬連", "ワイド"];
+  const FUND_MODES = {
+    conservative: { label: "保守型", baseRate: 0.012, maxRate: 0.035, trifecta: 0.16, win5: 0.04, win: 0.18, place: 0.28, quinella: 0.14, wide: 0.2 },
+    standard: { label: "標準型", baseRate: 0.02, maxRate: 0.06, trifecta: 0.24, win5: 0.08, win: 0.16, place: 0.2, quinella: 0.16, wide: 0.16 },
+    aggressive: { label: "攻撃型", baseRate: 0.032, maxRate: 0.09, trifecta: 0.34, win5: 0.14, win: 0.13, place: 0.12, quinella: 0.15, wide: 0.12 },
+    ultra: { label: "超攻撃型", baseRate: 0.048, maxRate: 0.14, trifecta: 0.42, win5: 0.22, win: 0.1, place: 0.07, quinella: 0.11, wide: 0.08 },
+  };
+  const DEFAULT_SETTINGS = { mode: "standard", losingProtection: { threeLossMultiplier: 0.5, stopAtLosses: 5 }, winningAcceleration: { threeWinMultiplier: 1.2, fiveWinMultiplier: 1.5 } };
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, toNumber(value, min)));
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const readJson = (storage, key, fallback) => {
+    try {
+      const raw = storage?.getItem?.(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const writeJson = (storage, key, value) => {
+    storage?.setItem?.(key, JSON.stringify(value));
+    return value;
+  };
+  const currency = (value) => `${Math.round(toNumber(value)).toLocaleString()}円`;
+  const modePreset = (mode) => FUND_MODES[mode] || FUND_MODES.standard;
+  const normalizeSettings = (settings = {}) => ({
+    ...DEFAULT_SETTINGS,
+    ...settings,
+    losingProtection: { ...DEFAULT_SETTINGS.losingProtection, ...(settings.losingProtection || {}) },
+    winningAcceleration: { ...DEFAULT_SETTINGS.winningAcceleration, ...(settings.winningAcceleration || {}) },
+  });
+
+  const extractInvestment = (record = {}) => toNumber(record.investment ?? record.totalInvestment ?? record.stake ?? record.betAmount ?? record.amount, 0);
+  const extractPayout = (record = {}) => toNumber(record.payout ?? record.totalPayout ?? record.returnAmount ?? record.refund ?? record.payoff, 0);
+  const collectSettledRecords = (storage) => asArray(readJson(storage, "fundCurveRecords", []))
+    .concat(asArray(readJson(storage, "raceDatabase", [])), asArray(readJson(storage, "productionResultValidationReports", [])))
+    .filter((record) => extractInvestment(record) > 0 || extractPayout(record) > 0);
+
+  const calculateStreaks = (records = []) => records.reduce((state, record) => {
+    const investment = extractInvestment(record);
+    const payout = extractPayout(record);
+    if (investment <= 0 && payout <= 0) return state;
+    if (payout > investment) return { losingStreak: 0, winningStreak: state.winningStreak + 1 };
+    return { losingStreak: state.losingStreak + 1, winningStreak: 0 };
+  }, { losingStreak: 0, winningStreak: 0 });
+
+  const calculateMaxDrawdown = (records = [], initialBankroll = 0) => {
+    let equity = toNumber(initialBankroll, 0);
+    let peak = equity;
+    let maxDrawdown = 0;
+    records.forEach((record) => {
+      equity += extractPayout(record) - extractInvestment(record);
+      peak = Math.max(peak, equity);
+      const drawdown = peak > 0 ? ((peak - equity) / peak) * 100 : 0;
+      maxDrawdown = Math.max(maxDrawdown, drawdown);
+    });
+    return round(maxDrawdown, 1);
+  };
+
+  const calculateRiskLevel = ({ mode = "standard", bankroll = 0, recommendedStake = 0, losingStreak = 0, maxDrawdown = 0, roi = 100 } = {}) => {
+    const exposureRate = bankroll > 0 ? (recommendedStake / bankroll) * 100 : 0;
+    const riskScore = exposureRate * 6 + losingStreak * 10 + Math.max(0, 100 - roi) * 0.35 + maxDrawdown * 0.8 + (mode === "ultra" ? 18 : mode === "aggressive" ? 10 : mode === "conservative" ? -8 : 0);
+    if (riskScore >= 78 || losingStreak >= 5) return "危険";
+    if (riskScore >= 55) return "高リスク";
+    if (riskScore >= 30) return "中リスク";
+    return "低リスク";
+  };
+
+  const applyStreakAdjustment = (stake, { losingStreak = 0, winningStreak = 0, settings = DEFAULT_SETTINGS } = {}) => {
+    const normalized = normalizeSettings(settings);
+    if (losingStreak >= normalized.losingProtection.stopAtLosses) return { stake: 0, multiplier: 0, reason: `${losingStreak}連敗のため投資停止` };
+    if (losingStreak >= 3) return { stake: stake * normalized.losingProtection.threeLossMultiplier, multiplier: normalized.losingProtection.threeLossMultiplier, reason: `${losingStreak}連敗保護で投資額${Math.round(normalized.losingProtection.threeLossMultiplier * 100)}%` };
+    if (winningStreak >= 5) return { stake: stake * normalized.winningAcceleration.fiveWinMultiplier, multiplier: normalized.winningAcceleration.fiveWinMultiplier, reason: `${winningStreak}連勝加速で投資額${Math.round(normalized.winningAcceleration.fiveWinMultiplier * 100)}%` };
+    if (winningStreak >= 3) return { stake: stake * normalized.winningAcceleration.threeWinMultiplier, multiplier: normalized.winningAcceleration.threeWinMultiplier, reason: `${winningStreak}連勝加速で投資額${Math.round(normalized.winningAcceleration.threeWinMultiplier * 100)}%` };
+    return { stake, multiplier: 1, reason: "通常運用" };
+  };
+
+  const getLatestRaceRanking = (storage) => {
+    const dailyRanking = readJson(storage, "dailyRaceRankings", null)?.ranking;
+    if (Array.isArray(dailyRanking)) return dailyRanking;
+    const latestReport = asArray(readJson(storage, "raceSelectionReports", []))[0];
+    return asArray(latestReport?.ranking);
+  };
+
+  const raceProposalFromRecommendation = (recommendation = "", score = 0) => {
+    if (recommendation === "資金集中" || score >= 88) return "資金集中";
+    if (recommendation === "通常購入" || score >= 75) return "通常購入";
+    if (recommendation === "少額購入" || score >= 48) return "少額購入";
+    return "見送り";
+  };
+
+  const calculateRaceProposals = ({ ranking = [], recommendedStake = 0, riskLevel = "低リスク" } = {}) => {
+    const eligible = asArray(ranking).slice(0, 10).map((race) => {
+      const proposal = raceProposalFromRecommendation(race.recommendation, race.score);
+      const weight = proposal === "資金集中" ? 1.35 : proposal === "通常購入" ? 1 : proposal === "少額購入" ? 0.45 : 0;
+      return { ...race, proposal, weight };
+    });
+    const totalWeight = eligible.reduce((sum, race) => sum + race.weight, 0) || 1;
+    return eligible.map((race) => ({
+      raceLabel: race.raceLabel || `${race.course || "未設定"}${race.raceNumber || "?"}R`,
+      score: round(race.score, 1),
+      aiRecommendation: race.recommendation || "未判定",
+      investmentProposal: race.proposal,
+      suggestedStake: Math.round(recommendedStake * (race.weight / totalWeight)),
+      risk: race.proposal === "見送り" ? "危険" : race.score >= 88 ? "中リスク" : race.score >= 75 ? "低リスク" : "高リスク",
+    }));
+  };
+
+  const calculateTicketAllocation = ({ stake = 0, mode = "standard", riskLevel = "低リスク", roiReport = null } = {}) => {
+    const preset = modePreset(mode);
+    const riskDefense = riskLevel === "危険" ? 0 : riskLevel === "高リスク" ? 0.72 : riskLevel === "中リスク" ? 0.9 : 1;
+    const roiMetrics = roiReport?.metrics || roiReport?.summary || {};
+    const trifectaBoost = toNumber(roiMetrics.trifectaRoi, 100) >= 115 ? 1.12 : toNumber(roiMetrics.trifectaRoi, 100) < 85 ? 0.72 : 1;
+    const win5Boost = toNumber(roiMetrics.win5Roi, 100) >= 120 ? 1.12 : toNumber(roiMetrics.win5Roi, 100) < 80 ? 0.55 : 1;
+    const raw = [
+      { ticketType: "三連単", ratio: preset.trifecta * trifectaBoost * riskDefense },
+      { ticketType: "WIN5", ratio: preset.win5 * win5Boost * riskDefense },
+      { ticketType: "単勝", ratio: preset.win * (riskLevel === "低リスク" ? 1.05 : 1) },
+      { ticketType: "複勝", ratio: preset.place * (riskLevel === "高リスク" ? 1.35 : riskLevel === "危険" ? 1.6 : 1) },
+      { ticketType: "馬連", ratio: preset.quinella },
+      { ticketType: "ワイド", ratio: preset.wide * (riskLevel === "高リスク" ? 1.25 : riskLevel === "危険" ? 1.45 : 1) },
+    ];
+    const ratioSum = raw.reduce((sum, item) => sum + item.ratio, 0) || 1;
+    return raw.map((item) => ({ ticketType: item.ticketType, ratio: round((item.ratio / ratioSum) * 100, 1), amount: Math.round(stake * (item.ratio / ratioSum)) }));
+  };
+
+  const chooseRecommendedTicketType = (allocation = [], riskLevel = "低リスク") => {
+    if (riskLevel === "危険") return "見送り";
+    return [...allocation].sort((a, b) => b.amount - a.amount)[0]?.ticketType || TICKET_TYPES[0];
+  };
+
+  const buildFundManagementReport = ({ currentBankroll = null, mode = null, storage = window.localStorage, persist = false, date = new Date().toISOString().slice(0, 10) } = {}) => {
+    const savedSettings = normalizeSettings(readJson(storage, SETTINGS_STORAGE_KEY, DEFAULT_SETTINGS));
+    const activeMode = mode || savedSettings.mode || "standard";
+    const settings = normalizeSettings({ ...savedSettings, mode: activeMode });
+    const bankroll = Math.max(0, toNumber(currentBankroll ?? settings.currentBankroll, 100000));
+    const records = collectSettledRecords(storage);
+    const totals = records.reduce((sum, record) => ({ investment: sum.investment + extractInvestment(record), payout: sum.payout + extractPayout(record) }), { investment: 0, payout: 0 });
+    const roi = totals.investment > 0 ? round((totals.payout / totals.investment) * 100, 1) : 100;
+    const profit = totals.payout - totals.investment;
+    const streaks = calculateStreaks(records);
+    const maxDrawdown = calculateMaxDrawdown(records, bankroll - profit);
+    const preset = modePreset(activeMode);
+    const latestRoiReport = asArray(readJson(storage, "roiOptimizationReports", []))[0] || null;
+    const ranking = getLatestRaceRanking(storage);
+    const topScore = toNumber(ranking[0]?.score, 55);
+    const roiMultiplier = latestRoiReport?.summary?.totalRoi >= 120 || roi >= 120 ? 1.12 : roi < 80 ? 0.65 : roi < 95 ? 0.85 : 1;
+    const selectionMultiplier = topScore >= 88 ? 1.2 : topScore >= 75 ? 1.05 : topScore < 48 ? 0.55 : 0.85;
+    const baseStake = bankroll * preset.baseRate * roiMultiplier * selectionMultiplier;
+    const streakAdjusted = applyStreakAdjustment(baseStake, { ...streaks, settings });
+    const maxStake = bankroll * preset.maxRate;
+    const recommendedStake = Math.min(Math.round(streakAdjusted.stake), Math.round(maxStake));
+    const riskLevel = calculateRiskLevel({ mode: activeMode, bankroll, recommendedStake, losingStreak: streaks.losingStreak, maxDrawdown, roi });
+    const allocation = calculateTicketAllocation({ stake: recommendedStake, mode: activeMode, riskLevel, roiReport: latestRoiReport });
+    const raceProposals = calculateRaceProposals({ ranking, recommendedStake, riskLevel });
+    const report = {
+      id: `fund-management-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+      generatedAt: new Date().toISOString(),
+      date,
+      storageKeys: { reports: REPORT_STORAGE_KEY, settings: SETTINGS_STORAGE_KEY },
+      sourceStorageKeys: SOURCE_KEYS,
+      mode: activeMode,
+      modeLabel: preset.label,
+      settings,
+      summary: { currentBankroll: bankroll, totalInvestment: totals.investment, totalPayout: totals.payout, totalProfit: profit, roi, maxDrawdown, losingStreak: streaks.losingStreak, winningStreak: streaks.winningStreak },
+      recommendation: { recommendedStake, maxStake: Math.round(maxStake), recommendedTicketType: chooseRecommendedTicketType(allocation, riskLevel), riskLevel, streakAdjustment: streakAdjusted.reason, baseStake: Math.round(baseStake) },
+      ticketAllocation: allocation,
+      raceProposals,
+    };
+    if (persist) {
+      const reports = asArray(readJson(storage, REPORT_STORAGE_KEY, []));
+      writeJson(storage, REPORT_STORAGE_KEY, [report, ...reports].slice(0, MAX_STORED_REPORTS));
+      writeJson(storage, SETTINGS_STORAGE_KEY, { ...settings, currentBankroll: bankroll, mode: activeMode, lastUpdated: report.generatedAt });
+    }
+    return report;
+  };
+
+  const exportFundManagementJson = ({ storage = window.localStorage, currentBankroll = null, mode = null } = {}) => JSON.stringify(buildFundManagementReport({ storage, currentBankroll, mode, persist: true }), null, 2);
+
+  window.HashimotoFundManagementEngine = {
+    REPORT_STORAGE_KEY,
+    SETTINGS_STORAGE_KEY,
+    SOURCE_KEYS,
+    FUND_MODES,
+    TICKET_TYPES,
+    DEFAULT_SETTINGS,
+    calculateStreaks,
+    calculateMaxDrawdown,
+    applyStreakAdjustment,
+    calculateRiskLevel,
+    calculateTicketAllocation,
+    calculateRaceProposals,
+    buildFundManagementReport,
+    exportFundManagementJson,
+    currency,
+  };
+})();
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoFundManagementEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#fund-management-panel")) return;
+  const setText = (selector, value) => {
+    const target = documentRef.querySelector(selector);
+    if (target) target.textContent = value;
+  };
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+  const bankrollInput = documentRef.querySelector("#fund-management-bankroll");
+  const modeInputs = Array.from(documentRef.querySelectorAll('input[name="fund-management-mode"]'));
+  const readMode = () => modeInputs.find((input) => input.checked)?.value || "standard";
+  const renderList = (selector, items = [], formatter = (item) => item) => {
+    const target = documentRef.querySelector(selector);
+    if (!target) return;
+    target.innerHTML = items.length ? items.map((item) => `<li>${formatter(item)}</li>`).join("") : "<li>対象データなし</li>";
+  };
+  const renderRaceRows = (items = []) => {
+    const body = documentRef.querySelector("#fund-management-race-body");
+    if (!body) return;
+    body.innerHTML = items.length ? items.map((item) => `
+      <tr>
+        <td data-label="レース">${escapeHtml(item.raceLabel)}</td>
+        <td data-label="勝負スコア"><strong>${escapeHtml(item.score)}</strong></td>
+        <td data-label="AI推奨">${escapeHtml(item.aiRecommendation)}</td>
+        <td data-label="投資提案">${escapeHtml(item.investmentProposal)}</td>
+        <td data-label="目安投資">${escapeHtml(engine.currency(item.suggestedStake))}</td>
+        <td data-label="リスク">${escapeHtml(item.risk)}</td>
+      </tr>`).join("") : '<tr><td data-label="レース" colspan="6">勝負レース選定AIのランキングがありません。</td></tr>';
+  };
+  const render = ({ persist = true } = {}) => {
+    const report = engine.buildFundManagementReport({ currentBankroll: bankrollInput?.value, mode: readMode(), storage: window.localStorage, persist });
+    setText("#fund-management-status", `${report.modeLabel} / ${report.recommendation.riskLevel}`);
+    setText("#fund-management-current-bankroll", engine.currency(report.summary.currentBankroll));
+    setText("#fund-management-total-investment", engine.currency(report.summary.totalInvestment));
+    setText("#fund-management-total-payout", engine.currency(report.summary.totalPayout));
+    setText("#fund-management-total-profit", engine.currency(report.summary.totalProfit));
+    setText("#fund-management-roi", `${report.summary.roi}%`);
+    setText("#fund-management-drawdown", `${report.summary.maxDrawdown}%`);
+    setText("#fund-management-losing-streak", report.summary.losingStreak);
+    setText("#fund-management-winning-streak", report.summary.winningStreak);
+    setText("#fund-management-recommended-stake", engine.currency(report.recommendation.recommendedStake));
+    setText("#fund-management-max-stake", engine.currency(report.recommendation.maxStake));
+    setText("#fund-management-ticket-type", report.recommendation.recommendedTicketType);
+    setText("#fund-management-risk", report.recommendation.riskLevel);
+    setText("#fund-management-source-count", `参照: ${report.sourceStorageKeys.join(" / ")} / 保存キー: ${engine.REPORT_STORAGE_KEY}, ${engine.SETTINGS_STORAGE_KEY}`);
+    renderList("#fund-management-ticket-allocation", report.ticketAllocation, (item) => `<strong>${escapeHtml(item.ticketType)}</strong><span>${escapeHtml(item.ratio)}%</span><b>${escapeHtml(engine.currency(item.amount))}</b>`);
+    renderList("#fund-management-race-proposals", report.raceProposals.slice(0, 6), (item) => `<strong>${escapeHtml(item.raceLabel)}</strong><span>${escapeHtml(item.aiRecommendation)} → ${escapeHtml(item.investmentProposal)}</span><b>${escapeHtml(engine.currency(item.suggestedStake))}</b>`);
+    renderList("#fund-management-streak-rules", [
+      { title: "3連敗", body: "投資額50%" },
+      { title: "5連敗", body: "投資停止" },
+      { title: "3連勝", body: "投資額120%" },
+      { title: "5連勝", body: "投資額150%" },
+      { title: "現在補正", body: report.recommendation.streakAdjustment },
+    ], (item) => `<strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.body)}</span>`);
+    renderRaceRows(report.raceProposals);
+    return report;
+  };
+  const applySavedSettings = () => {
+    const settings = engine.buildFundManagementReport({ storage: window.localStorage, persist: false }).settings;
+    if (bankrollInput) bankrollInput.value = settings.currentBankroll || 100000;
+    modeInputs.forEach((input) => { input.checked = input.value === (settings.mode || "standard"); });
+  };
+  const downloadReport = () => {
+    const report = render({ persist: true });
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = documentRef.createElement("a");
+    link.href = url;
+    link.download = `fund-management-${report.date || "today"}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setText("#fund-management-status", "JSONエクスポート完了");
+  };
+  documentRef.querySelector("#fund-management-calculate")?.addEventListener("click", () => render({ persist: true }));
+  documentRef.querySelector("#fund-management-export")?.addEventListener("click", downloadReport);
+  bankrollInput?.addEventListener("change", () => render({ persist: true }));
+  modeInputs.forEach((input) => input.addEventListener("change", () => render({ persist: true })));
+  applySavedSettings();
+  render({ persist: true });
+})();

@@ -6614,3 +6614,196 @@ h1 {
     width: 100%;
   }
 }
+
+.fund-management-card {
+  margin-top: 18px;
+  border-color: rgba(248, 196, 79, 0.46);
+  background:
+    radial-gradient(circle at 14% 8%, rgba(248, 196, 79, 0.18), transparent 32%),
+    linear-gradient(145deg, rgba(18, 12, 2, 0.98), rgba(4, 4, 5, 0.96));
+}
+
+.fund-management-controls,
+.fund-management-summary,
+.fund-management-output,
+.fund-management-layout {
+  display: grid;
+  gap: 1rem;
+}
+
+.fund-management-controls {
+  grid-template-columns: minmax(220px, 0.7fr) minmax(280px, 1.3fr);
+  align-items: end;
+  margin: 1.25rem 0;
+}
+
+.fund-management-controls label,
+.fund-management-controls fieldset,
+.fund-management-summary article,
+.fund-management-output article,
+.fund-management-panel {
+  border: 1px solid rgba(248, 196, 79, 0.28);
+  border-radius: 18px;
+  background: rgba(9, 7, 3, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 236, 179, 0.08);
+}
+
+.fund-management-controls label {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.fund-management-controls input[type="number"] {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.7rem 0.9rem;
+  color: var(--gold-light);
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 900;
+  border: 1px solid rgba(248, 196, 79, 0.34);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.42);
+}
+
+.fund-management-controls fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 1rem;
+  margin: 0;
+}
+
+.fund-management-controls legend {
+  padding: 0 0.35rem;
+  color: var(--gold-light);
+  font-weight: 900;
+}
+
+.fund-management-controls fieldset label {
+  display: inline-flex;
+  flex: 1 1 120px;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.72rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(248, 196, 79, 0.06);
+}
+
+.fund-management-summary {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 1.25rem 0;
+}
+
+.fund-management-output {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 1.25rem;
+}
+
+.fund-management-summary article,
+.fund-management-output article,
+.fund-management-panel {
+  padding: 1rem;
+}
+
+.fund-management-summary span,
+.fund-management-output span,
+.fund-management-list span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.fund-management-summary strong,
+.fund-management-output strong {
+  display: block;
+  margin: 0.28rem 0;
+  color: var(--gold-light);
+  font-size: clamp(1.35rem, 2.6vw, 2.25rem);
+  line-height: 1.05;
+}
+
+.fund-management-output small {
+  color: rgba(255, 255, 255, 0.66);
+  line-height: 1.5;
+}
+
+.fund-management-layout {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 1.25rem 0;
+}
+
+.fund-management-panel h3 {
+  margin: 0 0 0.8rem;
+  color: #ffe08a;
+}
+
+.fund-management-list {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.fund-management-list li {
+  padding: 0.75rem;
+  border: 1px solid rgba(248, 196, 79, 0.18);
+  border-radius: 14px;
+  background: rgba(248, 196, 79, 0.06);
+}
+
+.fund-management-list strong,
+.fund-management-list b {
+  display: block;
+  color: var(--gold-light);
+}
+
+.fund-management-list b {
+  font-size: 1.25rem;
+}
+
+.fund-management-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.fund-management-actions p {
+  flex: 1 1 380px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.6;
+}
+
+@media (max-width: 1080px) {
+  .fund-management-summary,
+  .fund-management-output,
+  .fund-management-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .fund-management-controls,
+  .fund-management-summary,
+  .fund-management-output,
+  .fund-management-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .fund-management-actions {
+    justify-content: stretch;
+  }
+
+  .fund-management-actions .button {
+    width: 100%;
+  }
+}
