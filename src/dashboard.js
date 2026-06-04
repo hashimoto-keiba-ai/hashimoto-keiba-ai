@@ -1450,6 +1450,51 @@
     godRace: payload.godRace,
   });
 
+  const topHorseFields = (horses = [], limit = 3) => horses.slice(0, limit).map((horse, index) => ({
+    rank: index + 1,
+    number: horse.number,
+    name: horse.name,
+    popularity: horse.popularity,
+    odds: horse.odds,
+    aiIndex: horse.aiIndex,
+    kamianaIndex: horse.kamianaIndex,
+    dangerIndex: horse.dangerIndex,
+  }));
+
+  const buildRaceDatabaseRecord = ({ payload = {}, validationReport = null } = {}) => {
+    if (!payload?.race) throw new Error("raceDatabase保存用の本番レースpayloadがありません");
+    const race = normalizeRace(payload.race);
+    const existingResult = payload.result || payload.validationReport || null;
+    const result = validationReport || existingResult;
+    return {
+      id: payload.id || `production:${race.date}:${race.course}:${race.raceNumber}`,
+      savedAt: new Date().toISOString(),
+      generatedAt: payload.generatedAt || new Date().toISOString(),
+      storageVersion: 2,
+      date: race.date,
+      course: race.course,
+      raceNumber: race.raceNumber,
+      raceName: race.raceName,
+      distance: race.distance,
+      surface: race.surface,
+      going: race.going,
+      aiIndexTop3: topHorseFields(payload.aiIndexRanking || [], 3),
+      kamianaTop3: topHorseFields(payload.kamianaRanking || payload.kamiana || [], 3),
+      dangerPopularTop3: topHorseFields(payload.dangerPopularRanking || payload.dangerPopular || [], 3),
+      trifectaCandidates: flattenTickets(payload.trifecta?.tickets).slice(0, 12),
+      result: result?.result || null,
+      roi: result?.roi ?? null,
+      godRaceJudgement: payload.godRace || payload.summary?.godRaceJudgement || null,
+      summary: payload.summary || { runnerCount: Array.isArray(payload.horses) ? payload.horses.length : 0 },
+      predictionPayload: payload,
+      validationReport: result || null,
+    };
+  };
+
+  const normalizeRaceDatabaseRecord = (entry = {}) => entry?.predictionPayload
+    ? entry
+    : buildRaceDatabaseRecord({ payload: entry, validationReport: entry.validationReport || null });
+
   const buildProductionRunReport = ({ payload, validation = null, operationReportEngine = window.HashimotoOperationDiagnosticReportEngine } = {}) => {
     if (!payload) throw new Error("本番AI一括実行レポートのpayloadがありません");
     const inputCheck = validation || validateProductionInput({ race: payload.race, horses: payload.horses });
@@ -1584,18 +1629,51 @@
       const raw = storage?.getItem?.(RACE_DATABASE_STORAGE_KEY);
       if (!raw) return [];
       const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : Array.isArray(parsed.races) ? parsed.races : [];
+      const records = Array.isArray(parsed) ? parsed : Array.isArray(parsed.races) ? parsed.races : [];
+      return records.map((record) => {
+        try { return normalizeRaceDatabaseRecord(record); } catch (error) { return record; }
+      });
     } catch (error) {
       return [];
     }
   };
 
+  const saveRaceDatabaseRecord = (record, storage = window.localStorage) => {
+    if (!storage?.setItem) return record;
+    const existing = loadRaceDatabase(storage).filter((race) => race.id !== record.id);
+    storage.setItem(RACE_DATABASE_STORAGE_KEY, JSON.stringify([record, ...existing].slice(0, 200)));
+    return record;
+  };
+
   const saveProductionRace = (payload, storage = window.localStorage) => {
     if (!storage?.setItem) return payload;
     storage.setItem(PRODUCTION_RACE_STORAGE_KEY, JSON.stringify(payload));
-    const existing = loadRaceDatabase(storage).filter((race) => race.id !== payload.id);
-    storage.setItem(RACE_DATABASE_STORAGE_KEY, JSON.stringify([payload, ...existing].slice(0, 200)));
+    saveRaceDatabaseRecord(buildRaceDatabaseRecord({ payload }), storage);
     return payload;
+  };
+
+  const updateRaceDatabaseResult = ({ payload = {}, validationReport = null } = {}, storage = window.localStorage) => {
+    if (!storage?.setItem || !payload?.race) return null;
+    const record = buildRaceDatabaseRecord({ payload, validationReport });
+    saveRaceDatabaseRecord(record, storage);
+    return record;
+  };
+
+  const searchRaceDatabase = (filters = {}, storage = window.localStorage) => {
+    const course = normalizeText(filters.course || filters.racecourse);
+    const going = normalizeText(filters.going || filters.trackCondition);
+    const distance = normalizeText(filters.distance);
+    const from = filters.from || filters.startDate || filters.dateFrom || "";
+    const to = filters.to || filters.endDate || filters.dateTo || "";
+    return loadRaceDatabase(storage).filter((record) => {
+      if (course && !normalizeText(record.course || record.race?.course).includes(course)) return false;
+      if (going && normalizeText(record.going || record.race?.going) !== going) return false;
+      if (distance && String(record.distance || record.race?.distance || "") !== distance) return false;
+      const date = record.date || record.race?.date || "";
+      if (from && date < from) return false;
+      if (to && date > to) return false;
+      return true;
+    });
   };
 
   const buildAndSaveProductionRace = (options = {}, storage = window.localStorage) => {
@@ -1638,7 +1716,11 @@
     buildAiAnalysisPayload,
     buildProductionPredictionLog,
     buildProductionRunReport,
+    buildRaceDatabaseRecord,
     loadRaceDatabase,
+    saveRaceDatabaseRecord,
+    searchRaceDatabase,
+    updateRaceDatabaseResult,
     saveProductionRace,
     buildAndSaveProductionRace,
     loadProductionRunReports,
@@ -3833,7 +3915,8 @@
       ...asArray(readJson(storage, "fundCurveRecords", [])),
     ].slice(0, 200);
     storage?.setItem?.("fundCurveRecords", JSON.stringify(fundCurveRecords));
-    return { report, evolutionLog, fundCurveRecords };
+    const raceDatabaseRecord = window.HashimotoProductionRaceEngine?.updateRaceDatabaseResult?.({ payload, validationReport: report }, storage) || null;
+    return { report, evolutionLog, fundCurveRecords, raceDatabaseRecord };
   };
 
   const createOperationBackup = (storage = window.localStorage) => {
@@ -3886,6 +3969,10 @@
   const logFiltersForm = documentRef.querySelector("#production-operation-log-filters");
   const logExportButton = documentRef.querySelector("#production-operation-log-export");
   const logCount = documentRef.querySelector("#production-operation-log-count");
+  const raceDatabaseForm = documentRef.querySelector("#race-database-search-form");
+  const raceDatabaseBody = documentRef.querySelector("#race-database-body");
+  const raceDatabaseCount = documentRef.querySelector("#race-database-count");
+  const raceDatabaseReset = documentRef.querySelector("#race-database-reset");
   const logEngine = window.HashimotoProductionOperationLogEngine;
   const latestPayload = () => readJson(window.localStorage, "hashimoto-keiba-ai:production-race-entry:v1", null) || readJson(window.localStorage, "productionRaceEntries", [])[0] || null;
   let currentPayload = latestPayload();
@@ -3956,6 +4043,52 @@
       </tr>
     `).join("") : '<tr><td data-label="日時" colspan="6">条件に一致する本番運用オペレーションログはありません。</td></tr>';
     return logs;
+  };
+
+
+  const getRaceDatabaseFilters = () => {
+    if (!raceDatabaseForm) return {};
+    const values = Object.fromEntries(new FormData(raceDatabaseForm).entries());
+    return {
+      course: values.course || "",
+      distance: values.distance || "",
+      going: values.going || "",
+      from: values.from || "",
+      to: values.to || "",
+    };
+  };
+
+  const summarizeTop3 = (items = [], scoreKey = "aiIndex") => asArray(items).slice(0, 3)
+    .map((horse) => `${horse.number || "?"}.${horse.name || "未設定"}(${horse[scoreKey] ?? "-"})`)
+    .join(" / ") || "-";
+
+  const summarizeTrifectaCandidates = (tickets = []) => asArray(tickets).slice(0, 3)
+    .map(ticketText)
+    .filter(Boolean)
+    .join(" / ") || "-";
+
+  const renderRaceDatabase = () => {
+    if (!raceDatabaseBody) return [];
+    const engine = window.HashimotoProductionRaceEngine;
+    const records = engine?.searchRaceDatabase ? engine.searchRaceDatabase(getRaceDatabaseFilters(), window.localStorage) : [];
+    if (raceDatabaseCount) raceDatabaseCount.textContent = `${records.length}件表示`;
+    raceDatabaseBody.innerHTML = records.length ? records.map((record) => `
+      <tr>
+        <td data-label="開催日">${escapeOperationLogHtml(record.date || record.race?.date || "-")}</td>
+        <td data-label="競馬場">${escapeOperationLogHtml(record.course || record.race?.course || "-")}</td>
+        <td data-label="R">${escapeOperationLogHtml(record.raceNumber || record.race?.raceNumber || "-")}R</td>
+        <td data-label="レース名">${escapeOperationLogHtml(record.raceName || record.race?.raceName || "-")}</td>
+        <td data-label="距離/馬場">${escapeOperationLogHtml(record.distance || record.race?.distance || "-")}m / ${escapeOperationLogHtml(record.going || record.race?.going || "-")}</td>
+        <td data-label="AI指数TOP3">${escapeOperationLogHtml(summarizeTop3(record.aiIndexTop3, "aiIndex"))}</td>
+        <td data-label="神穴TOP3">${escapeOperationLogHtml(summarizeTop3(record.kamianaTop3, "kamianaIndex"))}</td>
+        <td data-label="危険人気馬TOP3">${escapeOperationLogHtml(summarizeTop3(record.dangerPopularTop3, "dangerIndex"))}</td>
+        <td data-label="三連単候補">${escapeOperationLogHtml(summarizeTrifectaCandidates(record.trifectaCandidates))}</td>
+        <td data-label="結果">${escapeOperationLogHtml([record.result?.firstNumber, record.result?.secondNumber, record.result?.thirdNumber].filter(Boolean).join("-") || "未入力")}</td>
+        <td data-label="ROI">${escapeOperationLogHtml(record.roi ?? "-")}${record.roi === null || record.roi === undefined ? "" : "%"}</td>
+        <td data-label="神レース判定"><span class="badge badge--gold">${escapeOperationLogHtml(record.godRaceJudgement?.label || "未判定")}</span></td>
+      </tr>
+    `).join("") : '<tr><td data-label="開催日" colspan="12">条件に一致する実戦レースデータはありません。</td></tr>';
+    return records;
   };
 
   const addOperationLog = (input) => {
@@ -4043,6 +4176,7 @@
     addOperationLog({ operationType: "資金配分計算", race: logRace, summary: `推奨投資${toNumber(currentPayload.capital?.summary?.totalRecommended).toLocaleString()}円`, status: "完了", memo: `${currentPayload.capital?.summary?.totalTickets || 0}点に配分` });
     addOperationLog({ operationType: "神レース判定", race: logRace, summary: `${currentPayload.godRace?.label || "未判定"} / ${currentPayload.godRace?.score ?? 0}点`, status: "完了", memo: currentPayload.godRace?.reason || "本番AI一括実行から自動判定" });
     renderPayload(currentPayload);
+    renderRaceDatabase();
     refreshScores();
   });
 
@@ -4066,6 +4200,7 @@
     if (fundCurve) fundCurve.textContent = `最新ROI ${report.roi}% / 資金曲線 ${fundCurveRecords.length}件保存`;
     setFlow(["input", "ai", "tickets", "investment", "result", "validation", "evolution"]);
     refreshScores();
+    renderRaceDatabase();
     if (status) status.textContent = "結果検証・自己進化ログ保存済み";
   });
 
@@ -4088,8 +4223,15 @@
   logFiltersForm?.addEventListener("input", renderOperationLogs);
   logFiltersForm?.addEventListener("reset", () => setTimeout(renderOperationLogs, 0));
   logExportButton?.addEventListener("click", downloadOperationLogs);
+  raceDatabaseForm?.addEventListener("input", renderRaceDatabase);
+  raceDatabaseForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    renderRaceDatabase();
+  });
+  raceDatabaseReset?.addEventListener("click", () => setTimeout(renderRaceDatabase, 0));
 
   renderPayload(currentPayload);
   refreshScores();
   renderOperationLogs();
+  renderRaceDatabase();
 })();
