@@ -31,6 +31,7 @@
           <a href="#command-dashboard">司令塔</a>
           <a href="#production-operation-mode">本番運用モード</a>
           <a href="#race-database-panel">Race Database</a>
+          <a href="#weakness-analysis-panel">AI弱点分析</a>
           <a href="#today-races">今日のレース</a>
           <a href="#real-data-entry">実データ入力</a>
           <a href="#result-csv-import">結果CSV取込</a>
@@ -92,6 +93,7 @@
           <a href="#operation-readiness-checklist"><span>⑲</span>実戦運用チェック</a>
           <a href="#production-operation-mode"><span>⑳</span>本番運用モード完成版</a>
           <a href="#race-database-panel"><span>㉑</span>Race Database</a>
+          <a href="#weakness-analysis-panel"><span>㉒</span>AI弱点分析</a>
         </div>
 
         <section class="production-mode-switch" aria-label="本番運用モードスイッチ">
@@ -362,6 +364,60 @@
                 <tr><td data-label="開催日" colspan="13">実戦レースデータはまだありません。</td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="weakness-analysis-panel" class="weakness-analysis-card card card--wide card--featured" aria-label="Phase5-6 AI弱点分析システム">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE5-6 AI WEAKNESS ANALYSIS</p>
+              <h2>AI弱点分析パネル</h2>
+              <p class="card__lead"><code>raceDatabase</code>・<code>fundCurveRecords</code>・<code>productionResultValidationReports</code>を横断し、ROI・的中率・神穴成功率・危険人気馬成功率・神レース成功率から得意条件と苦手条件を自動検出します。</p>
+            </div>
+            <span id="weakness-analysis-status" class="status-pill status-pill--live">弱点分析待機</span>
+          </div>
+
+          <div class="weakness-scoreboard" aria-live="polite">
+            <article class="weakness-scoreboard__main weakness-scoreboard__main--weak">
+              <span>最大弱点条件</span>
+              <strong id="weakness-analysis-top-weak">弱点データ待ち</strong>
+              <small>例: 東京芝1600 弱点スコア 82</small>
+            </article>
+            <article class="weakness-scoreboard__main weakness-scoreboard__main--strong">
+              <span>最大得意条件</span>
+              <strong id="weakness-analysis-top-strong">得意データ待ち</strong>
+              <small>例: 中京ダ1400 得意スコア 91</small>
+            </article>
+          </div>
+
+          <div class="weakness-grid" aria-label="AI弱点・得意条件ランキング">
+            <section class="weakness-panel"><h3>苦手競馬場TOP10</h3><ol id="weakness-course-list"></ol></section>
+            <section class="weakness-panel weakness-panel--strong"><h3>得意競馬場TOP10</h3><ol id="strength-course-list"></ol></section>
+            <section class="weakness-panel"><h3>苦手距離TOP10</h3><ol id="weakness-distance-list"></ol></section>
+            <section class="weakness-panel weakness-panel--strong"><h3>得意距離TOP10</h3><ol id="strength-distance-list"></ol></section>
+            <section class="weakness-panel"><h3>苦手馬場</h3><ol id="weakness-going-list"></ol></section>
+            <section class="weakness-panel weakness-panel--strong"><h3>得意馬場</h3><ol id="strength-going-list"></ol></section>
+            <section class="weakness-panel"><h3>苦手人気ゾーン</h3><ol id="weakness-popularity-list"></ol></section>
+            <section class="weakness-panel weakness-panel--strong"><h3>得意人気ゾーン</h3><ol id="strength-popularity-list"></ol></section>
+            <section class="weakness-panel"><h3>苦手脚質</h3><ol id="weakness-style-list"></ol></section>
+            <section class="weakness-panel weakness-panel--strong"><h3>得意脚質</h3><ol id="strength-style-list"></ol></section>
+          </div>
+
+          <section class="weakness-improvement" aria-label="自動改善候補">
+            <div>
+              <p class="card__kicker">AUTO IMPROVEMENT CANDIDATES</p>
+              <h3>自動改善候補</h3>
+              <p>競馬場×芝ダ×距離の弱点スコア上位から、補正不足・有効補正を提示します。</p>
+            </div>
+            <ul id="weakness-improvement-candidates"></ul>
+          </section>
+
+          <div class="weakness-actions">
+            <p id="weakness-analysis-source-count">参照: raceDatabase / fundCurveRecords / productionResultValidationReports / 保存先 weaknessAnalysisReports</p>
+            <button id="weakness-analysis-refresh" class="button button--ghost" type="button">最新データで再分析</button>
+            <button id="weakness-analysis-export" class="button button--primary" type="button">JSONエクスポート</button>
           </div>
         </div>
       </section>
