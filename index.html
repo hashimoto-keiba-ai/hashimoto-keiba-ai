@@ -264,6 +264,36 @@
               <div id="production-operation-backup-status" class="production-operation-mini">未作成</div>
               <button id="production-operation-backup" class="button button--ghost" type="button">本番運用バックアップ作成</button>
             </section>
+
+            <section class="production-operation-panel production-operation-log-panel">
+              <div class="production-operation-log-heading">
+                <div>
+                  <h3>本番運用オペレーションログ</h3>
+                  <p class="production-operation-mini">主要操作を productionOperationLogs に時系列保存します。</p>
+                </div>
+                <span id="production-operation-log-count" class="status-pill">0件表示</span>
+              </div>
+              <form id="production-operation-log-filters" class="production-operation-log-filters" aria-label="本番運用オペレーションログ絞り込み">
+                <label><span>日付</span><input name="date" type="date" /></label>
+                <label><span>競馬場</span><input name="racecourse" type="text" placeholder="東京競馬場" /></label>
+                <label><span>操作種別</span><select name="operationType"><option value="">すべて</option><option>本番レース入力</option><option>AI一括実行</option><option>買い目生成</option><option>資金配分計算</option><option>神レース判定</option><option>結果入力</option><option>結果検証</option><option>自己進化ログ保存</option><option>バックアップ実行</option><option>復元実行</option><option>モード切替</option></select></label>
+                <label><span>状態</span><select name="status"><option value="">すべて</option><option>完了</option><option>警告</option><option>失敗</option></select></label>
+                <div class="production-operation-log-actions">
+                  <button class="button button--ghost" type="reset">フィルター解除</button>
+                  <button id="production-operation-log-export" class="button button--primary" type="button">ログJSONダウンロード</button>
+                </div>
+              </form>
+              <div class="table-wrap production-operation-log-table">
+                <table class="data-table data-table--compact">
+                  <thead>
+                    <tr><th scope="col">日時</th><th scope="col">操作種別</th><th scope="col">競馬場</th><th scope="col">レース番号</th><th scope="col">概要</th><th scope="col">状態</th></tr>
+                  </thead>
+                  <tbody id="production-operation-log-body">
+                    <tr><td data-label="日時" colspan="6">本番運用オペレーションログはまだありません。</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
           </div>
         </div>
       </section>

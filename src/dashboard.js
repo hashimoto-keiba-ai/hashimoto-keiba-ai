@@ -2623,6 +2623,108 @@
 })();
 
 
+
+(() => {
+  const OPERATION_LOG_STORAGE_KEY = "productionOperationLogs";
+  const MAX_OPERATION_LOGS = 500;
+  const OPERATION_TYPES = [
+    "本番レース入力",
+    "AI一括実行",
+    "買い目生成",
+    "資金配分計算",
+    "神レース判定",
+    "結果入力",
+    "結果検証",
+    "自己進化ログ保存",
+    "バックアップ実行",
+    "復元実行",
+    "モード切替",
+  ];
+  const OPERATION_STATUSES = ["完了", "警告", "失敗"];
+
+  const safeParseOperationJson = (value, fallback = null) => {
+    if (value === null || value === undefined || value === "") return fallback;
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      return fallback;
+    }
+  };
+  const normalizeOperationText = (value) => String(value ?? "").trim();
+  const readOperationLogs = (storage = window.localStorage) => {
+    const parsed = safeParseOperationJson(storage?.getItem?.(OPERATION_LOG_STORAGE_KEY), []);
+    return Array.isArray(parsed) ? parsed : [];
+  };
+  const normalizeRaceNumberForLog = (value) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) && numeric > 0 ? numeric : "";
+  };
+  const extractRaceContext = (context = {}) => {
+    const race = context.race || context.payload?.race || context.report?.productionPayload?.race || context.validation?.payload?.race || {};
+    return {
+      racecourse: normalizeOperationText(context.racecourse ?? context.course ?? race.course ?? race.racecourse),
+      raceNumber: normalizeRaceNumberForLog(context.raceNumber ?? race.raceNumber),
+      raceName: normalizeOperationText(context.raceName ?? race.raceName),
+    };
+  };
+  const createOperationLog = (input = {}) => {
+    const raceContext = extractRaceContext(input);
+    const operationType = OPERATION_TYPES.includes(input.operationType) ? input.operationType : normalizeOperationText(input.operationType || "未分類");
+    const status = OPERATION_STATUSES.includes(input.status) ? input.status : normalizeOperationText(input.status || "完了");
+    return {
+      id: input.id || `operation:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`,
+      timestamp: input.timestamp || new Date().toISOString(),
+      operationType,
+      racecourse: raceContext.racecourse,
+      raceNumber: raceContext.raceNumber,
+      raceName: raceContext.raceName,
+      summary: normalizeOperationText(input.summary),
+      status,
+      memo: normalizeOperationText(input.memo),
+    };
+  };
+  const appendOperationLog = (input = {}, storage = window.localStorage) => {
+    const log = createOperationLog(input);
+    const logs = [log, ...readOperationLogs(storage)].slice(0, MAX_OPERATION_LOGS);
+    storage?.setItem?.(OPERATION_LOG_STORAGE_KEY, JSON.stringify(logs));
+    return { log, logs };
+  };
+  const filterOperationLogs = (logs = [], filters = {}) => {
+    const date = normalizeOperationText(filters.date);
+    const racecourse = normalizeOperationText(filters.racecourse);
+    const operationType = normalizeOperationText(filters.operationType);
+    const status = normalizeOperationText(filters.status);
+    return (Array.isArray(logs) ? logs : []).filter((log) => {
+      const logDate = normalizeOperationText(log.timestamp).slice(0, 10);
+      return (!date || logDate === date)
+        && (!racecourse || normalizeOperationText(log.racecourse).includes(racecourse))
+        && (!operationType || log.operationType === operationType)
+        && (!status || log.status === status);
+    });
+  };
+  const createExportPayload = (logs = [], filters = {}) => ({
+    storageKey: OPERATION_LOG_STORAGE_KEY,
+    exportedAt: new Date().toISOString(),
+    filters: { ...filters },
+    count: Array.isArray(logs) ? logs.length : 0,
+    logs: Array.isArray(logs) ? logs : [],
+  });
+  const exportLogsJson = (logs = [], filters = {}) => JSON.stringify(createExportPayload(logs, filters), null, 2);
+
+  window.HashimotoProductionOperationLogEngine = {
+    OPERATION_LOG_STORAGE_KEY,
+    MAX_OPERATION_LOGS,
+    OPERATION_TYPES,
+    OPERATION_STATUSES,
+    readOperationLogs,
+    createOperationLog,
+    appendOperationLog,
+    filterOperationLogs,
+    createExportPayload,
+    exportLogsJson,
+  };
+})();
+
 (() => {
   const PRODUCTION_BACKUP_TYPE = "hashimoto-keiba-ai-production-operation-backup";
   const PRE_RESTORE_BACKUP_KEY = "preRestoreBackup";
@@ -2812,6 +2914,12 @@
       emptyRequiredKeys: validation.emptyRequiredKeys,
       preRestoreBackupKey: PRE_RESTORE_BACKUP_KEY,
       preRestoreBackupCreatedAt: preRestoreBackup.createdAt,
+    }, storage);
+    window.HashimotoProductionOperationLogEngine?.appendOperationLog?.({
+      operationType: "復元実行",
+      summary: `${restoredKeys.length}キーを本番運用バックアップから復元`,
+      status: restoredKeys.length ? "完了" : "警告",
+      memo: `sourceCreatedAt=${validation.backupCreatedAt || "未記録"}`,
     }, storage);
     return { validation, restoredKeys, preRestoreBackup, logs };
   };
@@ -3364,6 +3472,11 @@
   const judgementValue = documentRef.querySelector("#production-operation-judgement");
   const refreshScoreButton = documentRef.querySelector("#production-operation-score-refresh");
   const backupButton = documentRef.querySelector("#production-operation-backup");
+  const logTableBody = documentRef.querySelector("#production-operation-log-body");
+  const logFiltersForm = documentRef.querySelector("#production-operation-log-filters");
+  const logExportButton = documentRef.querySelector("#production-operation-log-export");
+  const logCount = documentRef.querySelector("#production-operation-log-count");
+  const logEngine = window.HashimotoProductionOperationLogEngine;
   const latestPayload = () => readJson(window.localStorage, "hashimoto-keiba-ai:production-race-entry:v1", null) || readJson(window.localStorage, "productionRaceEntries", [])[0] || null;
   let currentPayload = latestPayload();
 
@@ -3390,6 +3503,72 @@
     const scores = saveScores(deriveScoresFromStorage(window.localStorage), window.localStorage);
     renderScores(scores);
     return scores;
+  };
+
+  const escapeOperationLogHtml = (value) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+
+  const formatOperationLogDate = (timestamp) => {
+    if (!timestamp) return "未記録";
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) return String(timestamp);
+    return date.toLocaleString("ja-JP", { hour12: false });
+  };
+
+  const getOperationLogFilters = () => {
+    if (!logFiltersForm) return {};
+    const values = Object.fromEntries(new FormData(logFiltersForm).entries());
+    return {
+      date: values.date || "",
+      racecourse: values.racecourse || "",
+      operationType: values.operationType || "",
+      status: values.status || "",
+    };
+  };
+
+  const renderOperationLogs = () => {
+    if (!logEngine || !logTableBody) return [];
+    const filters = getOperationLogFilters();
+    const logs = logEngine.filterOperationLogs(logEngine.readOperationLogs(window.localStorage), filters);
+    if (logCount) logCount.textContent = `${logs.length}件表示`;
+    logTableBody.innerHTML = logs.length ? logs.map((log) => `
+      <tr>
+        <td data-label="日時">${escapeOperationLogHtml(formatOperationLogDate(log.timestamp))}</td>
+        <td data-label="操作種別"><span class="badge badge--gold">${escapeOperationLogHtml(log.operationType)}</span></td>
+        <td data-label="競馬場">${escapeOperationLogHtml(log.racecourse || "-")}</td>
+        <td data-label="レース番号">${escapeOperationLogHtml(log.raceNumber ? `${log.raceNumber}R` : "-")}</td>
+        <td data-label="概要">${escapeOperationLogHtml(log.summary || log.raceName || "-")}</td>
+        <td data-label="状態"><span class="badge">${escapeOperationLogHtml(log.status || "完了")}</span></td>
+      </tr>
+    `).join("") : '<tr><td data-label="日時" colspan="6">条件に一致する本番運用オペレーションログはありません。</td></tr>';
+    return logs;
+  };
+
+  const addOperationLog = (input) => {
+    if (!logEngine) return null;
+    const result = logEngine.appendOperationLog(input, window.localStorage);
+    renderOperationLogs();
+    return result.log;
+  };
+
+  const downloadOperationLogs = () => {
+    if (!logEngine) return;
+    const filters = getOperationLogFilters();
+    const logs = logEngine.filterOperationLogs(logEngine.readOperationLogs(window.localStorage), filters);
+    const blob = new Blob([logEngine.exportLogsJson(logs, filters)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = documentRef.createElement("a");
+    link.href = url;
+    link.download = `production-operation-logs-${new Date().toISOString().slice(0, 10)}.json`;
+    documentRef.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    if (status) status.textContent = `オペレーションログ${logs.length}件をJSON出力`;
   };
 
   const renderPayload = (payload = currentPayload) => {
@@ -3424,6 +3603,12 @@
     input.addEventListener("change", () => {
       const mode = saveMode(input.value, window.localStorage);
       if (modeLabel) modeLabel.textContent = MODE_LABELS[mode];
+      addOperationLog({
+        operationType: "モード切替",
+        summary: `${MODE_LABELS[mode]}へ切替`,
+        status: "完了",
+        memo: `productionOperationMode=${mode}`,
+      });
       if (status) status.textContent = `${MODE_LABELS[mode]}へ切替保存済み`;
     });
   });
@@ -3441,6 +3626,12 @@
     }
     const report = productionEngine.buildAndSaveProductionRunReport({ race, horses, simulationCount: 1000, persistEngines: true }, window.localStorage);
     currentPayload = report.productionPayload;
+    const logRace = currentPayload?.race || race;
+    addOperationLog({ operationType: "本番レース入力", race: logRace, summary: `${logRace.course || "競馬場未設定"}${logRace.raceNumber || ""}R ${logRace.raceName || ""}を保存`, status: "完了", memo: `出走馬${asArray(horses).length}頭` });
+    addOperationLog({ operationType: "AI一括実行", race: logRace, summary: `AI指数・神穴・危険人気馬を一括計算`, status: "完了", memo: `AI指数TOP=${currentPayload.aiIndexRanking?.[0]?.name || "未算出"}` });
+    addOperationLog({ operationType: "買い目生成", race: logRace, summary: `三連単${flattenTickets(currentPayload.trifecta?.tickets).length}点 / WIN5${flattenWin5(currentPayload.win5?.zones).length}候補`, status: "完了", memo: `本線=${ticketText(flattenTickets(currentPayload.trifecta?.tickets)[0] || {}) || "未生成"}` });
+    addOperationLog({ operationType: "資金配分計算", race: logRace, summary: `推奨投資${toNumber(currentPayload.capital?.summary?.totalRecommended).toLocaleString()}円`, status: "完了", memo: `${currentPayload.capital?.summary?.totalTickets || 0}点に配分` });
+    addOperationLog({ operationType: "神レース判定", race: logRace, summary: `${currentPayload.godRace?.label || "未判定"} / ${currentPayload.godRace?.score ?? 0}点`, status: "完了", memo: currentPayload.godRace?.reason || "本番AI一括実行から自動判定" });
     renderPayload(currentPayload);
     refreshScores();
   });
@@ -3454,6 +3645,10 @@
     }
     const result = Object.fromEntries(new FormData(resultForm).entries());
     const { report, evolutionLog, fundCurveRecords } = saveValidationAndEvolution({ payload: currentPayload, result, storage: window.localStorage });
+    const resultNumbers = [result.firstNumber, result.secondNumber, result.thirdNumber].filter(Boolean).join("-");
+    addOperationLog({ operationType: "結果入力", payload: currentPayload, summary: `確定着順 ${resultNumbers || "未入力"} / 投資${toNumber(result.investment).toLocaleString()}円`, status: "完了", memo: `払戻${toNumber(result.payout).toLocaleString()}円` });
+    addOperationLog({ operationType: "結果検証", payload: currentPayload, summary: report.summary, status: report.roi >= 100 ? "完了" : "警告", memo: `ROI ${report.roi}% / 三連単的中=${report.trifectaHit ? "YES" : "NO"}` });
+    addOperationLog({ operationType: "自己進化ログ保存", payload: currentPayload, summary: evolutionLog.improvement, status: evolutionLog.status || "完了", memo: evolutionLog.nextAction || "次回予想へ反映" });
     const validation = documentRef.querySelector("#production-operation-validation");
     if (validation) validation.textContent = report.summary;
     renderList("#production-operation-evolution", [evolutionLog], (item) => `${item.status}: ${item.improvement}`);
@@ -3467,12 +3662,24 @@
   refreshScoreButton?.addEventListener("click", refreshScores);
   backupButton?.addEventListener("click", () => {
     const payload = createOperationBackup(window.localStorage);
+    addOperationLog({
+      operationType: "バックアップ実行",
+      payload: currentPayload,
+      summary: `${payload.keys.length}キーを本番運用バックアップへ保存`,
+      status: "完了",
+      memo: `productionOperationBackupLatest / ${payload.generatedAt || payload.createdAt || "時刻未記録"}`,
+    });
     const backupStatus = documentRef.querySelector("#production-operation-backup-status");
-    if (backupStatus) backupStatus.textContent = `${payload.keys.length}キーを${payload.generatedAt || new Date().toISOString()}に保存`;
+    if (backupStatus) backupStatus.textContent = `${payload.keys.length}キーを${payload.generatedAt || payload.createdAt || new Date().toISOString()}に保存`;
     setFlow(["input", "ai", "tickets", "investment", "result", "validation", "evolution", "backup"]);
     if (status) status.textContent = "本番運用バックアップ保存済み";
   });
 
+  logFiltersForm?.addEventListener("input", renderOperationLogs);
+  logFiltersForm?.addEventListener("reset", () => setTimeout(renderOperationLogs, 0));
+  logExportButton?.addEventListener("click", downloadOperationLogs);
+
   renderPayload(currentPayload);
   refreshScores();
+  renderOperationLogs();
 })();
