@@ -45,6 +45,7 @@
           <a href="#win5-ai-screen">WIN5生成</a>
           <a href="#roi-dashboard">回収率</a>
           <a href="#performance-dashboard">総合パフォーマンス</a>
+          <a href="#roi-optimization-panel">ROI最適化AI</a>
           <a href="#result-verification">結果検証</a>
           <a href="#result-log-list">検証ログ</a>
           <a href="#ai-backtest-lab">AI精度テスト</a>
@@ -621,6 +622,52 @@
             <p id="performance-source-count">参照: fundCurveRecords / productionOperationLogs / selfEvolutionLogs / productionResultValidationReports</p>
             <button id="performance-dashboard-refresh" class="button button--ghost" type="button">最新データで再集計</button>
             <button id="performance-dashboard-export" class="button button--primary" type="button">JSON出力</button>
+          </div>
+        </div>
+      </section>
+
+
+
+      <section id="roi-optimization-panel" class="roi-optimization-card card card--wide card--featured" aria-label="Phase6-4 ROI最適化AIパネル">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE6-4 ROI OPTIMIZATION AI</p>
+              <h2>ROI最適化AI</h2>
+              <p class="card__lead">的中率だけでなく回収率ROIを最大化するため、raceDatabase・fundCurveRecords・productionResultValidationReports・selfLearningSuggestions・courseEvolutionReportsを横断集計します。</p>
+            </div>
+            <span id="roi-optimization-status" class="status-pill status-pill--live">ROI最適化待機</span>
+          </div>
+
+          <div class="roi-optimization-grid" aria-label="ROI最適化指標">
+            <article><span>総ROI</span><strong id="roi-optimization-total-roi">0%</strong><small>全投資の回収率</small></article>
+            <article><span>三連単ROI</span><strong id="roi-optimization-trifecta-roi">0%</strong><small>三連単条件の強化判断</small></article>
+            <article><span>WIN5 ROI</span><strong id="roi-optimization-win5-roi">0%</strong><small>WIN5抑制判断</small></article>
+            <article><span>神穴ROI</span><strong id="roi-optimization-kamiana-roi">0%</strong><small>神穴候補の回収率</small></article>
+            <article><span>危険人気馬除外成功ROI</span><strong id="roi-optimization-danger-roi">0%</strong><small>消し成功時のROI</small></article>
+            <article><span>神レースROI</span><strong id="roi-optimization-godrace-roi">0%</strong><small>勝負レース判定のROI</small></article>
+            <article><span>見送り成功率</span><strong id="roi-optimization-skip-rate">0%</strong><small>赤字回避の成功率</small></article>
+          </div>
+
+          <div class="roi-optimization-layout">
+            <section class="roi-optimization-panel">
+              <h3>ROI別改善提案</h3>
+              <ul id="roi-optimization-suggestions" class="roi-optimization-list"></ul>
+            </section>
+            <section class="roi-optimization-panel">
+              <h3>ROIスコア・投資強度判定</h3>
+              <ul id="roi-optimization-score-list" class="roi-optimization-list"></ul>
+            </section>
+            <section class="roi-optimization-panel">
+              <h3>見送り候補</h3>
+              <ul id="roi-optimization-watch-list" class="roi-optimization-list"></ul>
+            </section>
+          </div>
+
+          <div class="roi-optimization-actions">
+            <p id="roi-optimization-source-count">参照: raceDatabase / fundCurveRecords / productionResultValidationReports / selfLearningSuggestions / courseEvolutionReports</p>
+            <button id="roi-optimization-refresh" class="button button--ghost" type="button">ROI再集計</button>
+            <button id="roi-optimization-export" class="button button--primary" type="button">ROI最適化JSON出力</button>
           </div>
         </div>
       </section>
