@@ -6116,3 +6116,103 @@ h1 {
     width: 100%;
   }
 }
+
+.self-learning-card {
+  margin-top: 26px;
+  border-color: rgba(248, 196, 79, 0.5);
+  background:
+    radial-gradient(circle at 14% 10%, rgba(248, 196, 79, 0.14), transparent 20rem),
+    radial-gradient(circle at 88% 18%, rgba(120, 240, 163, 0.1), transparent 22rem),
+    linear-gradient(145deg, rgba(16, 10, 4, 0.96), rgba(0, 0, 0, 0.8));
+}
+
+.self-learning-summary,
+.self-learning-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.self-learning-summary {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.self-learning-summary article {
+  padding: 14px;
+  border: 1px solid rgba(248, 196, 79, 0.22);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.32);
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.08);
+}
+
+.self-learning-summary span,
+.self-learning-source-count,
+.self-learning-table small {
+  color: var(--muted);
+}
+
+.self-learning-summary strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--gold-light);
+  font-size: clamp(1.08rem, 2vw, 1.55rem);
+}
+
+.self-learning-actions {
+  grid-template-columns: repeat(3, max-content);
+  align-items: center;
+}
+
+.self-learning-table {
+  margin-top: 18px;
+}
+
+.self-learning-status-select,
+.self-learning-memo {
+  width: 100%;
+  border: 1px solid rgba(248, 196, 79, 0.28);
+  border-radius: 12px;
+  background: rgba(7, 5, 2, 0.92);
+  color: var(--text);
+  font: inherit;
+}
+
+.self-learning-status-select {
+  min-width: 92px;
+  padding: 8px 10px;
+}
+
+.self-learning-memo {
+  min-width: 170px;
+  padding: 9px 10px;
+  resize: vertical;
+}
+
+.self-learning-status-select:focus,
+.self-learning-memo:focus {
+  outline: 2px solid rgba(248, 196, 79, 0.42);
+  outline-offset: 2px;
+}
+
+.self-learning-source-count {
+  margin: 14px 0 0;
+  line-height: 1.7;
+}
+
+@media (max-width: 980px) {
+  .self-learning-summary,
+  .self-learning-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .self-learning-summary,
+  .self-learning-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .self-learning-actions .button {
+    width: 100%;
+  }
+}
