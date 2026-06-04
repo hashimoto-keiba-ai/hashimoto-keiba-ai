@@ -2443,6 +2443,217 @@
   };
 })();
 
+
+(() => {
+  const PRODUCTION_BACKUP_TYPE = "hashimoto-keiba-ai-production-operation-backup";
+  const PRE_RESTORE_BACKUP_KEY = "preRestoreBackup";
+  const RESTORE_LOG_STORAGE_KEY = "backupRestoreLogs";
+  const PRODUCTION_RACE_COMPAT_STORAGE_KEY = "hashimoto-keiba-ai:production-race-entry:v1";
+  const SELF_EVOLUTION_COMPAT_STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
+
+  const REQUIRED_BACKUP_TARGETS = [
+    { key: "productionRaceEntries", label: "本番入力レース", alternateKeys: [PRODUCTION_RACE_COMPAT_STORAGE_KEY] },
+    { key: "productionRunReports", label: "本番AI分析結果" },
+    { key: "productionResultValidationReports", label: "本番結果検証" },
+    { key: "selfEvolutionLogs", label: "自己進化ログ", alternateKeys: [SELF_EVOLUTION_COMPAT_STORAGE_KEY] },
+    { key: "fundCurveRecords", label: "資金曲線" },
+    { key: "operationDiagnosticReports", label: "実戦診断レポート" },
+    { key: "operationReadinessChecklist", label: "実戦運用チェックリスト" },
+    { key: "sampleRaceTestLog", label: "サンプルレース一括テストログ" },
+    { key: "sampleRaceResultValidationLog", label: "サンプル結果検証ログ" },
+  ];
+
+  const safeParseJson = (value, fallback = null) => {
+    if (value === null || value === undefined || value === "") return fallback;
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      return fallback;
+    }
+  };
+
+  const stringifyForStorage = (value) => JSON.stringify(value ?? null);
+
+  const getRawStorageValue = (storage, target) => {
+    const keys = [target.key, ...(target.alternateKeys || [])];
+    const foundKey = keys.find((key) => storage?.getItem?.(key) !== null && storage?.getItem?.(key) !== undefined);
+    return { storageKey: foundKey || target.key, raw: foundKey ? storage.getItem(foundKey) : null };
+  };
+
+  const countDataItems = (value) => {
+    if (Array.isArray(value)) return value.length;
+    if (!value || typeof value !== "object") return value === null || value === undefined ? 0 : 1;
+    const listKeys = ["reports", "logs", "records", "results", "items", "entries", "races", "horses", "rules", "resultVerifications", "backtests", "improvementProposals"];
+    const directList = listKeys.find((key) => Array.isArray(value[key]));
+    if (directList) return value[directList].length;
+    if (value.logs && typeof value.logs === "object") {
+      return Object.values(value.logs).reduce((total, item) => total + (Array.isArray(item) ? item.length : 0), 0);
+    }
+    return Object.keys(value).length;
+  };
+
+  const createLocalStorageSnapshot = (storage, preferredKeys = REQUIRED_BACKUP_TARGETS.map((target) => target.key)) => {
+    const keys = new Set(preferredKeys);
+    if (Number.isFinite(Number(storage?.length)) && typeof storage?.key === "function") {
+      for (let index = 0; index < storage.length; index += 1) {
+        const key = storage.key(index);
+        if (key) keys.add(key);
+      }
+    }
+    const values = {};
+    keys.forEach((key) => {
+      const raw = storage?.getItem?.(key);
+      if (raw !== null && raw !== undefined) {
+        values[key] = { raw, value: safeParseJson(raw, raw) };
+      }
+    });
+    return {
+      storageVersion: 1,
+      type: "hashimoto-keiba-ai-localStorage-snapshot",
+      createdAt: new Date().toISOString(),
+      keys: Object.keys(values),
+      values,
+    };
+  };
+
+  const createPreRestoreBackup = (storage = window.localStorage) => {
+    const snapshot = createLocalStorageSnapshot(storage);
+    storage?.setItem?.(PRE_RESTORE_BACKUP_KEY, JSON.stringify(snapshot));
+    return snapshot;
+  };
+
+  const loadRestoreLogs = (storage = window.localStorage) => {
+    const parsed = safeParseJson(storage?.getItem?.(RESTORE_LOG_STORAGE_KEY), []);
+    return Array.isArray(parsed) ? parsed : [];
+  };
+
+  const appendRestoreLog = (log, storage = window.localStorage) => {
+    const logs = [{ id: `restore:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`, loggedAt: new Date().toISOString(), ...log }, ...loadRestoreLogs(storage)].slice(0, 100);
+    storage?.setItem?.(RESTORE_LOG_STORAGE_KEY, JSON.stringify(logs));
+    return logs;
+  };
+
+  const createBackupPayload = (storage = window.localStorage) => {
+    const data = REQUIRED_BACKUP_TARGETS.reduce((accumulator, target) => {
+      const found = getRawStorageValue(storage, target);
+      const value = safeParseJson(found.raw, null);
+      accumulator[target.key] = {
+        label: target.label,
+        storageKey: target.key,
+        sourceStorageKey: found.storageKey,
+        alternateKeys: target.alternateKeys || [],
+        required: true,
+        missing: found.raw === null || found.raw === undefined,
+        itemCount: countDataItems(value),
+        value,
+      };
+      return accumulator;
+    }, {});
+    return {
+      storageVersion: 1,
+      type: PRODUCTION_BACKUP_TYPE,
+      provider: "localStorage",
+      createdAt: new Date().toISOString(),
+      keys: REQUIRED_BACKUP_TARGETS.map((target) => target.key),
+      data,
+      summary: summarizeBackupData(data),
+    };
+  };
+
+  const summarizeBackupData = (data = {}) => {
+    const entries = Object.entries(data);
+    return {
+      keyCount: entries.length,
+      totalItemCount: entries.reduce((total, [, entry]) => total + countDataItems(entry?.value), 0),
+      itemCounts: Object.fromEntries(entries.map(([key, entry]) => [key, countDataItems(entry?.value)])),
+      missingKeys: REQUIRED_BACKUP_TARGETS.filter((target) => !data[target.key] || data[target.key].missing).map((target) => target.key),
+    };
+  };
+
+  const normalizeBackupPayload = (payload = {}) => {
+    if (payload.type === PRODUCTION_BACKUP_TYPE && payload.data) {
+      const data = { ...payload.data };
+      Object.values(data).forEach((entry) => {
+        if (entry && !Object.prototype.hasOwnProperty.call(entry, "itemCount")) entry.itemCount = countDataItems(entry.value);
+      });
+      return { ...payload, keys: payload.keys || Object.keys(data), data, summary: payload.summary || summarizeBackupData(data) };
+    }
+    const data = Object.fromEntries(Object.entries(payload || {}).map(([key, value]) => [key, { label: key, storageKey: key, required: REQUIRED_BACKUP_TARGETS.some((target) => target.key === key), missing: false, itemCount: countDataItems(value), value }]));
+    return { storageVersion: 1, type: "legacy-production-operation-backup", createdAt: new Date().toISOString(), keys: Object.keys(data), data, summary: summarizeBackupData(data) };
+  };
+
+  const validateBackupPayload = (payload = {}) => {
+    const normalized = normalizeBackupPayload(payload);
+    const requiredKeys = REQUIRED_BACKUP_TARGETS.map((target) => target.key);
+    const dataKeys = Object.keys(normalized.data || {});
+    const missingRequiredKeys = requiredKeys.filter((key) => !Object.prototype.hasOwnProperty.call(normalized.data || {}, key));
+    const emptyRequiredKeys = requiredKeys.filter((key) => normalized.data?.[key]?.missing);
+    const itemCounts = Object.fromEntries(requiredKeys.map((key) => [key, countDataItems(normalized.data?.[key]?.value)]));
+    const overwriteTargets = requiredKeys.filter((key) => Object.prototype.hasOwnProperty.call(normalized.data || {}, key));
+    const warnings = [
+      ...missingRequiredKeys.map((key) => `必要キー ${key} がバックアップJSONにありません。`),
+      ...emptyRequiredKeys.map((key) => `${key} はバックアップ作成時点で未保存または空です。`),
+      overwriteTargets.length ? "復元すると現在のlocalStorageデータを上書きします。" : "上書き対象がありません。",
+    ];
+    return {
+      ok: missingRequiredKeys.length === 0,
+      payload: normalized,
+      backupCreatedAt: normalized.createdAt || "未記録",
+      requiredKeys,
+      dataKeys,
+      missingRequiredKeys,
+      emptyRequiredKeys,
+      itemCounts,
+      overwriteTargets,
+      totalItemCount: Object.values(itemCounts).reduce((total, count) => total + count, 0),
+      warnings,
+    };
+  };
+
+  const restoreBackupPayload = (payload = {}, storage = window.localStorage, options = {}) => {
+    const validation = validateBackupPayload(payload);
+    if (options.requireComplete !== false && !validation.ok) {
+      throw new Error(`バックアップJSONの必要キーが不足しています: ${validation.missingRequiredKeys.join(", ")}`);
+    }
+    const preRestoreBackup = createPreRestoreBackup(storage);
+    const restoredKeys = [];
+    validation.overwriteTargets.forEach((key) => {
+      const entry = validation.payload.data[key];
+      if (!entry || entry.missing || !Object.prototype.hasOwnProperty.call(entry, "value")) return;
+      storage?.setItem?.(key, stringifyForStorage(entry.value));
+      restoredKeys.push(key);
+      const target = REQUIRED_BACKUP_TARGETS.find((item) => item.key === key);
+      (target?.alternateKeys || []).forEach((alternateKey) => storage?.setItem?.(alternateKey, stringifyForStorage(entry.value)));
+    });
+    const logs = appendRestoreLog({
+      action: "production-operation-restore",
+      sourceCreatedAt: validation.backupCreatedAt,
+      restoredKeys,
+      missingRequiredKeys: validation.missingRequiredKeys,
+      emptyRequiredKeys: validation.emptyRequiredKeys,
+      preRestoreBackupKey: PRE_RESTORE_BACKUP_KEY,
+      preRestoreBackupCreatedAt: preRestoreBackup.createdAt,
+    }, storage);
+    return { validation, restoredKeys, preRestoreBackup, logs };
+  };
+
+  window.HashimotoProductionOperationBackupEngine = {
+    PRODUCTION_BACKUP_TYPE,
+    PRE_RESTORE_BACKUP_KEY,
+    RESTORE_LOG_STORAGE_KEY,
+    REQUIRED_BACKUP_TARGETS,
+    countDataItems,
+    createLocalStorageSnapshot,
+    createPreRestoreBackup,
+    loadRestoreLogs,
+    appendRestoreLog,
+    createBackupPayload,
+    normalizeBackupPayload,
+    validateBackupPayload,
+    restoreBackupPayload,
+  };
+})();
+
 (() => {
   const STORAGE_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
   const DATA_URL = "./data/selfEvolutionLogs.json";

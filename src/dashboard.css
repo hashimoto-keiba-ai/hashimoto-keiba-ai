@@ -5040,3 +5040,103 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+/* Phase4-5 production operation backup */
+.production-backup-panel {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.34);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 100% 0, rgba(248, 196, 79, 0.17), transparent 22rem),
+    linear-gradient(145deg, rgba(0, 0, 0, 0.72), rgba(248, 196, 79, 0.08));
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.12), 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.production-backup-actions {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, 1.2fr) repeat(2, minmax(160px, 0.75fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.production-backup-actions .button {
+  min-height: 46px;
+  cursor: pointer;
+}
+
+.production-backup-summary {
+  margin-top: 0;
+}
+
+.production-restore-preview {
+  padding: 16px;
+  color: var(--muted);
+  border: 1px solid rgba(248, 196, 79, 0.22);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.production-restore-preview__grid,
+.production-restore-preview__details {
+  display: grid;
+  gap: 12px;
+}
+
+.production-restore-preview__grid {
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  margin-bottom: 12px;
+}
+
+.production-restore-preview__grid article,
+.production-restore-preview__details section {
+  padding: 14px;
+  border: 1px solid rgba(248, 196, 79, 0.2);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.production-restore-preview span,
+.production-restore-preview h4 {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--gold);
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.production-restore-preview strong {
+  display: block;
+  color: var(--gold-light);
+  font-size: 1.02rem;
+}
+
+.production-restore-preview small,
+.production-restore-preview li {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.production-restore-preview__details {
+  grid-template-columns: minmax(220px, 0.8fr) minmax(260px, 1.2fr);
+}
+
+.production-restore-warning {
+  border-color: rgba(255, 107, 95, 0.36) !important;
+  background: rgba(80, 16, 11, 0.22) !important;
+}
+
+@media (max-width: 980px) {
+  .production-backup-actions,
+  .production-restore-preview__grid,
+  .production-restore-preview__details {
+    grid-template-columns: 1fr;
+  }
+
+  .production-backup-actions .button {
+    width: 100%;
+  }
+}
