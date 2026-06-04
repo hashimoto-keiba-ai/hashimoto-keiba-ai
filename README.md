@@ -1,16 +1,52 @@
-## Hi there 👋
+# 橋本競馬AI学習ログシステム
 
-<!--
-**hashimoto-keiba-ai/hashimoto-keiba-ai** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+競馬場ごとの学習データを年別に管理し、事前予想、結果検証、OSアップデート、保存ログを蓄積するためのデータベースです。
 
-Here are some ideas to get you started:
+## ダッシュボード
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+トップ画面は `index.html` です。ブラウザで開くと、橋本競馬AIの学習状況を実データ形式の管理画面として確認できます。
+
+## Phase7-4 最終監査（リリース監査）
+
+`index.html` の「最終監査（リリース監査）」パネルで、橋本競馬AIの正式リリース可否を確認できます。
+
+監査対象:
+
+- AI指数
+- 神穴AI
+- 危険人気馬AI
+- 三連単生成
+- WIN5生成
+- 未来シミュレーター
+- EV監視
+- 神レース検出
+- 勝負レース選定
+- 資金配分
+- 資金管理
+- 実戦レースDB
+- AI弱点分析
+- 自己学習
+- 重み自動調整
+- コース別自己進化
+- ROI最適化
+- 完全統合ダッシュボード
+- バックアップ/復元
+- Version Manager
+
+表示内容:
+
+- 監査結果: 正常 / 要確認 / 警告 / エラー
+- 完成度: 0〜100%
+- リリーススコア: 0〜100
+- 判定: 開発版 / アルファ版 / ベータ版 / RC版 / 正式版
+- 問題一覧: 重大 / 中 / 軽微
+- 修正優先順位: 問題の重大度に応じて自動生成
+
+使い方:
+
+1. `index.html` をブラウザで開きます。
+2. 「監査実行」を押すと全システムの監査結果を再生成します。
+3. 結果は `localStorage` の `releaseAuditReports` に保存されます。
+4. 「JSON出力」を押すと、現在の監査結果をJSONファイルとしてダウンロードできます。
+
+監査は `releaseManagerReports`、`finalHealthCheckReports`、`productionReadinessAuditReports`、`productionOperationScores`、`performanceDashboardReports` を参照し、保存済みデータがない場合でも初期監査値から判定できます。
