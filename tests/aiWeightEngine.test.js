@@ -46,7 +46,8 @@ assert.equal(initial.abilityIndex, 1.0, '能力指数の初期重みを保存す
 assert.equal(initial.jockeyCorrection, 0.8, '騎手補正の初期重みを保存する');
 assert.equal(initial.darkHorseCorrection, 1.1, '神穴補正の初期重みを保存する');
 assert.equal(initial.dangerPopularCorrection, 1.2, '危険人気馬補正の初期重みを保存する');
-assert.equal(Object.keys(initial).length, 14, '14種類の重みを保存する');
+assert.equal(Object.keys(initial).filter((key) => !key.endsWith('Weights')).length, 14, '基本14種類の重みを保存する');
+assert.ok(initial.tokyoWeights && initial.nakayamaWeights && initial.hanshinWeights && initial.kyotoWeights && initial.chukyoWeights, '主要競馬場別重みを保存する');
 
 localStorageMock.setItem('selfLearningSuggestions', JSON.stringify([
   { id: 's-dark', status: '採用', targetArea: '神穴条件', suggestedRule: '神穴成功率が低いため神穴補正を強化', reason: '神穴成功率が低い' },
@@ -84,3 +85,17 @@ const scoreAfter = sandbox.window.calculateDarkHorseScore({ popularity: 9, odds:
 assert.ok(scoreAfter > scoreBefore, 'calculateDarkHorseScoreがaiWeightSettingsを参照する');
 
 console.log('ai weight engine test passed');
+
+
+assert.equal(engine.resolveCourseWeightKey('東京競馬場'), 'tokyoWeights', '東京競馬場からtokyoWeightsを解決する');
+engine.setSettings({ darkHorseCorrection: 2.0 }, { storage: localStorageMock, course: '東京競馬場', reason: '東京AI個別補正' });
+engine.setSettings({ darkHorseCorrection: 0.3 }, { storage: localStorageMock, course: '中山競馬場', reason: '中山AI個別補正' });
+const tokyoWeights = engine.getCourseSettings('東京競馬場', localStorageMock);
+const nakayamaWeights = engine.getCourseSettings('中山競馬場', localStorageMock);
+assert.equal(tokyoWeights.darkHorseCorrection, 2.0, '東京AIだけ神穴補正を変更する');
+assert.equal(nakayamaWeights.darkHorseCorrection, 0.3, '中山AIには東京AI補正を混在させない');
+engine.activateCourseWeights('東京競馬場', { storage: localStorageMock });
+const tokyoScore = sandbox.window.calculateDarkHorseScore({ popularity: 9, odds: 18, runningStyle: '差し', cornerPosition: 5, fieldSize: 16, training: 'A', going: '良', distance: 1600, surface: '芝', course: '東京' });
+engine.activateCourseWeights('中山競馬場', { storage: localStorageMock });
+const nakayamaScore = sandbox.window.calculateDarkHorseScore({ popularity: 9, odds: 18, runningStyle: '差し', cornerPosition: 5, fieldSize: 16, training: 'A', going: '良', distance: 1600, surface: '芝', course: '東京' });
+assert.ok(tokyoScore > nakayamaScore, '選択競馬場のコース別重みがスコアへ適用される');

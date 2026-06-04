@@ -6,6 +6,16 @@
   const AI_WEIGHT_STORAGE_KEY = "aiWeightSettings";
   const AI_WEIGHT_LOG_STORAGE_KEY = "aiWeightAdjustmentLogs";
   const AI_WEIGHT_RANGE = { min: 0.3, max: 2.0 };
+  const COURSE_AI_TARGETS = Object.freeze([
+    { course: "東京", label: "東京AI", weightKey: "tokyoWeights" },
+    { course: "中山", label: "中山AI", weightKey: "nakayamaWeights" },
+    { course: "阪神", label: "阪神AI", weightKey: "hanshinWeights" },
+    { course: "京都", label: "京都AI", weightKey: "kyotoWeights" },
+    { course: "中京", label: "中京AI", weightKey: "chukyoWeights" },
+    { course: "福島", label: "福島AI", weightKey: "fukushimaWeights" },
+    { course: "新潟", label: "新潟AI", weightKey: "niigataWeights" },
+    { course: "小倉", label: "小倉AI", weightKey: "kokuraWeights" },
+  ]);
   const DEFAULT_AI_WEIGHT_SETTINGS = Object.freeze({
     abilityIndex: 1.0,
     positionIndex: 1.0,
@@ -38,6 +48,9 @@
     { key: "evCorrection", label: "EV補正重み", shortLabel: "EV補正", description: "期待値・オッズ妙味に反映" },
     { key: "bankrollCorrection", label: "資金配分補正重み", shortLabel: "資金配分補正", description: "資金配分AIと連動する防御/攻撃係数" },
   ]);
+  const COURSE_WEIGHT_KEY_BY_COURSE = Object.freeze(Object.fromEntries(COURSE_AI_TARGETS.map((item) => [item.course, item.weightKey])));
+  const COURSE_WEIGHT_KEYS = Object.freeze(COURSE_AI_TARGETS.map((item) => item.weightKey));
+  let activeCourseWeightKey = "";
   const clampAiWeight = (value) => Math.max(AI_WEIGHT_RANGE.min, Math.min(AI_WEIGHT_RANGE.max, Math.round(toNumber(value, 1) * 10) / 10));
   const readJsonSafe = (storage, key, fallback) => {
     try {
@@ -48,13 +61,37 @@
     }
   };
   const writeJsonSafe = (storage, key, value) => storage?.setItem?.(key, JSON.stringify(value));
-  const normalizeAiWeightSettings = (settings = {}) => Object.fromEntries(AI_WEIGHT_DEFINITIONS.map(({ key }) => [key, clampAiWeight(settings[key] ?? DEFAULT_AI_WEIGHT_SETTINGS[key])]));
+  const normalizeCourseNameForWeights = (value) => normalizeText(value).replace(/競馬場/g, "");
+  const resolveCourseWeightKey = (course) => COURSE_WEIGHT_KEY_BY_COURSE[normalizeCourseNameForWeights(course)] || "";
+  const normalizeAiWeightSet = (settings = {}) => Object.fromEntries(AI_WEIGHT_DEFINITIONS.map(({ key }) => [key, clampAiWeight(settings[key] ?? DEFAULT_AI_WEIGHT_SETTINGS[key])]));
+  const normalizeAiWeightSettings = (settings = {}) => {
+    const base = normalizeAiWeightSet(settings);
+    COURSE_WEIGHT_KEYS.forEach((courseKey) => {
+      base[courseKey] = normalizeAiWeightSet({ ...base, ...(settings?.[courseKey] || {}) });
+    });
+    return base;
+  };
   const getAiWeightSettings = (storage = window.localStorage) => {
     const normalized = normalizeAiWeightSettings(readJsonSafe(storage, AI_WEIGHT_STORAGE_KEY, null) || DEFAULT_AI_WEIGHT_SETTINGS);
     writeJsonSafe(storage, AI_WEIGHT_STORAGE_KEY, normalized);
     return normalized;
   };
-  const getAiWeight = (key, storage = window.localStorage) => getAiWeightSettings(storage)[key] ?? DEFAULT_AI_WEIGHT_SETTINGS[key] ?? 1;
+  const getCourseAiWeightSettings = (course, storage = window.localStorage) => {
+    const settings = getAiWeightSettings(storage);
+    const courseKey = resolveCourseWeightKey(course);
+    return courseKey ? normalizeAiWeightSet({ ...settings, ...(settings[courseKey] || {}) }) : normalizeAiWeightSet(settings);
+  };
+  const activateCourseAiWeights = (course, { storage = window.localStorage } = {}) => {
+    activeCourseWeightKey = resolveCourseWeightKey(course);
+    getAiWeightSettings(storage);
+    return { course: normalizeCourseNameForWeights(course), weightKey: activeCourseWeightKey, weights: activeCourseWeightKey ? getCourseAiWeightSettings(course, storage) : getAiWeightSettings(storage) };
+  };
+  const clearActiveCourseAiWeights = () => { activeCourseWeightKey = ""; };
+  const getAiWeight = (key, storage = window.localStorage) => {
+    const settings = getAiWeightSettings(storage);
+    const courseWeights = activeCourseWeightKey ? settings[activeCourseWeightKey] : null;
+    return courseWeights?.[key] ?? settings[key] ?? DEFAULT_AI_WEIGHT_SETTINGS[key] ?? 1;
+  };
   const createAiWeightLog = ({ targetWeight, before, after, reason, sourceSuggestion = null, mode = "manual" }) => ({
     date: new Date().toISOString(),
     targetWeight,
@@ -70,13 +107,19 @@
     writeJsonSafe(storage, AI_WEIGHT_LOG_STORAGE_KEY, next);
     return next;
   };
-  const setAiWeightSettings = (updates = {}, { storage = window.localStorage, mode = "manual", reason = "手動編集", sourceSuggestion = null, log = true } = {}) => {
+  const setAiWeightSettings = (updates = {}, { storage = window.localStorage, mode = "manual", reason = "手動編集", sourceSuggestion = null, log = true, course = "" } = {}) => {
     const beforeSettings = getAiWeightSettings(storage);
-    const nextSettings = normalizeAiWeightSettings({ ...beforeSettings, ...updates });
+    const courseKey = resolveCourseWeightKey(course);
+    const merged = courseKey
+      ? { ...beforeSettings, [courseKey]: { ...(beforeSettings[courseKey] || {}), ...updates } }
+      : { ...beforeSettings, ...updates };
+    const nextSettings = normalizeAiWeightSettings(merged);
     writeJsonSafe(storage, AI_WEIGHT_STORAGE_KEY, nextSettings);
+    const beforeSet = courseKey ? beforeSettings[courseKey] || beforeSettings : beforeSettings;
+    const afterSet = courseKey ? nextSettings[courseKey] || nextSettings : nextSettings;
     const logs = AI_WEIGHT_DEFINITIONS
-      .filter(({ key }) => beforeSettings[key] !== nextSettings[key])
-      .map(({ key }) => createAiWeightLog({ targetWeight: key, before: beforeSettings[key], after: nextSettings[key], reason, sourceSuggestion, mode }));
+      .filter(({ key }) => beforeSet[key] !== afterSet[key])
+      .map(({ key }) => createAiWeightLog({ targetWeight: courseKey ? `${courseKey}.${key}` : key, before: beforeSet[key], after: afterSet[key], reason, sourceSuggestion, mode }));
     if (log && logs.length) appendAiWeightLogs(logs, storage);
     return { settings: nextSettings, logs };
   };
@@ -566,7 +609,12 @@
     RANGE: AI_WEIGHT_RANGE,
     DEFAULT_SETTINGS: DEFAULT_AI_WEIGHT_SETTINGS,
     DEFINITIONS: AI_WEIGHT_DEFINITIONS,
+    COURSE_TARGETS: COURSE_AI_TARGETS,
     getSettings: getAiWeightSettings,
+    getCourseSettings: getCourseAiWeightSettings,
+    activateCourseWeights: activateCourseAiWeights,
+    clearActiveCourseWeights: clearActiveCourseAiWeights,
+    resolveCourseWeightKey,
     setSettings: setAiWeightSettings,
     resetSettings: resetAiWeightSettings,
     revertSettings: revertAiWeightSettings,
@@ -574,6 +622,9 @@
     resolveAdjustment: resolveAiWeightAdjustment,
   };
   getAiWeightSettings(window.localStorage);
+  window.document?.querySelectorAll?.('#race-course, select[name="course"], input[name="course"]').forEach((courseControl) => {
+    courseControl.addEventListener("change", () => activateCourseAiWeights(courseControl.value));
+  });
   window.calculateAiScore = calculateAiScore;
   window.calculateDarkHorseScore = calculateDarkHorseScore;
   window.calculateRiskScore = calculateRiskScore;
@@ -1716,6 +1767,7 @@
     const normalizedRace = normalizeRace(race);
     const normalizedHorses = horses.map(normalizeHorse).filter((horse) => horse.number && horse.name);
     const raceContext = { ...normalizedRace, fieldSize: normalizedRace.fieldSize || normalizedHorses.length };
+    const activeCourseWeights = window.HashimotoAiWeightEngine?.activateCourseWeights?.(raceContext.course) || null;
     const scoredHorses = scoreEngine.calculateAllHorseScores(normalizedHorses, raceContext);
     const aiIndexRanking = [...scoredHorses].sort((a, b) => b.aiIndex - a.aiIndex);
     const kamianaRanking = [...scoredHorses].sort((a, b) => b.kamianaIndex - a.kamianaIndex);
@@ -1748,6 +1800,7 @@
       generatedAt: new Date().toISOString(),
       storageVersion: 1,
       race: raceContext,
+      appliedCourseWeights: activeCourseWeights,
       horses: scoredHorses,
       aiIndexRanking,
       kamiana,
@@ -2464,6 +2517,212 @@
     appendSelfEvolutionLog,
     appendFundCurveRecord,
     validateAndPersistProductionResult,
+  };
+})();
+
+
+(() => {
+  const COURSE_EVOLUTION_REPORTS_KEY = "courseEvolutionReports";
+  const COURSE_SPECIFIC_SUGGESTIONS_KEY = "courseSpecificSuggestions";
+  const TARGET_COURSES = Object.freeze(["東京", "中山", "阪神", "京都", "中京", "福島", "新潟", "小倉"]);
+  const COURSE_LABELS = Object.freeze(Object.fromEntries(TARGET_COURSES.map((course) => [course, `${course}AI`])));
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const normalizeText = (value) => String(value ?? "").trim();
+  const normalizeCourse = (value) => {
+    const text = normalizeText(value).replace(/競馬場/g, "");
+    return TARGET_COURSES.find((course) => text.includes(course)) || "";
+  };
+  const safeParse = (raw, fallback = null) => {
+    try { return raw ? JSON.parse(raw) : fallback; } catch (_) { return fallback; }
+  };
+  const readJson = (storage, key, fallback) => safeParse(storage?.getItem?.(key), fallback);
+  const writeJson = (storage, key, value) => storage?.setItem?.(key, JSON.stringify(value));
+  const pct = (hits, total) => total > 0 ? round((hits / total) * 100, 1) : 0;
+  const roi = (stake, payout) => stake > 0 ? round((payout / stake) * 100, 1) : 0;
+
+  const createEmptyBucket = (course) => ({
+    course,
+    label: COURSE_LABELS[course],
+    raceCount: 0,
+    investment: 0,
+    payout: 0,
+    hitCount: 0,
+    kamianaAttempts: 0,
+    kamianaSuccess: 0,
+    dangerPopularAttempts: 0,
+    dangerPopularSuccess: 0,
+    godRaceAttempts: 0,
+    godRaceSuccess: 0,
+    trifectaAttempts: 0,
+    trifectaHits: 0,
+    evidence: [],
+    sourceCounts: { raceDatabase: 0, productionResultValidationReports: 0, selfEvolutionLogs: 0 },
+  });
+
+  const extractCourse = (item = {}) => normalizeCourse(item.course || item.race?.course || item.racecourse || item.productionPayload?.race?.course || item.payload?.race?.course);
+  const isTruthLike = (value) => value === true || value === "的中" || value === "成功" || value === "hit" || value === "win" || value === 1;
+  const inferGodRace = (item = {}) => /神|S|A|勝負/.test(normalizeText(item.godRaceJudgement?.label || item.godRace?.label || item.summary?.godRaceJudgement?.label || item.race?.godRaceJudgement?.label)) && !/見送り/.test(normalizeText(item.godRaceJudgement?.label || item.godRace?.label || item.summary?.godRaceJudgement?.label));
+
+  const addRaceDatabaseRecord = (bucket, record = {}) => {
+    const stake = toNumber(record.investmentAmount ?? record.totalInvestment ?? record.validationReport?.totalInvestment ?? record.validationReport?.investment, 0);
+    const payout = toNumber(record.payoutAmount ?? record.payout ?? record.validationReport?.payout, 0);
+    bucket.raceCount += 1;
+    bucket.investment += stake;
+    bucket.payout += payout;
+    bucket.hitCount += isTruthLike(record.hit ?? record.validationReport?.summary?.hit) || payout > 0 ? 1 : 0;
+    const judgement = record.validationReport?.judgements || record.judgements || {};
+    if (record.kamiana?.length || record.kamianaRanking?.length || judgement.kamianaHit !== undefined) {
+      bucket.kamianaAttempts += 1;
+      bucket.kamianaSuccess += isTruthLike(judgement.kamianaHit ?? record.kamianaHit ?? record.kamianaSuccess) ? 1 : 0;
+    }
+    if (record.dangerPopular?.length || record.dangerPopularRanking?.length || judgement.dangerPopularSuccess !== undefined) {
+      bucket.dangerPopularAttempts += 1;
+      bucket.dangerPopularSuccess += isTruthLike(judgement.dangerPopularSuccess ?? record.dangerPopularSuccess) ? 1 : 0;
+    }
+    if (inferGodRace(record) || judgement.godRaceSuccess !== undefined) {
+      bucket.godRaceAttempts += 1;
+      bucket.godRaceSuccess += isTruthLike(judgement.godRaceSuccess ?? record.godRaceSuccess ?? record.hit) || payout > 0 ? 1 : 0;
+    }
+    bucket.trifectaAttempts += 1;
+    bucket.trifectaHits += isTruthLike(judgement.trifectaHit ?? record.trifectaHit ?? record.hit) || payout > 0 ? 1 : 0;
+    bucket.sourceCounts.raceDatabase += 1;
+    bucket.evidence.push(record.id || `${record.date || record.race?.date || "未日付"}:${record.raceName || record.race?.raceName || "未入力"}`);
+  };
+
+  const addValidationReport = (bucket, report = {}) => {
+    const judgement = report.judgements || {};
+    const result = report.result || {};
+    const stake = toNumber(report.totalInvestment ?? report.investment ?? result.investment, 0);
+    const payout = toNumber(report.payout ?? result.payout, 0);
+    bucket.raceCount += 1;
+    bucket.investment += stake;
+    bucket.payout += payout;
+    bucket.hitCount += isTruthLike(report.summary?.hit ?? judgement.trifectaHit) || payout > 0 ? 1 : 0;
+    bucket.kamianaAttempts += judgement.kamianaHit !== undefined || report.kamianaHit !== undefined ? 1 : 0;
+    bucket.kamianaSuccess += isTruthLike(judgement.kamianaHit ?? report.kamianaHit) ? 1 : 0;
+    bucket.dangerPopularAttempts += judgement.dangerPopularSuccess !== undefined || report.dangerPopularSuccess !== undefined ? 1 : 0;
+    bucket.dangerPopularSuccess += isTruthLike(judgement.dangerPopularSuccess ?? report.dangerPopularSuccess) ? 1 : 0;
+    bucket.godRaceAttempts += inferGodRace(report) || judgement.godRaceSuccess !== undefined ? 1 : 0;
+    bucket.godRaceSuccess += isTruthLike(judgement.godRaceSuccess ?? report.godRaceSuccess ?? report.summary?.hit) || payout > 0 ? 1 : 0;
+    bucket.trifectaAttempts += 1;
+    bucket.trifectaHits += isTruthLike(judgement.trifectaHit ?? report.trifectaHit) || payout > 0 ? 1 : 0;
+    bucket.sourceCounts.productionResultValidationReports += 1;
+    bucket.evidence.push(report.id || `${report.race?.date || "未日付"}:${report.race?.raceName || "検証"}`);
+  };
+
+  const addSelfEvolutionLog = (bucket, log = {}) => {
+    bucket.sourceCounts.selfEvolutionLogs += 1;
+    bucket.evidence.push(log.id || `${log.savedAt || log.date || "未日付"}:selfEvolution`);
+  };
+
+  const finalizeBucket = (bucket) => {
+    const metrics = {
+      roi: roi(bucket.investment, bucket.payout),
+      hitRate: pct(bucket.hitCount, bucket.raceCount),
+      kamianaSuccessRate: pct(bucket.kamianaSuccess, bucket.kamianaAttempts),
+      dangerPopularSuccessRate: pct(bucket.dangerPopularSuccess, bucket.dangerPopularAttempts),
+      godRaceSuccessRate: pct(bucket.godRaceSuccess, bucket.godRaceAttempts),
+      trifectaHitRate: pct(bucket.trifectaHits, bucket.trifectaAttempts),
+    };
+    const weaknesses = detectWeaknesses(bucket.course, metrics);
+    return { ...bucket, evidenceCount: bucket.evidence.length, evidence: bucket.evidence.slice(0, 20), metrics, weaknesses };
+  };
+
+  const detectWeaknesses = (course, metrics = {}) => {
+    const defaults = {
+      東京: "差し補正不足",
+      中山: "逃げ補正過剰",
+      阪神: "危険人気馬判定不足",
+      京都: "直線持続力補正不足",
+      中京: "神穴条件不足",
+      福島: "小回り先行補正不足",
+      新潟: "長い直線の差し補正不足",
+      小倉: "ローカル小回り補正不足",
+    };
+    const items = [];
+    if (metrics.roi && metrics.roi < 90) items.push("ROI改善が必要");
+    if (metrics.hitRate && metrics.hitRate < 35) items.push("的中率不足");
+    if (metrics.kamianaSuccessRate < 25) items.push(course === "中京" ? "神穴条件不足" : "神穴成功率不足");
+    if (metrics.dangerPopularSuccessRate < 35) items.push(course === "阪神" ? "危険人気馬判定不足" : "危険人気馬成功率不足");
+    if (metrics.trifectaHitRate < 20) items.push("三連単的中率不足");
+    if (!items.length) items.push(defaults[course]);
+    if (!items.includes(defaults[course])) items.push(defaults[course]);
+    return [...new Set(items)].slice(0, 4);
+  };
+
+  const createSuggestion = (report, weakness, index) => {
+    const targetRule = /神穴/.test(weakness) ? "darkHorseCorrection" : /危険人気馬/.test(weakness) ? "dangerPopularCorrection" : /三連単|的中|差し|逃げ|展開/.test(weakness) ? "paceMatch" : "trackAptitude";
+    const before = window.HashimotoAiWeightEngine?.getCourseSettings?.(report.course)?.[targetRule] ?? 1;
+    const direction = /過剰/.test(weakness) ? -0.1 : 0.1;
+    return {
+      id: `course-specific:${report.course}:${targetRule}:${index}`,
+      course: report.course,
+      targetRule,
+      before,
+      after: Math.max(0.3, Math.min(2.0, round(before + direction, 1))),
+      reason: `${report.label}の${weakness}を補正し、競馬場別に学習内容を分離するため`,
+      evidenceCount: report.evidenceCount,
+      impactEstimate: `ROI +${Math.max(1, Math.min(12, Math.round((100 - report.metrics.roi) / 8) || 3))}% / 的中率 +${Math.max(1, Math.min(8, Math.round((45 - report.metrics.hitRate) / 6) || 2))}pt`,
+      status: "保留",
+    };
+  };
+
+  const collectSources = (storage = window.localStorage) => ({
+    raceDatabase: window.HashimotoProductionRaceEngine?.loadRaceDatabase ? window.HashimotoProductionRaceEngine.loadRaceDatabase(storage) : asArray(readJson(storage, "raceDatabase", [])),
+    productionResultValidationReports: asArray(readJson(storage, "productionResultValidationReports", [])),
+    selfEvolutionLogs: readJson(storage, "selfEvolutionLogs", null) || readJson(storage, "hashimoto-keiba-ai:self-evolution-logs:v1", null) || {},
+  });
+
+  const flattenSelfEvolutionLogs = (value = {}) => Object.values(value.logs || value || {}).flatMap((entry) => asArray(entry));
+
+  const buildCourseEvolutionReports = ({ storage = window.localStorage, persist = true } = {}) => {
+    const buckets = Object.fromEntries(TARGET_COURSES.map((course) => [course, createEmptyBucket(course)]));
+    const sources = collectSources(storage);
+    asArray(sources.raceDatabase).forEach((record) => { const course = extractCourse(record); if (buckets[course]) addRaceDatabaseRecord(buckets[course], record); });
+    asArray(sources.productionResultValidationReports).forEach((report) => { const course = extractCourse(report); if (buckets[course]) addValidationReport(buckets[course], report); });
+    flattenSelfEvolutionLogs(sources.selfEvolutionLogs).forEach((log) => { const course = extractCourse(log); if (buckets[course]) addSelfEvolutionLog(buckets[course], log); });
+    const reports = TARGET_COURSES.map((course) => finalizeBucket(buckets[course]));
+    const payload = {
+      id: `course-evolution-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+      generatedAt: new Date().toISOString(),
+      storageKey: COURSE_EVOLUTION_REPORTS_KEY,
+      sourceKeys: ["raceDatabase", "productionResultValidationReports", "selfEvolutionLogs"],
+      reports,
+      sourceCounts: {
+        raceDatabase: asArray(sources.raceDatabase).length,
+        productionResultValidationReports: asArray(sources.productionResultValidationReports).length,
+        selfEvolutionLogs: flattenSelfEvolutionLogs(sources.selfEvolutionLogs).length,
+      },
+    };
+    const generatedSuggestions = reports.flatMap((report) => report.weaknesses.slice(0, 2).map((weakness, index) => createSuggestion(report, weakness, index)));
+    const existingSuggestions = asArray(readJson(storage, COURSE_SPECIFIC_SUGGESTIONS_KEY, []));
+    const suggestions = generatedSuggestions.map((item) => ({ ...item, ...(existingSuggestions.find((saved) => saved.id === item.id) || {}) }));
+    if (persist) {
+      writeJson(storage, COURSE_EVOLUTION_REPORTS_KEY, payload);
+      writeJson(storage, COURSE_SPECIFIC_SUGGESTIONS_KEY, suggestions);
+    }
+    return { ...payload, suggestions };
+  };
+
+  const applyCourseSpecificSuggestion = (suggestion = {}, { storage = window.localStorage } = {}) => {
+    if (!suggestion.course || !suggestion.targetRule) return null;
+    const result = window.HashimotoAiWeightEngine?.setSettings?.({ [suggestion.targetRule]: suggestion.after }, { storage, course: suggestion.course, mode: "course-auto", reason: suggestion.reason, sourceSuggestion: { id: suggestion.id, course: suggestion.course, targetRule: suggestion.targetRule } }) || null;
+    const suggestions = asArray(readJson(storage, COURSE_SPECIFIC_SUGGESTIONS_KEY, [])).map((item) => item.id === suggestion.id ? { ...item, status: "採用" } : item);
+    writeJson(storage, COURSE_SPECIFIC_SUGGESTIONS_KEY, suggestions);
+    return result;
+  };
+
+  window.HashimotoCourseEvolutionEngine = {
+    COURSE_EVOLUTION_REPORTS_KEY,
+    COURSE_SPECIFIC_SUGGESTIONS_KEY,
+    TARGET_COURSES,
+    COURSE_LABELS,
+    normalizeCourse,
+    collectSources,
+    buildCourseEvolutionReports,
+    applyCourseSpecificSuggestion,
   };
 })();
 
@@ -3431,6 +3690,65 @@
   }, true);
   if (!engine.currentSuggestions(window.localStorage).length) engine.buildSuggestions({ storage: window.localStorage, persist: true });
   renderSuggestions();
+})();
+
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoCourseEvolutionEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#course-evolution-panel")) return;
+  const status = documentRef.querySelector("#course-evolution-status");
+  const summary = documentRef.querySelector("#course-evolution-summary");
+  const body = documentRef.querySelector("#course-evolution-table-body");
+  const suggestionsBody = documentRef.querySelector("#course-evolution-suggestion-body");
+  const source = documentRef.querySelector("#course-evolution-source-count");
+  const pct = (value) => `${Number(value || 0).toFixed(1).replace(/\.0$/, "")}%`;
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+
+  const render = ({ persist = false } = {}) => {
+    const report = engine.buildCourseEvolutionReports({ storage: window.localStorage, persist });
+    if (status) status.textContent = `COURSE AI ${report.reports.length}場 集計完了`;
+    if (source) source.textContent = `参照: raceDatabase ${report.sourceCounts.raceDatabase}件 / productionResultValidationReports ${report.sourceCounts.productionResultValidationReports}件 / selfEvolutionLogs ${report.sourceCounts.selfEvolutionLogs}件 / 保存先 courseEvolutionReports・courseSpecificSuggestions`;
+    if (summary) {
+      summary.innerHTML = report.reports.map((item) => `<article><span>${escapeHtml(item.label)}</span><strong>${pct(item.metrics.roi)}</strong><small>${item.raceCount}戦 / 弱点: ${escapeHtml(item.weaknesses[0] || "学習待ち")}</small></article>`).join("");
+    }
+    if (body) {
+      body.innerHTML = report.reports.map((item) => `
+        <tr>
+          <td data-label="AI"><strong>${escapeHtml(item.label)}</strong><small>${item.raceCount}戦 / 証拠${item.evidenceCount}件</small></td>
+          <td data-label="ROI">${pct(item.metrics.roi)}</td>
+          <td data-label="的中率">${pct(item.metrics.hitRate)}</td>
+          <td data-label="神穴成功率">${pct(item.metrics.kamianaSuccessRate)}</td>
+          <td data-label="危険人気馬成功率">${pct(item.metrics.dangerPopularSuccessRate)}</td>
+          <td data-label="神レース成功率">${pct(item.metrics.godRaceSuccessRate)}</td>
+          <td data-label="三連単的中率">${pct(item.metrics.trifectaHitRate)}</td>
+          <td data-label="弱点">${item.weaknesses.map((weakness) => `<span class="badge">${escapeHtml(weakness)}</span>`).join(" ")}</td>
+        </tr>`).join("");
+    }
+    if (suggestionsBody) {
+      suggestionsBody.innerHTML = report.suggestions.map((item) => `
+        <tr data-course-suggestion-id="${escapeHtml(item.id)}">
+          <td data-label="競馬場"><strong>${escapeHtml(item.course)}</strong></td>
+          <td data-label="対象ルール">${escapeHtml(item.targetRule)}</td>
+          <td data-label="Before/After">${item.before} → <strong>${item.after}</strong></td>
+          <td data-label="理由">${escapeHtml(item.reason)}<small>証拠${item.evidenceCount}件 / ${escapeHtml(item.impactEstimate)}</small></td>
+          <td data-label="状態"><button class="button button--ghost course-suggestion-apply" type="button">${escapeHtml(item.status === "採用" ? "採用済み" : "採用")}</button></td>
+        </tr>`).join("");
+    }
+    return report;
+  };
+
+  documentRef.querySelector("#course-evolution-refresh")?.addEventListener("click", () => render({ persist: true }));
+  suggestionsBody?.addEventListener("click", (event) => {
+    if (!event.target.classList.contains("course-suggestion-apply")) return;
+    const id = event.target.closest("tr[data-course-suggestion-id]")?.dataset.courseSuggestionId;
+    const suggestions = JSON.parse(window.localStorage.getItem(engine.COURSE_SPECIFIC_SUGGESTIONS_KEY) || "[]");
+    const suggestion = suggestions.find((item) => item.id === id);
+    if (suggestion) engine.applyCourseSpecificSuggestion(suggestion, { storage: window.localStorage });
+    render({ persist: false });
+    if (status) status.textContent = `${suggestion?.course || "コース"}別重みを aiWeightSettings へ適用しました`;
+  });
+  render({ persist: true });
 })();
 
 
@@ -4850,6 +5168,17 @@
   const logEngine = window.HashimotoProductionOperationLogEngine;
   const latestPayload = () => readJson(window.localStorage, "hashimoto-keiba-ai:production-race-entry:v1", null) || readJson(window.localStorage, "productionRaceEntries", [])[0] || null;
   let currentPayload = latestPayload();
+  const applySelectedCourseWeights = (course) => {
+    const applied = window.HashimotoAiWeightEngine?.activateCourseWeights?.(course);
+    if (applied?.weightKey && status) status.textContent = `${course} のコース別重み（${applied.weightKey}）を適用しました`;
+    return applied;
+  };
+  const courseInput = raceForm?.elements?.course;
+  if (courseInput) {
+    applySelectedCourseWeights(courseInput.value);
+    courseInput.addEventListener("change", () => applySelectedCourseWeights(courseInput.value));
+    courseInput.addEventListener("input", () => applySelectedCourseWeights(courseInput.value));
+  }
 
   const setFlow = (activeSteps = []) => {
     const active = new Set(activeSteps);

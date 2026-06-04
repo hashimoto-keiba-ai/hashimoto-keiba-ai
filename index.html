@@ -502,6 +502,51 @@
         </div>
       </section>
 
+      <section id="course-evolution-panel" class="course-evolution-card card card--wide card--featured" aria-label="Phase6-3 コース別自己進化AI">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE6-3 COURSE EVOLUTION AI</p>
+              <h2>コース別自己進化AI</h2>
+              <p class="card__lead"><code>raceDatabase</code>・<code>productionResultValidationReports</code>・<code>selfEvolutionLogs</code>を競馬場別に分離集計し、東京AI〜小倉AIが別々に弱点・改善提案・重み補正を進化します。</p>
+            </div>
+            <span id="course-evolution-status" class="status-pill status-pill--live">コース別集計待機</span>
+          </div>
+
+          <div id="course-evolution-summary" class="course-evolution-summary" aria-label="競馬場別AIサマリー"></div>
+
+          <div class="self-learning-actions">
+            <button id="course-evolution-refresh" class="button button--primary" type="button">コース別自己進化を再集計</button>
+          </div>
+
+          <div class="table-wrap course-evolution-table">
+            <table class="data-table data-table--compact">
+              <thead>
+                <tr>
+                  <th scope="col">AI</th><th scope="col">ROI</th><th scope="col">的中率</th><th scope="col">神穴成功率</th><th scope="col">危険人気馬成功率</th><th scope="col">神レース成功率</th><th scope="col">三連単的中率</th><th scope="col">弱点分析</th>
+                </tr>
+              </thead>
+              <tbody id="course-evolution-table-body">
+                <tr><td data-label="状態" colspan="8">コース別集計待ち</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-wrap course-evolution-table">
+            <table class="data-table data-table--compact">
+              <thead>
+                <tr><th scope="col">競馬場</th><th scope="col">対象ルール</th><th scope="col">Before/After</th><th scope="col">理由・証拠</th><th scope="col">状態</th></tr>
+              </thead>
+              <tbody id="course-evolution-suggestion-body">
+                <tr><td data-label="状態" colspan="5">改善提案生成待ち</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p id="course-evolution-source-count" class="self-learning-source-count">参照: raceDatabase / productionResultValidationReports / selfEvolutionLogs / 保存先 courseEvolutionReports・courseSpecificSuggestions</p>
+        </div>
+      </section>
+
       <section id="performance-dashboard" class="performance-dashboard card card--wide card--featured" aria-label="Phase5-3 総合パフォーマンスダッシュボード">
         <div class="card__body">
           <div class="card-heading">
