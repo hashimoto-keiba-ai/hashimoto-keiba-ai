@@ -1478,3 +1478,32 @@ Phase7-2では、完全統合ダッシュボード導入後の最終確認用と
 - `backupRestoreLogs`
 
 黒×金デザイン、スマホ/iPad対応、既存の完全統合ダッシュボード・本番運用・資金管理・自己学習・バックアップ機能とのlocalStorage連動を維持しています。
+
+## Phase7-3 リリース判定システム（Version Manager）
+
+Phase7-3では、橋本競馬AIの完成度を管理し、`開発版`、`アルファ版`、`ベータ版`、`RC版`、`本番版` のどの段階にいるかを判定する **Version Manager** パネルを追加しました。現在バージョンは `v7.3` として表示され、完成度、最終更新日、リリース判定、リリース条件、リリース履歴を1画面で確認できます。
+
+### 使い方
+
+1. 画面上部のナビゲーションまたはランチャーから「Version」を開きます。
+2. 「リリース判定を更新」を押すと、現在のlocalStorageから判定材料を読み直して、Version、Development、Completion、Updated、Statusを更新します。
+3. 「リリース段階」で `開発版 → アルファ版 → ベータ版 → RC版 → 本番版` の到達状況を確認します。
+4. 「リリース条件」で本番版条件を確認します。本番版になるには、ヘルススコア90以上、完成度90%以上、重大エラー0件、localStorage整合性OKがすべて必要です。
+5. 「判定材料」で、各参照キーの読込状態、件数、メッセージを確認します。
+6. 「履歴へ保存」を押すと、現在のリリース判定を `releaseHistory` に保存します。
+
+### 判定材料
+
+Version Managerは以下のlocalStorageキーを参照します。
+
+- `finalHealthCheckReports`
+- `productionReadinessAuditReports`
+- `productionOperationScores`
+- `performanceDashboardReports`
+
+### 保存キー
+
+- 最新リリース判定レポート: `releaseManagerReports`
+- リリース履歴: `releaseHistory`
+
+リリース履歴には `version`、`date`、`completionScore`、`healthScore`、`status`、`notes` を保存します。黒×金デザイン、スマホ/iPad対応、既存の最終統合ヘルスチェック・本番運用監査・総合パフォーマンス機能とのlocalStorage連動を維持しています。

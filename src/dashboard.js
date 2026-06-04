@@ -6616,6 +6616,165 @@
     buildFinalHealthCheckReport,
     saveReport,
   };
+
+})();
+
+(() => {
+  const VERSION = "v7.3";
+  const REPORT_STORAGE_KEY = "releaseManagerReports";
+  const HISTORY_STORAGE_KEY = "releaseHistory";
+  const SOURCE_KEYS = Object.freeze([
+    "finalHealthCheckReports",
+    "productionReadinessAuditReports",
+    "productionOperationScores",
+    "performanceDashboardReports",
+  ]);
+  const RELEASE_STAGES = Object.freeze([
+    { key: "development", label: "開発版", min: 0, status: "Development" },
+    { key: "alpha", label: "アルファ版", min: 45, status: "Alpha" },
+    { key: "beta", label: "ベータ版", min: 70, status: "Beta" },
+    { key: "rc", label: "RC版", min: 90, status: "RC Candidate" },
+    { key: "production", label: "本番版", min: 90, status: "Production Ready" },
+  ]);
+
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const clamp = (value) => Math.max(0, Math.min(100, toNumber(value)));
+  const round = (value, digits = 0) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const safeParse = (raw, fallback = null) => {
+    if (raw === null || raw === undefined || raw === "") return { ok: true, value: fallback, empty: true };
+    try { return { ok: true, value: JSON.parse(raw), empty: false }; } catch (error) { return { ok: false, value: fallback, empty: false, error: error.message }; }
+  };
+  const latestOf = (value) => Array.isArray(value) ? (value[0] || null) : (value || null);
+  const readSource = (storage, key) => {
+    try {
+      const raw = storage?.getItem?.(key);
+      const parsed = safeParse(raw, null);
+      if (!parsed.ok) return { key, ok: false, status: "エラー", latest: null, count: 0, message: `JSON読込エラー: ${parsed.error}` };
+      if (parsed.empty || parsed.value === null) return { key, ok: true, status: "未実行", latest: null, count: 0, message: "保存データなし" };
+      const count = Array.isArray(parsed.value) ? parsed.value.length : 1;
+      return { key, ok: true, status: count > 0 ? "正常" : "未実行", latest: latestOf(parsed.value), count, message: count > 0 ? "読込正常" : "保存データなし" };
+    } catch (error) {
+      return { key, ok: false, status: "エラー", latest: null, count: 0, message: `localStorage読込失敗: ${error.message}` };
+    }
+  };
+  const loadSources = (storage = window.localStorage) => Object.fromEntries(SOURCE_KEYS.map((key) => [key, readSource(storage, key)]));
+  const valueFrom = (...values) => values.find((value) => Number.isFinite(Number(value))) ?? 0;
+  const extractHealthScore = (health) => clamp(valueFrom(health?.score, health?.summary?.healthScore));
+  const extractAuditCompletion = (audit) => clamp(valueFrom(audit?.completion?.percentage, audit?.summary?.completionRate, audit?.completionScore));
+  const extractOperationScore = (operation) => clamp(valueFrom(operation?.score, operation?.operationScore, operation?.summary?.score));
+  const extractPerformanceScore = (performance) => clamp(valueFrom(performance?.aiEvaluation?.aiOperationScore, performance?.aiEvaluation?.score, performance?.summary?.score, performance?.score));
+  const extractCriticalErrors = (health, sources) => {
+    const countedErrors = toNumber(health?.counts?.error, 0);
+    const issueErrors = asArray(health?.issues).filter((item) => item?.status === "error" || item?.statusLabel === "エラー").length;
+    const sourceErrors = Object.values(sources).filter((source) => !source.ok).length;
+    return Math.max(0, Math.round(Math.max(countedErrors, issueErrors) + sourceErrors));
+  };
+  const isLocalStorageIntegrityOk = (health, sources) => Boolean(health) && Object.values(sources).every((source) => source.ok) && asArray(health?.storageChecks).every((check) => check.status !== "error" && check.statusLabel !== "エラー");
+
+  const calculateCompletionScore = ({ healthScore = 0, auditCompletion = 0, operationScore = 0, performanceScore = 0 } = {}) => round(
+    (clamp(healthScore) * 0.35) + (clamp(auditCompletion) * 0.30) + (clamp(operationScore) * 0.20) + (clamp(performanceScore) * 0.15),
+    1,
+  );
+
+  const buildReleaseConditions = ({ healthScore, completionScore, criticalErrors, localStorageIntegrityOk } = {}) => [
+    { key: "health", label: "ヘルススコア90以上", passed: clamp(healthScore) >= 90, value: `${round(healthScore, 1)}点` },
+    { key: "completion", label: "完成度90%以上", passed: clamp(completionScore) >= 90, value: `${round(completionScore, 1)}%` },
+    { key: "criticalErrors", label: "重大エラー0件", passed: toNumber(criticalErrors) === 0, value: `${toNumber(criticalErrors)}件` },
+    { key: "localStorage", label: "localStorage整合性OK", passed: Boolean(localStorageIntegrityOk), value: localStorageIntegrityOk ? "OK" : "要確認" },
+  ];
+
+  const judgeRelease = ({ completionScore = 0, healthScore = 0, criticalErrors = 0, localStorageIntegrityOk = false } = {}) => {
+    const completion = clamp(completionScore);
+    const productionReady = healthScore >= 90 && completion >= 90 && criticalErrors === 0 && localStorageIntegrityOk;
+    if (productionReady) return { stage: "production", stageLabel: "本番版", status: "Production Ready", developmentStatus: "本番リリース可能" };
+    if (completion >= 90 && healthScore >= 85 && criticalErrors === 0) return { stage: "rc", stageLabel: "RC版", status: "RC Candidate", developmentStatus: "本番前最終確認" };
+    if (completion >= 70) return { stage: "beta", stageLabel: "ベータ版", status: "Beta", developmentStatus: "検証運用中" };
+    if (completion >= 45) return { stage: "alpha", stageLabel: "アルファ版", status: "Alpha", developmentStatus: "機能検証中" };
+    return { stage: "development", stageLabel: "開発版", status: "Development", developmentStatus: "開発中" };
+  };
+
+  const buildReleaseManagerReport = ({ storage = window.localStorage, version = VERSION, notes = "自動リリース判定" } = {}) => {
+    const sources = loadSources(storage);
+    const health = sources.finalHealthCheckReports.latest;
+    const audit = sources.productionReadinessAuditReports.latest;
+    const operation = sources.productionOperationScores.latest;
+    const performance = sources.performanceDashboardReports.latest;
+    const metrics = {
+      healthScore: extractHealthScore(health),
+      auditCompletion: extractAuditCompletion(audit),
+      operationScore: extractOperationScore(operation),
+      performanceScore: extractPerformanceScore(performance),
+    };
+    const completionScore = calculateCompletionScore(metrics);
+    const criticalErrors = extractCriticalErrors(health, sources);
+    const localStorageIntegrityOk = isLocalStorageIntegrityOk(health, sources);
+    const judgement = judgeRelease({ completionScore, healthScore: metrics.healthScore, criticalErrors, localStorageIntegrityOk });
+    const conditions = buildReleaseConditions({ healthScore: metrics.healthScore, completionScore, criticalErrors, localStorageIntegrityOk });
+    return {
+      id: `release-manager:${new Date().toISOString()}`,
+      storageKey: REPORT_STORAGE_KEY,
+      version,
+      date: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
+      completionScore,
+      completionPercent: completionScore,
+      healthScore: metrics.healthScore,
+      status: judgement.status,
+      releaseStage: judgement.stage,
+      releaseStageLabel: judgement.stageLabel,
+      developmentStatus: judgement.developmentStatus,
+      releaseJudgement: judgement.status,
+      criticalErrors,
+      localStorageIntegrityOk,
+      metrics,
+      conditions,
+      sources: Object.values(sources).map(({ key, status, count, message, ok }) => ({ key, status, count, message, ok })),
+      sourceStorageKeys: SOURCE_KEYS,
+      releaseStages: RELEASE_STAGES,
+      notes,
+    };
+  };
+
+  const readArray = (storage, key) => {
+    const parsed = safeParse(storage?.getItem?.(key), []);
+    return Array.isArray(parsed.value) ? parsed.value : [];
+  };
+  const saveReport = (report, storage = window.localStorage) => {
+    if (!storage?.setItem) return [report];
+    const reports = [report, ...readArray(storage, REPORT_STORAGE_KEY).filter((item) => item.id !== report.id)].slice(0, 30);
+    storage.setItem(REPORT_STORAGE_KEY, JSON.stringify(reports));
+    return reports;
+  };
+  const saveHistory = (report, storage = window.localStorage) => {
+    if (!storage?.setItem) return [];
+    const historyItem = {
+      version: report.version,
+      date: report.date,
+      completionScore: report.completionScore,
+      healthScore: report.healthScore,
+      status: report.status,
+      notes: report.notes,
+    };
+    const history = [historyItem, ...readArray(storage, HISTORY_STORAGE_KEY)].slice(0, 50);
+    storage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+    return history;
+  };
+
+  window.HashimotoReleaseManagerEngine = {
+    VERSION,
+    REPORT_STORAGE_KEY,
+    HISTORY_STORAGE_KEY,
+    SOURCE_KEYS,
+    RELEASE_STAGES,
+    loadSources,
+    calculateCompletionScore,
+    buildReleaseConditions,
+    judgeRelease,
+    buildReleaseManagerReport,
+    saveReport,
+    saveHistory,
+  };
 })();
 
 (() => {
@@ -6835,5 +6994,80 @@
   };
   documentRef.querySelector("#final-health-run")?.addEventListener("click", () => render({ persist: true }));
   documentRef.querySelector("#final-health-scroll-issues")?.addEventListener("click", () => documentRef.querySelector("#final-health-issues")?.scrollIntoView?.({ behavior: "smooth", block: "start" }));
+  render({ persist: true });
+})();
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoReleaseManagerEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#version-manager-panel")) return;
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+  const setText = (selector, value) => {
+    const target = documentRef.querySelector(selector);
+    if (target) target.textContent = value;
+  };
+  const formatDate = (value) => value ? new Date(value).toLocaleDateString("ja-JP") : "-";
+  const stageClass = (stage, current) => stage === current ? "is-current" : engine.RELEASE_STAGES.findIndex((item) => item.key === stage) < engine.RELEASE_STAGES.findIndex((item) => item.key === current) ? "is-complete" : "";
+  const renderStages = (report) => {
+    const target = documentRef.querySelector("#version-manager-stage-list");
+    if (!target) return;
+    target.innerHTML = engine.RELEASE_STAGES.map((stage) => `<li class="${stageClass(stage.key, report.releaseStage)}"><strong>${escapeHtml(stage.label)}</strong><small>${escapeHtml(stage.status)}</small></li>`).join("");
+  };
+  const renderConditions = (conditions = []) => {
+    const target = documentRef.querySelector("#version-manager-condition-list");
+    if (!target) return;
+    target.innerHTML = conditions.map((condition) => `<li class="${condition.passed ? "is-pass" : "is-fail"}"><strong>${escapeHtml(condition.label)}</strong><span>${condition.passed ? "OK" : "NG"}</span><small>${escapeHtml(condition.value)}</small></li>`).join("");
+  };
+  const renderSources = (sources = []) => {
+    const target = documentRef.querySelector("#version-manager-source-body");
+    if (!target) return;
+    target.innerHTML = sources.map((source) => `
+      <tr class="${source.ok ? "is-pass" : "is-fail"}">
+        <td data-label="参照キー"><code>${escapeHtml(source.key)}</code></td>
+        <td data-label="状態">${escapeHtml(source.status)}</td>
+        <td data-label="値">${escapeHtml(source.count)}件</td>
+        <td data-label="メッセージ">${escapeHtml(source.message)}</td>
+      </tr>`).join("");
+  };
+  const loadHistory = () => {
+    try {
+      const raw = window.localStorage?.getItem?.(engine.HISTORY_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (_) {
+      return [];
+    }
+  };
+  const renderHistory = (history = loadHistory()) => {
+    const target = documentRef.querySelector("#version-manager-history-body");
+    if (!target) return;
+    target.innerHTML = history.length ? history.slice(0, 8).map((item) => `
+      <tr>
+        <td data-label="Version">${escapeHtml(item.version)}</td>
+        <td data-label="Date">${escapeHtml(formatDate(item.date))}</td>
+        <td data-label="Completion">${escapeHtml(item.completionScore)}%</td>
+        <td data-label="Health">${escapeHtml(item.healthScore)}</td>
+        <td data-label="Status">${escapeHtml(item.status)}</td>
+        <td data-label="Notes">${escapeHtml(item.notes)}</td>
+      </tr>`).join("") : '<tr><td data-label="状態" colspan="6">履歴なし</td></tr>';
+  };
+  const render = ({ persist = true, saveHistory = false } = {}) => {
+    const report = engine.buildReleaseManagerReport({ storage: window.localStorage });
+    if (persist) engine.saveReport(report, window.localStorage);
+    if (saveHistory) renderHistory(engine.saveHistory(report, window.localStorage));
+    setText("#version-manager-current-version", report.version);
+    setText("#version-manager-development-status", report.developmentStatus);
+    setText("#version-manager-completion", `${report.completionScore}%`);
+    setText("#version-manager-updated-at", formatDate(report.lastUpdated));
+    setText("#version-manager-release-status", report.status);
+    setText("#version-manager-status", `${report.releaseStageLabel} / ${report.status}`);
+    setText("#version-manager-source-keys", `参照: ${engine.SOURCE_KEYS.join(" / ")} / 保存先: ${engine.REPORT_STORAGE_KEY}・${engine.HISTORY_STORAGE_KEY}`);
+    renderStages(report);
+    renderConditions(report.conditions);
+    renderSources(report.sources);
+    if (!saveHistory) renderHistory();
+    return report;
+  };
+  documentRef.querySelector("#version-manager-refresh")?.addEventListener("click", () => render({ persist: true }));
+  documentRef.querySelector("#version-manager-save-history")?.addEventListener("click", () => render({ persist: true, saveHistory: true }));
   render({ persist: true });
 })();
