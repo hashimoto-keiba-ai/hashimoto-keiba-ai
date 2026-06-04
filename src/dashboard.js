@@ -6464,6 +6464,161 @@
 })();
 
 (() => {
+  const REPORT_STORAGE_KEY = "finalHealthCheckReports";
+  const LOCAL_STORAGE_KEYS = Object.freeze([
+    "productionRaceEntries",
+    "productionRunReports",
+    "raceDatabase",
+    "raceSelectionReports",
+    "fundManagementReports",
+    "roiOptimizationReports",
+    "weaknessAnalysisReports",
+    "selfLearningSuggestions",
+    "courseEvolutionReports",
+    "fundCurveRecords",
+    "productionOperationLogs",
+    "productionOperationMode",
+    "productionOperationScores",
+    "backupRestoreLogs",
+  ]);
+  const STATUS_LABELS = Object.freeze({ normal: "正常", review: "要確認", idle: "未実行", error: "エラー" });
+  const STATUS_SCORE = Object.freeze({ normal: 100, review: 65, idle: 35, error: 0 });
+  const HEALTH_ITEM_DEFINITIONS = Object.freeze([
+    { key: "aiIndexEngine", label: "AI指数エンジン", sources: ["productionRunReports", "raceDatabase"], patterns: [/AI指数|aiIndex|aiRanking|aiScores/i], location: "AI指数自動入力 / 本番AI一括実行", action: "出馬表CSVまたは本番レース入力後にAI指数を再計算してください。" },
+    { key: "aiIndexValidation", label: "AI指数検証パネル", sources: ["raceDatabase", "productionRunReports"], patterns: [/検証|validation|AI指数|result/i], location: "結果検証 / AI指数検証パネル", action: "結果入力または検証ログ保存を実行し、指数と着順の照合ログを作成してください。" },
+    { key: "kamianaAi", label: "神穴AI", sources: ["productionRunReports", "raceDatabase"], patterns: [/神穴|kamiana|darkHorse/i], location: "神穴ランキング", action: "AI一括実行または神穴ランキング再計算を実行してください。" },
+    { key: "dangerPopularAi", label: "危険人気馬AI", sources: ["productionRunReports", "raceDatabase"], patterns: [/危険人気馬|dangerPopular/i], location: "危険人気馬", action: "危険人気馬自動判定を再実行し、人気・オッズ・指数を確認してください。" },
+    { key: "trifecta", label: "三連単生成", sources: ["productionRunReports", "raceDatabase"], patterns: [/三連単|trifecta/i], location: "三連単生成", action: "AI指数と危険人気馬判定後に三連単買い目を生成してください。" },
+    { key: "win5", label: "WIN5生成", sources: ["productionRunReports", "raceDatabase"], patterns: [/WIN5|win5/i], location: "WIN5生成", action: "WIN5対象レースを登録し、WIN5候補生成を実行してください。" },
+    { key: "futureSimulator", label: "AI未来シミュレーター", sources: ["productionRunReports"], patterns: [/未来|シミュレーター|simulation|simulator/i], location: "AI未来シミュレーター", action: "本番AI一括実行で未来シミュレーターの出力を保存してください。" },
+    { key: "evMonitor", label: "EV監視", sources: ["productionRunReports", "raceSelectionReports"], patterns: [/EV|expectedValue|期待値/i], location: "EV監視 / 勝負レース選定AI", action: "想定オッズを入力し、EV監視または勝負レース選定AIを再集計してください。" },
+    { key: "godRaceDetection", label: "神レース検出AI", sources: ["productionRunReports", "raceSelectionReports"], patterns: [/神レース|godRace|資金集中/i], location: "神レースTOP10 / 勝負レース選定AI", action: "神レース判定または勝負レースランキングを生成してください。" },
+    { key: "raceSelection", label: "勝負レース選定AI", sources: ["raceSelectionReports"], patterns: [/勝負|資金集中|見送り|ranking|recommendation/i], location: "勝負レース選定AI", action: "勝負レース選定AIの再集計ボタンを押してください。" },
+    { key: "fundAllocation", label: "AI資金配分", sources: ["productionRunReports", "fundManagementReports"], patterns: [/資金配分|allocation|recommendedStake|suggestedStake/i], location: "AI資金配分 / AI資金管理", action: "買い目生成後に資金配分またはAI資金管理を再計算してください。" },
+    { key: "fundManagement", label: "AI資金管理", sources: ["fundManagementReports"], patterns: [/資金管理|fundManagement|recommendedStake|riskLevel/i], location: "AI資金管理", action: "現在資金と運用モードを確認し、資金管理レポートを保存してください。" },
+    { key: "fundCurveRoi", label: "資金曲線/ROI", sources: ["fundCurveRecords", "roiOptimizationReports"], patterns: [/ROI|roi|payout|stake|回収/i], location: "回収率 / 資金曲線", action: "投資額・払戻額を入力し、ROIまたは資金曲線を更新してください。" },
+    { key: "raceDatabase", label: "実戦レースDB", sources: ["raceDatabase"], patterns: [/race|course|raceNumber|result|AI|神穴|三連単/i], location: "実戦レースDB", action: "本番レース入力またはproductionRunReportsからDB保存を実行してください。" },
+    { key: "weaknessAnalysis", label: "AI弱点分析", sources: ["weaknessAnalysisReports"], patterns: [/弱点|weakness|改善|要確認|target/i], location: "AI弱点分析", action: "結果検証データを蓄積してAI弱点分析を再実行してください。" },
+    { key: "selfLearning", label: "自己学習エンジン", sources: ["selfLearningSuggestions"], patterns: [/自己学習|selfLearning|改善|suggestion|採用/i], location: "自己学習エンジン", action: "弱点分析後に自己学習提案を生成し、必要に応じて採用してください。" },
+    { key: "aiWeightAutoTuning", label: "AI重み自動調整", sources: ["selfLearningSuggestions", "courseEvolutionReports"], patterns: [/重み|weight|採用|adjust|補正/i], location: "AI重み自動調整", action: "採用済み改善提案を作成してAI重み自動調整を実行してください。" },
+    { key: "courseEvolution", label: "コース別自己進化AI", sources: ["courseEvolutionReports"], patterns: [/東京|中山|阪神|京都|中京|福島|新潟|小倉|course|evolution/i], location: "コース別自己進化AI", action: "コース別自己進化AIを再集計し、競馬場別レポートを保存してください。" },
+    { key: "roiOptimization", label: "ROI最適化AI", sources: ["roiOptimizationReports"], patterns: [/ROI|roiOptimization|最適化|metrics/i], location: "ROI最適化AI", action: "ROI最適化AIを再集計し、改善ルールを保存してください。" },
+    { key: "productionMode", label: "本番運用モード", sources: ["productionOperationMode", "productionOperationScores"], patterns: [/production|test|development|本番|スコア|score/i], location: "本番運用モード", action: "本番運用モードスイッチを選択し、運用スコアを再計算してください。" },
+    { key: "operationLog", label: "オペレーションログ", sources: ["productionOperationLogs"], patterns: [/入力|AI|買い目|資金|結果|自己学習|バックアップ|operation/i], location: "オペレーションログ", action: "本番運用の各操作ボタンを実行し、operation logへ保存してください。" },
+    { key: "backupRestore", label: "バックアップ/復元", sources: ["backupRestoreLogs", "productionOperationLogs"], patterns: [/バックアップ|復元|backup|restore/i], location: "バックアップ/復元", action: "バックアップ作成または復元テストを実行してログを保存してください。" },
+    { key: "completeDashboard", label: "完全統合ダッシュボード", sources: ["productionRunReports", "raceSelectionReports", "fundManagementReports", "roiOptimizationReports", "productionOperationLogs"], patterns: [/AI|勝負|資金|ROI|バックアップ|ranking|summary/i], location: "完全統合ダッシュボード", action: "完全統合ダッシュボードの「統合再集計」を押し、各パネルの保存データを反映してください。" },
+  ]);
+
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const normalizeList = (value) => {
+    if (Array.isArray(value)) return value;
+    const nested = asArray(value?.reports || value?.records || value?.ranking || value?.items || value?.logs);
+    if (nested.length) return nested;
+    if (value && typeof value === "object") return [value];
+    return value === null || value === undefined || value === "" ? [] : [value];
+  };
+  const safeJsonStringify = (value) => {
+    try { return JSON.stringify(value || {}); } catch (_) { return ""; }
+  };
+  const safeParseRaw = (raw, fallback = null) => {
+    if (raw === null || raw === undefined || raw === "") return { ok: true, value: fallback, raw, empty: true };
+    try { return { ok: true, value: JSON.parse(raw), raw, empty: false }; } catch (error) { return { ok: false, value: fallback, raw, empty: false, error: error.message }; }
+  };
+  const readStorageValue = (storage, key) => {
+    try {
+      const raw = storage?.getItem?.(key);
+      const parsed = safeParseRaw(raw, []);
+      if (key === "productionOperationMode" && raw && !parsed.ok) return { key, status: "normal", raw, value: raw, count: 1, message: "文字列モードとして読込可能" };
+      if (raw === null || raw === undefined) return { key, status: "idle", raw, value: [], count: 0, message: "キー未作成" };
+      if (!parsed.ok) return { key, status: "error", raw, value: [], count: 0, message: `JSON読込エラー: ${parsed.error}` };
+      const value = parsed.value;
+      const list = normalizeList(value);
+      const count = Array.isArray(value) || list.length ? list.length : (value && typeof value === "object" ? Object.keys(value).length : 1);
+      if (count === 0 || value === null || value === "") return { key, status: "idle", raw, value, count: 0, message: "データ未保存" };
+      if (safeJsonStringify(value).match(/エラー|失敗|error|failed/i)) return { key, status: "error", raw, value, count, message: "エラー/失敗ログを検出" };
+      if (safeJsonStringify(value).match(/要確認|警告|保留|pending|review|warning/i)) return { key, status: "review", raw, value, count, message: "要確認ログを検出" };
+      return { key, status: "normal", raw, value, count, message: "読込正常" };
+    } catch (error) {
+      return { key, status: "error", raw: null, value: [], count: 0, message: `localStorage読込失敗: ${error.message}` };
+    }
+  };
+  const loadStorageChecks = (storage = window.localStorage) => LOCAL_STORAGE_KEYS.map((key) => {
+    const check = readStorageValue(storage, key);
+    return { ...check, statusLabel: STATUS_LABELS[check.status] };
+  });
+  const sourceValues = (storageChecks = []) => Object.fromEntries(storageChecks.map((check) => [check.key, normalizeList(check.value)]));
+  const includesPattern = (item, patterns = []) => patterns.some((pattern) => pattern.test(safeJsonStringify(item)));
+  const includesError = (item) => /エラー|失敗|error|failed/i.test(safeJsonStringify(item));
+  const includesReview = (item) => /要確認|警告|保留|pending|review|warning/i.test(safeJsonStringify(item));
+  const buildRepairGuide = (item) => ({ target: item.label || item.key, status: item.statusLabel, location: item.location || `${item.key} の保存データ`, action: item.action || "該当パネルを開き、入力・再集計・保存を実行してください。" });
+
+  const calculateHealthItems = (storageChecks = []) => {
+    const sources = sourceValues(storageChecks);
+    const storageStatusByKey = Object.fromEntries(storageChecks.map((check) => [check.key, check.status]));
+    return HEALTH_ITEM_DEFINITIONS.map((definition) => {
+      const erroredKey = definition.sources.find((key) => storageStatusByKey[key] === "error");
+      if (erroredKey) return { ...definition, status: "error", statusLabel: STATUS_LABELS.error, sourceCount: 0, message: `${erroredKey} の読込エラー` };
+      const records = definition.sources.flatMap((key) => asArray(sources[key]).map((item) => ({ item, key })));
+      if (!records.length) return { ...definition, status: "idle", statusLabel: STATUS_LABELS.idle, sourceCount: 0, message: "参照データなし" };
+      if (records.some(({ item }) => includesError(item))) return { ...definition, status: "error", statusLabel: STATUS_LABELS.error, sourceCount: records.length, message: "エラー/失敗ログを検出" };
+      const matched = records.filter(({ item }) => includesPattern(item, definition.patterns));
+      if (!matched.length || records.some(({ item }) => includesReview(item))) return { ...definition, status: "review", statusLabel: STATUS_LABELS.review, sourceCount: records.length, message: matched.length ? "要確認ログを検出" : "保存データはあるが直接実行ログ未検出" };
+      return { ...definition, status: "normal", statusLabel: STATUS_LABELS.normal, sourceCount: records.length, message: "連動正常" };
+    });
+  };
+
+  const calculateHealthScore = ({ items = [], storageChecks = [] } = {}) => {
+    const itemScore = items.length ? items.reduce((sum, item) => sum + STATUS_SCORE[item.status], 0) / items.length : 0;
+    const storageScore = storageChecks.length ? storageChecks.reduce((sum, item) => sum + STATUS_SCORE[item.status], 0) / storageChecks.length : 0;
+    return Math.max(0, Math.min(100, Math.round((itemScore * 0.7 + storageScore * 0.3) * 10) / 10));
+  };
+
+  const buildFinalHealthCheckReport = ({ storage = window.localStorage } = {}) => {
+    const storageChecks = LOCAL_STORAGE_KEYS.map((key) => readStorageValue(storage, key)).map((check) => ({ ...check, statusLabel: STATUS_LABELS[check.status] }));
+    const items = calculateHealthItems(storageChecks);
+    const score = calculateHealthScore({ items, storageChecks });
+    const issues = [...items, ...storageChecks.map((check) => ({ ...check, label: check.key, location: `localStorage: ${check.key}`, action: check.status === "idle" ? "該当機能を実行して保存データを作成してください。" : "保存データを確認し、必要ならバックアップ後に再生成してください。" }))].filter((item) => item.status !== "normal");
+    const counts = ["normal", "review", "idle", "error"].reduce((acc, status) => ({ ...acc, [status]: [...items, ...storageChecks].filter((item) => item.status === status).length }), {});
+    return {
+      id: `final-health-check:${new Date().toISOString()}`,
+      generatedAt: new Date().toISOString(),
+      storageKey: REPORT_STORAGE_KEY,
+      sourceStorageKeys: LOCAL_STORAGE_KEYS,
+      score,
+      status: score >= 85 ? "normal" : score >= 70 ? "review" : score > 0 ? "idle" : "error",
+      statusLabel: score >= 85 ? STATUS_LABELS.normal : score >= 70 ? STATUS_LABELS.review : score > 0 ? STATUS_LABELS.idle : STATUS_LABELS.error,
+      counts,
+      items,
+      storageChecks,
+      issues,
+      repairGuides: issues.map(buildRepairGuide),
+    };
+  };
+
+  const saveReport = (report, storage = window.localStorage) => {
+    if (!storage?.setItem) return [report];
+    const parsed = safeParseRaw(storage.getItem(REPORT_STORAGE_KEY), []);
+    const current = Array.isArray(parsed.value) ? parsed.value : [];
+    const next = [report, ...current.filter((item) => item.id !== report.id)].slice(0, 30);
+    storage.setItem(REPORT_STORAGE_KEY, JSON.stringify(next));
+    return next;
+  };
+
+  window.HashimotoFinalHealthCheckEngine = {
+    REPORT_STORAGE_KEY,
+    LOCAL_STORAGE_KEYS,
+    HEALTH_ITEM_DEFINITIONS,
+    STATUS_LABELS,
+    readStorageValue,
+    loadStorageChecks,
+    calculateHealthItems,
+    calculateHealthScore,
+    buildFinalHealthCheckReport,
+    saveReport,
+  };
+})();
+
+(() => {
   const documentRef = window.document;
   const engine = window.HashimotoFundManagementEngine;
   if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#fund-management-panel")) return;
@@ -6623,5 +6778,62 @@
     });
   });
   documentRef.querySelector("#complete-dashboard-refresh")?.addEventListener("click", () => render({ persist: true }));
+  render({ persist: true });
+})();
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoFinalHealthCheckEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#final-health-check-panel")) return;
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+  const setText = (selector, value) => {
+    const target = documentRef.querySelector(selector);
+    if (target) target.textContent = value;
+  };
+  const statusClass = (status) => ({ normal: "is-normal", review: "is-review", idle: "is-idle", error: "is-error" }[status] || "is-idle");
+  const renderItems = (items = []) => {
+    const target = documentRef.querySelector("#final-health-item-list");
+    if (!target) return;
+    target.innerHTML = items.map((item) => `<li class="${statusClass(item.status)}"><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.statusLabel)}</span><small>${escapeHtml(item.message)} / ${escapeHtml(item.sourceCount)}件</small></li>`).join("");
+  };
+  const renderStorageChecks = (checks = []) => {
+    const target = documentRef.querySelector("#final-health-storage-body");
+    if (!target) return;
+    target.innerHTML = checks.map((check) => `
+      <tr class="${statusClass(check.status)}">
+        <td data-label="キー"><code>${escapeHtml(check.key)}</code></td>
+        <td data-label="判定"><span class="final-health-badge ${statusClass(check.status)}">${escapeHtml(check.statusLabel)}</span></td>
+        <td data-label="件数/状態">${escapeHtml(check.count)}</td>
+        <td data-label="メッセージ">${escapeHtml(check.message)}</td>
+      </tr>`).join("");
+  };
+  const renderIssues = (issues = []) => {
+    const target = documentRef.querySelector("#final-health-issue-list");
+    if (!target) return;
+    target.innerHTML = issues.length ? issues.map((item) => `<li class="${statusClass(item.status)}"><strong>${escapeHtml(item.label || item.key)}</strong><span>${escapeHtml(item.statusLabel)}</span><small>${escapeHtml(item.message || "確認が必要です")}</small></li>`).join("") : '<li class="is-normal"><strong>問題なし</strong><span>正常</span><small>エラー・未実行・要確認の項目はありません。</small></li>';
+  };
+  const renderRepairGuides = (guides = []) => {
+    const target = documentRef.querySelector("#final-health-repair-guide");
+    if (!target) return;
+    target.innerHTML = guides.length ? guides.map((guide) => `<article><h4>${escapeHtml(guide.target)} <span>${escapeHtml(guide.status)}</span></h4><p><b>確認する場所:</b> ${escapeHtml(guide.location)}</p><p><b>必要な操作:</b> ${escapeHtml(guide.action)}</p></article>`).join("") : "<article><h4>修復不要 <span>正常</span></h4><p><b>確認する場所:</b> 全パネル</p><p><b>必要な操作:</b> 現時点で追加操作は不要です。</p></article>";
+  };
+  const render = ({ persist = true } = {}) => {
+    const report = engine.buildFinalHealthCheckReport({ storage: window.localStorage });
+    if (persist) engine.saveReport(report, window.localStorage);
+    setText("#final-health-score", report.score);
+    setText("#final-health-normal-count", report.counts.normal || 0);
+    setText("#final-health-review-count", report.counts.review || 0);
+    setText("#final-health-idle-count", report.counts.idle || 0);
+    setText("#final-health-error-count", report.counts.error || 0);
+    setText("#final-health-status", `ヘルス ${report.statusLabel} / ${report.score}点`);
+    setText("#final-health-source-keys", `保存先: ${engine.REPORT_STORAGE_KEY} / 確認キー: ${engine.LOCAL_STORAGE_KEYS.join(" / ")}`);
+    renderItems(report.items);
+    renderStorageChecks(report.storageChecks);
+    renderIssues(report.issues);
+    renderRepairGuides(report.repairGuides);
+    return report;
+  };
+  documentRef.querySelector("#final-health-run")?.addEventListener("click", () => render({ persist: true }));
+  documentRef.querySelector("#final-health-scroll-issues")?.addEventListener("click", () => documentRef.querySelector("#final-health-issues")?.scrollIntoView?.({ behavior: "smooth", block: "start" }));
   render({ persist: true });
 })();

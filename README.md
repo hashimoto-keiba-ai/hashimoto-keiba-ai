@@ -1441,3 +1441,40 @@ Phase7-1では、ダッシュボード上部に **完全統合ダッシュボー
 - `productionOperationLogs`
 
 統合レポートは `completeIntegrationDashboardReports` に最新30件まで保存されます。黒×金デザイン、スマホ/iPad対応、既存パネルへのlocalStorage連動を維持しています。
+
+## Phase7-2 最終統合ヘルスチェック
+
+Phase7-2では、完全統合ダッシュボード導入後の最終確認用として **最終統合ヘルスチェック** パネルを追加しました。全AI機能、localStorageキー、データ連動、画面表示の状態を1画面で診断し、総合ヘルススコアと修復ガイドを確認できます。
+
+### 使い方
+
+1. 画面上部のナビゲーションまたはランチャーから「最終ヘルス」を開きます。
+2. 「最終ヘルスチェック実行」を押すと、現在のlocalStorageを読み直して全項目を再診断します。
+3. 上段の「総合ヘルススコア」で0〜100点の状態を確認します。正常データが揃うほど100点に近づきます。
+4. 「AI機能・画面表示ヘルス」で、AI指数エンジン、AI指数検証パネル、神穴AI、危険人気馬AI、三連単生成、WIN5生成、AI未来シミュレーター、EV監視、神レース検出AI、勝負レース選定AI、AI資金配分、AI資金管理、資金曲線/ROI、実戦レースDB、AI弱点分析、自己学習エンジン、AI重み自動調整、コース別自己進化AI、ROI最適化AI、本番運用モード、オペレーションログ、バックアップ/復元、完全統合ダッシュボードを確認します。
+5. 判定は `正常`、`要確認`、`未実行`、`エラー` の4種類です。
+6. 「localStorageキー確認」では、対象キーが読めるか、件数、読込メッセージを確認できます。
+7. 「問題一覧」には、`エラー`、`未実行`、`要確認` の項目だけが表示されます。
+8. 「修復ガイド」には、問題ごとに「確認する場所」と「必要な操作」が表示されます。必要なパネルを開いて再入力・再集計・保存を実行してください。
+9. 診断レポートはlocalStorageの `finalHealthCheckReports` に最新30件まで保存されます。
+
+### 確認するlocalStorageキー
+
+最終統合ヘルスチェックは以下を読み込みます。
+
+- `productionRaceEntries`
+- `productionRunReports`
+- `raceDatabase`
+- `raceSelectionReports`
+- `fundManagementReports`
+- `roiOptimizationReports`
+- `weaknessAnalysisReports`
+- `selfLearningSuggestions`
+- `courseEvolutionReports`
+- `fundCurveRecords`
+- `productionOperationLogs`
+- `productionOperationMode`
+- `productionOperationScores`
+- `backupRestoreLogs`
+
+黒×金デザイン、スマホ/iPad対応、既存の完全統合ダッシュボード・本番運用・資金管理・自己学習・バックアップ機能とのlocalStorage連動を維持しています。
