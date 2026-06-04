@@ -29,6 +29,7 @@
         </a>
         <div class="nav-links">
           <a href="#command-dashboard">司令塔</a>
+          <a href="#production-operation-mode">本番運用モード</a>
           <a href="#today-races">今日のレース</a>
           <a href="#real-data-entry">実データ入力</a>
           <a href="#result-csv-import">結果CSV取込</a>
@@ -86,7 +87,22 @@
           <a href="#github-storage-settings"><span>⑰</span>GitHub保存設定</a>
           <a href="#pages-publish-check"><span>⑱</span>Pages公開チェック</a>
           <a href="#operation-readiness-checklist"><span>⑲</span>実戦運用チェック</a>
+          <a href="#production-operation-mode"><span>⑳</span>本番運用モード完成版</a>
         </div>
+
+        <section class="production-mode-switch" aria-label="本番運用モードスイッチ">
+          <div>
+            <p class="card__kicker">PHASE5-1 OPERATION MODE</p>
+            <h2>本番運用モードスイッチ</h2>
+          </div>
+          <div class="production-mode-options" role="radiogroup" aria-label="運用モード">
+            <label><input type="radio" name="production-operation-mode" value="development" /> <span>開発モード</span></label>
+            <label><input type="radio" name="production-operation-mode" value="test" /> <span>テストモード</span></label>
+            <label><input type="radio" name="production-operation-mode" value="production" /> <span>本番運用モード</span></label>
+          </div>
+          <strong id="production-operation-mode-label">開発モード</strong>
+        </section>
+
         <div class="command-metrics" aria-label="AIオペレーション即時指標">
           <article><span>勝負レース</span><strong>11R</strong><small>資金投入S/A判定</small></article>
           <article><span>回収レース</span><strong>18R</strong><small>期待回収率120%超</small></article>
@@ -122,6 +138,135 @@
         <span><b>保存先</b> 各競馬場/保存ログ</span>
       </section>
 
+
+
+      <section id="production-operation-mode" class="production-operation-card card card--wide card--featured" aria-label="Phase5-1 本番運用モード完成版">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE5-1 PRODUCTION OPERATION MODE</p>
+              <h2>本番運用モード完成版</h2>
+              <p class="card__lead">本番レース入力 → AI実行 → 買い目生成 → 結果検証 → 自己進化 → バックアップを1画面で実行・保存します。</p>
+            </div>
+            <span id="production-operation-status" class="status-pill status-pill--live">本番運用モード待機</span>
+          </div>
+
+          <div class="production-operation-scoreboard" aria-live="polite">
+            <article class="production-operation-score-main">
+              <span>本番運用スコア</span>
+              <strong><b id="production-operation-score">0</b> / 100</strong>
+              <small id="production-operation-score-note">productionOperationScores に保存されます</small>
+            </article>
+            <article>
+              <span>本番運用判定</span>
+              <strong id="production-operation-judgement">準備中</strong>
+              <small>準備中 / テスト運用 / 実戦運用 / 完全運用</small>
+            </article>
+            <article>
+              <span>保存キー</span>
+              <strong>productionOperationMode</strong>
+              <small>productionOperationScores と同期</small>
+            </article>
+          </div>
+
+          <ol id="production-operation-flow" class="production-operation-flow" aria-label="本番運用フロー">
+            <li data-step="input">入力</li>
+            <li data-step="ai">AI実行</li>
+            <li data-step="tickets">買い目生成</li>
+            <li data-step="investment">投資判断</li>
+            <li data-step="result">結果入力</li>
+            <li data-step="validation">検証</li>
+            <li data-step="evolution">自己進化</li>
+            <li data-step="backup">バックアップ</li>
+          </ol>
+
+          <div class="production-operation-layout">
+            <section class="production-operation-panel production-operation-input">
+              <h3>本番レース入力</h3>
+              <form id="production-operation-race-form" class="production-operation-form">
+                <label><span>開催日</span><input name="date" type="date" required /></label>
+                <label><span>競馬場</span><input name="course" type="text" value="東京競馬場" required /></label>
+                <label><span>R</span><input name="raceNumber" type="number" min="1" max="12" value="11" required /></label>
+                <label><span>レース名</span><input name="raceName" type="text" value="Phase5本番テストS" required /></label>
+                <label><span>距離</span><input name="distance" type="number" value="1600" /></label>
+                <label><span>芝/ダ</span><select name="surface"><option>芝</option><option>ダート</option></select></label>
+                <label><span>馬場</span><select name="going"><option>良</option><option>稍重</option><option>重</option><option>不良</option></select></label>
+                <label class="production-operation-horses"><span>出走馬JSON</span><textarea name="horses" rows="8" spellcheck="false"></textarea></label>
+                <div class="production-operation-actions">
+                  <button id="production-operation-run-ai" class="button button--primary" type="submit">AI実行・買い目生成</button>
+                  <button id="production-operation-score-refresh" class="button button--ghost" type="button">スコア再計算</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="production-operation-panel">
+              <h3>AI指数ランキング</h3>
+              <ol id="production-operation-ai-ranking" class="production-operation-list"></ol>
+            </section>
+            <section class="production-operation-panel">
+              <h3>神穴ランキング</h3>
+              <ol id="production-operation-kamiana-ranking" class="production-operation-list"></ol>
+            </section>
+            <section class="production-operation-panel production-operation-danger">
+              <h3>危険人気馬ランキング</h3>
+              <ol id="production-operation-danger-ranking" class="production-operation-list"></ol>
+            </section>
+            <section class="production-operation-panel">
+              <h3>三連単候補</h3>
+              <ol id="production-operation-trifecta" class="production-operation-list"></ol>
+            </section>
+            <section class="production-operation-panel">
+              <h3>WIN5候補</h3>
+              <ol id="production-operation-win5" class="production-operation-list"></ol>
+            </section>
+            <section class="production-operation-panel">
+              <h3>未来シミュレーター</h3>
+              <ol id="production-operation-simulation" class="production-operation-list"></ol>
+            </section>
+            <section class="production-operation-panel">
+              <h3>EVランキング</h3>
+              <ol id="production-operation-ev" class="production-operation-list"></ol>
+            </section>
+            <section class="production-operation-panel">
+              <h3>資金配分</h3>
+              <div id="production-operation-capital" class="production-operation-mini">未実行</div>
+            </section>
+            <section class="production-operation-panel">
+              <h3>神レース判定</h3>
+              <div id="production-operation-god-race" class="production-operation-mini">未実行</div>
+            </section>
+
+            <section class="production-operation-panel production-operation-result">
+              <h3>本番結果入力</h3>
+              <form id="production-operation-result-form" class="production-operation-form production-operation-form--compact">
+                <label><span>1着</span><input name="firstNumber" type="number" min="1" /></label>
+                <label><span>2着</span><input name="secondNumber" type="number" min="1" /></label>
+                <label><span>3着</span><input name="thirdNumber" type="number" min="1" /></label>
+                <label><span>投資</span><input name="investment" type="number" value="3000" min="0" /></label>
+                <label><span>払戻</span><input name="payout" type="number" value="0" min="0" /></label>
+                <button id="production-operation-validate-result" class="button button--primary" type="submit">結果検証・自己進化</button>
+              </form>
+            </section>
+            <section class="production-operation-panel">
+              <h3>結果検証</h3>
+              <div id="production-operation-validation" class="production-operation-mini">結果入力待ち</div>
+            </section>
+            <section class="production-operation-panel">
+              <h3>自己進化ログ</h3>
+              <ol id="production-operation-evolution" class="production-operation-list"></ol>
+            </section>
+            <section class="production-operation-panel">
+              <h3>資金曲線</h3>
+              <div id="production-operation-fund-curve" class="production-operation-mini">未検証</div>
+            </section>
+            <section class="production-operation-panel production-operation-backup">
+              <h3>バックアップ</h3>
+              <div id="production-operation-backup-status" class="production-operation-mini">未作成</div>
+              <button id="production-operation-backup" class="button button--ghost" type="button">本番運用バックアップ作成</button>
+            </section>
+          </div>
+        </div>
+      </section>
 
       <section class="device-command-ui" aria-label="iPad・スマホ専用クイックUI">
         <aside class="device-race-rail" aria-label="iPad左カラム レース一覧">
