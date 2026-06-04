@@ -1478,12 +1478,21 @@
       distance: race.distance,
       surface: race.surface,
       going: race.going,
+      fieldSize: race.fieldSize || payload.summary?.runnerCount || (Array.isArray(payload.horses) ? payload.horses.length : 0),
       aiIndexTop3: topHorseFields(payload.aiIndexRanking || [], 3),
       kamianaTop3: topHorseFields(payload.kamianaRanking || payload.kamiana || [], 3),
       dangerPopularTop3: topHorseFields(payload.dangerPopularRanking || payload.dangerPopular || [], 3),
       trifectaCandidates: flattenTickets(payload.trifecta?.tickets).slice(0, 12),
+      win5Candidates: flattenWin5Candidates(payload.win5?.zones).slice(0, 12),
+      evTop: (payload.ev?.evRanking || payload.summary?.evTop || []).slice(0, 8),
+      recommendedInvestmentAmount: toNumber(payload.capital?.summary?.totalRecommended ?? payload.summary?.recommendedInvestmentAmount, 0),
       result: result?.result || null,
-      roi: result?.roi ?? null,
+      trifectaPayout: result?.result?.trifectaPayout ?? result?.trifectaPayout ?? null,
+      investmentAmount: result?.totalInvestment ?? result?.investment ?? result?.result?.investmentAmount ?? null,
+      payoutAmount: result?.payout ?? result?.result?.payoutAmount ?? null,
+      roi: result?.roi ?? result?.summary?.roi ?? null,
+      hit: result?.summary?.hit ?? result?.trifectaHit ?? result?.judgements?.trifectaHit ?? null,
+      verificationMemo: result?.result?.memo || result?.memo || "",
       godRaceJudgement: payload.godRace || payload.summary?.godRaceJudgement || null,
       summary: payload.summary || { runnerCount: Array.isArray(payload.horses) ? payload.horses.length : 0 },
       predictionPayload: payload,
@@ -1663,18 +1672,84 @@
     const course = normalizeText(filters.course || filters.racecourse);
     const going = normalizeText(filters.going || filters.trackCondition);
     const distance = normalizeText(filters.distance);
+    const surface = normalizeText(filters.surface);
+    const godRace = normalizeText(filters.godRace || filters.godRaceJudgement);
+    const roiSign = normalizeText(filters.roiSign);
+    const hitStatus = normalizeText(filters.hitStatus);
     const from = filters.from || filters.startDate || filters.dateFrom || "";
     const to = filters.to || filters.endDate || filters.dateTo || "";
     return loadRaceDatabase(storage).filter((record) => {
       if (course && !normalizeText(record.course || record.race?.course).includes(course)) return false;
       if (going && normalizeText(record.going || record.race?.going) !== going) return false;
+      if (surface && normalizeText(record.surface || record.race?.surface) !== surface) return false;
       if (distance && String(record.distance || record.race?.distance || "") !== distance) return false;
+      if (godRace) {
+        const label = normalizeText(record.godRaceJudgement?.label || record.godRaceJudgement?.grade || record.godRaceJudgement?.action);
+        const isGodRace = /神|S|A|勝負/.test(label) && !/見送り/.test(label);
+        if (godRace === "god" && !isGodRace) return false;
+        if (godRace === "skip" && isGodRace) return false;
+      }
+      const roi = record.roi;
+      if (roiSign === "plus" && !(Number(roi) >= 100)) return false;
+      if (roiSign === "minus" && !(Number(roi) < 100)) return false;
+      const isHit = record.hit ?? record.validationReport?.summary?.hit ?? record.validationReport?.judgements?.trifectaHit ?? (toNumber(record.payoutAmount, 0) > 0);
+      if (hitStatus === "hit" && !isHit) return false;
+      if (hitStatus === "miss" && isHit) return false;
       const date = record.date || record.race?.date || "";
       if (from && date < from) return false;
       if (to && date > to) return false;
       return true;
     });
   };
+
+  const summarizeRaceDatabase = (records = []) => {
+    const collection = records.map((record) => ({
+      ...record,
+      investmentAmount: toNumber(record.investmentAmount ?? record.validationReport?.totalInvestment ?? record.validationReport?.investment, 0),
+      payoutAmount: toNumber(record.payoutAmount ?? record.validationReport?.payout, 0),
+      roi: record.roi ?? record.validationReport?.roi ?? null,
+      hit: record.hit ?? record.validationReport?.summary?.hit ?? record.validationReport?.judgements?.trifectaHit ?? false,
+    }));
+    const totalInvestment = collection.reduce((sum, record) => sum + record.investmentAmount, 0);
+    const totalPayout = collection.reduce((sum, record) => sum + record.payoutAmount, 0);
+    const buildGroup = (key) => Object.values(collection.reduce((groups, record) => {
+      const label = normalizeText(record[key] || record.race?.[key] || "未設定");
+      groups[label] = groups[label] || { label, races: 0, investment: 0, payout: 0, roi: 0 };
+      groups[label].races += 1;
+      groups[label].investment += record.investmentAmount;
+      groups[label].payout += record.payoutAmount;
+      groups[label].roi = groups[label].investment > 0 ? round((groups[label].payout / groups[label].investment) * 100, 1) : 0;
+      return groups;
+    }, {})).sort((a, b) => b.roi - a.roi || b.races - a.races);
+    return {
+      raceCount: collection.length,
+      hitCount: collection.filter((record) => record.hit).length,
+      hitRate: collection.length ? round((collection.filter((record) => record.hit).length / collection.length) * 100, 1) : 0,
+      totalInvestment,
+      totalPayout,
+      totalRoi: totalInvestment > 0 ? round((totalPayout / totalInvestment) * 100, 1) : 0,
+      roiByCourse: buildGroup("course"),
+      roiByDistance: buildGroup("distance"),
+    };
+  };
+
+  const exportRaceDatabaseJson = (records = [], filters = {}) => JSON.stringify({
+    exportedAt: new Date().toISOString(),
+    storageKey: RACE_DATABASE_STORAGE_KEY,
+    filters,
+    summary: summarizeRaceDatabase(records),
+    races: records,
+  }, null, 2);
+
+  const saveProductionRunReportToRaceDatabase = (report, storage = window.localStorage) => {
+    const payload = report?.productionPayload || report?.payload || null;
+    if (!payload?.race) return null;
+    return saveRaceDatabaseRecord(buildRaceDatabaseRecord({ payload, validationReport: report.validationReport || null }), storage);
+  };
+
+  const saveProductionRunReportsToRaceDatabase = (reports = [], storage = window.localStorage) => reports
+    .map((report) => saveProductionRunReportToRaceDatabase(report, storage))
+    .filter(Boolean);
 
   const buildAndSaveProductionRace = (options = {}, storage = window.localStorage) => {
     const payload = buildAiAnalysisPayload(options);
@@ -1720,6 +1795,10 @@
     loadRaceDatabase,
     saveRaceDatabaseRecord,
     searchRaceDatabase,
+    summarizeRaceDatabase,
+    exportRaceDatabaseJson,
+    saveProductionRunReportToRaceDatabase,
+    saveProductionRunReportsToRaceDatabase,
     updateRaceDatabaseResult,
     saveProductionRace,
     buildAndSaveProductionRace,
@@ -2221,6 +2300,10 @@
     saveValidationReport(validation, storage);
     appendSelfEvolutionLog(validation, storage);
     appendFundCurveRecord(validation, storage);
+    const matchedReport = loadProductionRunReports(storage).find((report) => report.id === validation.matchedRunReportId);
+    if (matchedReport?.productionPayload && window.HashimotoProductionRaceEngine?.updateRaceDatabaseResult) {
+      window.HashimotoProductionRaceEngine.updateRaceDatabaseResult({ payload: matchedReport.productionPayload, validationReport: validation }, storage);
+    }
     return validation;
   };
 
@@ -3973,6 +4056,12 @@
   const raceDatabaseBody = documentRef.querySelector("#race-database-body");
   const raceDatabaseCount = documentRef.querySelector("#race-database-count");
   const raceDatabaseReset = documentRef.querySelector("#race-database-reset");
+  const raceDatabaseSummary = documentRef.querySelector("#race-database-summary");
+  const raceDatabaseCourseRoi = documentRef.querySelector("#race-database-course-roi");
+  const raceDatabaseDistanceRoi = documentRef.querySelector("#race-database-distance-roi");
+  const raceDatabaseExport = documentRef.querySelector("#race-database-export");
+  const raceDatabaseImportRunReports = documentRef.querySelector("#race-database-import-run-reports");
+  const raceDatabaseStatus = documentRef.querySelector("#race-database-status");
   const logEngine = window.HashimotoProductionOperationLogEngine;
   const latestPayload = () => readJson(window.localStorage, "hashimoto-keiba-ai:production-race-entry:v1", null) || readJson(window.localStorage, "productionRaceEntries", [])[0] || null;
   let currentPayload = latestPayload();
@@ -4052,7 +4141,11 @@
     return {
       course: values.course || "",
       distance: values.distance || "",
+      surface: values.surface || "",
       going: values.going || "",
+      godRace: values.godRace || "",
+      roiSign: values.roiSign || "",
+      hitStatus: values.hitStatus || "",
       from: values.from || "",
       to: values.to || "",
     };
@@ -4067,28 +4160,88 @@
     .filter(Boolean)
     .join(" / ") || "-";
 
+  const summarizeWin5Candidates = (items = []) => asArray(items).slice(0, 3)
+    .map((horse) => `${horse.number || "?"}.${horse.name || "未設定"}${horse.zone ? `(${horse.zone})` : ""}`)
+    .join(" / ") || "-";
+
+  const summarizeEvTop = (items = []) => asArray(items).slice(0, 3)
+    .map((item) => `${item.number || "?"}.${item.name || item.label || "EV"}(${item.ev ?? item.expectedValue ?? "-"})`)
+    .join(" / ") || "-";
+
+  const renderRaceDatabaseSummary = (summary) => {
+    if (raceDatabaseSummary) {
+      const values = [
+        `${summary.raceCount}件`,
+        `${summary.hitCount}件`,
+        `${summary.hitRate}%`,
+        `${summary.totalInvestment.toLocaleString("ja-JP")}円`,
+        `${summary.totalPayout.toLocaleString("ja-JP")}円`,
+        `${summary.totalRoi}%`,
+      ];
+      raceDatabaseSummary.querySelectorAll("strong").forEach((node, index) => { node.textContent = values[index] || "-"; });
+    }
+    const renderGroup = (target, groups) => {
+      if (!target) return;
+      target.innerHTML = groups.length ? groups.slice(0, 6).map((group) => `<li><strong>${escapeOperationLogHtml(group.label)} ROI ${escapeOperationLogHtml(group.roi)}%</strong><small>${escapeOperationLogHtml(group.races)}件 / 投資${escapeOperationLogHtml(group.investment.toLocaleString("ja-JP"))}円 / 払戻${escapeOperationLogHtml(group.payout.toLocaleString("ja-JP"))}円</small></li>`).join("") : "<li>未集計</li>";
+    };
+    renderGroup(raceDatabaseCourseRoi, summary.roiByCourse || []);
+    renderGroup(raceDatabaseDistanceRoi, summary.roiByDistance || []);
+  };
+
   const renderRaceDatabase = () => {
     if (!raceDatabaseBody) return [];
     const engine = window.HashimotoProductionRaceEngine;
     const records = engine?.searchRaceDatabase ? engine.searchRaceDatabase(getRaceDatabaseFilters(), window.localStorage) : [];
+    const summary = engine?.summarizeRaceDatabase ? engine.summarizeRaceDatabase(records) : { raceCount: records.length, hitCount: 0, hitRate: 0, totalInvestment: 0, totalPayout: 0, totalRoi: 0, roiByCourse: [], roiByDistance: [] };
+    renderRaceDatabaseSummary(summary);
     if (raceDatabaseCount) raceDatabaseCount.textContent = `${records.length}件表示`;
-    raceDatabaseBody.innerHTML = records.length ? records.map((record) => `
+    raceDatabaseBody.innerHTML = records.length ? records.map((record) => {
+      const resultText = [record.result?.firstNumber, record.result?.secondNumber, record.result?.thirdNumber].filter(Boolean).join("-") || "未入力";
+      const trifectaPayoutText = record.trifectaPayout === null || record.trifectaPayout === undefined ? "-" : toNumber(record.trifectaPayout, 0).toLocaleString("ja-JP");
+      return `
       <tr>
         <td data-label="開催日">${escapeOperationLogHtml(record.date || record.race?.date || "-")}</td>
         <td data-label="競馬場">${escapeOperationLogHtml(record.course || record.race?.course || "-")}</td>
         <td data-label="R">${escapeOperationLogHtml(record.raceNumber || record.race?.raceNumber || "-")}R</td>
         <td data-label="レース名">${escapeOperationLogHtml(record.raceName || record.race?.raceName || "-")}</td>
-        <td data-label="距離/馬場">${escapeOperationLogHtml(record.distance || record.race?.distance || "-")}m / ${escapeOperationLogHtml(record.going || record.race?.going || "-")}</td>
+        <td data-label="距離/芝ダ/馬場">${escapeOperationLogHtml(record.distance || record.race?.distance || "-")}m / ${escapeOperationLogHtml(record.surface || record.race?.surface || "-")} / ${escapeOperationLogHtml(record.going || record.race?.going || "-")}</td>
+        <td data-label="頭数">${escapeOperationLogHtml(record.fieldSize || record.summary?.runnerCount || "-")}頭</td>
         <td data-label="AI指数TOP3">${escapeOperationLogHtml(summarizeTop3(record.aiIndexTop3, "aiIndex"))}</td>
         <td data-label="神穴TOP3">${escapeOperationLogHtml(summarizeTop3(record.kamianaTop3, "kamianaIndex"))}</td>
         <td data-label="危険人気馬TOP3">${escapeOperationLogHtml(summarizeTop3(record.dangerPopularTop3, "dangerIndex"))}</td>
-        <td data-label="三連単候補">${escapeOperationLogHtml(summarizeTrifectaCandidates(record.trifectaCandidates))}</td>
-        <td data-label="結果">${escapeOperationLogHtml([record.result?.firstNumber, record.result?.secondNumber, record.result?.thirdNumber].filter(Boolean).join("-") || "未入力")}</td>
-        <td data-label="ROI">${escapeOperationLogHtml(record.roi ?? "-")}${record.roi === null || record.roi === undefined ? "" : "%"}</td>
-        <td data-label="神レース判定"><span class="badge badge--gold">${escapeOperationLogHtml(record.godRaceJudgement?.label || "未判定")}</span></td>
-      </tr>
-    `).join("") : '<tr><td data-label="開催日" colspan="12">条件に一致する実戦レースデータはありません。</td></tr>';
+        <td data-label="三連単/WIN5/EV"><strong>三連単</strong> ${escapeOperationLogHtml(summarizeTrifectaCandidates(record.trifectaCandidates))}<br><strong>WIN5</strong> ${escapeOperationLogHtml(summarizeWin5Candidates(record.win5Candidates))}<br><strong>EV</strong> ${escapeOperationLogHtml(summarizeEvTop(record.evTop))}</td>
+        <td data-label="結果/配当">${escapeOperationLogHtml(resultText)}<br>三連単配当 ${escapeOperationLogHtml(trifectaPayoutText)}円</td>
+        <td data-label="投資/払戻/ROI">投資 ${escapeOperationLogHtml(toNumber(record.investmentAmount, 0).toLocaleString("ja-JP"))}円<br>払戻 ${escapeOperationLogHtml(toNumber(record.payoutAmount, 0).toLocaleString("ja-JP"))}円<br>ROI ${escapeOperationLogHtml(record.roi ?? "-")}${record.roi === null || record.roi === undefined ? "" : "%"}<br>推奨 ${escapeOperationLogHtml(toNumber(record.recommendedInvestmentAmount, 0).toLocaleString("ja-JP"))}円</td>
+        <td data-label="神レース/メモ"><span class="badge badge--gold">${escapeOperationLogHtml(record.godRaceJudgement?.label || "未判定")}</span><br>${escapeOperationLogHtml(record.verificationMemo || "メモなし")}</td>
+      </tr>`;
+    }).join("") : '<tr><td data-label="開催日" colspan="13">条件に一致する実戦レースデータはありません。</td></tr>';
     return records;
+  };
+
+  const downloadRaceDatabase = () => {
+    const engine = window.HashimotoProductionRaceEngine;
+    if (!engine?.exportRaceDatabaseJson) return;
+    const filters = getRaceDatabaseFilters();
+    const records = engine.searchRaceDatabase(filters, window.localStorage);
+    const blob = new Blob([engine.exportRaceDatabaseJson(records, filters)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = documentRef.createElement("a");
+    link.href = url;
+    link.download = `raceDatabase-${new Date().toISOString().slice(0, 10)}.json`;
+    documentRef.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    if (raceDatabaseStatus) raceDatabaseStatus.textContent = `raceDatabase ${records.length}件をJSONエクスポートしました`;
+  };
+
+  const importProductionRunReportsToRaceDatabase = () => {
+    const engine = window.HashimotoProductionRaceEngine;
+    if (!engine?.saveProductionRunReportsToRaceDatabase) return;
+    const reports = engine.loadProductionRunReports(window.localStorage);
+    const saved = engine.saveProductionRunReportsToRaceDatabase(reports, window.localStorage);
+    renderRaceDatabase();
+    if (raceDatabaseStatus) raceDatabaseStatus.textContent = `productionRunReports ${saved.length}件をraceDatabaseへ保存しました`;
   };
 
   const addOperationLog = (input) => {
@@ -4229,6 +4382,8 @@
     renderRaceDatabase();
   });
   raceDatabaseReset?.addEventListener("click", () => setTimeout(renderRaceDatabase, 0));
+  raceDatabaseExport?.addEventListener("click", downloadRaceDatabase);
+  raceDatabaseImportRunReports?.addEventListener("click", importProductionRunReportsToRaceDatabase);
 
   renderPayload(currentPayload);
   refreshScores();
