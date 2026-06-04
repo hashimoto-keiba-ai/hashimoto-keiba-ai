@@ -2162,6 +2162,416 @@
 
 
 (() => {
+  const REPORT_STORAGE_KEY = "performanceDashboardReports";
+  const FUND_CURVE_STORAGE_KEY = "fundCurveRecords";
+  const OPERATION_LOG_STORAGE_KEY = "productionOperationLogs";
+  const SELF_EVOLUTION_STORAGE_KEY = "selfEvolutionLogs";
+  const SELF_EVOLUTION_COMPAT_KEY = "hashimoto-keiba-ai:self-evolution-logs:v1";
+  const VALIDATION_REPORT_STORAGE_KEY = "productionResultValidationReports";
+
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, toNumber(value)));
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const safeParse = (raw, fallback = null) => {
+    try {
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const readJson = (storage, key, fallback) => safeParse(storage?.getItem?.(key), fallback);
+  const compactText = (value, fallback = "未設定") => String(value ?? "").trim() || fallback;
+  const normalizeDate = (value) => String(value || new Date().toISOString().slice(0, 10)).slice(0, 10);
+  const pct = (hits, total) => total > 0 ? round((hits / total) * 100, 1) : 0;
+
+  const normalizeFundCurveRecords = (value) => {
+    const records = Array.isArray(value) ? value : asArray(value?.records);
+    return records.map((record, index) => {
+      const stake = toNumber(record.stake ?? record.investment ?? record.investmentAmount, 0);
+      const payout = toNumber(record.payout ?? record.payoutAmount, 0);
+      return {
+        ...record,
+        id: record.id || `fund-curve-${index}`,
+        date: normalizeDate(record.date ?? record.savedAt ?? record.generatedAt),
+        course: compactText(record.course ?? record.race?.course ?? record.racecourse),
+        raceNumber: compactText(record.raceNumber ?? record.race?.raceNumber, "?"),
+        distance: toNumber(record.distance ?? record.race?.distance, 0),
+        raceType: compactText(record.raceType ?? record.ticketType ?? record.race?.surface, "本番レース"),
+        stake,
+        payout,
+        profit: toNumber(record.profit, payout - stake),
+        roi: stake > 0 ? round((payout / stake) * 100, 1) : toNumber(record.roi, 0),
+      };
+    });
+  };
+
+  const normalizeValidationReports = (value) => asArray(value).map((report, index) => {
+    const judgements = report.judgements || {};
+    const race = report.race || {};
+    const result = report.result || {};
+    return {
+      ...report,
+      id: report.id || `validation-${index}`,
+      date: normalizeDate(result.date ?? report.generatedAt ?? report.date),
+      course: compactText(result.course ?? race.course ?? report.course ?? report.racecourse),
+      raceNumber: compactText(result.raceNumber ?? race.raceNumber ?? report.raceNumber, "?"),
+      distance: toNumber(race.distance ?? result.distance ?? report.distance, 0),
+      raceType: compactText(race.surface ? `${race.surface}${race.distance ? ` ${race.distance}m` : ""}` : report.raceType, "本番レース"),
+      totalInvestment: toNumber(report.totalInvestment ?? report.investment ?? report.summary?.investment, 0),
+      payout: toNumber(report.payout ?? report.summary?.payout, 0),
+      roi: toNumber(report.roi ?? report.summary?.roi, 0),
+      osUpdateCandidates: report.osUpdateCandidates || {},
+      judgements: {
+        mainHit: Boolean(judgements.mainHit ?? report.mainHit ?? report.topAiHit),
+        trifectaHit: Boolean(judgements.trifectaHit ?? report.trifectaHit),
+        win5Hit: Boolean(judgements.win5Hit ?? report.win5Hit),
+        kamianaHit: Boolean(judgements.kamianaHit ?? report.kamianaHit),
+        dangerPopularSuccess: Boolean(judgements.dangerPopularSuccess ?? judgements.dangerPopularFlew ?? report.dangerPopularSuccess),
+        godRaceSuccess: Boolean(judgements.godRaceSuccess ?? judgements.godRaceHit ?? report.godRaceSuccess),
+        evSuccess: Boolean(judgements.evSuccess ?? report.evSuccess),
+        capitalSuccess: Boolean(judgements.capitalSuccess ?? report.capitalSuccess),
+      },
+    };
+  });
+
+  const normalizeOperationLogs = (value) => asArray(value).map((log, index) => ({
+    ...log,
+    id: log.id || `operation-${index}`,
+    date: normalizeDate(log.timestamp ?? log.generatedAt ?? log.date),
+    course: compactText(log.racecourse ?? log.race?.course ?? log.payload?.race?.course),
+    raceNumber: compactText(log.raceNumber ?? log.race?.raceNumber ?? log.payload?.race?.raceNumber, "?"),
+    operationType: compactText(log.operationType, "未分類"),
+  }));
+
+  const flattenSelfEvolutionLogs = (payload) => {
+    if (Array.isArray(payload)) return payload;
+    const logs = payload?.logs || payload || {};
+    return [
+      ...asArray(logs.resultVerifications),
+      ...asArray(logs.backtests),
+      ...asArray(logs.improvementProposals),
+      ...asArray(logs.osUpdates),
+      ...asArray(logs.adoptedRules),
+    ];
+  };
+
+  const loadDashboardSources = (storage = window.localStorage) => {
+    const selfEvolutionPrimary = readJson(storage, SELF_EVOLUTION_STORAGE_KEY, null);
+    const selfEvolutionCompat = readJson(storage, SELF_EVOLUTION_COMPAT_KEY, null);
+    const primaryLogs = flattenSelfEvolutionLogs(selfEvolutionPrimary);
+    const compatLogs = flattenSelfEvolutionLogs(selfEvolutionCompat);
+    const mergedEvolution = [...primaryLogs, ...compatLogs.filter((item) => !primaryLogs.some((base) => base.id && base.id === item.id))];
+    return {
+      fundCurveRecords: normalizeFundCurveRecords(readJson(storage, FUND_CURVE_STORAGE_KEY, [])),
+      operationLogs: normalizeOperationLogs(readJson(storage, OPERATION_LOG_STORAGE_KEY, [])),
+      selfEvolutionLogs: mergedEvolution,
+      validationReports: normalizeValidationReports(readJson(storage, VALIDATION_REPORT_STORAGE_KEY, [])),
+    };
+  };
+
+  const uniqueRaceKey = (item) => [normalizeDate(item.date), compactText(item.course), compactText(item.raceNumber ?? item.race?.raceNumber ?? "?")].join("|");
+  const countByJudgement = (reports, key) => reports.filter((report) => report.judgements?.[key]).length;
+
+  const summarizeRates = (validationReports) => {
+    const total = validationReports.length;
+    return {
+      mainHitRate: pct(countByJudgement(validationReports, "mainHit"), total),
+      trifectaHitRate: pct(countByJudgement(validationReports, "trifectaHit"), total),
+      win5HitRate: pct(countByJudgement(validationReports, "win5Hit"), total),
+      kamianaHitRate: pct(countByJudgement(validationReports, "kamianaHit"), total),
+      dangerPopularSuccessRate: pct(countByJudgement(validationReports, "dangerPopularSuccess"), total),
+      godRaceSuccessRate: pct(countByJudgement(validationReports, "godRaceSuccess"), total),
+      evSuccessRate: pct(countByJudgement(validationReports, "evSuccess"), total),
+      capitalSuccessRate: pct(countByJudgement(validationReports, "capitalSuccess"), total),
+    };
+  };
+
+  const summarizeRevenue = (fundCurveRecords, validationReports) => {
+    const source = fundCurveRecords.length ? fundCurveRecords : validationReports.map((report) => ({ stake: report.totalInvestment, payout: report.payout }));
+    const totalInvestment = source.reduce((sum, record) => sum + toNumber(record.stake ?? record.totalInvestment, 0), 0);
+    const totalPayout = source.reduce((sum, record) => sum + toNumber(record.payout, 0), 0);
+    return {
+      totalInvestment,
+      totalPayout,
+      totalProfit: totalPayout - totalInvestment,
+      roi: totalInvestment > 0 ? round((totalPayout / totalInvestment) * 100, 1) : 0,
+    };
+  };
+
+  const calculateAiOperationScore = ({ rates = {}, revenue = {}, operation = {} } = {}) => {
+    const hitRate = round(((toNumber(rates.mainHitRate) + toNumber(rates.trifectaHitRate) + toNumber(rates.win5HitRate)) / 3), 1);
+    const roiScore = clamp(revenue.roi);
+    const verificationRate = clamp(operation.verificationRate);
+    const score = round(
+      (hitRate * 0.25) +
+      (roiScore * 0.25) +
+      (toNumber(rates.godRaceSuccessRate) * 0.15) +
+      (toNumber(rates.dangerPopularSuccessRate) * 0.12) +
+      (toNumber(rates.kamianaHitRate) * 0.12) +
+      (verificationRate * 0.11),
+      0,
+    );
+    return {
+      score: clamp(score),
+      hitRate,
+      roiScore,
+      verificationRate,
+      components: {
+        hitRate,
+        roi: roiScore,
+        godRaceSuccessRate: toNumber(rates.godRaceSuccessRate),
+        dangerPopularSuccessRate: toNumber(rates.dangerPopularSuccessRate),
+        kamianaHitRate: toNumber(rates.kamianaHitRate),
+        verificationRate,
+      },
+    };
+  };
+
+  const buildWeaknessGroups = (validationReports, keyGetter) => {
+    const groups = new Map();
+    validationReports.forEach((report) => {
+      const key = compactText(keyGetter(report));
+      const current = groups.get(key) || { label: key, races: 0, misses: 0, roiTotal: 0 };
+      current.races += 1;
+      current.roiTotal += toNumber(report.roi, 0);
+      if (!report.judgements.trifectaHit && !report.judgements.mainHit && toNumber(report.roi, 0) < 100) current.misses += 1;
+      groups.set(key, current);
+    });
+    return Array.from(groups.values())
+      .map((item) => ({ ...item, averageRoi: item.races ? round(item.roiTotal / item.races, 1) : 0 }))
+      .sort((a, b) => (b.misses - a.misses) || (a.averageRoi - b.averageRoi));
+  };
+
+  const distanceBucket = (distance) => {
+    const value = toNumber(distance, 0);
+    if (!value) return "距離未設定";
+    if (value <= 1400) return "短距離";
+    if (value <= 1800) return "マイル";
+    if (value <= 2200) return "中距離";
+    return "長距離";
+  };
+
+  const summarizeImprovements = (validationReports, selfEvolutionLogs) => {
+    const osCandidates = validationReports.flatMap((report) => [
+      ...asArray(report.osUpdateCandidates?.pending),
+      ...asArray(report.osUpdateCandidates?.delete),
+      ...asArray(report.summary?.nextFixPoints),
+    ]);
+    const evolutionCandidates = selfEvolutionLogs.map((log) => log.afterRule || log.learningPoint || log.pendingRule || log.deleteRule).filter(Boolean);
+    return [...osCandidates, ...evolutionCandidates].slice(0, 6);
+  };
+
+  const buildTrendSeries = ({ fundCurveRecords, validationReports, selfEvolutionLogs, totalRaceCount }) => {
+    const dates = Array.from(new Set([
+      ...fundCurveRecords.map((record) => normalizeDate(record.date ?? record.savedAt)),
+      ...validationReports.map((report) => normalizeDate(report.date ?? report.generatedAt)),
+      ...selfEvolutionLogs.map((log) => normalizeDate(log.date ?? log.savedAt)),
+    ])).sort();
+    let cumulativeStake = 0;
+    let cumulativePayout = 0;
+    return dates.map((date) => {
+      fundCurveRecords.filter((record) => normalizeDate(record.date ?? record.savedAt) === date).forEach((record) => {
+        cumulativeStake += toNumber(record.stake ?? record.totalInvestment, 0);
+        cumulativePayout += toNumber(record.payout, 0);
+      });
+      const reportsUntilDate = validationReports.filter((report) => normalizeDate(report.date ?? report.generatedAt) <= date);
+      const revenue = cumulativeStake > 0
+        ? { roi: round((cumulativePayout / cumulativeStake) * 100, 1), totalInvestment: cumulativeStake, totalPayout: cumulativePayout }
+        : summarizeRevenue([], reportsUntilDate);
+      const operation = {
+        totalRaceCount,
+        verifiedRaceCount: reportsUntilDate.length,
+        verificationRate: totalRaceCount > 0 ? pct(reportsUntilDate.length, totalRaceCount) : 0,
+      };
+      const rates = summarizeRates(reportsUntilDate);
+      return {
+        date,
+        roi: revenue.roi,
+        aiOperationScore: calculateAiOperationScore({ rates, revenue, operation }).score,
+        selfEvolutionCount: selfEvolutionLogs.filter((log) => normalizeDate(log.date ?? log.savedAt) <= date).length,
+      };
+    });
+  };
+
+  const buildPerformanceDashboardReport = ({ storage = window.localStorage } = {}) => {
+    const sources = loadDashboardSources(storage);
+    const raceKeys = new Set([
+      ...sources.operationLogs.map(uniqueRaceKey),
+      ...sources.validationReports.map(uniqueRaceKey),
+      ...sources.fundCurveRecords.map(uniqueRaceKey),
+    ].filter(Boolean));
+    const totalRaceCount = raceKeys.size;
+    const analyzedRaceCount = sources.operationLogs.filter((log) => /AI|一括|分析|買い目|神レース/.test(log.operationType)).length;
+    const verifiedRaceCount = sources.validationReports.length;
+    const operation = {
+      totalRaceCount,
+      analyzedRaceCount,
+      verifiedRaceCount,
+      selfEvolutionCount: sources.selfEvolutionLogs.length,
+      verificationRate: totalRaceCount > 0 ? pct(verifiedRaceCount, totalRaceCount) : 0,
+    };
+    const rates = summarizeRates(sources.validationReports);
+    const revenue = summarizeRevenue(sources.fundCurveRecords, sources.validationReports);
+    const aiOperationScore = calculateAiOperationScore({ rates, revenue, operation });
+    const weakRaceTypes = buildWeaknessGroups(sources.validationReports, (report) => report.raceType);
+    const weakCourses = buildWeaknessGroups(sources.validationReports, (report) => report.course);
+    const weakDistances = buildWeaknessGroups(sources.validationReports, (report) => distanceBucket(report.distance));
+    return {
+      id: `performance-dashboard:${new Date().toISOString()}`,
+      generatedAt: new Date().toISOString(),
+      storageKey: REPORT_STORAGE_KEY,
+      sourceStorageKeys: [FUND_CURVE_STORAGE_KEY, OPERATION_LOG_STORAGE_KEY, SELF_EVOLUTION_STORAGE_KEY, VALIDATION_REPORT_STORAGE_KEY],
+      operation,
+      hitRates: rates,
+      revenue,
+      aiEvaluation: {
+        godRaceSuccessRate: rates.godRaceSuccessRate,
+        evSuccessRate: rates.evSuccessRate,
+        capitalSuccessRate: rates.capitalSuccessRate,
+        aiOperationScore: aiOperationScore.score,
+        scoreComponents: aiOperationScore.components,
+      },
+      trends: buildTrendSeries({ ...sources, totalRaceCount }),
+      improvements: {
+        weakRaceTypes: weakRaceTypes.slice(0, 3),
+        weakCourses: weakCourses.slice(0, 3),
+        weakDistances: weakDistances.slice(0, 3),
+        osCandidates: summarizeImprovements(sources.validationReports, sources.selfEvolutionLogs),
+      },
+      sourceCounts: {
+        fundCurveRecords: sources.fundCurveRecords.length,
+        productionOperationLogs: sources.operationLogs.length,
+        selfEvolutionLogs: sources.selfEvolutionLogs.length,
+        productionResultValidationReports: sources.validationReports.length,
+      },
+    };
+  };
+
+  const savePerformanceDashboardReport = (report, storage = window.localStorage) => {
+    if (!storage?.setItem) return [report];
+    const current = asArray(readJson(storage, REPORT_STORAGE_KEY, []));
+    const next = [report, ...current.filter((item) => item.id !== report.id)].slice(0, 50);
+    storage.setItem(REPORT_STORAGE_KEY, JSON.stringify(next));
+    return next;
+  };
+
+  const exportPerformanceDashboardJson = ({ storage = window.localStorage } = {}) => {
+    const report = buildPerformanceDashboardReport({ storage });
+    savePerformanceDashboardReport(report, storage);
+    return JSON.stringify(report, null, 2);
+  };
+
+  window.HashimotoPerformanceDashboardEngine = {
+    REPORT_STORAGE_KEY,
+    FUND_CURVE_STORAGE_KEY,
+    OPERATION_LOG_STORAGE_KEY,
+    SELF_EVOLUTION_STORAGE_KEY,
+    SELF_EVOLUTION_COMPAT_KEY,
+    VALIDATION_REPORT_STORAGE_KEY,
+    normalizeFundCurveRecords,
+    normalizeValidationReports,
+    normalizeOperationLogs,
+    loadDashboardSources,
+    summarizeRates,
+    summarizeRevenue,
+    calculateAiOperationScore,
+    buildTrendSeries,
+    buildPerformanceDashboardReport,
+    savePerformanceDashboardReport,
+    exportPerformanceDashboardJson,
+  };
+})();
+
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoPerformanceDashboardEngine;
+  if (!documentRef?.querySelector || !engine) return;
+
+  const formatPercent = (value) => `${Number(value || 0).toFixed(1).replace(/\.0$/, "")}%`;
+  const formatYen = (value) => `${Math.round(Number(value || 0)).toLocaleString("ja-JP")}円`;
+  const setText = (selector, value) => {
+    const target = documentRef.querySelector(selector);
+    if (target) target.textContent = value;
+  };
+  const fillList = (selector, items, formatter, emptyText = "データ蓄積待ち") => {
+    const target = documentRef.querySelector(selector);
+    if (!target) return;
+    target.innerHTML = items.length ? items.map((item) => `<li>${formatter(item)}</li>`).join("") : `<li class="empty-state">${emptyText}</li>`;
+  };
+  const fillTrend = (selector, items, key, formatter) => {
+    const target = documentRef.querySelector(selector);
+    if (!target) return;
+    const max = Math.max(1, ...items.map((item) => Number(item[key] || 0)));
+    target.innerHTML = items.length ? items.slice(-8).map((item) => {
+      const height = Math.max(8, Math.round((Number(item[key] || 0) / max) * 100));
+      return `<span class="performance-trend-bar" style="--bar-height:${height}%"><i>${formatter(item[key])}</i><b>${String(item.date).slice(5)}</b></span>`;
+    }).join("") : '<p class="empty-state">時系列データ待ち</p>';
+  };
+
+  const renderPerformanceDashboard = () => {
+    const report = engine.buildPerformanceDashboardReport({ storage: window.localStorage });
+    setText("#performance-total-races", report.operation.totalRaceCount.toLocaleString("ja-JP"));
+    setText("#performance-analyzed-races", report.operation.analyzedRaceCount.toLocaleString("ja-JP"));
+    setText("#performance-verified-races", report.operation.verifiedRaceCount.toLocaleString("ja-JP"));
+    setText("#performance-self-evolution-count", report.operation.selfEvolutionCount.toLocaleString("ja-JP"));
+
+    setText("#performance-main-hit-rate", formatPercent(report.hitRates.mainHitRate));
+    setText("#performance-trifecta-hit-rate", formatPercent(report.hitRates.trifectaHitRate));
+    setText("#performance-win5-hit-rate", formatPercent(report.hitRates.win5HitRate));
+    setText("#performance-kamiana-hit-rate", formatPercent(report.hitRates.kamianaHitRate));
+    setText("#performance-danger-success-rate", formatPercent(report.hitRates.dangerPopularSuccessRate));
+
+    setText("#performance-total-investment", formatYen(report.revenue.totalInvestment));
+    setText("#performance-total-payout", formatYen(report.revenue.totalPayout));
+    setText("#performance-total-profit", formatYen(report.revenue.totalProfit));
+    setText("#performance-roi", formatPercent(report.revenue.roi));
+
+    setText("#performance-god-race-rate", formatPercent(report.aiEvaluation.godRaceSuccessRate));
+    setText("#performance-ev-rate", formatPercent(report.aiEvaluation.evSuccessRate));
+    setText("#performance-capital-rate", formatPercent(report.aiEvaluation.capitalSuccessRate));
+    setText("#performance-ai-score", String(report.aiEvaluation.aiOperationScore));
+    setText("#performance-ai-score-inline", `${report.aiEvaluation.aiOperationScore} / 100`);
+    setText("#performance-ai-score-note", `的中${formatPercent(report.aiEvaluation.scoreComponents.hitRate)} / ROI${formatPercent(report.aiEvaluation.scoreComponents.roi)} / 検証率${formatPercent(report.aiEvaluation.scoreComponents.verificationRate)}`);
+    setText("#performance-source-count", `参照: fundCurveRecords ${report.sourceCounts.fundCurveRecords}件 / productionOperationLogs ${report.sourceCounts.productionOperationLogs}件 / selfEvolutionLogs ${report.sourceCounts.selfEvolutionLogs}件 / productionResultValidationReports ${report.sourceCounts.productionResultValidationReports}件`);
+
+    fillTrend("#performance-roi-trend", report.trends, "roi", formatPercent);
+    fillTrend("#performance-score-trend", report.trends, "aiOperationScore", (value) => `${Math.round(Number(value || 0))}`);
+    fillTrend("#performance-evolution-trend", report.trends, "selfEvolutionCount", (value) => `${Math.round(Number(value || 0))}回`);
+
+    fillList("#performance-weak-race-types", report.improvements.weakRaceTypes, (item) => `<strong>${item.label}</strong><span>${item.races}戦 / 弱点${item.misses}件 / 平均ROI ${formatPercent(item.averageRoi)}</span>`);
+    fillList("#performance-weak-courses", report.improvements.weakCourses, (item) => `<strong>${item.label}</strong><span>${item.races}戦 / 弱点${item.misses}件 / 平均ROI ${formatPercent(item.averageRoi)}</span>`);
+    fillList("#performance-weak-distances", report.improvements.weakDistances, (item) => `<strong>${item.label}</strong><span>${item.races}戦 / 弱点${item.misses}件 / 平均ROI ${formatPercent(item.averageRoi)}</span>`);
+    fillList("#performance-os-candidates", report.improvements.osCandidates, (item) => `<strong>改善候補OS</strong><span>${item}</span>`);
+    return report;
+  };
+
+  const downloadReport = () => {
+    const json = engine.exportPerformanceDashboardJson({ storage: window.localStorage });
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = documentRef.createElement("a");
+    link.href = url;
+    link.download = `performance-dashboard-${new Date().toISOString().slice(0, 10)}.json`;
+    documentRef.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setText("#performance-dashboard-status", "performanceDashboardReportsへ保存しJSON出力しました");
+    renderPerformanceDashboard();
+  };
+
+  documentRef.querySelector("#performance-dashboard-refresh")?.addEventListener("click", () => {
+    renderPerformanceDashboard();
+    setText("#performance-dashboard-status", "最新localStorageから再集計しました");
+  });
+  documentRef.querySelector("#performance-dashboard-export")?.addEventListener("click", downloadReport);
+  renderPerformanceDashboard();
+})();
+
+
+(() => {
   const STORAGE_KEY = "operationDiagnosticReports";
 
   const asArray = (value) => Array.isArray(value) ? value : [];

@@ -40,6 +40,7 @@
           <a href="#trifecta-generator">三連単生成</a>
           <a href="#win5-ai-screen">WIN5生成</a>
           <a href="#roi-dashboard">回収率</a>
+          <a href="#performance-dashboard">総合パフォーマンス</a>
           <a href="#result-verification">結果検証</a>
           <a href="#result-log-list">検証ログ</a>
           <a href="#ai-backtest-lab">AI精度テスト</a>
@@ -78,6 +79,7 @@
           <a href="#trifecta-generator"><span>⑧</span>三連単自動生成</a>
           <a href="#win5-ai-screen"><span>⑨</span>WIN5自動生成</a>
           <a href="#roi-dashboard"><span>⑩</span>回収率ダッシュボード</a>
+          <a href="#performance-dashboard"><span>⑩-2</span>総合パフォーマンス</a>
           <a href="#result-verification"><span>⑪</span>結果検証フォーム</a>
           <a href="#result-log-list"><span>⑫</span>最新結果検証ログ</a>
           <a href="#ai-backtest-lab"><span>⑬</span>AI精度テスト・バックテスト</a>
@@ -294,6 +296,84 @@
                 </table>
               </div>
             </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="performance-dashboard" class="performance-dashboard card card--wide card--featured" aria-label="Phase5-3 総合パフォーマンスダッシュボード">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE5-3 PERFORMANCE DASHBOARD</p>
+              <h2>総合パフォーマンスダッシュボード</h2>
+              <p class="card__lead">本番運用の成果、AI精度、回収率、自己進化状況を localStorage から1画面に集約します。</p>
+            </div>
+            <span id="performance-dashboard-status" class="status-pill status-pill--live">総合集計待機</span>
+          </div>
+
+          <div class="performance-score-hero" aria-live="polite">
+            <span>AI運用スコア</span>
+            <strong><b id="performance-ai-score">0</b> / 100</strong>
+            <small id="performance-ai-score-note">的中率・ROI・神レース・危険人気馬・神穴・検証率を統合評価</small>
+          </div>
+
+          <div class="performance-grid" aria-label="総合パフォーマンスパネル">
+            <section class="performance-panel">
+              <h3>運用状況</h3>
+              <dl class="metric-list">
+                <div><dt>総レース数</dt><dd id="performance-total-races">0</dd></div>
+                <div><dt>分析済レース数</dt><dd id="performance-analyzed-races">0</dd></div>
+                <div><dt>検証済レース数</dt><dd id="performance-verified-races">0</dd></div>
+                <div><dt>自己進化回数</dt><dd id="performance-self-evolution-count">0</dd></div>
+              </dl>
+            </section>
+            <section class="performance-panel">
+              <h3>的中率</h3>
+              <dl class="metric-list">
+                <div><dt>本命的中率</dt><dd id="performance-main-hit-rate">0%</dd></div>
+                <div><dt>三連単的中率</dt><dd id="performance-trifecta-hit-rate">0%</dd></div>
+                <div><dt>WIN5候補的中率</dt><dd id="performance-win5-hit-rate">0%</dd></div>
+                <div><dt>神穴的中率</dt><dd id="performance-kamiana-hit-rate">0%</dd></div>
+                <div><dt>危険人気馬成功率</dt><dd id="performance-danger-success-rate">0%</dd></div>
+              </dl>
+            </section>
+            <section class="performance-panel">
+              <h3>収益</h3>
+              <dl class="metric-list">
+                <div><dt>総投資額</dt><dd id="performance-total-investment">0円</dd></div>
+                <div><dt>総払戻額</dt><dd id="performance-total-payout">0円</dd></div>
+                <div><dt>総利益</dt><dd id="performance-total-profit">0円</dd></div>
+                <div><dt>ROI</dt><dd id="performance-roi">0%</dd></div>
+              </dl>
+            </section>
+            <section class="performance-panel">
+              <h3>AI評価</h3>
+              <dl class="metric-list">
+                <div><dt>神レース判定成功率</dt><dd id="performance-god-race-rate">0%</dd></div>
+                <div><dt>EV判定成功率</dt><dd id="performance-ev-rate">0%</dd></div>
+                <div><dt>資金配分成功率</dt><dd id="performance-capital-rate">0%</dd></div>
+                <div><dt>AI運用スコア</dt><dd><span id="performance-ai-score-inline">100点評価</span></dd></div>
+              </dl>
+            </section>
+          </div>
+
+          <div class="performance-trends" aria-label="時系列推移">
+            <section><h3>ROI推移</h3><div id="performance-roi-trend" class="performance-trend-chart"></div></section>
+            <section><h3>AI運用スコア推移</h3><div id="performance-score-trend" class="performance-trend-chart"></div></section>
+            <section><h3>自己進化回数推移</h3><div id="performance-evolution-trend" class="performance-trend-chart"></div></section>
+          </div>
+
+          <div class="performance-improvements" aria-label="改善候補">
+            <section><h3>弱点レースタイプ</h3><ul id="performance-weak-race-types"></ul></section>
+            <section><h3>弱点競馬場</h3><ul id="performance-weak-courses"></ul></section>
+            <section><h3>弱点距離</h3><ul id="performance-weak-distances"></ul></section>
+            <section><h3>改善候補OS</h3><ul id="performance-os-candidates"></ul></section>
+          </div>
+
+          <div class="performance-actions">
+            <p id="performance-source-count">参照: fundCurveRecords / productionOperationLogs / selfEvolutionLogs / productionResultValidationReports</p>
+            <button id="performance-dashboard-refresh" class="button button--ghost" type="button">最新データで再集計</button>
+            <button id="performance-dashboard-export" class="button button--primary" type="button">JSON出力</button>
           </div>
         </div>
       </section>
