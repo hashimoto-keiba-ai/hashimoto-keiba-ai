@@ -1775,9 +1775,29 @@
               </section>
             </div>
 
+            <section class="production-backup-panel" aria-label="本番運用バックアップと復元">
+              <div class="form-section-heading">
+                <span>③ Phase4-5 本番運用バックアップ</span>
+                <small>本番レース・AI分析・検証・自己進化・資金曲線を一括保全</small>
+              </div>
+              <p class="restore-note">対象: <code>productionRaceEntries</code> / <code>productionRunReports</code> / <code>productionResultValidationReports</code> / <code>selfEvolutionLogs</code> / <code>fundCurveRecords</code> / <code>operationDiagnosticReports</code> / <code>operationReadinessChecklist</code> / <code>sampleRaceTestLog</code> / <code>sampleRaceResultValidationLog</code></p>
+              <div class="production-backup-actions">
+                <button id="production-backup-export" class="button button--primary" type="button">本番運用バックアップをJSON出力</button>
+                <label class="restore-file-drop"><span>本番運用バックアップJSONを選択</span><input id="production-restore-json-file" type="file" accept="application/json,.json" /></label>
+                <button id="production-backup-preview" class="button button--ghost" type="button">復元前チェック</button>
+                <button id="production-backup-restore" class="button button--primary" type="button">確認内容で復元</button>
+              </div>
+              <div id="production-backup-summary" class="sample-race-test-summary production-backup-summary" aria-live="polite">
+                <article><span>作成対象</span><strong>9キー</strong><small>本番運用データを一括JSON化</small></article>
+                <article><span>復元前バックアップ</span><strong>preRestoreBackup</strong><small>復元直前に自動保存</small></article>
+                <article><span>復元ログ</span><strong>backupRestoreLogs</strong><small>復元結果をlocalStorageへ保存</small></article>
+              </div>
+              <div id="production-restore-preview" class="production-restore-preview" aria-live="polite">復元前チェック結果はここに表示されます。</div>
+            </section>
+
             <section class="backup-history-panel" aria-label="バックアップ履歴">
               <div class="form-section-heading">
-                <span>③ バックアップ履歴</span>
+                <span>④ バックアップ履歴</span>
                 <small>GitHub保存前・復元前・手動バックアップをワンクリック復元</small>
               </div>
               <div class="table-wrap"><table class="data-table backup-history-table"><thead><tr><th>作成日時</th><th>保存対象</th><th>件数</th><th>種別</th><th>操作</th></tr></thead><tbody id="backup-history-body"></tbody></table></div>
@@ -2678,7 +2698,15 @@
       const backupWin5DataButton = document.querySelector("#backup-win5-data");
       const backupRoiDataButton = document.querySelector("#backup-roi-data");
       const restoreJsonDataButton = document.querySelector("#restore-json-data");
+      const productionBackupEngine = window.HashimotoProductionOperationBackupEngine;
+      const productionBackupExportButton = document.querySelector("#production-backup-export");
+      const productionRestoreJsonFile = document.querySelector("#production-restore-json-file");
+      const productionBackupPreviewButton = document.querySelector("#production-backup-preview");
+      const productionBackupRestoreButton = document.querySelector("#production-backup-restore");
+      const productionBackupSummary = document.querySelector("#production-backup-summary");
+      const productionRestorePreview = document.querySelector("#production-restore-preview");
       const backupHistoryBody = document.querySelector("#backup-history-body");
+      let currentProductionRestorePayload = null;
 
       const backupStorageTargets = [
         { type: "raceEntries", key: STORAGE_KEY, label: "レース登録データ", category: "race", coursePaths: [["race", "course"]] },
@@ -2986,6 +3014,7 @@
           return false;
         }
         createTemporaryBackup({ backupKind: "before-restore", backupKindLabel: "復元前バックアップ" });
+        productionBackupEngine?.createPreRestoreBackup?.(window.localStorage);
         backupRestoreStatus.textContent = "復元前バックアップ作成済";
         return true;
       };
@@ -3024,14 +3053,17 @@
 
       const restoreBackupToLocalStorage = (payload) => {
         const normalized = normalizeRestorePayload(payload);
+        const restoredKeys = [];
         normalized.keys.forEach((key) => {
           if (normalized.data[key]) {
             const storageType = normalized.data[key].storageType || backupStorageTargets.find((definition) => definition.key === key)?.type;
             if (storageType) {
               dataStorage.importData(storageType, normalized.data[key].value, "localStorage");
+              restoredKeys.push(key);
             }
           }
         });
+        productionBackupEngine?.appendRestoreLog?.({ action: "standard-backup-restore", sourceCreatedAt: normalized.createdAt, restoredKeys }, window.localStorage);
         return normalized;
       };
 
@@ -3067,6 +3099,113 @@
         reader.addEventListener("error", () => reject(new Error("ファイルの読み込みに失敗しました。")));
         reader.readAsText(file, "utf-8");
       });
+
+      const readJsonFile = (file, emptyMessage = "JSONファイルを選択してください。") => new Promise((resolve, reject) => {
+        if (!file) {
+          reject(new Error(emptyMessage));
+          return;
+        }
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          try {
+            resolve(JSON.parse(reader.result));
+          } catch (error) {
+            reject(new Error(`JSONを読み込めません: ${error.message}`));
+          }
+        });
+        reader.addEventListener("error", () => reject(new Error("ファイルの読み込みに失敗しました。")));
+        reader.readAsText(file, "utf-8");
+      });
+
+      const downloadProductionBackupJson = (payload) => {
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `hashimoto-keiba-ai-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.append(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      };
+
+      const renderProductionBackupSummary = () => {
+        if (!productionBackupEngine || !productionBackupSummary) return;
+        const payload = productionBackupEngine.createBackupPayload(window.localStorage);
+        const validation = productionBackupEngine.validateBackupPayload(payload);
+        productionBackupSummary.innerHTML = `
+          <article><span>バックアップ対象</span><strong>${validation.requiredKeys.length}キー</strong><small>合計 ${validation.totalItemCount.toLocaleString("ja-JP")}件 / 不足 ${validation.emptyRequiredKeys.length}キー</small></article>
+          <article><span>作成ファイル</span><strong>JSON</strong><small>hashimoto-keiba-ai-backup-${new Date().toISOString().slice(0, 10)}.json</small></article>
+          <article><span>復元安全機能</span><strong>ON</strong><small>${escapeHtml(productionBackupEngine.PRE_RESTORE_BACKUP_KEY)} と ${escapeHtml(productionBackupEngine.RESTORE_LOG_STORAGE_KEY)} を自動保存</small></article>
+        `;
+      };
+
+      const renderProductionRestorePreview = (validation) => {
+        if (!productionRestorePreview) return;
+        const countRows = validation.requiredKeys.map((key) => `<li><strong>${escapeHtml(key)}</strong>: ${Number(validation.itemCounts[key] || 0).toLocaleString("ja-JP")}件</li>`).join("");
+        const warnings = validation.warnings.length ? validation.warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("") : "<li>警告なし</li>";
+        productionRestorePreview.innerHTML = `
+          <div class="production-restore-preview__grid">
+            <article><span>バックアップ作成日</span><strong>${escapeHtml(formatBackupDate(validation.backupCreatedAt))}</strong><small>${escapeHtml(validation.payload.type)}</small></article>
+            <article><span>含まれるデータ件数</span><strong>${validation.totalItemCount.toLocaleString("ja-JP")}件</strong><small>${validation.dataKeys.length}キー検出</small></article>
+            <article><span>上書き対象</span><strong>${validation.overwriteTargets.length}キー</strong><small>${escapeHtml(validation.overwriteTargets.join(" / "))}</small></article>
+          </div>
+          <div class="production-restore-preview__details">
+            <section><h4>データ件数</h4><ul>${countRows}</ul></section>
+            <section class="production-restore-warning"><h4>上書き警告・整合性チェック</h4><ul>${warnings}</ul></section>
+          </div>
+        `;
+      };
+
+      const previewProductionRestoreBackup = async () => {
+        if (!productionBackupEngine) return null;
+        const payload = await readJsonFile(productionRestoreJsonFile?.files?.[0], "本番運用バックアップJSONを選択してください。");
+        const validation = productionBackupEngine.validateBackupPayload(payload);
+        currentProductionRestorePayload = validation.payload;
+        renderProductionRestorePreview(validation);
+        backupRestoreStatus.textContent = validation.ok ? "本番バックアップ整合性OK" : `必要キー不足: ${validation.missingRequiredKeys.join(" / ")}`;
+        return validation;
+      };
+
+      const exportProductionBackup = () => {
+        if (!productionBackupEngine) return;
+        const payload = productionBackupEngine.createBackupPayload(window.localStorage);
+        downloadProductionBackupJson(payload);
+        const validation = productionBackupEngine.validateBackupPayload(payload);
+        renderProductionBackupSummary();
+        renderProductionRestorePreview(validation);
+        backupRestoreStatus.textContent = `${validation.requiredKeys.length}キー / ${validation.totalItemCount.toLocaleString("ja-JP")}件を本番運用バックアップ出力`;
+      };
+
+      const restoreProductionBackup = async () => {
+        if (!productionBackupEngine) return;
+        try {
+          const validation = currentProductionRestorePayload
+            ? productionBackupEngine.validateBackupPayload(currentProductionRestorePayload)
+            : await previewProductionRestoreBackup();
+          renderProductionRestorePreview(validation);
+          const confirmMessage = [
+            "本番運用バックアップを復元します。",
+            `バックアップ作成日: ${formatBackupDate(validation.backupCreatedAt)}`,
+            `含まれるデータ件数: ${validation.totalItemCount.toLocaleString("ja-JP")}件`,
+            `上書き対象: ${validation.overwriteTargets.join(" / ") || "なし"}`,
+            "現在のlocalStorageデータは上書きされます。復元前にpreRestoreBackupを自動保存します。",
+            validation.missingRequiredKeys.length ? `不足キー: ${validation.missingRequiredKeys.join(" / ")}` : "必要キー: OK",
+          ].join("\n");
+          if (!window.confirm(confirmMessage)) {
+            backupRestoreStatus.textContent = "本番バックアップ復元キャンセル";
+            return;
+          }
+          const result = productionBackupEngine.restoreBackupPayload(validation.payload, window.localStorage, { requireComplete: false });
+          setActiveStorageMode("localStorage");
+          refreshDashboardAfterRestore();
+          renderProductionBackupSummary();
+          renderProductionRestorePreview(result.validation);
+          backupRestoreStatus.textContent = `${result.restoredKeys.length}キー復元 / preRestoreBackup・backupRestoreLogs保存済`;
+        } catch (error) {
+          backupRestoreStatus.textContent = error.message;
+        }
+      };
 
       const restoreSelectedBackup = async () => {
         try {
@@ -3123,6 +3262,11 @@
       backupWin5DataButton.addEventListener("click", () => runBackup({ scope: "win5" }));
       backupRoiDataButton.addEventListener("click", () => runBackup({ scope: "roi" }));
       restoreJsonDataButton.addEventListener("click", restoreSelectedBackup);
+      productionBackupExportButton?.addEventListener("click", exportProductionBackup);
+      productionBackupPreviewButton?.addEventListener("click", () => previewProductionRestoreBackup().catch((error) => { backupRestoreStatus.textContent = error.message; }));
+      productionRestoreJsonFile?.addEventListener("change", () => { currentProductionRestorePayload = null; previewProductionRestoreBackup().catch((error) => { if (productionRestorePreview) productionRestorePreview.textContent = error.message; }); });
+      productionBackupRestoreButton?.addEventListener("click", restoreProductionBackup);
+      renderProductionBackupSummary();
 
       const toNumberOrBlank = (value) => (value === "" ? "" : Number(value));
       const normalizeRuleKeyPart = (value) => String(value || "未設定").replace(/\s+/g, "").slice(0, 80);
