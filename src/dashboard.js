@@ -2445,6 +2445,185 @@
 
 
 (() => {
+  const STORAGE_KEY = "productionReadinessAuditReports";
+  const VERSION = 1;
+  const STATUSES = {
+    implemented: "実装済み",
+    partial: "部分実装",
+    missing: "未実装",
+    confirm: "要確認",
+  };
+  const STATUS_WEIGHTS = {
+    [STATUSES.implemented]: 1,
+    [STATUSES.partial]: 0.5,
+    [STATUSES.confirm]: 0.25,
+    [STATUSES.missing]: 0,
+  };
+
+  const AUDIT_ITEMS = [
+    { id: "productionRaceInput", label: "本番レース入力", source: "productionRaceEntries / hashimoto-keiba-ai:production-race-entry:v1", evidence: (ctx) => ctx.hasItems(ctx.productionRaceEntries) || ctx.hasItems(ctx.productionRaceCompat) },
+    { id: "horseEntryInput", label: "出走馬入力", source: "productionRaceEntries.horses / horseEntries", evidence: (ctx) => ctx.hasHorseEntries },
+    { id: "aiBatchRun", label: "AI一括実行", source: "productionRunReports", evidence: (ctx) => ctx.hasItems(ctx.productionRunReports) || Boolean(ctx.sampleRaceLog?.race) },
+    { id: "aiIndex", label: "AI指数", source: "productionRunReports.aiTop5 / sampleRaceTestLog.aiTop5", evidence: (ctx) => ctx.hasItems(ctx.latestRun?.aiTop5) || ctx.hasItems(ctx.sampleRaceLog?.aiTop5) },
+    { id: "kamianaIndex", label: "神穴指数", source: "productionRunReports.kamianaTop5 / sampleRaceTestLog.kamianaTop5", evidence: (ctx) => ctx.hasItems(ctx.latestRun?.kamianaTop5) || ctx.hasItems(ctx.sampleRaceLog?.kamianaTop5) },
+    { id: "dangerPopularIndex", label: "危険人気馬指数", source: "productionRunReports.dangerTop5 / sampleRaceTestLog.dangerTop5", evidence: (ctx) => ctx.hasItems(ctx.latestRun?.dangerTop5) || ctx.hasItems(ctx.sampleRaceLog?.dangerTop5) },
+    { id: "trifectaGeneration", label: "三連単生成", source: "productionRunReports.trifectaCandidates / betTickets", evidence: (ctx) => ctx.hasItems(ctx.latestRun?.trifectaCandidates) || ctx.hasItems(ctx.sampleRaceLog?.trifectaCandidates) || ctx.hasItems(ctx.betTickets) },
+    { id: "win5Generation", label: "WIN5生成", source: "productionRunReports.win5Candidates / win5Tickets", evidence: (ctx) => ctx.hasItems(ctx.latestRun?.win5Candidates) || ctx.hasItems(ctx.sampleRaceLog?.win5Candidates) || ctx.hasItems(ctx.win5Tickets) },
+    { id: "futureSimulator", label: "未来シミュレーター", source: "productionRunReports.simulationWinTop5 / sampleRaceTestLog.simulationWinTop5", evidence: (ctx) => ctx.hasItems(ctx.latestRun?.simulationWinTop5) || ctx.hasItems(ctx.sampleRaceLog?.simulationWinTop5) },
+    { id: "evMonitoring", label: "EV監視", source: "productionRunReports.evTop / sampleRaceTestLog.evTop", evidence: (ctx) => ctx.hasItems(ctx.latestRun?.evTop) || ctx.hasItems(ctx.sampleRaceLog?.evTop) },
+    { id: "capitalAllocation", label: "資金配分", source: "productionRunReports.recommendedInvestments", evidence: (ctx) => ctx.hasItems(ctx.latestRun?.recommendedInvestments) || ctx.hasItems(ctx.sampleRaceLog?.recommendedInvestments) },
+    { id: "godRaceJudgement", label: "神レース判定", source: "productionRunReports.godRace / godRaceJudgementResults", evidence: (ctx) => Boolean(ctx.latestRun?.godRace?.label || ctx.sampleRaceLog?.godRace?.label || ctx.godRace?.label) },
+    { id: "productionResultInput", label: "本番結果入力", source: "productionResultValidationReports.result", evidence: (ctx) => Boolean(ctx.latestValidation?.result || ctx.latestValidation?.resultInput || ctx.sampleValidation?.result || ctx.sampleValidation?.resultInput) },
+    { id: "resultVerification", label: "結果検証", source: "productionResultValidationReports.judgements", evidence: (ctx) => Boolean(ctx.latestValidation?.judgements || ctx.sampleValidation?.judgements) },
+    { id: "selfEvolutionLog", label: "自己進化ログ", source: "selfEvolutionLogs / hashimoto-keiba-ai:self-evolution-logs:v1", evidence: (ctx) => Boolean(ctx.latestValidation?.selfEvolutionLog || ctx.sampleValidation?.selfEvolutionLog || ctx.selfEvolutionCount > 0) },
+    { id: "fundCurveRoi", label: "資金曲線/ROI", source: "fundCurveRecords / roiRecords / validation.roi", evidence: (ctx) => ctx.hasItems(ctx.fundCurveRecords) || ctx.hasItems(ctx.roiRecords) || Number.isFinite(Number(ctx.latestValidation?.roi)) || Number.isFinite(Number(ctx.sampleValidation?.roi)) },
+    { id: "diagnosticReport", label: "診断レポート", source: "operationDiagnosticReports", evidence: (ctx) => ctx.hasItems(ctx.operationDiagnosticReports) },
+    { id: "backup", label: "バックアップ", source: "preRestoreBackup / production backup export UI", evidence: (ctx) => Boolean(ctx.preRestoreBackup || ctx.hasItems(ctx.backupRestoreLogs)), confirmWhenNoEvidence: true },
+    { id: "restore", label: "復元", source: "backupRestoreLogs", evidence: (ctx) => ctx.hasItems(ctx.backupRestoreLogs), confirmWhenNoEvidence: true },
+    { id: "ipadOperation", label: "iPad運用", source: "Pages公開チェック / iPadクイックUI", evidence: (ctx) => Boolean(ctx.pagesPublicUrl || ctx.ipadAuditConfirmed), confirmWhenNoEvidence: true },
+  ];
+
+  const safeParseJson = (value, fallback = null) => {
+    if (value === null || value === undefined || value === "") return fallback;
+    try {
+      return JSON.parse(value);
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const readStorageJson = (storage, key, fallback = null) => safeParseJson(storage?.getItem?.(key), fallback);
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const latestArrayItem = (value) => asArray(value)[0] || null;
+  const hasItems = (value) => asArray(value).length > 0;
+  const objectListCount = (value) => {
+    if (Array.isArray(value)) return value.length;
+    if (!value || typeof value !== "object") return 0;
+    if (value.logs && typeof value.logs === "object") {
+      return Object.values(value.logs).reduce((total, item) => total + (Array.isArray(item) ? item.length : 0), 0);
+    }
+    return ["items", "entries", "horses", "records", "reports", "results", "races"].reduce((total, key) => total + (Array.isArray(value[key]) ? value[key].length : 0), 0);
+  };
+
+  const buildContext = (storage = window.localStorage) => {
+    const productionRaceEntries = readStorageJson(storage, "productionRaceEntries", []);
+    const productionRaceCompat = readStorageJson(storage, "hashimoto-keiba-ai:production-race-entry:v1", []);
+    const horseEntries = readStorageJson(storage, "horseEntries", null);
+    const productionRunReports = readStorageJson(storage, "productionRunReports", []);
+    const productionResultValidationReports = readStorageJson(storage, "productionResultValidationReports", []);
+    const selfEvolutionLogs = readStorageJson(storage, "selfEvolutionLogs", null);
+    const selfEvolutionV1 = readStorageJson(storage, "hashimoto-keiba-ai:self-evolution-logs:v1", null);
+    const sampleRaceLog = readStorageJson(storage, "sampleRaceTestLog", null);
+    const sampleValidation = readStorageJson(storage, "sampleRaceResultValidationLog", null);
+    const latestRun = latestArrayItem(productionRunReports) || sampleRaceLog;
+    const latestValidation = latestArrayItem(productionResultValidationReports);
+    const hasHorseEntries = [productionRaceEntries, productionRaceCompat].some((entryList) => asArray(entryList).some((entry) => hasItems(entry?.horses))) || hasItems(horseEntries?.horses) || hasItems(horseEntries);
+    return {
+      storage,
+      productionRaceEntries,
+      productionRaceCompat,
+      horseEntries,
+      productionRunReports,
+      productionResultValidationReports,
+      latestRun,
+      latestValidation,
+      sampleRaceLog,
+      sampleValidation,
+      operationDiagnosticReports: readStorageJson(storage, "operationDiagnosticReports", []),
+      fundCurveRecords: readStorageJson(storage, "fundCurveRecords", []),
+      roiRecords: readStorageJson(storage, "roiRecords", []),
+      betTickets: readStorageJson(storage, "betTickets", []),
+      win5Tickets: readStorageJson(storage, "win5Tickets", []),
+      godRace: readStorageJson(storage, "godRaceJudgementResults", null),
+      preRestoreBackup: readStorageJson(storage, "preRestoreBackup", null),
+      backupRestoreLogs: readStorageJson(storage, "backupRestoreLogs", []),
+      pagesPublicUrl: storage?.getItem?.("hashimoto-keiba-ai:pages-public-url:v1"),
+      ipadAuditConfirmed: storage?.getItem?.("hashimoto-keiba-ai:ipad-operation-confirmed:v1") === "true",
+      selfEvolutionCount: objectListCount(selfEvolutionLogs) + objectListCount(selfEvolutionV1),
+      hasHorseEntries,
+      hasItems,
+    };
+  };
+
+  const auditItem = (item, context) => {
+    const implemented = Boolean(item.evidence(context));
+    const status = implemented ? STATUSES.implemented : item.confirmWhenNoEvidence ? STATUSES.confirm : STATUSES.partial;
+    return {
+      id: item.id,
+      label: item.label,
+      status,
+      source: item.source,
+      score: STATUS_WEIGHTS[status],
+      detail: implemented ? `${item.source} の運用データを確認しました。` : item.confirmWhenNoEvidence ? "画面・実機操作で最終確認してください。" : "機能枠はありますが、本番運用データ保存が未確認です。",
+    };
+  };
+
+  const calculateCompletion = (items = []) => {
+    const total = items.length;
+    const score = items.reduce((sum, item) => sum + (STATUS_WEIGHTS[item.status] ?? 0), 0);
+    const percentage = total ? Math.round((score / total) * 100) : 0;
+    const operationStatus = percentage >= 95 ? "本番運用可能" : percentage >= 85 ? "実戦投入可能" : percentage >= 60 ? "テスト運用可能" : "開発中";
+    return { total, score, percentage, operationStatus };
+  };
+
+  const buildAuditReport = ({ storage = window.localStorage } = {}) => {
+    const context = buildContext(storage);
+    const items = AUDIT_ITEMS.map((item) => auditItem(item, context));
+    const completion = calculateCompletion(items);
+    const improvementCandidates = items.filter((item) => item.status !== STATUSES.implemented);
+    return {
+      version: VERSION,
+      id: `production-readiness-audit:${Date.now()}`,
+      storageKey: STORAGE_KEY,
+      generatedAt: new Date().toISOString(),
+      items,
+      completion,
+      improvementCandidates,
+      summaryText: buildReportText({ items, completion, improvementCandidates }),
+    };
+  };
+
+  function buildReportText({ items, completion, improvementCandidates }) {
+    const lines = [
+      "橋本競馬AI 本番運用完成度監査レポート",
+      `完成度: ${completion.percentage}%`,
+      `本番運用ステータス: ${completion.operationStatus}`,
+      "",
+      "監査項目:",
+      ...items.map((item) => `- ${item.label}: ${item.status}（${item.source}）`),
+      "",
+      "改善候補:",
+      ...(improvementCandidates.length ? improvementCandidates.map((item) => `- ${item.label}: ${item.status} / ${item.detail}`) : ["- なし"]),
+    ];
+    return lines.join("\n");
+  }
+
+  const loadReports = (storage = window.localStorage) => {
+    const reports = readStorageJson(storage, STORAGE_KEY, []);
+    return Array.isArray(reports) ? reports : [];
+  };
+
+  const saveReport = (report, storage = window.localStorage) => {
+    const reports = [report, ...loadReports(storage)].slice(0, 50);
+    storage?.setItem?.(STORAGE_KEY, JSON.stringify(reports));
+    return reports;
+  };
+
+  window.HashimotoProductionReadinessAuditEngine = {
+    STORAGE_KEY,
+    STATUSES,
+    AUDIT_ITEMS,
+    STATUS_WEIGHTS,
+    buildContext,
+    calculateCompletion,
+    buildAuditReport,
+    buildReportText,
+    loadReports,
+    saveReport,
+  };
+})();
+
+
+(() => {
   const PRODUCTION_BACKUP_TYPE = "hashimoto-keiba-ai-production-operation-backup";
   const PRE_RESTORE_BACKUP_KEY = "preRestoreBackup";
   const RESTORE_LOG_STORAGE_KEY = "backupRestoreLogs";

@@ -519,6 +519,41 @@
             <p class="operation-readiness-note">手動項目は実画面で確認後にチェックしてください。状態は <code>operationReadinessChecklist</code> としてlocalStorageへ保存されます。</p>
           </section>
 
+
+          <section id="production-readiness-audit" class="production-readiness-audit-panel sample-race-test-panel" aria-label="本番運用完成度監査">
+            <div class="race-simulator-panel__head">
+              <div>
+                <p class="card__kicker">PRODUCTION READINESS AUDIT</p>
+                <h3>本番運用完成度監査パネル</h3>
+                <p>本番レース入力からバックアップ復元、iPad運用までの20項目を「実装済み・部分実装・未実装・要確認」で監査し、完成度％と改善候補を保存します。</p>
+              </div>
+              <span id="production-readiness-status" class="status-pill">未監査</span>
+            </div>
+            <div class="operation-readiness-meter production-readiness-meter" aria-live="polite">
+              <div>
+                <span>完成度</span>
+                <strong id="production-readiness-percent">0%</strong>
+                <small id="production-readiness-count">0/20項目</small>
+              </div>
+              <div class="operation-readiness-progress" aria-hidden="true"><span id="production-readiness-progress-bar"></span></div>
+              <div class="production-readiness-actions">
+                <button id="run-production-readiness-audit" class="button button--primary" type="button">本番監査を実行・保存</button>
+                <button id="copy-production-readiness-audit" class="button button--ghost" type="button" disabled>監査レポートをコピー</button>
+              </div>
+            </div>
+            <div id="production-readiness-summary" class="sample-race-test-summary production-readiness-summary" aria-live="polite">
+              <article><span>本番運用ステータス</span><strong>未監査</strong><small>監査実行後に開発中/テスト運用可能/実戦投入可能/本番運用可能を表示</small></article>
+              <article><span>保存先</span><strong>productionReadinessAuditReports</strong><small>監査レポートをlocalStorageへ保存</small></article>
+              <article><span>改善候補</span><strong>未生成</strong><small>未実装・部分実装・要確認項目を一覧化</small></article>
+            </div>
+            <div id="production-readiness-audit-list" class="production-readiness-audit-list"></div>
+            <section class="production-readiness-improvements" aria-label="改善候補">
+              <h4>改善候補</h4>
+              <ul id="production-readiness-improvement-list"><li class="empty-state">監査未実行です。</li></ul>
+            </section>
+            <p class="operation-readiness-note">監査結果は <code>productionReadinessAuditReports</code> に最新50件まで保存されます。iPad運用と復元は実機・実ファイル操作が必要なため、運用前に要確認項目として表示される場合があります。</p>
+          </section>
+
           <div class="csv-validation-panel" aria-label="CSV取込バリデーション">
             <div class="entry-heading">
               <span>③ CSV取込バリデーション</span>
@@ -1961,7 +1996,18 @@
       const operationReadinessCount = document.querySelector("#operation-readiness-count");
       const operationReadinessProgressBar = document.querySelector("#operation-readiness-progress-bar");
       const refreshOperationReadinessButton = document.querySelector("#refresh-operation-readiness");
+      const productionReadinessAuditEngine = window.HashimotoProductionReadinessAuditEngine;
+      const productionReadinessStatus = document.querySelector("#production-readiness-status");
+      const productionReadinessPercent = document.querySelector("#production-readiness-percent");
+      const productionReadinessCount = document.querySelector("#production-readiness-count");
+      const productionReadinessProgressBar = document.querySelector("#production-readiness-progress-bar");
+      const productionReadinessSummary = document.querySelector("#production-readiness-summary");
+      const productionReadinessAuditList = document.querySelector("#production-readiness-audit-list");
+      const productionReadinessImprovementList = document.querySelector("#production-readiness-improvement-list");
+      const runProductionReadinessAuditButton = document.querySelector("#run-production-readiness-audit");
+      const copyProductionReadinessAuditButton = document.querySelector("#copy-production-readiness-audit");
       let currentOperationDiagnosticReport = null;
+      let currentProductionReadinessAuditReport = null;
       const aiRanking = document.querySelector("#ai-ranking");
       const kamianaRankingLive = document.querySelector("#kamiana-ranking-live");
       const dangerRankingLive = document.querySelector("#danger-ranking-live");
@@ -5044,6 +5090,80 @@
       };
       window.HashimotoRefreshOperationReadinessChecklist = refreshOperationReadinessChecklist;
 
+      const productionReadinessStatusClass = (status) => ({
+        "実装済み": "production-readiness-audit-item--implemented",
+        "部分実装": "production-readiness-audit-item--partial",
+        "未実装": "production-readiness-audit-item--missing",
+        "要確認": "production-readiness-audit-item--confirm",
+      }[status] || "production-readiness-audit-item--confirm");
+
+      const renderProductionReadinessAudit = (report) => {
+        if (!report || !productionReadinessAuditEngine) return;
+        currentProductionReadinessAuditReport = report;
+        const completion = report.completion || productionReadinessAuditEngine.calculateCompletion(report.items || []);
+        const implementedCount = (report.items || []).filter((item) => item.status === "実装済み").length;
+        const savedCount = productionReadinessAuditEngine.loadReports(window.localStorage).length;
+        if (productionReadinessStatus) {
+          productionReadinessStatus.textContent = completion.operationStatus;
+          productionReadinessStatus.classList.toggle("status-pill--live", completion.percentage >= 95);
+          productionReadinessStatus.classList.toggle("status-pill--danger", completion.percentage < 60);
+        }
+        if (productionReadinessPercent) productionReadinessPercent.textContent = `${completion.percentage}%`;
+        if (productionReadinessCount) productionReadinessCount.textContent = `${implementedCount}/${completion.total}項目 実装済み`;
+        if (productionReadinessProgressBar) productionReadinessProgressBar.style.width = `${completion.percentage}%`;
+        if (copyProductionReadinessAuditButton) copyProductionReadinessAuditButton.disabled = false;
+        if (productionReadinessSummary) {
+          productionReadinessSummary.innerHTML = `
+            <article><span>本番運用ステータス</span><strong>${escapeHtml(completion.operationStatus)}</strong><small>完成度 ${completion.percentage}% / 加重点 ${Number(completion.score).toFixed(1)} / ${completion.total}項目</small></article>
+            <article><span>保存先</span><strong>${escapeHtml(String(savedCount))}件保存</strong><small>localStorage: ${escapeHtml(productionReadinessAuditEngine.STORAGE_KEY)}</small></article>
+            <article><span>改善候補</span><strong>${escapeHtml(String(report.improvementCandidates.length))}件</strong><small>未実装・部分実装・要確認を抽出</small></article>
+          `;
+        }
+        if (productionReadinessAuditList) {
+          productionReadinessAuditList.innerHTML = (report.items || []).map((item) => `
+            <article class="production-readiness-audit-item ${productionReadinessStatusClass(item.status)}">
+              <div>
+                <strong>${escapeHtml(item.label)}</strong>
+                <small>${escapeHtml(item.detail)}</small>
+              </div>
+              <span>${escapeHtml(item.status)}</span>
+              <code>${escapeHtml(item.source)}</code>
+            </article>
+          `).join("");
+        }
+        if (productionReadinessImprovementList) {
+          productionReadinessImprovementList.innerHTML = report.improvementCandidates.length
+            ? report.improvementCandidates.map((item) => `<li><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.status)}</span><small>${escapeHtml(item.detail)}</small></li>`).join("")
+            : '<li class="empty-state">改善候補はありません。本番運用前の実機確認だけ継続してください。</li>';
+        }
+      };
+
+      const runAndSaveProductionReadinessAudit = () => {
+        if (!productionReadinessAuditEngine) return null;
+        const report = productionReadinessAuditEngine.buildAuditReport({ storage: window.localStorage });
+        productionReadinessAuditEngine.saveReport(report, window.localStorage);
+        renderProductionReadinessAudit(report);
+        return report;
+      };
+
+      const copyProductionReadinessAuditReport = async () => {
+        if (!currentProductionReadinessAuditReport) return;
+        const text = currentProductionReadinessAuditReport.summaryText || productionReadinessAuditEngine.buildReportText(currentProductionReadinessAuditReport);
+        if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+        else {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          textarea.remove();
+        }
+        if (productionReadinessStatus) productionReadinessStatus.textContent = "コピー完了";
+      };
+
+      const latestProductionReadinessAudit = productionReadinessAuditEngine?.loadReports(window.localStorage)?.[0];
+      if (latestProductionReadinessAudit) renderProductionReadinessAudit(latestProductionReadinessAudit);
+
       const renderOperationDiagnosticReport = (report) => {
         if (!report) return;
         currentOperationDiagnosticReport = report;
@@ -5297,6 +5417,20 @@
         });
       });
       exportOperationDiagnosticReportButton?.addEventListener("click", exportOperationDiagnosticReport);
+      runProductionReadinessAuditButton?.addEventListener("click", () => {
+        try {
+          runAndSaveProductionReadinessAudit();
+          saveStatus.textContent = "本番運用完成度監査レポートを保存しました";
+        } catch (error) {
+          if (productionReadinessStatus) productionReadinessStatus.textContent = `監査エラー: ${error.message}`;
+          saveStatus.textContent = `本番運用完成度監査エラー: ${error.message}`;
+        }
+      });
+      copyProductionReadinessAuditButton?.addEventListener("click", () => {
+        copyProductionReadinessAuditReport().catch((error) => {
+          if (productionReadinessStatus) productionReadinessStatus.textContent = `コピーエラー: ${error.message}`;
+        });
+      });
       const restoredOperationReport = operationReportEngine?.loadReports(window.localStorage)?.[0];
       if (restoredOperationReport) renderOperationDiagnosticReport(restoredOperationReport);
 
