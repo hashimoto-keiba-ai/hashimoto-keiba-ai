@@ -3,6 +3,124 @@
   const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
   const normalizeText = (value) => String(value || "").trim();
 
+  const AI_WEIGHT_STORAGE_KEY = "aiWeightSettings";
+  const AI_WEIGHT_LOG_STORAGE_KEY = "aiWeightAdjustmentLogs";
+  const AI_WEIGHT_RANGE = { min: 0.3, max: 2.0 };
+  const DEFAULT_AI_WEIGHT_SETTINGS = Object.freeze({
+    abilityIndex: 1.0,
+    positionIndex: 1.0,
+    paceMatch: 1.0,
+    jockeyCorrection: 0.8,
+    trainerCorrection: 0.7,
+    pedigreeCorrection: 0.6,
+    trainingCorrection: 0.7,
+    trackAptitude: 0.8,
+    distanceAptitude: 0.8,
+    popularityExpectedValue: 0.9,
+    darkHorseCorrection: 1.1,
+    dangerPopularCorrection: 1.2,
+    evCorrection: 1.0,
+    bankrollCorrection: 0.8,
+  });
+  const AI_WEIGHT_DEFINITIONS = Object.freeze([
+    { key: "abilityIndex", label: "能力指数重み", shortLabel: "能力指数", description: "AI指数の基礎能力・人気/オッズ評価に反映" },
+    { key: "positionIndex", label: "位置指数重み", shortLabel: "位置指数", description: "想定4角位置・位置取り評価に反映" },
+    { key: "paceMatch", label: "展開一致重み", shortLabel: "展開一致", description: "脚質・展開・コース補正に反映" },
+    { key: "jockeyCorrection", label: "騎手補正重み", shortLabel: "騎手補正", description: "騎手評価または人気馬リスク騎手補正に反映" },
+    { key: "trainerCorrection", label: "調教師補正重み", shortLabel: "調教師補正", description: "調教師評価フィールドがある場合に反映" },
+    { key: "pedigreeCorrection", label: "血統補正重み", shortLabel: "血統補正", description: "血統・適性評価フィールドがある場合に反映" },
+    { key: "trainingCorrection", label: "調教補正重み", shortLabel: "調教補正", description: "調教評価S〜Dの加減点に反映" },
+    { key: "trackAptitude", label: "馬場適性重み", shortLabel: "馬場適性", description: "馬場状態・芝/ダート適性補正に反映" },
+    { key: "distanceAptitude", label: "距離適性重み", shortLabel: "距離適性", description: "距離カテゴリ補正に反映" },
+    { key: "popularityExpectedValue", label: "人気期待値重み", shortLabel: "人気期待値", description: "人気妙味・オッズ期待値に反映" },
+    { key: "darkHorseCorrection", label: "神穴補正重み", shortLabel: "神穴補正", description: "神穴指数の穴馬押し上げに反映" },
+    { key: "dangerPopularCorrection", label: "危険人気馬補正重み", shortLabel: "危険人気馬補正", description: "危険人気馬指数の過剰人気/不一致検知に反映" },
+    { key: "evCorrection", label: "EV補正重み", shortLabel: "EV補正", description: "期待値・オッズ妙味に反映" },
+    { key: "bankrollCorrection", label: "資金配分補正重み", shortLabel: "資金配分補正", description: "資金配分AIと連動する防御/攻撃係数" },
+  ]);
+  const clampAiWeight = (value) => Math.max(AI_WEIGHT_RANGE.min, Math.min(AI_WEIGHT_RANGE.max, Math.round(toNumber(value, 1) * 10) / 10));
+  const readJsonSafe = (storage, key, fallback) => {
+    try {
+      const raw = storage?.getItem?.(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const writeJsonSafe = (storage, key, value) => storage?.setItem?.(key, JSON.stringify(value));
+  const normalizeAiWeightSettings = (settings = {}) => Object.fromEntries(AI_WEIGHT_DEFINITIONS.map(({ key }) => [key, clampAiWeight(settings[key] ?? DEFAULT_AI_WEIGHT_SETTINGS[key])]));
+  const getAiWeightSettings = (storage = window.localStorage) => {
+    const normalized = normalizeAiWeightSettings(readJsonSafe(storage, AI_WEIGHT_STORAGE_KEY, null) || DEFAULT_AI_WEIGHT_SETTINGS);
+    writeJsonSafe(storage, AI_WEIGHT_STORAGE_KEY, normalized);
+    return normalized;
+  };
+  const getAiWeight = (key, storage = window.localStorage) => getAiWeightSettings(storage)[key] ?? DEFAULT_AI_WEIGHT_SETTINGS[key] ?? 1;
+  const createAiWeightLog = ({ targetWeight, before, after, reason, sourceSuggestion = null, mode = "manual" }) => ({
+    date: new Date().toISOString(),
+    targetWeight,
+    before: clampAiWeight(before),
+    after: clampAiWeight(after),
+    reason,
+    sourceSuggestion,
+    mode,
+  });
+  const appendAiWeightLogs = (logs, storage = window.localStorage) => {
+    const current = readJsonSafe(storage, AI_WEIGHT_LOG_STORAGE_KEY, []);
+    const next = [...logs, ...(Array.isArray(current) ? current : [])].slice(0, 300);
+    writeJsonSafe(storage, AI_WEIGHT_LOG_STORAGE_KEY, next);
+    return next;
+  };
+  const setAiWeightSettings = (updates = {}, { storage = window.localStorage, mode = "manual", reason = "手動編集", sourceSuggestion = null, log = true } = {}) => {
+    const beforeSettings = getAiWeightSettings(storage);
+    const nextSettings = normalizeAiWeightSettings({ ...beforeSettings, ...updates });
+    writeJsonSafe(storage, AI_WEIGHT_STORAGE_KEY, nextSettings);
+    const logs = AI_WEIGHT_DEFINITIONS
+      .filter(({ key }) => beforeSettings[key] !== nextSettings[key])
+      .map(({ key }) => createAiWeightLog({ targetWeight: key, before: beforeSettings[key], after: nextSettings[key], reason, sourceSuggestion, mode }));
+    if (log && logs.length) appendAiWeightLogs(logs, storage);
+    return { settings: nextSettings, logs };
+  };
+  const resetAiWeightSettings = ({ storage = window.localStorage, mode = "manual", reason = "初期値に戻す" } = {}) => setAiWeightSettings(DEFAULT_AI_WEIGHT_SETTINGS, { storage, mode, reason });
+  const revertAiWeightSettings = ({ storage = window.localStorage } = {}) => {
+    const latestLog = (readJsonSafe(storage, AI_WEIGHT_LOG_STORAGE_KEY, []) || [])[0];
+    if (!latestLog) return { settings: getAiWeightSettings(storage), logs: [] };
+    return setAiWeightSettings({ [latestLog.targetWeight]: latestLog.before }, { storage, mode: "manual", reason: "前回値に戻す", sourceSuggestion: latestLog.sourceSuggestion || null });
+  };
+  const suggestionText = (suggestion = {}) => [suggestion.targetArea, suggestion.targetCondition, suggestion.currentRule, suggestion.suggestedRule, suggestion.reason, suggestion.memo].map(normalizeText).join(" ");
+  const resolveAiWeightAdjustment = (suggestion = {}) => {
+    const text = suggestionText(suggestion);
+    if (/神穴|穴馬|万馬券/.test(text) && /(低い|不足|不的中|失敗|弱点|強化|引き上げ|押し上げ)/.test(text)) return { key: "darkHorseCorrection", delta: 0.1, reason: "神穴成功率/穴馬条件の改善提案を採用" };
+    if (/危険人気馬|過剰人気|人気馬リスク/.test(text) && /(低い|不足|見逃|失敗|弱点|追加|強化|引き上げ)/.test(text)) return { key: "dangerPopularCorrection", delta: 0.1, reason: "危険人気馬成功率の改善提案を採用" };
+    if (/展開不一致|展開|脚質|ペース/.test(text) && /(多い|不一致|不足|弱点|強化|引き上げ)/.test(text)) return { key: "paceMatch", delta: 0.1, reason: "展開不一致の改善提案を採用" };
+    if (/調教/.test(text) && /(過剰|過大|下げ|弱化|減点|マイナス)/.test(text)) return { key: "trainingCorrection", delta: -0.1, reason: "調教評価過剰の改善提案を採用" };
+    if (/調教/.test(text) && /(不足|強化|引き上げ)/.test(text)) return { key: "trainingCorrection", delta: 0.1, reason: "調教評価不足の改善提案を採用" };
+    if (/距離/.test(text) && /(不足|弱点|強化|引き上げ)/.test(text)) return { key: "distanceAptitude", delta: 0.1, reason: "距離適性の改善提案を採用" };
+    if (/馬場|芝|ダート/.test(text) && /(不足|弱点|強化|引き上げ)/.test(text)) return { key: "trackAptitude", delta: 0.1, reason: "馬場適性の改善提案を採用" };
+    if (/EV|期待値/.test(text) && /(不足|低EV|ROI|引き上げ|強化)/.test(text)) return { key: "evCorrection", delta: 0.1, reason: "EV条件の改善提案を採用" };
+    if (/資金配分|リスク係数|ドローダウン/.test(text)) return { key: "bankrollCorrection", delta: /防御|0\.85|下げ|抑制/.test(text) ? -0.1 : 0.1, reason: "資金配分条件の改善提案を採用" };
+    return null;
+  };
+  const applyAdoptedAiWeightSuggestions = ({ storage = window.localStorage } = {}) => {
+    const suggestions = readJsonSafe(storage, "selfLearningSuggestions", []);
+    const adopted = Array.isArray(suggestions) ? suggestions.filter((item) => item.status === "採用") : [];
+    const existingLogs = readJsonSafe(storage, AI_WEIGHT_LOG_STORAGE_KEY, []) || [];
+    const processed = new Set(existingLogs.filter((log) => log.mode === "auto" && log.sourceSuggestion?.id).map((log) => log.sourceSuggestion.id));
+    const applied = [];
+    adopted.forEach((suggestion) => {
+      if (processed.has(suggestion.id)) return;
+      const adjustment = resolveAiWeightAdjustment(suggestion);
+      if (!adjustment) return;
+      const current = getAiWeightSettings(storage);
+      const before = current[adjustment.key];
+      const after = clampAiWeight(before + adjustment.delta);
+      if (before === after) return;
+      const result = setAiWeightSettings({ [adjustment.key]: after }, { storage, mode: "auto", reason: adjustment.reason, sourceSuggestion: { id: suggestion.id, targetArea: suggestion.targetArea, suggestedRule: suggestion.suggestedRule } });
+      applied.push(...result.logs);
+    });
+    return applied;
+  };
+  const weightedOptionalBonus = (horse = {}, fields = [], weightKey) => fields.reduce((sum, field) => sum + toNumber(horse[field], 0), 0) * getAiWeight(weightKey);
+
   const COURSE_CORRECTION_TABLE = {
     中山: { frontAdvantage: 2.8, closerAdvantage: -0.8, insideDraw: 1.4, outsideDraw: -1.1, hillAptitude: 2.4, tightTurnAptitude: 2.2, straightLength: -0.8 },
     東京: { frontAdvantage: -0.7, closerAdvantage: 2.7, insideDraw: 0.8, outsideDraw: 0.9, hillAptitude: 1.6, tightTurnAptitude: -1.2, straightLength: 3.0 },
@@ -257,7 +375,10 @@
     const courseCorrection = calculateCourseCorrection(horse, scoreType);
     const distanceCorrectionValue = calculateDistanceCorrection(horse, scoreType);
     const styleCorrectionValue = calculateStyleCorrection(horse, scoreType);
-    const total = baseScore + courseCorrection + distanceCorrectionValue + styleCorrectionValue;
+    const total = baseScore
+      + (courseCorrection * getAiWeight("paceMatch"))
+      + (distanceCorrectionValue * getAiWeight("distanceAptitude"))
+      + (styleCorrectionValue * getAiWeight("paceMatch"));
     return {
       baseScore: roundCorrection(baseScore),
       courseCorrection,
@@ -282,31 +403,31 @@
     const riskPenalty = riskScore >= 80 ? -14 : riskScore >= 65 ? -8 : riskScore >= 50 ? -4 : 0;
     return {
       aiIndex: {
-        popularityCorrection: roundCorrection(popularityBonus(popularity)),
-        oddsCorrection: roundCorrection(oddsBonus(odds)),
-        styleCorrection: roundCorrection(styleBonus(horse.runningStyle)),
-        cornerCorrection: roundCorrection(cornerBonus(horse.cornerPosition, fieldSize)),
-        trainingCorrection: roundCorrection(trainingBonus(horse.training)),
+        popularityCorrection: roundCorrection(popularityBonus(popularity) * getAiWeight("popularityExpectedValue")),
+        oddsCorrection: roundCorrection(oddsBonus(odds) * getAiWeight("evCorrection")),
+        styleCorrection: roundCorrection(styleBonus(horse.runningStyle) * getAiWeight("paceMatch")),
+        cornerCorrection: roundCorrection(cornerBonus(horse.cornerPosition, fieldSize) * getAiWeight("positionIndex")),
+        trainingCorrection: roundCorrection(trainingBonus(horse.training) * getAiWeight("trainingCorrection")),
         courseCorrection: calculateCourseCorrection(horse, "ai"),
-        distanceCorrection: roundCorrection(distanceBonus(horse) + calculateDistanceCorrection(horse, "ai")),
-        goingCorrection: roundCorrection(trackStyleBonus(horse.runningStyle, horse.going) + calculateSurfaceCorrection(horse, "ai")),
-        dangerPopularPenalty: riskPenalty,
+        distanceCorrection: roundCorrection((distanceBonus(horse) + calculateDistanceCorrection(horse, "ai")) * getAiWeight("distanceAptitude")),
+        goingCorrection: roundCorrection((trackStyleBonus(horse.runningStyle, horse.going) + calculateSurfaceCorrection(horse, "ai")) * getAiWeight("trackAptitude")),
+        dangerPopularPenalty: roundCorrection(riskPenalty * getAiWeight("dangerPopularCorrection")),
       },
       kamianaIndex: {
-        popularityValue: popularity >= 10 ? 22 : popularity >= 6 ? 18 : popularity >= 4 ? 10 : 0,
-        oddsValue: odds > 50 ? 7 : odds > 20 ? 15 : odds >= 8 ? 18 : 0,
-        stylePaceFit: roundCorrection(Math.max(0, styleBonus(horse.runningStyle) - 2) + Math.max(0, cornerBonus(horse.cornerPosition, fieldSize))),
-        kamianaConditionFit: roundCorrection(Math.max(0, trainingBonus(horse.training)) + calculateCourseCorrection(horse, "darkHorse") + calculateDistanceCorrection(horse, "darkHorse")),
-        jackpotPatternFit: roundCorrection((odds >= 12 ? 8 : odds >= 6 ? 4 : -5) + (riskScore < 50 ? 10 : riskScore >= 70 ? -14 : 0)),
+        popularityValue: roundCorrection((popularity >= 10 ? 22 : popularity >= 6 ? 18 : popularity >= 4 ? 10 : 0) * getAiWeight("popularityExpectedValue") * getAiWeight("darkHorseCorrection")),
+        oddsValue: roundCorrection((odds > 50 ? 7 : odds > 20 ? 15 : odds >= 8 ? 18 : 0) * getAiWeight("evCorrection") * getAiWeight("darkHorseCorrection")),
+        stylePaceFit: roundCorrection((Math.max(0, styleBonus(horse.runningStyle) - 2) * getAiWeight("paceMatch") + Math.max(0, cornerBonus(horse.cornerPosition, fieldSize)) * getAiWeight("positionIndex")) * getAiWeight("darkHorseCorrection")),
+        kamianaConditionFit: roundCorrection((Math.max(0, trainingBonus(horse.training)) * getAiWeight("trainingCorrection") + calculateCourseCorrection(horse, "darkHorse") * getAiWeight("trackAptitude") + calculateDistanceCorrection(horse, "darkHorse") * getAiWeight("distanceAptitude")) * getAiWeight("darkHorseCorrection")),
+        jackpotPatternFit: roundCorrection(((odds >= 12 ? 8 : odds >= 6 ? 4 : -5) * getAiWeight("evCorrection") + (riskScore < 50 ? 10 : riskScore >= 70 ? -14 : 0) * getAiWeight("dangerPopularCorrection")) * getAiWeight("darkHorseCorrection")),
       },
       dangerIndex: {
-        overPopularity: popularity <= 3 && odds <= 3 ? 28 : popularity <= 3 && odds <= 5 ? 22 : popularity <= 5 && odds <= 8 ? 14 : 0,
-        paceMismatch: roundCorrection(unfavorableStylePenalty({ ...horse, fieldSize })),
-        positionDisadvantage: cornerBonus(horse.cornerPosition, fieldSize) < 0 ? roundCorrection(Math.abs(cornerBonus(horse.cornerPosition, fieldSize)) + 5) : 0,
-        trainingConcern: ["D", ""].includes(normalizeText(horse.training).toUpperCase()) ? 18 : normalizeText(horse.training).toUpperCase() === "C" ? 12 : 0,
-        goingMismatch: trackStyleBonus(horse.runningStyle, horse.going) < 0 ? 12 : 0,
-        distanceConcern: !toNumber(horse.distance ?? horse.raceDistance, 0) ? 10 : Math.max(0, calculateDistanceCorrection(horse, "risk")),
-        jockeyConcern: Math.max(0, getJockeyRiskCorrection(horse.jockey)),
+        overPopularity: roundCorrection((popularity <= 3 && odds <= 3 ? 28 : popularity <= 3 && odds <= 5 ? 22 : popularity <= 5 && odds <= 8 ? 14 : 0) * getAiWeight("dangerPopularCorrection")),
+        paceMismatch: roundCorrection(unfavorableStylePenalty({ ...horse, fieldSize }) * getAiWeight("paceMatch") * getAiWeight("dangerPopularCorrection")),
+        positionDisadvantage: cornerBonus(horse.cornerPosition, fieldSize) < 0 ? roundCorrection((Math.abs(cornerBonus(horse.cornerPosition, fieldSize)) + 5) * getAiWeight("positionIndex") * getAiWeight("dangerPopularCorrection")) : 0,
+        trainingConcern: roundCorrection((["D", ""].includes(normalizeText(horse.training).toUpperCase()) ? 18 : normalizeText(horse.training).toUpperCase() === "C" ? 12 : 0) * getAiWeight("trainingCorrection") * getAiWeight("dangerPopularCorrection")),
+        goingMismatch: roundCorrection((trackStyleBonus(horse.runningStyle, horse.going) < 0 ? 12 : 0) * getAiWeight("trackAptitude") * getAiWeight("dangerPopularCorrection")),
+        distanceConcern: roundCorrection((!toNumber(horse.distance ?? horse.raceDistance, 0) ? 10 : Math.max(0, calculateDistanceCorrection(horse, "risk"))) * getAiWeight("distanceAptitude") * getAiWeight("dangerPopularCorrection")),
+        jockeyConcern: roundCorrection(Math.max(0, getJockeyRiskCorrection(horse.jockey)) * getAiWeight("jockeyCorrection") * getAiWeight("dangerPopularCorrection")),
       },
     };
   };
@@ -317,16 +438,17 @@
     const odds = toNumber(horse.odds, 99);
     const fieldSize = toNumber(horse.fieldSize, 18);
     let score = 10;
-    if (popularity <= 3 && odds <= 3) score += 28;
-    else if (popularity <= 3 && odds <= 5) score += 22;
-    else if (popularity <= 5 && odds <= 8) score += 14;
-    score += unfavorableStylePenalty({ ...horse, fieldSize });
-    if (cornerBonus(horse.cornerPosition, fieldSize) < 0) score += Math.abs(cornerBonus(horse.cornerPosition, fieldSize)) + 5;
+    if (popularity <= 3 && odds <= 3) score += 28 * getAiWeight("dangerPopularCorrection");
+    else if (popularity <= 3 && odds <= 5) score += 22 * getAiWeight("dangerPopularCorrection");
+    else if (popularity <= 5 && odds <= 8) score += 14 * getAiWeight("dangerPopularCorrection");
+    score += unfavorableStylePenalty({ ...horse, fieldSize }) * getAiWeight("paceMatch") * getAiWeight("dangerPopularCorrection");
+    if (cornerBonus(horse.cornerPosition, fieldSize) < 0) score += (Math.abs(cornerBonus(horse.cornerPosition, fieldSize)) + 5) * getAiWeight("positionIndex") * getAiWeight("dangerPopularCorrection");
     const training = normalizeText(horse.training).toUpperCase();
-    if (training === "C") score += 12;
-    if (training === "D" || !training) score += 18;
-    if (trackStyleBonus(horse.runningStyle, horse.going) < 0) score += 12;
-    if (!toNumber(horse.distance ?? horse.raceDistance, 0)) score += 10;
+    if (training === "C") score += 12 * getAiWeight("trainingCorrection") * getAiWeight("dangerPopularCorrection");
+    if (training === "D" || !training) score += 18 * getAiWeight("trainingCorrection") * getAiWeight("dangerPopularCorrection");
+    if (trackStyleBonus(horse.runningStyle, horse.going) < 0) score += 12 * getAiWeight("trackAptitude") * getAiWeight("dangerPopularCorrection");
+    if (!toNumber(horse.distance ?? horse.raceDistance, 0)) score += 10 * getAiWeight("distanceAptitude") * getAiWeight("dangerPopularCorrection");
+    score += weightedOptionalBonus(horse, ["jockeyScore", "jockeyBonus", "騎手補正"], "jockeyCorrection");
     return score;
   };
 
@@ -337,15 +459,18 @@
   const calculateAiScoreBase = (horse = {}) => {
     const correctedRisk = calculateRiskScore(horse);
     const riskPenalty = correctedRisk >= 80 ? 14 : correctedRisk >= 65 ? 8 : correctedRisk >= 50 ? 4 : 0;
-    return 38
-      + popularityBonus(horse.popularity)
-      + oddsBonus(horse.odds)
-      + styleBonus(horse.runningStyle)
-      + cornerBonus(horse.cornerPosition, horse.fieldSize)
-      + trainingBonus(horse.training)
-      + trackStyleBonus(horse.runningStyle, horse.going)
-      + distanceBonus(horse)
-      - riskPenalty;
+    return (38 * getAiWeight("abilityIndex"))
+      + (popularityBonus(horse.popularity) * getAiWeight("popularityExpectedValue"))
+      + (oddsBonus(horse.odds) * getAiWeight("evCorrection"))
+      + (styleBonus(horse.runningStyle) * getAiWeight("paceMatch"))
+      + (cornerBonus(horse.cornerPosition, horse.fieldSize) * getAiWeight("positionIndex"))
+      + (trainingBonus(horse.training) * getAiWeight("trainingCorrection"))
+      + (trackStyleBonus(horse.runningStyle, horse.going) * getAiWeight("trackAptitude"))
+      + (distanceBonus(horse) * getAiWeight("distanceAptitude"))
+      + weightedOptionalBonus(horse, ["jockeyScore", "jockeyBonus", "騎手補正"], "jockeyCorrection")
+      + weightedOptionalBonus(horse, ["trainerScore", "trainerBonus", "調教師補正"], "trainerCorrection")
+      + weightedOptionalBonus(horse, ["pedigreeScore", "pedigreeBonus", "bloodlineScore", "血統補正"], "pedigreeCorrection")
+      - (riskPenalty * getAiWeight("dangerPopularCorrection"));
   };
 
   const calculateAiScoreBreakdown = (horse = {}) => createScoreBreakdown(calculateAiScoreBase(horse), horse, "ai");
@@ -356,17 +481,20 @@
     const popularity = toNumber(horse.popularity, 18);
     const odds = toNumber(horse.odds, 99);
     let score = 22;
-    if (popularity >= 6 && popularity <= 9) score += 18;
-    else if (popularity >= 10) score += 22;
-    else if (popularity >= 4) score += 10;
-    if (odds >= 8 && odds <= 20) score += 18;
-    else if (odds > 20 && odds <= 50) score += 15;
-    else if (odds > 50) score += 7;
-    score += Math.max(0, styleBonus(horse.runningStyle) - 2);
-    score += Math.max(0, cornerBonus(horse.cornerPosition, horse.fieldSize));
-    score += Math.max(0, trainingBonus(horse.training));
-    score += odds >= 12 ? 8 : odds >= 6 ? 4 : -5;
-    score += calculateRiskScore(horse) < 50 ? 10 : calculateRiskScore(horse) >= 70 ? -14 : 0;
+    if (popularity >= 6 && popularity <= 9) score += 18 * getAiWeight("popularityExpectedValue") * getAiWeight("darkHorseCorrection");
+    else if (popularity >= 10) score += 22 * getAiWeight("popularityExpectedValue") * getAiWeight("darkHorseCorrection");
+    else if (popularity >= 4) score += 10 * getAiWeight("popularityExpectedValue") * getAiWeight("darkHorseCorrection");
+    if (odds >= 8 && odds <= 20) score += 18 * getAiWeight("evCorrection") * getAiWeight("darkHorseCorrection");
+    else if (odds > 20 && odds <= 50) score += 15 * getAiWeight("evCorrection") * getAiWeight("darkHorseCorrection");
+    else if (odds > 50) score += 7 * getAiWeight("evCorrection") * getAiWeight("darkHorseCorrection");
+    score += Math.max(0, styleBonus(horse.runningStyle) - 2) * getAiWeight("paceMatch") * getAiWeight("darkHorseCorrection");
+    score += Math.max(0, cornerBonus(horse.cornerPosition, horse.fieldSize)) * getAiWeight("positionIndex") * getAiWeight("darkHorseCorrection");
+    score += Math.max(0, trainingBonus(horse.training)) * getAiWeight("trainingCorrection") * getAiWeight("darkHorseCorrection");
+    score += (odds >= 12 ? 8 : odds >= 6 ? 4 : -5) * getAiWeight("evCorrection") * getAiWeight("darkHorseCorrection");
+    score += (calculateRiskScore(horse) < 50 ? 10 : calculateRiskScore(horse) >= 70 ? -14 : 0) * getAiWeight("dangerPopularCorrection") * getAiWeight("darkHorseCorrection");
+    score += weightedOptionalBonus(horse, ["jockeyScore", "jockeyBonus", "騎手補正"], "jockeyCorrection");
+    score += weightedOptionalBonus(horse, ["trainerScore", "trainerBonus", "調教師補正"], "trainerCorrection");
+    score += weightedOptionalBonus(horse, ["pedigreeScore", "pedigreeBonus", "bloodlineScore", "血統補正"], "pedigreeCorrection");
     return score;
   };
 
@@ -432,6 +560,20 @@
     PACE_STYLE_CORRECTION_TABLE,
     JOCKEY_RISK_CORRECTION_TABLE,
   };
+  window.HashimotoAiWeightEngine = {
+    STORAGE_KEY: AI_WEIGHT_STORAGE_KEY,
+    LOG_STORAGE_KEY: AI_WEIGHT_LOG_STORAGE_KEY,
+    RANGE: AI_WEIGHT_RANGE,
+    DEFAULT_SETTINGS: DEFAULT_AI_WEIGHT_SETTINGS,
+    DEFINITIONS: AI_WEIGHT_DEFINITIONS,
+    getSettings: getAiWeightSettings,
+    setSettings: setAiWeightSettings,
+    resetSettings: resetAiWeightSettings,
+    revertSettings: revertAiWeightSettings,
+    applyAdoptedSuggestions: applyAdoptedAiWeightSuggestions,
+    resolveAdjustment: resolveAiWeightAdjustment,
+  };
+  getAiWeightSettings(window.localStorage);
   window.calculateAiScore = calculateAiScore;
   window.calculateDarkHorseScore = calculateDarkHorseScore;
   window.calculateRiskScore = calculateRiskScore;
@@ -3103,6 +3245,72 @@
   };
 })();
 
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoAiWeightEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#ai-weight-panel")) return;
+  const escapeHtml = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+  const readLogs = () => {
+    try {
+      const parsed = JSON.parse(window.localStorage.getItem(engine.LOG_STORAGE_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (_) {
+      return [];
+    }
+  };
+  const labelFor = (key) => engine.DEFINITIONS.find((item) => item.key === key)?.label || key;
+  const setStatus = (text) => {
+    const target = documentRef.querySelector("#ai-weight-status");
+    if (target) target.textContent = text;
+  };
+  const renderLogs = () => {
+    const body = documentRef.querySelector("#ai-weight-log-body");
+    if (!body) return;
+    const logs = readLogs().slice(0, 8);
+    body.innerHTML = logs.length ? logs.map((log) => `
+      <tr>
+        <td data-label="日時">${escapeHtml(new Date(log.date).toLocaleString("ja-JP"))}</td>
+        <td data-label="対象重み">${escapeHtml(labelFor(log.targetWeight))}</td>
+        <td data-label="変更"><strong>${escapeHtml(log.before)} → ${escapeHtml(log.after)}</strong></td>
+        <td data-label="理由">${escapeHtml(log.reason)}${log.sourceSuggestion?.id ? `<br><small>${escapeHtml(log.sourceSuggestion.id)}</small>` : ""}</td>
+        <td data-label="モード"><span class="status-pill">${escapeHtml(log.mode || "manual")}</span></td>
+      </tr>`).join("") : '<tr><td data-label="履歴" colspan="5">重み変更履歴はまだありません。</td></tr>';
+  };
+  const renderWeights = () => {
+    const grid = documentRef.querySelector("#ai-weight-grid");
+    if (!grid) return;
+    const settings = engine.getSettings(window.localStorage);
+    grid.innerHTML = engine.DEFINITIONS.map((definition) => `
+      <label class="ai-weight-item">
+        <span><strong>${escapeHtml(definition.label)}</strong><small>${escapeHtml(definition.description)}</small></span>
+        <input type="number" min="${engine.RANGE.min}" max="${engine.RANGE.max}" step="0.1" value="${settings[definition.key]}" data-weight-key="${escapeHtml(definition.key)}" />
+      </label>`).join("");
+    renderLogs();
+  };
+  const collectInputs = () => Object.fromEntries(Array.from(documentRef.querySelectorAll("#ai-weight-grid [data-weight-key]")).map((input) => [input.dataset.weightKey, input.value]));
+  documentRef.querySelector("#ai-weight-save")?.addEventListener("click", () => {
+    const result = engine.setSettings(collectInputs(), { storage: window.localStorage, mode: "manual", reason: "AI重み管理パネルで手動編集" });
+    renderWeights();
+    setStatus(result.logs.length ? `手動変更を${result.logs.length}件保存` : "変更はありません");
+  });
+  documentRef.querySelector("#ai-weight-auto-adjust")?.addEventListener("click", () => {
+    const logs = engine.applyAdoptedSuggestions({ storage: window.localStorage });
+    renderWeights();
+    setStatus(logs.length ? `採用提案から${logs.length}件自動調整` : "未反映の採用提案はありません");
+  });
+  documentRef.querySelector("#ai-weight-reset")?.addEventListener("click", () => {
+    const result = engine.resetSettings({ storage: window.localStorage });
+    renderWeights();
+    setStatus(result.logs.length ? "初期値へ戻しました" : "すでに初期値です");
+  });
+  documentRef.querySelector("#ai-weight-revert")?.addEventListener("click", () => {
+    const result = engine.revertSettings({ storage: window.localStorage });
+    renderWeights();
+    setStatus(result.logs.length ? "前回値へ戻しました" : "戻せる履歴がありません");
+  });
+  renderWeights();
+})();
 
 (() => {
   const documentRef = window.document;
