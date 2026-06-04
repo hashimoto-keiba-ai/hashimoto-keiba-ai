@@ -47,6 +47,7 @@
           <a href="#performance-dashboard">総合パフォーマンス</a>
           <a href="#roi-optimization-panel">ROI最適化AI</a>
           <a href="#race-selection-ai-panel">勝負レース選定AI</a>
+          <a href="#fund-management-panel">AI資金管理</a>
           <a href="#result-verification">結果検証</a>
           <a href="#result-log-list">検証ログ</a>
           <a href="#ai-backtest-lab">AI精度テスト</a>
@@ -88,6 +89,7 @@
           <a href="#performance-dashboard"><span>⑩-2</span>総合パフォーマンス</a>
           <a href="#roi-optimization-panel"><span>⑩-3</span>ROI最適化AI</a>
           <a href="#race-selection-ai-panel"><span>⑩-4</span>勝負レース選定AI</a>
+          <a href="#fund-management-panel"><span>⑩-5</span>AI資金管理エンジン</a>
           <a href="#result-verification"><span>⑪</span>結果検証フォーム</a>
           <a href="#result-log-list"><span>⑫</span>最新結果検証ログ</a>
           <a href="#ai-backtest-lab"><span>⑬</span>AI精度テスト・バックテスト</a>
@@ -728,6 +730,84 @@
             <p id="race-selection-source-count">保存キー: raceSelectionReports / dailyRaceRankings</p>
             <button id="race-selection-refresh" class="button button--ghost" type="button">ランキング再生成</button>
             <button id="race-selection-export" class="button button--primary" type="button">勝負レース選定JSON出力</button>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="fund-management-panel" class="fund-management-card card card--wide card--featured" aria-label="Phase6-6 AI資金管理エンジンパネル">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE6-6 AI FUND MANAGEMENT ENGINE</p>
+              <h2>AI資金管理エンジン（プロ運用版）</h2>
+              <p class="card__lead">勝負レース選定AIとROI最適化AIの判定を利用し、現在資金から推奨投資額・券種配分・レース別投資提案を自動計算して回収率最大化を支援します。</p>
+            </div>
+            <span id="fund-management-status" class="status-pill status-pill--live">資金管理待機</span>
+          </div>
+
+          <div class="fund-management-controls" aria-label="資金管理入力">
+            <label>
+              <span>現在資金</span>
+              <input id="fund-management-bankroll" type="number" min="0" step="100" value="100000" inputmode="numeric" />
+            </label>
+            <fieldset>
+              <legend>資金モード</legend>
+              <label><input type="radio" name="fund-management-mode" value="conservative" />保守型</label>
+              <label><input type="radio" name="fund-management-mode" value="standard" checked />標準型</label>
+              <label><input type="radio" name="fund-management-mode" value="aggressive" />攻撃型</label>
+              <label><input type="radio" name="fund-management-mode" value="ultra" />超攻撃型</label>
+            </fieldset>
+          </div>
+
+          <div class="fund-management-summary" aria-label="AI資金管理指標">
+            <article><span>現在資金</span><strong id="fund-management-current-bankroll">0円</strong></article>
+            <article><span>総投資額</span><strong id="fund-management-total-investment">0円</strong></article>
+            <article><span>総払戻額</span><strong id="fund-management-total-payout">0円</strong></article>
+            <article><span>総利益</span><strong id="fund-management-total-profit">0円</strong></article>
+            <article><span>ROI</span><strong id="fund-management-roi">0%</strong></article>
+            <article><span>最大ドローダウン</span><strong id="fund-management-drawdown">0%</strong></article>
+            <article><span>連敗数</span><strong id="fund-management-losing-streak">0</strong></article>
+            <article><span>連勝数</span><strong id="fund-management-winning-streak">0</strong></article>
+          </div>
+
+          <div class="fund-management-output" aria-label="投資額自動計算結果">
+            <article><span>推奨投資額</span><strong id="fund-management-recommended-stake">0円</strong><small>連敗保護・連勝加速・ROI補正後</small></article>
+            <article><span>推奨上限額</span><strong id="fund-management-max-stake">0円</strong><small>資金モード別の上限</small></article>
+            <article><span>推奨券種</span><strong id="fund-management-ticket-type">未判定</strong><small>ROIとリスクに応じて自動選択</small></article>
+            <article><span>リスク判定</span><strong id="fund-management-risk">低リスク</strong><small>低・中・高・危険</small></article>
+          </div>
+
+          <div class="fund-management-layout">
+            <section class="fund-management-panel">
+              <h3>券種別配分</h3>
+              <ul id="fund-management-ticket-allocation" class="fund-management-list"></ul>
+            </section>
+            <section class="fund-management-panel">
+              <h3>レース別投資提案</h3>
+              <ul id="fund-management-race-proposals" class="fund-management-list"></ul>
+            </section>
+            <section class="fund-management-panel">
+              <h3>連敗保護・連勝加速</h3>
+              <ul id="fund-management-streak-rules" class="fund-management-list"></ul>
+            </section>
+          </div>
+
+          <div class="table-wrap fund-management-table">
+            <table class="data-table data-table--compact">
+              <thead>
+                <tr><th scope="col">レース</th><th scope="col">勝負スコア</th><th scope="col">AI推奨</th><th scope="col">投資提案</th><th scope="col">目安投資</th><th scope="col">リスク</th></tr>
+              </thead>
+              <tbody id="fund-management-race-body">
+                <tr><td data-label="レース" colspan="6">勝負レース選定AIから提案を生成してください。</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="fund-management-actions">
+            <p id="fund-management-source-count">保存キー: fundManagementReports / fundManagementSettings</p>
+            <button id="fund-management-calculate" class="button button--ghost" type="button">資金管理を再計算</button>
+            <button id="fund-management-export" class="button button--primary" type="button">AI資金管理JSON出力</button>
           </div>
         </div>
       </section>
