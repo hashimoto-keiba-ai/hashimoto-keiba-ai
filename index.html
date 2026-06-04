@@ -308,18 +308,41 @@
           <div class="card-heading">
             <div>
               <p class="card__kicker">PHASE5-5 RACE DATABASE</p>
-              <h2>Race Databaseパネル</h2>
-              <p class="card__lead">本番運用したレースを localStorage の <code>raceDatabase</code> に永続保存し、競馬場・距離・馬場・期間で検索できます。</p>
+              <h2>実戦レースDB</h2>
+              <p class="card__lead">本番運用したレースを localStorage の <code>raceDatabase</code> に永続保存し、開催日・競馬場・距離・芝/ダート・馬場・神レース・ROI・的中状態で検索できます。</p>
             </div>
             <span id="race-database-count" class="status-pill status-pill--live">0件表示</span>
           </div>
 
+          <div class="race-database-toolbar">
+            <button id="race-database-import-run-reports" class="button button--primary" type="button">productionRunReportsからDB保存</button>
+            <button id="race-database-export" class="button button--ghost" type="button">JSONエクスポート</button>
+            <small id="race-database-status">保存キー: raceDatabase / 本番結果検証後はproductionResultValidationReportsを自動反映</small>
+          </div>
+
+          <div id="race-database-summary" class="race-database-summary" aria-label="実戦レースDB集計">
+            <article><span>登録レース数</span><strong>0</strong></article>
+            <article><span>的中数</span><strong>0</strong></article>
+            <article><span>的中率</span><strong>0%</strong></article>
+            <article><span>総投資額</span><strong>0円</strong></article>
+            <article><span>総払戻額</span><strong>0円</strong></article>
+            <article><span>総ROI</span><strong>0%</strong></article>
+          </div>
+          <div class="race-database-roi-groups">
+            <div><h3>競馬場別ROI</h3><ul id="race-database-course-roi"><li>未集計</li></ul></div>
+            <div><h3>距離別ROI</h3><ul id="race-database-distance-roi"><li>未集計</li></ul></div>
+          </div>
+
           <form id="race-database-search-form" class="race-database-search" aria-label="Race Database検索">
+            <label><span>開催日From</span><input name="from" type="date" /></label>
+            <label><span>開催日To</span><input name="to" type="date" /></label>
             <label><span>競馬場</span><input name="course" type="text" placeholder="東京競馬場" /></label>
             <label><span>距離</span><input name="distance" type="number" min="0" step="100" placeholder="1600" /></label>
-            <label><span>馬場</span><select name="going"><option value="">すべて</option><option>良</option><option>稍重</option><option>重</option><option>不良</option></select></label>
-            <label><span>期間From</span><input name="from" type="date" /></label>
-            <label><span>期間To</span><input name="to" type="date" /></label>
+            <label><span>芝/ダート</span><select name="surface"><option value="">すべて</option><option>芝</option><option>ダート</option><option>障害</option></select></label>
+            <label><span>馬場状態</span><select name="going"><option value="">すべて</option><option>良</option><option>稍重</option><option>重</option><option>不良</option></select></label>
+            <label><span>神レース判定</span><select name="godRace"><option value="">すべて</option><option value="god">神レース/勝負</option><option value="skip">見送り/通常</option></select></label>
+            <label><span>ROI</span><select name="roiSign"><option value="">すべて</option><option value="plus">プラス(100%以上)</option><option value="minus">マイナス(100%未満)</option></select></label>
+            <label><span>的中</span><select name="hitStatus"><option value="">すべて</option><option value="hit">的中</option><option value="miss">不的中</option></select></label>
             <div class="race-database-actions">
               <button class="button button--primary" type="submit">検索</button>
               <button id="race-database-reset" class="button button--ghost" type="reset">解除</button>
@@ -330,13 +353,13 @@
             <table class="data-table data-table--compact">
               <thead>
                 <tr>
-                  <th scope="col">開催日</th><th scope="col">競馬場</th><th scope="col">R</th><th scope="col">レース名</th><th scope="col">距離/馬場</th>
-                  <th scope="col">AI指数TOP3</th><th scope="col">神穴TOP3</th><th scope="col">危険人気馬TOP3</th><th scope="col">三連単候補</th>
-                  <th scope="col">結果</th><th scope="col">ROI</th><th scope="col">神レース判定</th>
+                  <th scope="col">開催日</th><th scope="col">競馬場</th><th scope="col">R</th><th scope="col">レース名</th><th scope="col">距離/芝ダ/馬場</th>
+                  <th scope="col">頭数</th><th scope="col">AI指数TOP3</th><th scope="col">神穴TOP3</th><th scope="col">危険人気馬TOP3</th><th scope="col">三連単/WIN5/EV</th>
+                  <th scope="col">結果/配当</th><th scope="col">投資/払戻/ROI</th><th scope="col">神レース/メモ</th>
                 </tr>
               </thead>
               <tbody id="race-database-body">
-                <tr><td data-label="開催日" colspan="12">実戦レースデータはまだありません。</td></tr>
+                <tr><td data-label="開催日" colspan="13">実戦レースデータはまだありません。</td></tr>
               </tbody>
             </table>
           </div>
