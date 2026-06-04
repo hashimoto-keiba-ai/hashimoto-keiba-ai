@@ -6350,3 +6350,118 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.roi-optimization-card {
+  margin-top: 18px;
+}
+
+.roi-optimization-grid,
+.roi-optimization-layout {
+  display: grid;
+  gap: 14px;
+}
+
+.roi-optimization-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin: 22px 0;
+}
+
+.roi-optimization-grid article,
+.roi-optimization-panel {
+  padding: 18px;
+  border: 1px solid rgba(248, 196, 79, 0.24);
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(22, 15, 5, 0.94), rgba(5, 5, 5, 0.78));
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.1);
+}
+
+.roi-optimization-grid span,
+.roi-optimization-list span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.roi-optimization-grid strong {
+  display: block;
+  margin: 7px 0;
+  color: var(--gold-light);
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+.roi-optimization-grid small {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.roi-optimization-layout {
+  grid-template-columns: 1.1fr 1fr 1fr;
+}
+
+.roi-optimization-panel h3 {
+  margin: 0 0 12px;
+  color: var(--gold-light);
+}
+
+.roi-optimization-list {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.roi-optimization-list li {
+  padding: 12px;
+  border: 1px solid rgba(248, 196, 79, 0.18);
+  border-radius: 14px;
+  background: rgba(248, 196, 79, 0.06);
+}
+
+.roi-optimization-list strong {
+  display: block;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.roi-optimization-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+.roi-optimization-actions p {
+  flex: 1 1 360px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 1080px) {
+  .roi-optimization-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .roi-optimization-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .roi-optimization-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roi-optimization-actions {
+    align-items: stretch;
+  }
+
+  .roi-optimization-actions .button {
+    width: 100%;
+  }
+}

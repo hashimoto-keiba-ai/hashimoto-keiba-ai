@@ -1295,8 +1295,9 @@
     const roi = getTicketROI(ticketType, options, item);
     const godRaceIndex = clamp(options.godRaceIndex ?? item.godRaceIndex ?? item.kamianaIndex ?? 0, 0, 100);
     const dangerIndex = clamp(item.dangerIndex ?? item.dangerPopularIndex ?? options.dangerIndex ?? 0, 0, 100);
+    const roiOptimization = window.HashimotoRoiOptimizationEngine?.getCapitalCorrectionForRace?.({ ...options.race, ...(item.race || {}), ticketType }, options.storage || window.localStorage) || { multiplier: 1, score: 50, investmentIntensity: "通常勝負", reason: "ROI最適化AI未接続" };
     const kelly = calculateKellyStake({ hitProbability: probability, odds, bankroll, riskCoefficient, unit });
-    const adjustedFraction = kelly.rawKellyRatio * riskCoefficient * getGodRaceMultiplier(godRaceIndex) * getROIMultiplier(roi) * getDangerMultiplier(dangerIndex);
+    const adjustedFraction = kelly.rawKellyRatio * riskCoefficient * getGodRaceMultiplier(godRaceIndex) * getROIMultiplier(roi) * getDangerMultiplier(dangerIndex) * toNumber(roiOptimization.multiplier, 1);
     const capRatio = ticketTypeCaps[ticketType] ?? 0.018;
     const maxPerTicket = Math.max(unit, toNumber(options.maxPerTicket ?? options.raceLimit, bankroll));
     const typeCap = ticketType === "win5" ? toNumber(options.win5Limit, maxPerTicket) : maxPerTicket;
@@ -1316,6 +1317,10 @@
       aiWinRate,
       ev,
       roi: round(roi, 1),
+      roiOptimizationScore: roiOptimization.score,
+      roiOptimizationMultiplier: round(toNumber(roiOptimization.multiplier, 1), 2),
+      roiOptimizationIntensity: roiOptimization.investmentIntensity,
+      roiOptimizationReason: roiOptimization.reason,
       godRaceIndex,
       dangerIndex,
       rawKellyFraction: kelly.rawKellyPercent,
@@ -1550,6 +1555,204 @@
     loadFromLocalStorage,
   };
   window.calculateKellyStake = calculateKellyStake;
+})();
+
+(() => {
+  const REPORT_STORAGE_KEY = "roiOptimizationReports";
+  const SETTINGS_STORAGE_KEY = "roiOptimizationSettings";
+  const SOURCE_STORAGE_KEYS = ["raceDatabase", "fundCurveRecords", "productionResultValidationReports", "selfLearningSuggestions", "courseEvolutionReports"];
+  const DEFAULT_SETTINGS = Object.freeze({
+    strengthenRoi: 120,
+    weakenRoi: 80,
+    profitableRoi: 105,
+    redInkRoi: 90,
+    minEvidence: 1,
+    maxReports: 50,
+  });
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, toNumber(value, min)));
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const text = (value, fallback = "未設定") => String(value ?? "").trim() || fallback;
+  const normalizeCourse = (value) => text(value).replace(/競馬場/g, "");
+  const readJson = (storage, key, fallback) => {
+    try {
+      const raw = storage?.getItem?.(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const writeJson = (storage, key, value) => {
+    storage?.setItem?.(key, JSON.stringify(value));
+    return value;
+  };
+  const loadSettings = (storage = window.localStorage) => {
+    const saved = readJson(storage, SETTINGS_STORAGE_KEY, {});
+    const settings = { ...DEFAULT_SETTINGS, ...(saved && typeof saved === "object" ? saved : {}) };
+    writeJson(storage, SETTINGS_STORAGE_KEY, settings);
+    return settings;
+  };
+  const pick = (record = {}, keys = [], fallback = undefined) => {
+    for (const key of keys) {
+      if (record?.[key] !== undefined && record?.[key] !== null && record?.[key] !== "") return record[key];
+    }
+    return fallback;
+  };
+  const conditionLabel = (record = {}) => `${normalizeCourse(pick(record, ["course", "racecourse"], "未設定"))}${text(pick(record, ["surface", "trackType", "芝ダート"], ""), "")}${text(pick(record, ["distance"], ""), "")}`.trim() || "未設定条件";
+  const normalizeRecord = (record = {}, sourceKey = "unknown", index = 0) => {
+    const race = record.race || record.result || record.predictionLog?.race || record.productionPayload?.race || {};
+    const investment = Math.max(0, toNumber(pick(record, ["investment", "totalInvestment", "stake", "recommendedInvestmentAmount"], pick(race, ["investment", "stake"], 0))));
+    const payout = Math.max(0, toNumber(pick(record, ["payout", "return", "払戻"], 0)));
+    const ticketType = text(pick(record, ["ticketType", "betType", "type"], record.trifectaHit ? "trifecta" : record.win5Hit ? "win5" : "race"), "race");
+    const merged = { ...record, ...race };
+    return {
+      id: record.id || `${sourceKey}:${index}`,
+      sourceKey,
+      date: text(pick(merged, ["date", "savedAt", "generatedAt"], "未設定")),
+      course: normalizeCourse(pick(merged, ["course", "racecourse"], "未設定")),
+      surface: text(pick(merged, ["surface", "trackType", "芝ダート"], ""), ""),
+      distance: text(pick(merged, ["distance"], ""), ""),
+      going: text(pick(merged, ["going", "trackCondition"], ""), ""),
+      condition: conditionLabel(merged),
+      ticketType: /三連単|trifecta/i.test(ticketType) ? "trifecta" : /WIN5|win5/i.test(ticketType) ? "win5" : ticketType,
+      investment,
+      payout,
+      profit: toNumber(record.profit, payout - investment),
+      roi: investment > 0 ? round((payout / investment) * 100, 1) : toNumber(record.roi, 0),
+      hit: Boolean(record.hit || record.mainHit || record.trifectaHit || record.win5Hit || payout > 0),
+      trifectaHit: Boolean(record.trifectaHit || record.judgements?.trifectaHit),
+      win5Hit: Boolean(record.win5Hit || record.judgements?.win5Hit),
+      kamianaHit: Boolean(record.kamianaHit || record.judgements?.kamianaHit),
+      dangerPopularSuccess: Boolean(record.dangerPopularSuccess || record.dangerPopularFlew || record.judgements?.dangerPopularFlew),
+      godRaceSuccess: Boolean(record.godRaceSuccess || record.godRaceHit || record.judgements?.godRaceSuccess),
+      skipped: Boolean(record.skipped || record.skip || record.decision === "skip" || /見送り/.test(String(record.decisionLabel || record.judgement || ""))),
+      skipSuccess: Boolean(record.skipSuccess || (record.skipped && investment === 0 && payout === 0) || /見送り成功/.test(String(record.memo || record.summary || ""))),
+    };
+  };
+  const loadSources = (storage = window.localStorage) => Object.fromEntries(SOURCE_STORAGE_KEYS.map((key) => [key, readJson(storage, key, [])]));
+  const mergeRecords = (sources = {}) => [
+    ...asArray(sources.raceDatabase).map((record, index) => normalizeRecord(record, "raceDatabase", index)),
+    ...asArray(sources.fundCurveRecords).map((record, index) => normalizeRecord(record, "fundCurveRecords", index)),
+    ...asArray(sources.productionResultValidationReports).map((record, index) => normalizeRecord(record, "productionResultValidationReports", index)),
+  ].filter((record) => record.investment > 0 || record.roi > 0 || record.skipped || record.skipSuccess);
+  const emptyStats = (label = "全体") => ({ label, races: 0, investment: 0, payout: 0, profit: 0, hits: 0, roi: 0, hitRate: 0 });
+  const summarize = (records = [], label = "全体") => {
+    const stats = records.reduce((acc, record) => {
+      acc.races += 1;
+      acc.investment += record.investment;
+      acc.payout += record.payout;
+      acc.profit += record.profit;
+      if (record.hit) acc.hits += 1;
+      return acc;
+    }, emptyStats(label));
+    stats.roi = stats.investment > 0 ? round((stats.payout / stats.investment) * 100, 1) : 0;
+    stats.hitRate = stats.races ? round((stats.hits / stats.races) * 100, 1) : 0;
+    return stats;
+  };
+  const summarizeFiltered = (records, predicate, label) => summarize(records.filter(predicate), label);
+  const calculateRoiScore = (stats = {}, settings = DEFAULT_SETTINGS) => {
+    const roiScore = clamp((toNumber(stats.roi, 0) / Math.max(1, settings.strengthenRoi)) * 72, 0, 72);
+    const hitScore = clamp(toNumber(stats.hitRate, 0) * 0.18, 0, 18);
+    const evidenceScore = clamp(toNumber(stats.races, 0) * 2.5, 0, 10);
+    return Math.round(clamp(roiScore + hitScore + evidenceScore, 0, 100));
+  };
+  const judgeInvestmentIntensity = (score = 0) => score >= 85 ? "強勝負" : score >= 65 ? "通常勝負" : score >= 45 ? "小額勝負" : "見送り";
+  const groupByCondition = (records = [], settings = DEFAULT_SETTINGS) => {
+    const groups = new Map();
+    records.forEach((record) => {
+      const key = record.condition;
+      groups.set(key, [...(groups.get(key) || []), record]);
+    });
+    return Array.from(groups.entries()).map(([label, items]) => {
+      const stats = summarize(items, label);
+      const roiScore = calculateRoiScore(stats, settings);
+      return { ...stats, condition: label, roiScore, investmentIntensity: judgeInvestmentIntensity(roiScore) };
+    }).sort((a, b) => b.roiScore - a.roiScore || b.roi - a.roi);
+  };
+  const buildSuggestions = ({ conditions = [], metrics = {}, settings = DEFAULT_SETTINGS } = {}) => {
+    const high = conditions.filter((item) => item.roi >= settings.strengthenRoi && item.races >= settings.minEvidence).slice(0, 4);
+    const low = conditions.filter((item) => item.roi > 0 && item.roi <= settings.weakenRoi && item.races >= settings.minEvidence).sort((a, b) => a.roi - b.roi || a.profit - b.profit).slice(0, 4);
+    const red = conditions.filter((item) => item.profit < 0 || item.roi < settings.redInkRoi).sort((a, b) => a.profit - b.profit || a.roi - b.roi).slice(0, 4);
+    const black = conditions.filter((item) => item.profit > 0 && item.roi >= settings.profitableRoi).sort((a, b) => b.profit - a.profit || b.roi - a.roi).slice(0, 4);
+    return [
+      ...(high.length ? high.map((item) => `ROIが高い条件「${item.condition}」を強化（ROI ${item.roi}% / スコア${item.roiScore}）。`) : ["ROIが高い条件を継続収集し、スコア65以上から強化候補化。"]),
+      ...(low.length ? low.map((item) => `ROIが低い条件「${item.condition}」を弱化（ROI ${item.roi}%）。`) : ["ROIが低い条件は現状サンプル不足。追加検証後に弱化判定。"]),
+      ...(red.length ? red.map((item) => `赤字条件「${item.condition}」を見送り候補へ（損益 ${item.profit.toLocaleString("ja-JP")}円）。`) : ["赤字条件なし。見送り候補は発生していません。"]),
+      ...(black.length ? black.map((item) => `黒字条件「${item.condition}」を勝負レース候補へ（ROI ${item.roi}%）。`) : ["黒字条件はスコア上位から勝負レース候補へ昇格待ち。"]),
+      metrics.trifecta.roi >= settings.strengthenRoi ? `三連単ROIが高い条件を強化（三連単ROI ${metrics.trifecta.roi}%）。` : `三連単ROIが高い条件を監視（三連単ROI ${metrics.trifecta.roi}%）。`,
+      metrics.win5.roi <= settings.weakenRoi ? `WIN5 ROIが低い条件を抑制（WIN5 ROI ${metrics.win5.roi}%）。` : `WIN5 ROIは抑制不要（WIN5 ROI ${metrics.win5.roi}%）。`,
+    ];
+  };
+  const buildRoiOptimizationReport = ({ storage = window.localStorage } = {}) => {
+    const settings = loadSettings(storage);
+    const sources = loadSources(storage);
+    const records = mergeRecords(sources);
+    const conditions = groupByCondition(records, settings);
+    const metrics = {
+      total: summarize(records, "総ROI"),
+      trifecta: summarizeFiltered(records, (record) => record.ticketType === "trifecta" || record.trifectaHit, "三連単ROI"),
+      win5: summarizeFiltered(records, (record) => record.ticketType === "win5" || record.win5Hit, "WIN5 ROI"),
+      kamiana: summarizeFiltered(records, (record) => record.kamianaHit, "神穴ROI"),
+      dangerPopular: summarizeFiltered(records, (record) => record.dangerPopularSuccess, "危険人気馬除外成功ROI"),
+      godRace: summarizeFiltered(records, (record) => record.godRaceSuccess, "神レースROI"),
+    };
+    const skipped = records.filter((record) => record.skipped || record.skipSuccess);
+    metrics.skipSuccessRate = skipped.length ? round((skipped.filter((record) => record.skipSuccess).length / skipped.length) * 100, 1) : 0;
+    const report = {
+      id: `roi-optimization:${new Date().toISOString().replace(/[:.]/g, "-")}`,
+      generatedAt: new Date().toISOString(),
+      storageKey: REPORT_STORAGE_KEY,
+      settingsStorageKey: SETTINGS_STORAGE_KEY,
+      sourceStorageKeys: SOURCE_STORAGE_KEYS,
+      sourceCounts: Object.fromEntries(SOURCE_STORAGE_KEYS.map((key) => [key, asArray(sources[key]).length])),
+      metrics,
+      conditions,
+      topConditions: conditions.slice(0, 10),
+      watchConditions: conditions.filter((item) => item.investmentIntensity === "見送り" || item.profit < 0).sort((a, b) => a.profit - b.profit || a.roi - b.roi).slice(0, 10),
+      suggestions: [],
+    };
+    report.suggestions = buildSuggestions({ conditions, metrics, settings });
+    return report;
+  };
+  const saveReport = (report, storage = window.localStorage) => {
+    const current = asArray(readJson(storage, REPORT_STORAGE_KEY, []));
+    const settings = loadSettings(storage);
+    const next = [report, ...current.filter((item) => item.id !== report.id)].slice(0, settings.maxReports);
+    writeJson(storage, REPORT_STORAGE_KEY, next);
+    return next;
+  };
+  const exportRoiOptimizationJson = ({ storage = window.localStorage } = {}) => {
+    const report = buildRoiOptimizationReport({ storage });
+    saveReport(report, storage);
+    return JSON.stringify(report, null, 2);
+  };
+  const getCapitalCorrectionForRace = (race = {}, storage = window.localStorage) => {
+    const report = buildRoiOptimizationReport({ storage });
+    saveReport(report, storage);
+    const target = conditionLabel(race);
+    const condition = report.conditions.find((item) => item.condition === target) || report.conditions.find((item) => item.condition.startsWith(normalizeCourse(race.course || race.racecourse)));
+    const score = condition?.roiScore ?? calculateRoiScore(report.metrics.total, loadSettings(storage));
+    const investmentIntensity = judgeInvestmentIntensity(score);
+    const multiplier = investmentIntensity === "強勝負" ? 1.25 : investmentIntensity === "通常勝負" ? 1.05 : investmentIntensity === "小額勝負" ? 0.65 : 0;
+    return { score, investmentIntensity, multiplier, condition: condition?.condition || target, reason: `ROIスコア${score}による${investmentIntensity}補正` };
+  };
+  window.HashimotoRoiOptimizationEngine = {
+    REPORT_STORAGE_KEY,
+    SETTINGS_STORAGE_KEY,
+    SOURCE_STORAGE_KEYS,
+    DEFAULT_SETTINGS,
+    loadSettings,
+    loadSources,
+    mergeRecords,
+    summarize,
+    calculateRoiScore,
+    judgeInvestmentIntensity,
+    buildRoiOptimizationReport,
+    saveReport,
+    exportRoiOptimizationJson,
+    getCapitalCorrectionForRace,
+  };
 })();
 
 
@@ -3836,6 +4039,60 @@
   });
   documentRef.querySelector("#performance-dashboard-export")?.addEventListener("click", downloadReport);
   renderPerformanceDashboard();
+})();
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoRoiOptimizationEngine;
+  if (!documentRef || !engine) return;
+  const setText = (selector, value) => {
+    const target = documentRef.querySelector(selector);
+    if (target) target.textContent = value;
+  };
+  const formatPercent = (value) => `${Number(value || 0).toLocaleString("ja-JP", { maximumFractionDigits: 1 })}%`;
+  const fillList = (selector, items = [], formatter = (item) => item) => {
+    const target = documentRef.querySelector(selector);
+    if (!target) return;
+    target.innerHTML = items.length ? items.map((item) => `<li>${formatter(item)}</li>`).join("") : '<li class="empty-state">ROI最適化データ待ち</li>';
+  };
+  const metric = (report, key) => report?.metrics?.[key]?.roi || 0;
+  const renderRoiOptimization = () => {
+    const report = engine.buildRoiOptimizationReport({ storage: window.localStorage });
+    engine.saveReport(report, window.localStorage);
+    setText("#roi-optimization-total-roi", formatPercent(metric(report, "total")));
+    setText("#roi-optimization-trifecta-roi", formatPercent(metric(report, "trifecta")));
+    setText("#roi-optimization-win5-roi", formatPercent(metric(report, "win5")));
+    setText("#roi-optimization-kamiana-roi", formatPercent(metric(report, "kamiana")));
+    setText("#roi-optimization-danger-roi", formatPercent(metric(report, "dangerPopular")));
+    setText("#roi-optimization-godrace-roi", formatPercent(metric(report, "godRace")));
+    setText("#roi-optimization-skip-rate", formatPercent(report.metrics?.skipSuccessRate));
+    setText("#roi-optimization-status", `ROI最適化 ${report.conditions.length}条件 / ${report.sourceCounts.raceDatabase + report.sourceCounts.fundCurveRecords + report.sourceCounts.productionResultValidationReports}件`);
+    setText("#roi-optimization-source-count", `参照: ${report.sourceStorageKeys.join(" / ")} / 保存先 ${report.storageKey}・${report.settingsStorageKey}`);
+    fillList("#roi-optimization-suggestions", report.suggestions, (item) => `<strong>${item}</strong>`);
+    fillList("#roi-optimization-score-list", report.topConditions.slice(0, 8), (item) => `<strong>${item.condition}</strong><span>ROIスコア ${item.roiScore} / ${item.investmentIntensity} / ROI ${formatPercent(item.roi)} / ${item.races}件</span>`);
+    fillList("#roi-optimization-watch-list", report.watchConditions.slice(0, 8), (item) => `<strong>${item.condition}</strong><span>${item.investmentIntensity}候補 / 損益 ${item.profit.toLocaleString("ja-JP")}円 / ROI ${formatPercent(item.roi)}</span>`);
+    return report;
+  };
+  const downloadReport = () => {
+    const json = engine.exportRoiOptimizationJson({ storage: window.localStorage });
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = documentRef.createElement("a");
+    link.href = url;
+    link.download = `roi-optimization-${new Date().toISOString().slice(0, 10)}.json`;
+    documentRef.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setText("#roi-optimization-status", "roiOptimizationReportsへ保存しJSON出力しました");
+    renderRoiOptimization();
+  };
+  documentRef.querySelector("#roi-optimization-refresh")?.addEventListener("click", () => {
+    renderRoiOptimization();
+    setText("#roi-optimization-status", "最新localStorageからROI再集計しました");
+  });
+  documentRef.querySelector("#roi-optimization-export")?.addEventListener("click", downloadReport);
+  renderRoiOptimization();
 })();
 
 
