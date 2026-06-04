@@ -2646,6 +2646,291 @@
     savePerformanceDashboardReport,
     exportPerformanceDashboardJson,
   };
+
+})();
+
+
+(() => {
+  const STORAGE_KEY = "weaknessAnalysisReports";
+  const SOURCE_KEYS = ["raceDatabase", "fundCurveRecords", "productionResultValidationReports"];
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const clamp = (value) => Math.max(0, Math.min(100, round(value, 1)));
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const normalizeText = (value, fallback = "未設定") => String(value ?? "").trim() || fallback;
+  const normalizeCourse = (value) => normalizeText(value).replace(/競馬場$/, "") || "未設定";
+  const normalizeSurface = (value) => {
+    const text = normalizeText(value);
+    return text === "ダ" ? "ダート" : text;
+  };
+  const conditionSurface = (value) => normalizeSurface(value).replace("ダート", "ダ");
+  const normalizeDistance = (value) => {
+    const distance = toNumber(value, 0);
+    return distance > 0 ? String(distance) : normalizeText(value);
+  };
+  const readJson = (storage, key, fallback) => {
+    try {
+      const raw = storage?.getItem?.(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  };
+  const compactKey = (record = {}) => [record.date, normalizeCourse(record.course), record.raceNumber].join(":");
+  const popularityZone = (value) => {
+    const rank = toNumber(value, 0);
+    if (!rank) return "人気未設定";
+    if (rank <= 1) return "1番人気";
+    if (rank <= 3) return "2〜3番人気";
+    if (rank <= 5) return "4〜5番人気";
+    if (rank <= 8) return "6〜8番人気";
+    if (rank <= 12) return "9〜12番人気";
+    return "13番人気以下";
+  };
+  const inferBestStyle = (record = {}) => {
+    const payload = record.predictionPayload || record.productionPayload || {};
+    const topNumber = String(record.result?.firstNumber || record.resultInput?.firstNumber || record.aiIndexTop3?.[0]?.number || "");
+    const horses = asArray(payload.horses).concat(asArray(payload.aiIndexRanking), asArray(payload.kamianaRanking));
+    const matched = horses.find((horse) => String(horse.number ?? horse.horseNumber ?? "") === topNumber) || horses[0] || {};
+    return normalizeText(matched.runningStyle || matched.style || matched["脚質"] || record.runningStyle || record.style || record["脚質"]);
+  };
+  const inferPopularity = (record = {}) => {
+    const result = record.result || record.resultInput || {};
+    return result.firstPopularity || result.popularity || record.aiIndexTop3?.[0]?.popularity || record.predictionPayload?.aiIndexRanking?.[0]?.popularity || record.popularity;
+  };
+  const normalizeRecord = (entry = {}, source = "raceDatabase") => {
+    const race = entry.race || entry.result || entry.resultInput || entry.predictionPayload?.race || entry.productionPayload?.race || entry.fundCurveRecord?.race || entry;
+    const investment = toNumber(entry.investmentAmount ?? entry.totalInvestment ?? entry.investment ?? entry.stake ?? entry.result?.investmentAmount, 0);
+    const payout = toNumber(entry.payoutAmount ?? entry.payout ?? entry.result?.payoutAmount, 0);
+    const roi = entry.roi !== undefined && entry.roi !== null ? toNumber(entry.roi, 0) : (investment > 0 ? (payout / investment) * 100 : 0);
+    const judgements = entry.judgements || entry.validationReport?.judgements || {};
+    const summary = entry.summary || entry.validationReport?.summary || {};
+    const godRace = entry.godRaceJudgement || entry.predictionPayload?.godRace || entry.productionPayload?.godRace || summary.godRaceJudgement || null;
+    return {
+      id: entry.id || `${source}:${compactKey(race)}`,
+      source,
+      date: normalizeText(race.date || entry.date || entry.generatedAt, ""),
+      course: normalizeCourse(race.course || race.racecourse || entry.course || entry.racecourse),
+      distance: normalizeDistance(race.distance || entry.distance),
+      surface: normalizeSurface(race.surface || entry.surface),
+      going: normalizeText(race.going || race.trackCondition || entry.going || entry.trackCondition),
+      raceNumber: toNumber(race.raceNumber || entry.raceNumber, 0),
+      popularityZone: popularityZone(inferPopularity(entry)),
+      style: inferBestStyle(entry),
+      investment,
+      payout,
+      roi: round(roi, 1),
+      hit: Boolean(summary.hit ?? entry.hit ?? judgements.trifectaHit ?? (payout > 0)),
+      kamianaSuccess: Boolean(judgements.kamianaHit ?? entry.kamianaSuccess ?? false),
+      dangerPopularSuccess: Boolean(judgements.dangerPopularFlew ?? entry.dangerPopularSuccess ?? false),
+      godRaceSuccess: Boolean(judgements.godRaceSuccess ?? entry.godRaceSuccess ?? (godRace && roi >= 100)),
+      isGodRace: Boolean(godRace && !godRace.skip),
+      fixPoints: asArray(summary.nextFixPoints).concat(asArray(entry.osUpdateCandidates?.pending), asArray(entry.osUpdateCandidates?.apply), asArray(entry.validationReport?.summary?.nextFixPoints)),
+    };
+  };
+  const loadSources = (storage = window.localStorage) => {
+    const raceDatabase = window.HashimotoProductionRaceEngine?.loadRaceDatabase ? window.HashimotoProductionRaceEngine.loadRaceDatabase(storage) : asArray(readJson(storage, "raceDatabase", []));
+    const fundCurveRecords = asArray(readJson(storage, "fundCurveRecords", []));
+    const validationReports = window.HashimotoProductionResultValidationEngine?.loadValidationReports ? window.HashimotoProductionResultValidationEngine.loadValidationReports(storage) : asArray(readJson(storage, "productionResultValidationReports", []));
+    return { raceDatabase, fundCurveRecords, productionResultValidationReports: validationReports };
+  };
+  const mergeRecords = (sources = {}) => {
+    const map = new Map();
+    const add = (record) => {
+      const key = compactKey(record);
+      const existing = map.get(key) || {};
+      const merged = { ...existing, ...record };
+      ["course", "distance", "surface", "going", "popularityZone", "style"].forEach((field) => {
+        if ((record[field] === "未設定" || record[field] === "人気未設定" || record[field] === "") && existing[field]) merged[field] = existing[field];
+      });
+      map.set(key, { ...merged, source: existing.source ? `${existing.source}+${record.source}` : record.source });
+    };
+    asArray(sources.raceDatabase).map((item) => normalizeRecord(item, "raceDatabase")).forEach(add);
+    asArray(sources.fundCurveRecords).map((item) => normalizeRecord(item, "fundCurveRecords")).forEach(add);
+    asArray(sources.productionResultValidationReports).map((item) => normalizeRecord(item, "productionResultValidationReports")).forEach(add);
+    return Array.from(map.values()).filter((record) => record.course || record.distance || record.investment || record.payout);
+  };
+  const createBucket = (label, dimension) => ({ label, dimension, races: 0, investment: 0, payout: 0, hits: 0, kamiana: 0, danger: 0, god: 0, godTargets: 0, fixPoints: [] });
+  const addToBucket = (bucket, record) => {
+    bucket.races += 1;
+    bucket.investment += toNumber(record.investment, 0);
+    bucket.payout += toNumber(record.payout, 0);
+    if (record.hit) bucket.hits += 1;
+    if (record.kamianaSuccess) bucket.kamiana += 1;
+    if (record.dangerPopularSuccess) bucket.danger += 1;
+    if (record.isGodRace) bucket.godTargets += 1;
+    if (record.godRaceSuccess) bucket.god += 1;
+    bucket.fixPoints.push(...asArray(record.fixPoints));
+  };
+  const finalizeBucket = (bucket) => {
+    const roi = bucket.investment > 0 ? (bucket.payout / bucket.investment) * 100 : 0;
+    const hitRate = bucket.races ? (bucket.hits / bucket.races) * 100 : 0;
+    const kamianaSuccessRate = bucket.races ? (bucket.kamiana / bucket.races) * 100 : 0;
+    const dangerPopularSuccessRate = bucket.races ? (bucket.danger / bucket.races) * 100 : 0;
+    const godRaceSuccessRate = bucket.godTargets ? (bucket.god / bucket.godTargets) * 100 : 0;
+    const weaknessScore = clamp(((100 - Math.min(160, roi) / 1.6) * 0.36) + ((100 - hitRate) * 0.22) + ((100 - kamianaSuccessRate) * 0.14) + ((100 - dangerPopularSuccessRate) * 0.14) + ((100 - godRaceSuccessRate) * 0.14));
+    return {
+      ...bucket,
+      investment: round(bucket.investment, 0),
+      payout: round(bucket.payout, 0),
+      roi: round(roi, 1),
+      hitRate: round(hitRate, 1),
+      kamianaSuccessRate: round(kamianaSuccessRate, 1),
+      dangerPopularSuccessRate: round(dangerPopularSuccessRate, 1),
+      godRaceSuccessRate: round(godRaceSuccessRate, 1),
+      weaknessScore,
+      strengthScore: clamp(100 - weaknessScore + Math.max(0, roi - 100) * 0.12),
+      improvement: buildImprovement({ ...bucket, roi, label: bucket.label }),
+    };
+  };
+  const buildImprovement = (bucket = {}) => {
+    const text = bucket.fixPoints.join(" / ");
+    if (/差し|末脚|外差し|4角|後方/.test(text) || /東京|新潟/.test(bucket.label)) return "差し補正不足";
+    if (/先行|逃げ|前残り/.test(text) || /中山|福島|小倉|ダート/.test(bucket.label)) return "先行補正有効";
+    if (/馬場|道悪|重|不良|稍重/.test(text) || /重|不良|稍重/.test(bucket.label)) return "馬場バイアス補正を再学習";
+    if (/危険人気|人気/.test(text) || /人気/.test(bucket.label)) return "危険人気馬しきい値調整";
+    if (/神穴|穴|高配当/.test(text)) return "神穴条件を追加検証";
+    return bucket.roi < 80 ? "買い目点数とEV下限を防御補正" : "現行補正を維持・展開条件を追加学習";
+  };
+  const groupBy = (records, dimension, getter) => Array.from(records.reduce((map, record) => {
+    const labels = asArray(getter(record)).filter(Boolean);
+    labels.forEach((label) => {
+      const normalized = normalizeText(label);
+      if (!map.has(normalized)) map.set(normalized, createBucket(normalized, dimension));
+      addToBucket(map.get(normalized), record);
+    });
+    return map;
+  }, new Map()).values()).map(finalizeBucket).filter((bucket) => bucket.races > 0);
+  const rankWeak = (items) => [...items].sort((a, b) => b.weaknessScore - a.weaknessScore || a.roi - b.roi).slice(0, 10);
+  const rankStrong = (items) => [...items].sort((a, b) => b.strengthScore - a.strengthScore || b.roi - a.roi).slice(0, 10);
+  const buildWeaknessAnalysisReport = ({ storage = window.localStorage } = {}) => {
+    const sources = loadSources(storage);
+    const records = mergeRecords(sources);
+    const dimensions = {
+      courses: groupBy(records, "競馬場", (record) => [record.course]),
+      distances: groupBy(records, "距離", (record) => [record.distance]),
+      goings: groupBy(records, "馬場", (record) => [record.going]),
+      popularityZones: groupBy(records, "人気ゾーン", (record) => [record.popularityZone]),
+      styles: groupBy(records, "脚質", (record) => [record.style]),
+      courseDistance: groupBy(records, "競馬場×芝ダ×距離", (record) => [`${record.course}${conditionSurface(record.surface)}${record.distance}`]),
+    };
+    const totalInvestment = records.reduce((sum, record) => sum + toNumber(record.investment, 0), 0);
+    const totalPayout = records.reduce((sum, record) => sum + toNumber(record.payout, 0), 0);
+    const report = {
+      id: `weakness-analysis-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+      generatedAt: new Date().toISOString(),
+      storageKey: STORAGE_KEY,
+      sourceStorageKeys: SOURCE_KEYS,
+      sourceCounts: {
+        raceDatabase: asArray(sources.raceDatabase).length,
+        fundCurveRecords: asArray(sources.fundCurveRecords).length,
+        productionResultValidationReports: asArray(sources.productionResultValidationReports).length,
+        mergedRaceCount: records.length,
+      },
+      summary: {
+        totalInvestment: round(totalInvestment, 0),
+        totalPayout: round(totalPayout, 0),
+        roi: totalInvestment > 0 ? round((totalPayout / totalInvestment) * 100, 1) : 0,
+        hitRate: records.length ? round((records.filter((record) => record.hit).length / records.length) * 100, 1) : 0,
+      },
+      rankings: {
+        weakCourses: rankWeak(dimensions.courses),
+        strongCourses: rankStrong(dimensions.courses),
+        weakDistances: rankWeak(dimensions.distances),
+        strongDistances: rankStrong(dimensions.distances),
+        weakGoings: rankWeak(dimensions.goings),
+        strongGoings: rankStrong(dimensions.goings),
+        weakPopularityZones: rankWeak(dimensions.popularityZones),
+        strongPopularityZones: rankStrong(dimensions.popularityZones),
+        weakStyles: rankWeak(dimensions.styles),
+        strongStyles: rankStrong(dimensions.styles),
+        weakConditions: rankWeak(dimensions.courseDistance),
+        strongConditions: rankStrong(dimensions.courseDistance),
+      },
+      improvementCandidates: rankWeak(dimensions.courseDistance).slice(0, 8).map((item) => ({ condition: item.label, score: item.weaknessScore, suggestion: item.improvement })),
+    };
+    return report;
+  };
+  const saveWeaknessAnalysisReport = (report, storage = window.localStorage) => {
+    if (!storage?.setItem) return [report];
+    const current = asArray(readJson(storage, STORAGE_KEY, []));
+    const next = [report, ...current.filter((item) => item.id !== report.id)].slice(0, 50);
+    storage.setItem(STORAGE_KEY, JSON.stringify(next));
+    return next;
+  };
+  const exportWeaknessAnalysisJson = ({ storage = window.localStorage } = {}) => {
+    const report = buildWeaknessAnalysisReport({ storage });
+    saveWeaknessAnalysisReport(report, storage);
+    return JSON.stringify(report, null, 2);
+  };
+  window.HashimotoWeaknessAnalysisEngine = {
+    STORAGE_KEY,
+    SOURCE_KEYS,
+    loadSources,
+    mergeRecords,
+    buildWeaknessAnalysisReport,
+    saveWeaknessAnalysisReport,
+    exportWeaknessAnalysisJson,
+  };
+})();
+
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoWeaknessAnalysisEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#weakness-analysis-panel")) return;
+  const escapeHtml = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+  const formatPercent = (value) => `${Number(value || 0).toFixed(1).replace(/\.0$/, "")}%`;
+  const formatScore = (value) => `${Number(value || 0).toFixed(1).replace(/\.0$/, "")}`;
+  const fillList = (selector, items = [], mode = "weak") => {
+    const target = documentRef.querySelector(selector);
+    if (!target) return;
+    const scoreKey = mode === "strong" ? "strengthScore" : "weaknessScore";
+    const scoreLabel = mode === "strong" ? "得意" : "弱点";
+    target.innerHTML = items.length ? items.map((item) => `<li><strong>${escapeHtml(item.label)} <b>${scoreLabel}スコア ${escapeHtml(formatScore(item[scoreKey]))}</b></strong><small>ROI ${escapeHtml(formatPercent(item.roi))} / 的中率 ${escapeHtml(formatPercent(item.hitRate))} / 神穴 ${escapeHtml(formatPercent(item.kamianaSuccessRate))} / 危険人気馬 ${escapeHtml(formatPercent(item.dangerPopularSuccessRate))} / 神レース ${escapeHtml(formatPercent(item.godRaceSuccessRate))} / ${escapeHtml(item.races)}R</small></li>`).join("") : '<li class="empty-state">分析データ蓄積待ち</li>';
+  };
+  const render = (persist = true) => {
+    const report = engine.buildWeaknessAnalysisReport({ storage: window.localStorage });
+    if (persist) engine.saveWeaknessAnalysisReport(report, window.localStorage);
+    const status = documentRef.querySelector("#weakness-analysis-status");
+    if (status) status.textContent = `分析済 ${report.sourceCounts.mergedRaceCount}R / ROI ${formatPercent(report.summary.roi)}`;
+    const source = documentRef.querySelector("#weakness-analysis-source-count");
+    if (source) source.textContent = `参照: raceDatabase ${report.sourceCounts.raceDatabase}件 / fundCurveRecords ${report.sourceCounts.fundCurveRecords}件 / productionResultValidationReports ${report.sourceCounts.productionResultValidationReports}件 / 保存先 ${engine.STORAGE_KEY}`;
+    const topWeak = report.rankings.weakConditions[0];
+    const topStrong = report.rankings.strongConditions[0];
+    const weakMain = documentRef.querySelector("#weakness-analysis-top-weak");
+    if (weakMain) weakMain.textContent = topWeak ? `${topWeak.label} 弱点スコア ${formatScore(topWeak.weaknessScore)}` : "弱点データ待ち";
+    const strongMain = documentRef.querySelector("#weakness-analysis-top-strong");
+    if (strongMain) strongMain.textContent = topStrong ? `${topStrong.label} 得意スコア ${formatScore(topStrong.strengthScore)}` : "得意データ待ち";
+    fillList("#weakness-course-list", report.rankings.weakCourses, "weak");
+    fillList("#strength-course-list", report.rankings.strongCourses, "strong");
+    fillList("#weakness-distance-list", report.rankings.weakDistances, "weak");
+    fillList("#strength-distance-list", report.rankings.strongDistances, "strong");
+    fillList("#weakness-going-list", report.rankings.weakGoings, "weak");
+    fillList("#strength-going-list", report.rankings.strongGoings, "strong");
+    fillList("#weakness-popularity-list", report.rankings.weakPopularityZones, "weak");
+    fillList("#strength-popularity-list", report.rankings.strongPopularityZones, "strong");
+    fillList("#weakness-style-list", report.rankings.weakStyles, "weak");
+    fillList("#strength-style-list", report.rankings.strongStyles, "strong");
+    const improvement = documentRef.querySelector("#weakness-improvement-candidates");
+    if (improvement) improvement.innerHTML = report.improvementCandidates.length ? report.improvementCandidates.map((item) => `<li><strong>${escapeHtml(item.condition)}</strong><span>→ ${escapeHtml(item.suggestion)}</span><small>弱点スコア ${escapeHtml(formatScore(item.score))}</small></li>`).join("") : '<li class="empty-state">改善候補の蓄積待ち</li>';
+    return report;
+  };
+  documentRef.querySelector("#weakness-analysis-refresh")?.addEventListener("click", () => render(true));
+  documentRef.querySelector("#weakness-analysis-export")?.addEventListener("click", () => {
+    const json = engine.exportWeaknessAnalysisJson({ storage: window.localStorage });
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = documentRef.createElement("a");
+    link.href = url;
+    link.download = `weaknessAnalysisReports-${new Date().toISOString().slice(0, 10)}.json`;
+    documentRef.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    render(false);
+  });
+  render(true);
 })();
 
 

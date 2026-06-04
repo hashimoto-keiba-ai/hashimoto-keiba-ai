@@ -5964,3 +5964,155 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.weakness-analysis-card {
+  margin-top: 26px;
+  border-color: rgba(248, 196, 79, 0.48);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255, 107, 95, 0.12), transparent 22rem),
+    radial-gradient(circle at 86% 16%, rgba(120, 240, 163, 0.12), transparent 24rem),
+    linear-gradient(145deg, rgba(16, 10, 4, 0.96), rgba(0, 0, 0, 0.78));
+}
+
+.weakness-scoreboard,
+.weakness-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.weakness-scoreboard {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 18px 0;
+}
+
+.weakness-scoreboard__main,
+.weakness-panel,
+.weakness-improvement {
+  border: 1px solid rgba(248, 196, 79, 0.22);
+  background: rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 233, 163, 0.08);
+}
+
+.weakness-scoreboard__main {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 24px;
+}
+
+.weakness-scoreboard__main--weak {
+  background: linear-gradient(135deg, rgba(255, 107, 95, 0.16), rgba(0, 0, 0, 0.38));
+}
+
+.weakness-scoreboard__main--strong {
+  background: linear-gradient(135deg, rgba(120, 240, 163, 0.14), rgba(0, 0, 0, 0.38));
+}
+
+.weakness-scoreboard__main span,
+.weakness-scoreboard__main small,
+.weakness-panel small,
+.weakness-improvement p,
+.weakness-actions p {
+  color: var(--muted);
+}
+
+.weakness-scoreboard__main strong {
+  color: var(--gold-light);
+  font-size: clamp(1.35rem, 4vw, 2.6rem);
+  line-height: 1.2;
+}
+
+.weakness-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.weakness-panel {
+  padding: 16px;
+  border-radius: 20px;
+}
+
+.weakness-panel--strong {
+  border-color: rgba(120, 240, 163, 0.24);
+}
+
+.weakness-panel h3,
+.weakness-improvement h3 {
+  margin: 0 0 12px;
+  color: var(--gold-light);
+}
+
+.weakness-panel ol,
+.weakness-improvement ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.weakness-panel li,
+.weakness-improvement li {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid rgba(248, 196, 79, 0.14);
+  border-radius: 14px;
+  background: rgba(248, 196, 79, 0.07);
+}
+
+.weakness-panel li strong,
+.weakness-improvement li strong {
+  color: var(--text);
+}
+
+.weakness-panel li b {
+  color: var(--gold);
+  font-weight: 900;
+}
+
+.weakness-improvement {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+  gap: 16px;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 22px;
+}
+
+.weakness-improvement li span {
+  color: var(--gold-light);
+  font-weight: 900;
+}
+
+.weakness-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+.weakness-actions p {
+  flex: 1 1 360px;
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 980px) {
+  .weakness-grid,
+  .weakness-improvement {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .weakness-scoreboard {
+    grid-template-columns: 1fr;
+  }
+
+  .weakness-actions .button {
+    width: 100%;
+  }
+}
