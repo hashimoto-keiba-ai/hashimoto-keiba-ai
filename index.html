@@ -32,6 +32,7 @@
           <a href="#production-operation-mode">本番運用モード</a>
           <a href="#race-database-panel">Race Database</a>
           <a href="#weakness-analysis-panel">AI弱点分析</a>
+          <a href="#self-learning-engine-panel">自己学習</a>
           <a href="#today-races">今日のレース</a>
           <a href="#real-data-entry">実データ入力</a>
           <a href="#result-csv-import">結果CSV取込</a>
@@ -94,6 +95,7 @@
           <a href="#production-operation-mode"><span>⑳</span>本番運用モード完成版</a>
           <a href="#race-database-panel"><span>㉑</span>Race Database</a>
           <a href="#weakness-analysis-panel"><span>㉒</span>AI弱点分析</a>
+          <a href="#self-learning-engine-panel"><span>㉓</span>自己学習エンジン</a>
         </div>
 
         <section class="production-mode-switch" aria-label="本番運用モードスイッチ">
@@ -419,6 +421,47 @@
             <button id="weakness-analysis-refresh" class="button button--ghost" type="button">最新データで再分析</button>
             <button id="weakness-analysis-export" class="button button--primary" type="button">JSONエクスポート</button>
           </div>
+        </div>
+      </section>
+
+      <section id="self-learning-engine-panel" class="self-learning-card card card--wide card--featured" aria-label="Phase6-1 自己学習エンジンパネル">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE6-1 SELF LEARNING ENGINE</p>
+              <h2>自己学習エンジン</h2>
+              <p class="card__lead"><code>raceDatabase</code>・<code>weaknessAnalysisReports</code>・<code>productionResultValidationReports</code>・<code>fundCurveRecords</code>・<code>selfEvolutionLogs</code>を参照し、AI補正値の改善提案を <code>selfLearningSuggestions</code> に保存します。</p>
+            </div>
+            <span id="self-learning-status" class="status-pill status-pill--live">自己学習待機</span>
+          </div>
+
+          <div id="self-learning-summary" class="self-learning-summary" aria-label="自己学習エンジン集計">
+            <article><span>学習対象レース数</span><strong>0</strong></article>
+            <article><span>学習済み条件数</span><strong>0</strong></article>
+            <article><span>改善提案数</span><strong>0</strong></article>
+            <article><span>採用済み改善数</span><strong>0</strong></article>
+            <article><span>保留改善数</span><strong>0</strong></article>
+            <article><span>却下改善数</span><strong>0</strong></article>
+          </div>
+
+          <div class="self-learning-actions">
+            <button id="self-learning-generate" class="button button--primary" type="button">改善提案を自動生成</button>
+            <button id="self-learning-refresh" class="button button--ghost" type="button">保存済み提案を再読込</button>
+            <button id="self-learning-reflect" class="button button--ghost" type="button">採用分を自己進化ログへ反映</button>
+          </div>
+
+          <div class="table-wrap self-learning-table">
+            <table class="data-table data-table--compact">
+              <thead>
+                <tr><th scope="col">対象</th><th scope="col">現行ルール</th><th scope="col">提案ルール/理由</th><th scope="col">証拠/影響</th><th scope="col">状態</th><th scope="col">メモ</th></tr>
+              </thead>
+              <tbody id="self-learning-suggestion-body">
+                <tr><td data-label="対象" colspan="6">改善提案はまだありません。</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p id="self-learning-source-count" class="self-learning-source-count">参照: raceDatabase / weaknessAnalysisReports / productionResultValidationReports / fundCurveRecords / selfEvolutionLogs / 保存先 selfLearningSuggestions</p>
         </div>
       </section>
 

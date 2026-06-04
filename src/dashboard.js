@@ -2876,6 +2876,235 @@
 
 
 (() => {
+  const STORAGE_KEY = "selfLearningSuggestions";
+  const SOURCE_KEYS = ["raceDatabase", "weaknessAnalysisReports", "productionResultValidationReports", "fundCurveRecords", "selfEvolutionLogs"];
+  const STATUS = { ADOPTED: "採用", PENDING: "保留", REJECTED: "却下" };
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const normalizeText = (value, fallback = "未設定") => String(value ?? "").trim() || fallback;
+  const readJson = (storage, key, fallback) => {
+    try {
+      const raw = storage?.getItem?.(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  };
+  const writeJson = (storage, key, value) => {
+    storage?.setItem?.(key, JSON.stringify(value));
+    return value;
+  };
+  const flattenSelfEvolutionLogs = (payload) => {
+    if (Array.isArray(payload)) return payload;
+    const logs = payload?.logs || payload || {};
+    return [
+      ...asArray(logs.resultVerifications),
+      ...asArray(logs.backtests),
+      ...asArray(logs.improvementProposals),
+      ...asArray(logs.osUpdates),
+      ...asArray(logs.adoptedRules),
+    ];
+  };
+  const loadSources = (storage = window.localStorage) => {
+    const raceDatabase = window.HashimotoProductionRaceEngine?.loadRaceDatabase ? window.HashimotoProductionRaceEngine.loadRaceDatabase(storage) : asArray(readJson(storage, "raceDatabase", []));
+    const weaknessAnalysisReports = asArray(readJson(storage, "weaknessAnalysisReports", []));
+    const productionResultValidationReports = window.HashimotoProductionResultValidationEngine?.loadValidationReports ? window.HashimotoProductionResultValidationEngine.loadValidationReports(storage) : asArray(readJson(storage, "productionResultValidationReports", []));
+    const fundCurveRecords = asArray(readJson(storage, "fundCurveRecords", []));
+    const selfEvolutionLogs = readJson(storage, "selfEvolutionLogs", { logs: { resultVerifications: [], backtests: [], improvementProposals: [], osUpdates: [], adoptedRules: [] } });
+    return { raceDatabase, weaknessAnalysisReports, productionResultValidationReports, fundCurveRecords, selfEvolutionLogs };
+  };
+  const latestWeaknessReport = (sources, storage) => sources.weaknessAnalysisReports[0] || window.HashimotoWeaknessAnalysisEngine?.buildWeaknessAnalysisReport?.({ storage }) || null;
+  const currentSuggestions = (storage = window.localStorage) => asArray(readJson(storage, STORAGE_KEY, []));
+  const stableId = (targetArea, targetCondition, suggestedRule) => `self-learning:${targetArea}:${targetCondition}:${suggestedRule}`.replace(/\s+/g, "");
+  const impactLabel = (item = {}) => {
+    const roi = round(item.roi, 1);
+    const score = round(item.weaknessScore ?? item.score ?? 0, 1);
+    if (score >= 80 || roi < 60) return "高";
+    if (score >= 60 || roi < 100) return "中";
+    return "低";
+  };
+  const buildSuggestion = ({ area, condition, currentRule, suggestedRule, reason, evidenceCount, impactEstimate, memo = "" }) => ({
+    id: stableId(area, condition, suggestedRule),
+    date: new Date().toISOString(),
+    targetArea: area,
+    targetCondition: condition,
+    currentRule,
+    suggestedRule,
+    reason,
+    evidenceCount: toNumber(evidenceCount, 0),
+    impactEstimate,
+    status: STATUS.PENDING,
+    memo,
+  });
+  const reasonFromBucket = (bucket = {}, extra = "") => {
+    const base = `ROI ${round(bucket.roi, 1)}% / 的中率 ${round(bucket.hitRate, 1)}% / 弱点スコア ${round(bucket.weaknessScore ?? bucket.score, 1)}`;
+    return extra ? `${base}。${extra}` : base;
+  };
+  const validationFixText = (reports = []) => reports.flatMap((report) => [
+    ...asArray(report.summary?.nextFixPoints),
+    ...asArray(report.osUpdateCandidates?.pending),
+    ...asArray(report.osUpdateCandidates?.apply),
+    ...asArray(report.osUpdateCandidates?.delete),
+  ]).join(" / ");
+  const buildSuggestions = ({ storage = window.localStorage, persist = true } = {}) => {
+    const sources = loadSources(storage);
+    const report = latestWeaknessReport(sources, storage);
+    const rankings = report?.rankings || {};
+    const fixText = validationFixText(sources.productionResultValidationReports);
+    const totalInvestment = sources.fundCurveRecords.reduce((sum, item) => sum + toNumber(item.stake ?? item.investment ?? item.totalInvestment, 0), 0);
+    const totalPayout = sources.fundCurveRecords.reduce((sum, item) => sum + toNumber(item.payout, 0), 0);
+    const fundRoi = totalInvestment ? round((totalPayout / totalInvestment) * 100, 1) : round(report?.summary?.roi, 1);
+    const candidates = [];
+
+    asArray(rankings.weakCourses).slice(0, 3).forEach((item) => candidates.push(buildSuggestion({
+      area: "競馬場別補正",
+      condition: item.label,
+      currentRule: "現行の競馬場補正を維持",
+      suggestedRule: `${item.label}の展開・馬場補正を${item.roi < 80 ? "強化" : "微強化"}`,
+      reason: reasonFromBucket(item, "苦手競馬場として検出されたため補正値の上積みを提案"),
+      evidenceCount: item.races,
+      impactEstimate: impactLabel(item),
+    })));
+    asArray(rankings.strongCourses).filter((item) => item.roi >= 140).slice(0, 2).forEach((item) => candidates.push(buildSuggestion({
+      area: "競馬場別補正",
+      condition: item.label,
+      currentRule: "得意条件にも通常資金配分",
+      suggestedRule: `${item.label}は補正を維持し、過剰リスク補正だけ弱化`,
+      reason: `ROI ${round(item.roi, 1)}%の得意競馬場。過度な防御補正を弱めて期待値を確保`,
+      evidenceCount: item.races,
+      impactEstimate: "中",
+    })));
+    asArray(rankings.weakDistances).slice(0, 3).forEach((item) => candidates.push(buildSuggestion({
+      area: "距離別補正",
+      condition: `${item.label}m`,
+      currentRule: "現行の距離補正を維持",
+      suggestedRule: `${item.label}mのスピード/スタミナ補正を強化`,
+      reason: reasonFromBucket(item, "苦手距離として検出されたため距離適性の重みを再調整"),
+      evidenceCount: item.races,
+      impactEstimate: impactLabel(item),
+    })));
+    asArray(rankings.weakStyles).slice(0, 3).forEach((item) => candidates.push(buildSuggestion({
+      area: "脚質補正",
+      condition: item.label,
+      currentRule: "現行の脚質補正を維持",
+      suggestedRule: `${item.label}の展開補正を${/逃げ|先行/.test(item.label) ? "前残り寄りに強化" : "差し届き/届かず判定込みで強化"}`,
+      reason: reasonFromBucket(item, "苦手脚質として検出されたため脚質別AI補正を調整"),
+      evidenceCount: item.races,
+      impactEstimate: impactLabel(item),
+    })));
+    asArray(rankings.weakPopularityZones).slice(0, 2).forEach((item) => candidates.push(buildSuggestion({
+      area: "危険人気馬条件",
+      condition: item.label,
+      currentRule: "人気ゾーンの危険判定は現行しきい値",
+      suggestedRule: `${item.label}でROI ${round(item.roi, 1)}%未満なら危険人気馬条件を追加`,
+      reason: reasonFromBucket(item, "人気ゾーン別の取りこぼし/過剰評価を検知"),
+      evidenceCount: item.races,
+      impactEstimate: impactLabel(item),
+    })));
+    asArray(rankings.weakConditions).slice(0, 3).forEach((item) => candidates.push(buildSuggestion({
+      area: "神穴条件",
+      condition: item.label,
+      currentRule: "神穴条件は現行の穴指数条件を使用",
+      suggestedRule: `${item.label}で人気薄の馬場・展開合致を神穴条件へ追加`,
+      reason: reasonFromBucket(item, "競馬場×芝ダ×距離の弱点から穴馬拾い漏れを補正"),
+      evidenceCount: item.races,
+      impactEstimate: impactLabel(item),
+    })));
+    candidates.push(buildSuggestion({
+      area: "EV判定条件",
+      condition: "EV下限/買い目点数",
+      currentRule: "現行EVしきい値で買い目採用",
+      suggestedRule: fundRoi < 100 ? "ROI 100%未満のためEV下限を+0.05〜+0.10引き上げ" : "ROI 100%以上のため高EVゾーンは現行維持、低証拠数条件のみ保留",
+      reason: `fundCurveRecords ROI ${fundRoi || 0}%。${/EV|期待値|低EV/.test(fixText) ? "検証ログにもEV調整候補あり" : "資金曲線からEVしきい値を再評価"}`,
+      evidenceCount: sources.fundCurveRecords.length || sources.productionResultValidationReports.length,
+      impactEstimate: fundRoi < 80 ? "高" : "中",
+    }));
+    candidates.push(buildSuggestion({
+      area: "資金配分リスク係数",
+      condition: "資金曲線/ドローダウン",
+      currentRule: "現行リスク係数で推奨投資額を算出",
+      suggestedRule: fundRoi < 100 ? "リスク係数を0.85倍に防御調整" : "プラスROI条件のみリスク係数を1.05倍まで許容",
+      reason: `総投資 ${round(totalInvestment, 0).toLocaleString("ja-JP")}円 / 総払戻 ${round(totalPayout, 0).toLocaleString("ja-JP")}円 / ROI ${fundRoi || 0}%`,
+      evidenceCount: sources.fundCurveRecords.length,
+      impactEstimate: fundRoi < 80 ? "高" : "中",
+    }));
+
+    const existing = currentSuggestions(storage);
+    const merged = candidates.map((item) => ({ ...item, ...(existing.find((saved) => saved.id === item.id) || {}), date: existing.find((saved) => saved.id === item.id)?.date || item.date }));
+    const withManual = [...merged, ...existing.filter((saved) => !merged.some((item) => item.id === saved.id))].slice(0, 100);
+    if (persist) writeJson(storage, STORAGE_KEY, withManual);
+    return withManual;
+  };
+  const summarizeSuggestions = ({ storage = window.localStorage } = {}) => {
+    const sources = loadSources(storage);
+    const suggestions = currentSuggestions(storage);
+    const report = latestWeaknessReport(sources, storage);
+    const conditions = new Set(suggestions.map((item) => `${item.targetArea}:${item.targetCondition}`));
+    const statusCount = (status) => suggestions.filter((item) => item.status === status).length;
+    return {
+      learningRaceCount: report?.sourceCounts?.mergedRaceCount || sources.raceDatabase.length || sources.productionResultValidationReports.length,
+      learnedConditionCount: conditions.size,
+      suggestionCount: suggestions.length,
+      adoptedCount: statusCount(STATUS.ADOPTED),
+      pendingCount: statusCount(STATUS.PENDING),
+      rejectedCount: statusCount(STATUS.REJECTED),
+      sourceCounts: {
+        raceDatabase: sources.raceDatabase.length,
+        weaknessAnalysisReports: sources.weaknessAnalysisReports.length,
+        productionResultValidationReports: sources.productionResultValidationReports.length,
+        fundCurveRecords: sources.fundCurveRecords.length,
+        selfEvolutionLogs: flattenSelfEvolutionLogs(sources.selfEvolutionLogs).length,
+      },
+    };
+  };
+  const updateSuggestionStatus = ({ id, status, memo = "", storage = window.localStorage } = {}) => {
+    const normalizedStatus = Object.values(STATUS).includes(status) ? status : STATUS.PENDING;
+    const next = currentSuggestions(storage).map((item) => item.id === id ? { ...item, status: normalizedStatus, memo: memo || item.memo || "", updatedAt: new Date().toISOString() } : item);
+    writeJson(storage, STORAGE_KEY, next);
+    return next.find((item) => item.id === id) || null;
+  };
+  const reflectAdoptedSuggestionsToSelfEvolutionLogs = ({ storage = window.localStorage } = {}) => {
+    const suggestions = currentSuggestions(storage).filter((item) => item.status === STATUS.ADOPTED);
+    const current = readJson(storage, "selfEvolutionLogs", { logs: { resultVerifications: [], backtests: [], improvementProposals: [], osUpdates: [], adoptedRules: [] } }) || {};
+    const logs = current.logs || { resultVerifications: [], backtests: [], improvementProposals: [], osUpdates: [], adoptedRules: [] };
+    const existing = asArray(logs.adoptedRules);
+    const additions = suggestions
+      .filter((item) => !existing.some((log) => log.sourceSuggestionId === item.id))
+      .map((item) => ({
+        id: `adopted-self-learning-${item.id}`,
+        date: new Date().toISOString(),
+        source: STORAGE_KEY,
+        sourceSuggestionId: item.id,
+        targetArea: item.targetArea,
+        targetCondition: item.targetCondition,
+        beforeRule: item.currentRule,
+        afterRule: item.suggestedRule,
+        reason: item.reason,
+        impactEstimate: item.impactEstimate,
+        status: "採用済み",
+        nextReflectionMemo: item.memo || "自己学習エンジン採用提案を次回補正値レビューへ反映",
+      }));
+    const next = { ...current, logs: { resultVerifications: asArray(logs.resultVerifications), backtests: asArray(logs.backtests), improvementProposals: asArray(logs.improvementProposals), osUpdates: asArray(logs.osUpdates), adoptedRules: [...additions, ...existing] } };
+    writeJson(storage, "selfEvolutionLogs", next);
+    writeJson(storage, "hashimoto-keiba-ai:self-evolution-logs:v1", next);
+    return additions;
+  };
+  window.HashimotoSelfLearningEngine = {
+    STORAGE_KEY,
+    SOURCE_KEYS,
+    STATUS,
+    loadSources,
+    buildSuggestions,
+    currentSuggestions,
+    summarizeSuggestions,
+    updateSuggestionStatus,
+    reflectAdoptedSuggestionsToSelfEvolutionLogs,
+  };
+})();
+
+
+(() => {
   const documentRef = window.document;
   const engine = window.HashimotoWeaknessAnalysisEngine;
   if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#weakness-analysis-panel")) return;
@@ -2931,6 +3160,69 @@
     render(false);
   });
   render(true);
+})();
+
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoSelfLearningEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#self-learning-engine-panel")) return;
+  const escapeHtml = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+  const suggestionBody = documentRef.querySelector("#self-learning-suggestion-body");
+  const statusText = documentRef.querySelector("#self-learning-status");
+  const sourceText = documentRef.querySelector("#self-learning-source-count");
+  const renderSummary = () => {
+    const summary = engine.summarizeSuggestions({ storage: window.localStorage });
+    const values = [summary.learningRaceCount, summary.learnedConditionCount, summary.suggestionCount, summary.adoptedCount, summary.pendingCount, summary.rejectedCount];
+    documentRef.querySelectorAll("#self-learning-summary strong").forEach((node, index) => { node.textContent = values[index] ?? 0; });
+    if (statusText) statusText.textContent = `提案 ${summary.suggestionCount}件 / 採用 ${summary.adoptedCount}件`;
+    if (sourceText) sourceText.textContent = `参照: raceDatabase ${summary.sourceCounts.raceDatabase}件 / weaknessAnalysisReports ${summary.sourceCounts.weaknessAnalysisReports}件 / productionResultValidationReports ${summary.sourceCounts.productionResultValidationReports}件 / fundCurveRecords ${summary.sourceCounts.fundCurveRecords}件 / selfEvolutionLogs ${summary.sourceCounts.selfEvolutionLogs}件 / 保存先 ${engine.STORAGE_KEY}`;
+    return summary;
+  };
+  const renderSuggestions = () => {
+    const suggestions = engine.currentSuggestions(window.localStorage);
+    if (suggestionBody) {
+      suggestionBody.innerHTML = suggestions.length ? suggestions.map((item) => `
+        <tr data-suggestion-id="${escapeHtml(item.id)}">
+          <td data-label="対象">${escapeHtml(item.targetArea)}<br><small>${escapeHtml(item.targetCondition)}</small></td>
+          <td data-label="現行ルール">${escapeHtml(item.currentRule)}</td>
+          <td data-label="提案ルール"><strong>${escapeHtml(item.suggestedRule)}</strong><br><small>${escapeHtml(item.reason)}</small></td>
+          <td data-label="証拠/影響">${escapeHtml(item.evidenceCount)}件<br><span class="badge badge--gold">${escapeHtml(item.impactEstimate)}</span></td>
+          <td data-label="状態"><select class="self-learning-status-select" aria-label="改善提案状態"><option value="採用"${item.status === "採用" ? " selected" : ""}>採用</option><option value="保留"${item.status === "保留" ? " selected" : ""}>保留</option><option value="却下"${item.status === "却下" ? " selected" : ""}>却下</option></select></td>
+          <td data-label="メモ"><textarea class="self-learning-memo" rows="2" placeholder="採用理由・保留理由">${escapeHtml(item.memo || "")}</textarea></td>
+        </tr>`).join("") : '<tr><td data-label="対象" colspan="6">改善提案はまだありません。「改善提案を自動生成」を押してください。</td></tr>';
+    }
+    renderSummary();
+    return suggestions;
+  };
+  const generate = () => {
+    const suggestions = engine.buildSuggestions({ storage: window.localStorage, persist: true });
+    renderSuggestions();
+    if (statusText) statusText.textContent = `改善提案を${suggestions.length}件生成し selfLearningSuggestions へ保存しました`;
+  };
+  documentRef.querySelector("#self-learning-generate")?.addEventListener("click", generate);
+  documentRef.querySelector("#self-learning-refresh")?.addEventListener("click", renderSuggestions);
+  documentRef.querySelector("#self-learning-reflect")?.addEventListener("click", () => {
+    const additions = engine.reflectAdoptedSuggestionsToSelfEvolutionLogs({ storage: window.localStorage });
+    if (statusText) statusText.textContent = `採用済み改善 ${additions.length}件を selfEvolutionLogs へ反映しました`;
+    renderSummary();
+  });
+  suggestionBody?.addEventListener("change", (event) => {
+    if (!event.target.classList.contains("self-learning-status-select")) return;
+    const row = event.target.closest("tr[data-suggestion-id]");
+    const memo = row?.querySelector(".self-learning-memo")?.value || "";
+    engine.updateSuggestionStatus({ id: row?.dataset.suggestionId, status: event.target.value, memo, storage: window.localStorage });
+    renderSummary();
+  });
+  suggestionBody?.addEventListener("blur", (event) => {
+    if (!event.target.classList.contains("self-learning-memo")) return;
+    const row = event.target.closest("tr[data-suggestion-id]");
+    const status = row?.querySelector(".self-learning-status-select")?.value || "保留";
+    engine.updateSuggestionStatus({ id: row?.dataset.suggestionId, status, memo: event.target.value, storage: window.localStorage });
+    renderSummary();
+  }, true);
+  if (!engine.currentSuggestions(window.localStorage).length) engine.buildSuggestions({ storage: window.localStorage, persist: true });
+  renderSuggestions();
 })();
 
 
