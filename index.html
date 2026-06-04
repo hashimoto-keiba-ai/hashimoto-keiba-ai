@@ -29,6 +29,7 @@
         </a>
         <div class="nav-links">
           <a href="#command-dashboard">司令塔</a>
+          <a href="#complete-integration-dashboard">完全統合</a>
           <a href="#production-operation-mode">本番運用モード</a>
           <a href="#race-database-panel">Race Database</a>
           <a href="#weakness-analysis-panel">AI弱点分析</a>
@@ -76,6 +77,7 @@
 
         <div class="operation-launcher" aria-label="実運用モード操作メニュー">
           <a href="#command-dashboard"><span>①</span>総合司令塔UI</a>
+          <a href="#complete-integration-dashboard"><span>㉕</span>完全統合ダッシュボード</a>
           <a href="#today-races"><span>②</span>今日のレース一覧</a>
           <a href="#real-data-entry"><span>③</span>実データ入力フォーム</a>
           <a href="#result-csv-import"><span>③-2</span>結果CSV取込</a>
@@ -155,6 +157,57 @@
       </section>
 
 
+
+
+      <section id="complete-integration-dashboard" class="complete-dashboard-card card card--wide card--featured" aria-label="Phase7-1 完全統合ダッシュボード">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE7-1 COMPLETE INTEGRATION COMMAND DASHBOARD</p>
+              <h2>完全統合ダッシュボード</h2>
+              <p class="card__lead">全AI機能・本番運用・自己学習・資金管理・バックアップを1画面に統合した橋本競馬AIの最終司令塔です。</p>
+            </div>
+            <span id="complete-dashboard-status" class="status-pill status-pill--live">統合集計待機</span>
+          </div>
+
+          <div class="complete-dashboard-summary" aria-label="本日の統合サマリー">
+            <article><span>本日の勝負レース数</span><strong id="complete-dashboard-battle-count">0</strong><small>勝負レース選定AI</small></article>
+            <article><span>神レース数</span><strong id="complete-dashboard-god-count">0</strong><small>資金集中候補</small></article>
+            <article><span>見送りレース数</span><strong id="complete-dashboard-skip-count">0</strong><small>リスク回避候補</small></article>
+            <article><span>推奨総投資額</span><strong id="complete-dashboard-investment">0円</strong><small>AI資金管理連動</small></article>
+            <article><span>想定ROI</span><strong id="complete-dashboard-roi">0%</strong><small>ROI最適化AI連動</small></article>
+            <article><span>AI運用スコア</span><strong id="complete-dashboard-ai-score">0</strong><small>統合100点評価</small></article>
+            <article><span>本番運用ステータス</span><strong id="complete-dashboard-production-status">開発/待機</strong><small>productionOperationMode</small></article>
+          </div>
+
+          <div class="complete-dashboard-actions" aria-label="ワンクリック実行ショートカット">
+            <button class="button button--primary" type="button" data-complete-dashboard-action="input">本番レース入力</button>
+            <button class="button button--ghost" type="button" data-complete-dashboard-action="bulk">AI一括実行</button>
+            <button class="button button--ghost" type="button" data-complete-dashboard-action="tickets">買い目生成</button>
+            <button class="button button--ghost" type="button" data-complete-dashboard-action="funds">資金配分</button>
+            <button class="button button--ghost" type="button" data-complete-dashboard-action="validation">結果検証</button>
+            <button class="button button--ghost" type="button" data-complete-dashboard-action="learning">自己学習</button>
+            <button class="button button--ghost" type="button" data-complete-dashboard-action="backup">バックアップ</button>
+            <button id="complete-dashboard-refresh" class="button button--primary" type="button">統合再集計</button>
+          </div>
+
+          <ol id="complete-dashboard-status-flow" class="complete-dashboard-status-flow" aria-label="本番運用ステータスバー">
+            <li>入力</li><li>AI分析</li><li>買い目</li><li>投資判断</li><li>結果検証</li><li>自己学習</li><li>バックアップ</li>
+          </ol>
+
+          <div class="complete-dashboard-layout">
+            <section class="complete-dashboard-panel">
+              <h3>AIモジュール状態一覧</h3>
+              <ul id="complete-dashboard-module-list" class="complete-dashboard-module-list"></ul>
+            </section>
+            <section class="complete-dashboard-panel">
+              <h3>今日の最重要カード</h3>
+              <div id="complete-dashboard-important-cards" class="complete-dashboard-important-cards"></div>
+            </section>
+          </div>
+          <p id="complete-dashboard-source-keys" class="complete-dashboard-source-keys">参照: productionRaceEntries / productionRunReports / raceDatabase / raceSelectionReports / fundManagementReports / roiOptimizationReports / weaknessAnalysisReports / selfLearningSuggestions / courseEvolutionReports / fundCurveRecords / productionOperationLogs</p>
+        </div>
+      </section>
 
       <section id="production-operation-mode" class="production-operation-card card card--wide card--featured" aria-label="Phase5-1 本番運用モード完成版">
         <div class="card__body">
