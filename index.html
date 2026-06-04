@@ -30,6 +30,7 @@
         <div class="nav-links">
           <a href="#command-dashboard">司令塔</a>
           <a href="#production-operation-mode">本番運用モード</a>
+          <a href="#race-database-panel">Race Database</a>
           <a href="#today-races">今日のレース</a>
           <a href="#real-data-entry">実データ入力</a>
           <a href="#result-csv-import">結果CSV取込</a>
@@ -90,6 +91,7 @@
           <a href="#pages-publish-check"><span>⑱</span>Pages公開チェック</a>
           <a href="#operation-readiness-checklist"><span>⑲</span>実戦運用チェック</a>
           <a href="#production-operation-mode"><span>⑳</span>本番運用モード完成版</a>
+          <a href="#race-database-panel"><span>㉑</span>Race Database</a>
         </div>
 
         <section class="production-mode-switch" aria-label="本番運用モードスイッチ">
@@ -296,6 +298,47 @@
                 </table>
               </div>
             </section>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="race-database-panel" class="race-database-card card card--wide card--featured" aria-label="Phase5-5 Race Databaseパネル">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE5-5 RACE DATABASE</p>
+              <h2>Race Databaseパネル</h2>
+              <p class="card__lead">本番運用したレースを localStorage の <code>raceDatabase</code> に永続保存し、競馬場・距離・馬場・期間で検索できます。</p>
+            </div>
+            <span id="race-database-count" class="status-pill status-pill--live">0件表示</span>
+          </div>
+
+          <form id="race-database-search-form" class="race-database-search" aria-label="Race Database検索">
+            <label><span>競馬場</span><input name="course" type="text" placeholder="東京競馬場" /></label>
+            <label><span>距離</span><input name="distance" type="number" min="0" step="100" placeholder="1600" /></label>
+            <label><span>馬場</span><select name="going"><option value="">すべて</option><option>良</option><option>稍重</option><option>重</option><option>不良</option></select></label>
+            <label><span>期間From</span><input name="from" type="date" /></label>
+            <label><span>期間To</span><input name="to" type="date" /></label>
+            <div class="race-database-actions">
+              <button class="button button--primary" type="submit">検索</button>
+              <button id="race-database-reset" class="button button--ghost" type="reset">解除</button>
+            </div>
+          </form>
+
+          <div class="table-wrap race-database-table">
+            <table class="data-table data-table--compact">
+              <thead>
+                <tr>
+                  <th scope="col">開催日</th><th scope="col">競馬場</th><th scope="col">R</th><th scope="col">レース名</th><th scope="col">距離/馬場</th>
+                  <th scope="col">AI指数TOP3</th><th scope="col">神穴TOP3</th><th scope="col">危険人気馬TOP3</th><th scope="col">三連単候補</th>
+                  <th scope="col">結果</th><th scope="col">ROI</th><th scope="col">神レース判定</th>
+                </tr>
+              </thead>
+              <tbody id="race-database-body">
+                <tr><td data-label="開催日" colspan="12">実戦レースデータはまだありません。</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
