@@ -46,6 +46,7 @@
           <a href="#roi-dashboard">回収率</a>
           <a href="#performance-dashboard">総合パフォーマンス</a>
           <a href="#roi-optimization-panel">ROI最適化AI</a>
+          <a href="#race-selection-ai-panel">勝負レース選定AI</a>
           <a href="#result-verification">結果検証</a>
           <a href="#result-log-list">検証ログ</a>
           <a href="#ai-backtest-lab">AI精度テスト</a>
@@ -85,6 +86,8 @@
           <a href="#win5-ai-screen"><span>⑨</span>WIN5自動生成</a>
           <a href="#roi-dashboard"><span>⑩</span>回収率ダッシュボード</a>
           <a href="#performance-dashboard"><span>⑩-2</span>総合パフォーマンス</a>
+          <a href="#roi-optimization-panel"><span>⑩-3</span>ROI最適化AI</a>
+          <a href="#race-selection-ai-panel"><span>⑩-4</span>勝負レース選定AI</a>
           <a href="#result-verification"><span>⑪</span>結果検証フォーム</a>
           <a href="#result-log-list"><span>⑫</span>最新結果検証ログ</a>
           <a href="#ai-backtest-lab"><span>⑬</span>AI精度テスト・バックテスト</a>
@@ -671,6 +674,64 @@
           </div>
         </div>
       </section>
+
+      <section id="race-selection-ai-panel" class="race-selection-ai-card card card--wide card--featured" aria-label="Phase6-5 勝負レース選定AIパネル">
+        <div class="card__body">
+          <div class="card-heading">
+            <div>
+              <p class="card__kicker">PHASE6-5 RACE SELECTION AI</p>
+              <h2>勝負レース選定AI（神レース強化版）</h2>
+              <p class="card__lead">全レースのAI指数信頼度・神穴指数・危険人気馬指数・ROI期待値・EV・コース別ROI・自己進化学習結果・神レース成功率・資金配分AIを統合し、資金を集中すべきレースを自動判定します。</p>
+            </div>
+            <span id="race-selection-status" class="status-pill status-pill--live">選定待機</span>
+          </div>
+
+          <div class="race-selection-summary" aria-label="勝負レース選定サマリー">
+            <article><span>本日の神レースTOP10</span><strong id="race-selection-god-count">0</strong><small>資金集中候補</small></article>
+            <article><span>本日の勝負レースTOP10</span><strong id="race-selection-battle-count">0</strong><small>通常購入以上</small></article>
+            <article><span>本日の見送りレースTOP10</span><strong id="race-selection-skip-count">0</strong><small>資金温存候補</small></article>
+            <article><span>最高スコア</span><strong id="race-selection-top-score">0</strong><small>0〜100点</small></article>
+          </div>
+
+          <div class="race-selection-layout">
+            <section class="race-selection-list-panel">
+              <h3>本日の神レースTOP10</h3>
+              <ol id="race-selection-god-list" class="race-selection-list"></ol>
+            </section>
+            <section class="race-selection-list-panel">
+              <h3>本日の勝負レースTOP10</h3>
+              <ol id="race-selection-battle-list" class="race-selection-list"></ol>
+            </section>
+            <section class="race-selection-list-panel race-selection-list-panel--skip">
+              <h3>本日の見送りレースTOP10</h3>
+              <ol id="race-selection-skip-list" class="race-selection-list"></ol>
+            </section>
+          </div>
+
+          <div class="race-selection-score-example" aria-label="勝負レーススコア表示例">
+            <article><span>中京11R</span><small>勝負レーススコア</small><strong>93</strong></article>
+            <article><span>東京10R</span><small>勝負レーススコア</small><strong>41</strong></article>
+          </div>
+
+          <div class="table-wrap race-selection-ranking-table">
+            <table class="data-table data-table--compact">
+              <thead>
+                <tr><th scope="col">順位</th><th scope="col">競馬場</th><th scope="col">R</th><th scope="col">スコア</th><th scope="col">分類</th><th scope="col">推奨</th><th scope="col">主な判定材料</th></tr>
+              </thead>
+              <tbody id="race-selection-ranking-body">
+                <tr><td data-label="順位" colspan="7">最新データからランキングを生成してください。</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="race-selection-actions">
+            <p id="race-selection-source-count">保存キー: raceSelectionReports / dailyRaceRankings</p>
+            <button id="race-selection-refresh" class="button button--ghost" type="button">ランキング再生成</button>
+            <button id="race-selection-export" class="button button--primary" type="button">勝負レース選定JSON出力</button>
+          </div>
+        </div>
+      </section>
+
 
       <section class="device-command-ui" aria-label="iPad・スマホ専用クイックUI">
         <aside class="device-race-rail" aria-label="iPad左カラム レース一覧">

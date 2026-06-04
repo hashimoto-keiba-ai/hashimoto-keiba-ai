@@ -5761,3 +5761,311 @@
   renderOperationLogs();
   renderRaceDatabase();
 })();
+
+(() => {
+  const REPORT_STORAGE_KEY = "raceSelectionReports";
+  const RANKING_STORAGE_KEY = "dailyRaceRankings";
+  const MAX_STORED_REPORTS = 50;
+  const SOURCE_KEYS = ["productionRunReports", "raceDatabase", "predictions", "raceEntries", "fundAllocationResults", "godRaceJudgementResults", "roiOptimizationReports", "selfLearningSuggestions", "courseEvolutionReports", "productionResultValidationReports"];
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, toNumber(value, min)));
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const text = (value, fallback = "未設定") => String(value ?? "").trim() || fallback;
+  const normalizeCourse = (value) => text(value, "").replace(/競馬場/g, "");
+  const todayString = () => new Date().toISOString().slice(0, 10);
+  const readJson = (storage, key, fallback) => {
+    try {
+      const raw = storage?.getItem?.(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const writeJson = (storage, key, value) => {
+    storage?.setItem?.(key, JSON.stringify(value));
+    return value;
+  };
+  const safeClone = (value) => value == null ? value : JSON.parse(JSON.stringify(value));
+  const raceKey = (race = {}) => [race.date || todayString(), normalizeCourse(race.course || race.racecourse), race.raceNumber || race.r || "?"].join("|");
+  const formatRaceLabel = (race = {}) => `${normalizeCourse(race.course || race.racecourse) || "未設定"}${race.raceNumber || race.r || "?"}R`;
+
+  const flattenCapitalItems = (capital = {}) => {
+    const payload = capital || {};
+    return Object.values(payload.ticketGroups || {}).flat().concat(asArray(payload.trifecta), asArray(payload.win5), asArray(payload.win), asArray(payload.place), asArray(payload.quinella), asArray(payload.wide));
+  };
+  const extractRace = (item = {}) => item.race || item.raceBasicInfo || item.summary?.race || item.productionPayload?.race || item.predictionPayload?.race || item;
+  const extractHorses = (item = {}) => asArray(item.horses)
+    .concat(asArray(item.aiIndexRanking), asArray(item.kamianaRanking), asArray(item.dangerPopularRanking))
+    .concat(asArray(item.productionPayload?.horses), asArray(item.productionPayload?.aiIndexRanking), asArray(item.productionPayload?.kamianaRanking), asArray(item.productionPayload?.dangerPopularRanking))
+    .filter((horse, index, horses) => horse && (horse.name || horse.number) && horses.findIndex((target) => (target.number || target.name) === (horse.number || horse.name)) === index);
+  const extractEvRanking = (item = {}) => asArray(item.ev?.evRanking || item.evRanking || item.productionPayload?.ev?.evRanking || item.predictionPayload?.evRanking || item.evTop);
+  const extractCapital = (item = {}) => item.capital || item.capitalPayload || item.productionPayload?.capital || item.predictionPayload?.capital || null;
+  const extractGodRace = (item = {}) => item.godRace || item.godRaceJudgement || item.productionPayload?.godRace || item.predictionPayload?.godRace || null;
+
+  const buildCourseStats = (records = []) => {
+    const buckets = new Map();
+    records.forEach((record) => {
+      const race = extractRace(record);
+      const course = normalizeCourse(race.course || record.course || record.racecourse);
+      if (!course) return;
+      const investment = toNumber(record.investment ?? record.totalInvestment ?? record.stake, 0);
+      const payout = toNumber(record.payout ?? record.returnAmount, 0);
+      const godTarget = /神|勝負|S|A/.test(text(record.godRaceJudgement?.label || record.godRace?.label || record.classification || ""));
+      const godSuccess = Boolean(record.godRaceSuccess || record.judgements?.godRaceSuccess || (godTarget && payout > investment && investment > 0));
+      const bucket = buckets.get(course) || { course, races: 0, investment: 0, payout: 0, godTargets: 0, godSuccess: 0 };
+      bucket.races += 1;
+      bucket.investment += investment;
+      bucket.payout += payout;
+      if (godTarget) bucket.godTargets += 1;
+      if (godSuccess) bucket.godSuccess += 1;
+      buckets.set(course, bucket);
+    });
+    return Object.fromEntries(Array.from(buckets.values()).map((bucket) => [bucket.course, {
+      ...bucket,
+      roi: bucket.investment > 0 ? round((bucket.payout / bucket.investment) * 100, 1) : 100,
+      godRaceSuccessRate: bucket.godTargets > 0 ? round((bucket.godSuccess / bucket.godTargets) * 100, 1) : 50,
+    }]));
+  };
+
+  const collectRaceCandidates = (storage = window.localStorage) => {
+    const productionRunReports = asArray(readJson(storage, "productionRunReports", []));
+    const raceDatabase = asArray(readJson(storage, "raceDatabase", []));
+    const predictions = asArray(readJson(storage, "predictions", []));
+    const raceEntries = asArray(readJson(storage, "raceEntries", []));
+    const candidates = [];
+    productionRunReports.forEach((report) => candidates.push({ source: "productionRunReports", raw: report, race: extractRace(report), horses: extractHorses(report), evRanking: extractEvRanking(report), capital: extractCapital(report), godRace: extractGodRace(report) }));
+    predictions.forEach((record) => candidates.push({ source: "predictions", raw: record, race: extractRace(record), horses: extractHorses(record), evRanking: extractEvRanking(record), capital: extractCapital(record), godRace: extractGodRace(record) }));
+    raceDatabase.forEach((record) => candidates.push({ source: "raceDatabase", raw: record, race: extractRace(record), horses: extractHorses(record), evRanking: extractEvRanking(record), capital: extractCapital(record), godRace: extractGodRace(record) }));
+    raceEntries.forEach((record) => candidates.push({ source: "raceEntries", raw: record, race: extractRace(record), horses: extractHorses(record), evRanking: extractEvRanking(record), capital: extractCapital(record), godRace: extractGodRace(record) }));
+    const merged = new Map();
+    candidates.forEach((candidate) => {
+      const race = extractRace(candidate.race);
+      const key = raceKey(race);
+      const current = merged.get(key) || { ...candidate, race: { ...race }, horses: [], evRanking: [], sources: [] };
+      current.horses = extractHorses(current).concat(candidate.horses || []).filter((horse, index, horses) => horse && (horse.name || horse.number) && horses.findIndex((target) => (target.number || target.name) === (horse.number || horse.name)) === index);
+      current.evRanking = asArray(current.evRanking).concat(asArray(candidate.evRanking)).sort((a, b) => toNumber(b.ev) - toNumber(a.ev));
+      current.capital = candidate.capital || current.capital;
+      current.godRace = candidate.godRace || current.godRace;
+      current.raw = candidate.raw || current.raw;
+      current.sources = Array.from(new Set([...current.sources, candidate.source]));
+      merged.set(key, current);
+    });
+    return Array.from(merged.values()).filter((candidate) => candidate.race?.course || candidate.race?.racecourse || candidate.race?.raceNumber || candidate.horses.length || candidate.evRanking.length);
+  };
+
+  const calculateAiConfidence = (horses = []) => {
+    const values = asArray(horses).map((horse) => toNumber(horse.aiIndex, NaN)).filter(Number.isFinite).sort((a, b) => b - a);
+    if (!values.length) return 50;
+    const topAverage = values.slice(0, 3).reduce((sum, value) => sum + value, 0) / Math.min(3, values.length);
+    const gap = values.length > 1 ? values[0] - values[1] : 8;
+    return clamp(topAverage * 0.74 + gap * 2.2 + (values.length >= 8 ? 4 : 0));
+  };
+  const calculateKamianaPower = (horses = []) => {
+    const candidates = asArray(horses).filter((horse) => toNumber(horse.dangerIndex) < 75).map((horse) => toNumber(horse.kamianaIndex, 0)).sort((a, b) => b - a);
+    return candidates.length ? clamp(candidates[0] * 0.78 + (candidates[1] || 0) * 0.18 + Math.min(8, candidates.length)) : 45;
+  };
+  const calculateDangerSafety = (horses = []) => {
+    const popularDanger = asArray(horses).filter((horse) => toNumber(horse.popularity, 99) <= 5).map((horse) => toNumber(horse.dangerIndex, 0));
+    const maxDanger = popularDanger.length ? Math.max(...popularDanger) : 45;
+    const dangerCount = popularDanger.filter((value) => value >= 75).length;
+    return clamp(100 - maxDanger * 0.78 - dangerCount * 8);
+  };
+  const calculateCapitalScore = (capital = {}) => {
+    const payload = capital || {};
+    const items = flattenCapitalItems(payload);
+    const totalRecommended = toNumber(payload.summary?.totalRecommended, items.reduce((sum, item) => sum + toNumber(item.recommendedAmount), 0));
+    const strong = toNumber(payload.summary?.strongCount, items.filter((item) => item.decision === "strong" || item.decisionLabel === "強勝負").length);
+    const normal = toNumber(payload.summary?.normalCount, items.filter((item) => item.decision === "normal" || item.decisionLabel === "通常勝負").length);
+    const skip = toNumber(payload.summary?.skipCount, items.filter((item) => item.decision === "skip" || item.decisionLabel === "見送り").length);
+    return clamp(45 + strong * 14 + normal * 6 + Math.min(18, totalRecommended / 800) - skip * 1.4);
+  };
+  const calculateSelfEvolutionScore = (storage = window.localStorage, course = "") => {
+    const suggestions = asArray(readJson(storage, "selfLearningSuggestions", []));
+    const courseReports = asArray(readJson(storage, "courseEvolutionReports", []));
+    const adopted = suggestions.filter((item) => /採用|反映|完了/.test(text(item.status))).length;
+    const courseMatch = courseReports.find((item) => normalizeCourse(item.course || item.racecourse || item.label) === normalizeCourse(course));
+    return clamp(50 + adopted * 3 + toNumber(courseMatch?.metrics?.roiScore ?? courseMatch?.score, 0) * 0.25 + (courseMatch ? 8 : 0));
+  };
+
+  const classifyRace = (score, components = {}) => {
+    if (score >= 88 && components.dangerSafety >= 45 && components.ev >= 65) return { classification: "神レース", recommendation: "資金集中" };
+    if (score >= 75) return { classification: "勝負レース", recommendation: "通常購入" };
+    if (score >= 62) return { classification: "回収レース", recommendation: "少額購入" };
+    if (score >= 48) return { classification: "観測レース", recommendation: "少額購入" };
+    return { classification: "見送りレース", recommendation: "見送り" };
+  };
+
+  const scoreRace = (candidate = {}, context = {}) => {
+    const race = extractRace(candidate.race || candidate.raw || {});
+    const course = normalizeCourse(race.course || candidate.raw?.course || candidate.raw?.racecourse);
+    const horses = candidate.horses?.length ? candidate.horses : extractHorses(candidate.raw || candidate);
+    const evRanking = candidate.evRanking?.length ? candidate.evRanking : extractEvRanking(candidate.raw || candidate);
+    const topEv = toNumber(evRanking[0]?.ev ?? candidate.raw?.ev ?? candidate.raw?.topEV, 100);
+    const avgEv = evRanking.length ? evRanking.slice(0, 3).reduce((sum, item) => sum + toNumber(item.ev), 0) / Math.min(3, evRanking.length) : topEv;
+    const courseStats = context.courseStats?.[course] || { roi: 100, godRaceSuccessRate: 50 };
+    const roiExpected = toNumber(candidate.raw?.roiExpected ?? candidate.raw?.roi ?? candidate.godRace?.metrics?.roi, courseStats.roi - 100);
+    const components = {
+      aiConfidence: calculateAiConfidence(horses),
+      kamianaPower: calculateKamianaPower(horses),
+      dangerSafety: calculateDangerSafety(horses),
+      roiExpectation: clamp(50 + roiExpected * 0.55 + (courseStats.roi - 100) * 0.25),
+      ev: clamp(avgEv * 0.55 + topEv * 0.22),
+      courseRoi: clamp(50 + (courseStats.roi - 100) * 0.6),
+      selfEvolution: calculateSelfEvolutionScore(context.storage, course),
+      godRaceSuccess: clamp(courseStats.godRaceSuccessRate),
+      capital: calculateCapitalScore(candidate.capital),
+    };
+    const score = round(
+      components.aiConfidence * 0.15
+      + components.kamianaPower * 0.12
+      + components.dangerSafety * 0.13
+      + components.roiExpectation * 0.12
+      + components.ev * 0.16
+      + components.courseRoi * 0.08
+      + components.selfEvolution * 0.08
+      + components.godRaceSuccess * 0.08
+      + components.capital * 0.18,
+      1,
+    );
+    const judgement = classifyRace(score, components);
+    return {
+      id: raceKey(race),
+      generatedAt: context.generatedAt || new Date().toISOString(),
+      date: race.date || context.date || todayString(),
+      course: course || "未設定",
+      raceNumber: race.raceNumber || race.r || "?",
+      raceName: race.raceName || race.name || candidate.raw?.raceName || "",
+      raceLabel: formatRaceLabel({ ...race, course }),
+      score: clamp(score),
+      battleRaceScore: clamp(score),
+      classification: judgement.classification,
+      recommendation: judgement.recommendation,
+      components,
+      metrics: { topEv: round(topEv, 1), avgEv: round(avgEv, 1), courseRoi: courseStats.roi, godRaceSuccessRate: courseStats.godRaceSuccessRate, horseCount: horses.length },
+      reasons: [
+        `AI指数信頼度${round(components.aiConfidence, 1)}`,
+        `神穴${round(components.kamianaPower, 1)}`,
+        `危険安全度${round(components.dangerSafety, 1)}`,
+        `EV${round(topEv, 1)}`,
+        `コースROI${round(courseStats.roi, 1)}%`,
+        `資金配分AI${round(components.capital, 1)}`,
+      ],
+      sourceStorageKeys: candidate.sources || [candidate.source].filter(Boolean),
+    };
+  };
+
+  const buildRaceSelectionReport = ({ races = null, storage = window.localStorage, persist = false, date = todayString() } = {}) => {
+    const generatedAt = new Date().toISOString();
+    const raceDatabase = asArray(readJson(storage, "raceDatabase", []));
+    const validationReports = asArray(readJson(storage, "productionResultValidationReports", []));
+    const courseStats = buildCourseStats(raceDatabase.concat(validationReports));
+    const candidates = asArray(races).length ? asArray(races).map((race) => ({ source: "manual", raw: race, race: extractRace(race), horses: extractHorses(race), evRanking: extractEvRanking(race), capital: extractCapital(race), godRace: extractGodRace(race), sources: ["manual"] })) : collectRaceCandidates(storage);
+    const ranking = candidates.map((candidate) => scoreRace(candidate, { storage, generatedAt, date, courseStats })).sort((a, b) => b.score - a.score);
+    const report = {
+      id: `race-selection-${generatedAt.replace(/[:.]/g, "-")}`,
+      generatedAt,
+      date,
+      storageKeys: { reports: REPORT_STORAGE_KEY, rankings: RANKING_STORAGE_KEY },
+      sourceStorageKeys: SOURCE_KEYS,
+      summary: {
+        totalRaces: ranking.length,
+        godRaceCount: ranking.filter((item) => item.classification === "神レース").length,
+        battleRaceCount: ranking.filter((item) => item.classification === "勝負レース").length,
+        recoveryRaceCount: ranking.filter((item) => item.classification === "回収レース").length,
+        observationRaceCount: ranking.filter((item) => item.classification === "観測レース").length,
+        skipRaceCount: ranking.filter((item) => item.classification === "見送りレース").length,
+        topScore: ranking[0]?.score || 0,
+      },
+      top10: {
+        godRaces: ranking.filter((item) => item.classification === "神レース").slice(0, 10),
+        battleRaces: ranking.filter((item) => ["神レース", "勝負レース", "回収レース"].includes(item.classification)).slice(0, 10),
+        skipRaces: [...ranking].sort((a, b) => a.score - b.score).filter((item) => item.classification === "見送りレース" || item.recommendation === "見送り").slice(0, 10),
+      },
+      ranking,
+    };
+    if (persist) {
+      const reports = asArray(readJson(storage, REPORT_STORAGE_KEY, []));
+      writeJson(storage, REPORT_STORAGE_KEY, [report, ...reports].slice(0, MAX_STORED_REPORTS));
+      writeJson(storage, RANKING_STORAGE_KEY, { generatedAt, date, ranking });
+    }
+    return report;
+  };
+
+  const exportRaceSelectionJson = ({ storage = window.localStorage } = {}) => JSON.stringify(buildRaceSelectionReport({ storage, persist: true }), null, 2);
+
+  window.HashimotoRaceSelectionEngine = {
+    REPORT_STORAGE_KEY,
+    RANKING_STORAGE_KEY,
+    SOURCE_KEYS,
+    collectRaceCandidates,
+    buildCourseStats,
+    calculateAiConfidence,
+    calculateKamianaPower,
+    calculateDangerSafety,
+    calculateCapitalScore,
+    scoreRace,
+    classifyRace,
+    buildRaceSelectionReport,
+    exportRaceSelectionJson,
+  };
+})();
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoRaceSelectionEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#race-selection-ai-panel")) return;
+  const setText = (selector, value) => {
+    const target = documentRef.querySelector(selector);
+    if (target) target.textContent = value;
+  };
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+  const badgeClass = (classification = "") => classification === "神レース" ? "badge badge--gold" : classification === "見送りレース" ? "badge badge--danger" : "badge";
+  const renderList = (selector, items = []) => {
+    const target = documentRef.querySelector(selector);
+    if (!target) return;
+    target.innerHTML = items.length ? items.map((item) => `<li><strong>${escapeHtml(item.raceLabel)}</strong><span>${escapeHtml(item.classification)} / ${escapeHtml(item.recommendation)}</span><b>${escapeHtml(item.score)}</b></li>`).join("") : "<li>対象レースなし</li>";
+  };
+  const renderRanking = (ranking = []) => {
+    const body = documentRef.querySelector("#race-selection-ranking-body");
+    if (!body) return;
+    body.innerHTML = ranking.length ? ranking.slice(0, 20).map((item, index) => `
+      <tr>
+        <td data-label="順位">${index + 1}</td>
+        <td data-label="競馬場">${escapeHtml(item.course)}</td>
+        <td data-label="R">${escapeHtml(item.raceNumber)}R</td>
+        <td data-label="スコア"><strong>${escapeHtml(item.score)}</strong></td>
+        <td data-label="分類"><span class="${badgeClass(item.classification)}">${escapeHtml(item.classification)}</span></td>
+        <td data-label="推奨">${escapeHtml(item.recommendation)}</td>
+        <td data-label="主な判定材料">${escapeHtml(item.reasons.slice(0, 3).join(" / "))}</td>
+      </tr>`).join("") : '<tr><td data-label="順位" colspan="7">分析対象レースがありません。実データ入力または本番運用モードでレースを保存してください。</td></tr>';
+  };
+  const render = ({ persist = true } = {}) => {
+    const report = engine.buildRaceSelectionReport({ storage: window.localStorage, persist });
+    setText("#race-selection-status", `${report.summary.totalRaces}レース選定済み`);
+    setText("#race-selection-god-count", report.summary.godRaceCount);
+    setText("#race-selection-battle-count", report.top10.battleRaces.length);
+    setText("#race-selection-skip-count", report.summary.skipRaceCount);
+    setText("#race-selection-top-score", report.summary.topScore);
+    setText("#race-selection-source-count", `参照: ${report.sourceStorageKeys.join(" / ")} / 保存キー: ${engine.REPORT_STORAGE_KEY}, ${engine.RANKING_STORAGE_KEY}`);
+    renderList("#race-selection-god-list", report.top10.godRaces);
+    renderList("#race-selection-battle-list", report.top10.battleRaces);
+    renderList("#race-selection-skip-list", report.top10.skipRaces);
+    renderRanking(report.ranking);
+    return report;
+  };
+  const downloadReport = () => {
+    const report = render({ persist: true });
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = documentRef.createElement("a");
+    link.href = url;
+    link.download = `race-selection-${report.date || "today"}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setText("#race-selection-status", "JSONエクスポート完了");
+  };
+  documentRef.querySelector("#race-selection-refresh")?.addEventListener("click", () => render({ persist: true }));
+  documentRef.querySelector("#race-selection-export")?.addEventListener("click", downloadReport);
+  render({ persist: true });
+})();
