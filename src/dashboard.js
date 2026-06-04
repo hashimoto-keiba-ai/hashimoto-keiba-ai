@@ -6274,6 +6274,195 @@
   };
 })();
 
+
+
+(() => {
+  const REPORT_STORAGE_KEY = "completeIntegrationDashboardReports";
+  const SOURCE_KEYS = Object.freeze([
+    "productionRaceEntries",
+    "productionRunReports",
+    "raceDatabase",
+    "raceSelectionReports",
+    "fundManagementReports",
+    "roiOptimizationReports",
+    "weaknessAnalysisReports",
+    "selfLearningSuggestions",
+    "courseEvolutionReports",
+    "fundCurveRecords",
+    "productionOperationLogs",
+  ]);
+  const MODULE_DEFINITIONS = Object.freeze([
+    { key: "aiIndex", label: "AI指数", sources: ["productionRunReports", "raceDatabase"], patterns: [/AI指数|aiIndex|aiRanking|aiScores/i] },
+    { key: "kamiana", label: "神穴", sources: ["productionRunReports", "raceDatabase"], patterns: [/神穴|kamiana|darkHorse/i] },
+    { key: "dangerPopular", label: "危険人気馬", sources: ["productionRunReports", "raceDatabase"], patterns: [/危険人気馬|dangerPopular/i] },
+    { key: "trifecta", label: "三連単", sources: ["productionRunReports", "raceDatabase"], patterns: [/三連単|trifecta/i] },
+    { key: "win5", label: "WIN5", sources: ["productionRunReports", "raceDatabase"], patterns: [/WIN5|win5/i] },
+    { key: "simulator", label: "シミュレーター", sources: ["productionRunReports"], patterns: [/未来|シミュレーター|simulation|simulator/i] },
+    { key: "ev", label: "EV", sources: ["productionRunReports", "raceSelectionReports"], patterns: [/EV|expectedValue/i] },
+    { key: "fundAllocation", label: "資金配分", sources: ["productionRunReports", "fundManagementReports"], patterns: [/資金配分|capital|allocation/i] },
+    { key: "fundManagement", label: "資金管理", sources: ["fundManagementReports", "fundCurveRecords"], patterns: [/資金管理|fundManagement/i], sourceOnly: true },
+    { key: "godRace", label: "神レース", sources: ["raceSelectionReports", "productionRunReports"], patterns: [/神レース|godRace/i] },
+    { key: "selfLearning", label: "自己学習", sources: ["selfLearningSuggestions", "courseEvolutionReports"], patterns: [/自己学習|selfLearning|courseEvolution/i], sourceOnly: true },
+    { key: "roiOptimization", label: "ROI最適化", sources: ["roiOptimizationReports"], patterns: [/ROI最適化|roiOptimization/i], sourceOnly: true },
+    { key: "backup", label: "バックアップ", sources: ["productionOperationLogs"], patterns: [/バックアップ|backup|復元|restore/i] },
+  ]);
+  const STATUS_LABELS = Object.freeze({ running: "稼働中", review: "要確認", idle: "未実行", error: "エラー" });
+  const STATUS_SCORE = Object.freeze({ running: 100, review: 62, idle: 28, error: 0 });
+
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 1) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const compactText = (value, fallback = "未設定") => String(value ?? "").trim() || fallback;
+  const safeParse = (raw, fallback = null) => {
+    try { return raw ? JSON.parse(raw) : fallback; } catch (_) { return fallback; }
+  };
+  const readJson = (storage, key, fallback) => safeParse(storage?.getItem?.(key), fallback);
+  const normalizeList = (value) => Array.isArray(value) ? value : asArray(value?.reports || value?.records || value?.ranking || value?.items || value?.logs);
+  const latest = (items = []) => asArray(items)[0] || null;
+  const includesError = (item) => /エラー|失敗|error|failed/i.test(JSON.stringify(item || {}));
+  const includesReview = (item) => /要確認|警告|保留|pending|review|warning/i.test(JSON.stringify(item || {}));
+  const includesPattern = (item, patterns = []) => patterns.some((pattern) => pattern.test(JSON.stringify(item || {})));
+  const formatRaceLabel = (item = {}) => {
+    const race = item.race || item.result || item.payload?.race || {};
+    const course = item.course || item.racecourse || race.course || race.racecourse || "未設定";
+    const number = item.raceNumber || race.raceNumber || item.r || race.r || "?";
+    const name = item.raceName || race.raceName || race.name || item.name || "";
+    return `${course}${number}R${name ? ` ${name}` : ""}`;
+  };
+  const investmentOf = (item = {}) => toNumber(item.suggestedStake ?? item.recommendedStake ?? item.recommendedAmount ?? item.investment ?? item.stake ?? item.totalInvestment ?? item.amount, 0);
+  const roiOf = (item = {}) => toNumber(item.roi ?? item.totalRoi ?? item.metrics?.total?.roi ?? item.metrics?.totalRoi ?? item.summary?.roi, 0);
+  const scoreOf = (item = {}) => toNumber(item.score ?? item.godRaceScore ?? item.battleScore ?? item.aiOperationScore ?? item.summary?.score, 0);
+  const evOf = (item = {}) => toNumber(item.ev ?? item.expectedValue ?? item.maxEv ?? item.evScore, 0);
+
+  const loadSources = (storage = window.localStorage) => Object.fromEntries(SOURCE_KEYS.map((key) => [key, normalizeList(readJson(storage, key, []))]));
+
+  const collectRaceSelectionRanking = (sources = {}, storage = window.localStorage) => {
+    const reportRanking = asArray(latest(sources.raceSelectionReports)?.ranking);
+    const fallback = asArray(readJson(storage, "dailyRaceRankings", [])?.ranking);
+    return (reportRanking.length ? reportRanking : fallback).map((item) => ({
+      ...item,
+      raceLabel: item.raceLabel || formatRaceLabel(item),
+      score: scoreOf(item),
+      recommendation: compactText(item.recommendation || item.classification || item.judgement, "未判定"),
+      investmentProposal: compactText(item.investmentProposal || item.proposal || item.recommendation, "未判定"),
+    }));
+  };
+
+  const flattenCandidates = (items, keys) => asArray(items).flatMap((item) => keys.flatMap((key) => asArray(key.split(".").reduce((acc, part) => acc?.[part], item))).map((candidate) => ({ ...candidate, sourceRace: item.race || item.payload?.race || item })));
+
+  const findTopCandidate = (items = [], scorer = scoreOf, fallbackLabel = "未実行") => {
+    const sorted = asArray(items).filter(Boolean).sort((a, b) => scorer(b) - scorer(a));
+    const top = sorted[0];
+    if (!top) return { label: fallbackLabel, value: "-", note: "対象データなし" };
+    return { label: top.raceLabel || formatRaceLabel(top.sourceRace || top), value: round(scorer(top), 1), note: top.horseName || top.name || top.notation || top.recommendation || top.reason || "最新localStorageから抽出" };
+  };
+
+  const calculateModuleStatuses = (sources = {}) => MODULE_DEFINITIONS.map((module) => {
+    const records = module.sources.flatMap((key) => asArray(sources[key]).map((item) => ({ item, key })));
+    if (!records.length) return { ...module, status: "idle", statusLabel: STATUS_LABELS.idle, sourceCount: 0, reason: "参照データなし" };
+    const matched = records.filter(({ item }) => includesPattern(item, module.patterns));
+    const targetRecords = matched.length ? matched : records;
+    if (module.sourceOnly && !matched.length && !targetRecords.some(({ item }) => includesError(item) || includesReview(item))) return { ...module, status: "running", statusLabel: STATUS_LABELS.running, sourceCount: targetRecords.length, reason: "保存データ稼働中" };
+    if (targetRecords.some(({ item }) => includesError(item))) return { ...module, status: "error", statusLabel: STATUS_LABELS.error, sourceCount: targetRecords.length, reason: "エラー/失敗ログを検出" };
+    if (!matched.length || targetRecords.some(({ item }) => includesReview(item))) return { ...module, status: "review", statusLabel: STATUS_LABELS.review, sourceCount: targetRecords.length, reason: matched.length ? "要確認ログを検出" : "データはあるが直接実行ログ未検出" };
+    return { ...module, status: "running", statusLabel: STATUS_LABELS.running, sourceCount: targetRecords.length, reason: "最新データ稼働中" };
+  });
+
+  const calculateOperationSteps = (sources = {}) => {
+    const logs = asArray(sources.productionOperationLogs);
+    const hasLog = (pattern) => logs.some((log) => pattern.test(`${log.operationType || ""} ${log.summary || ""}`));
+    return [
+      { key: "input", label: "入力", complete: sources.productionRaceEntries?.length > 0 || hasLog(/入力/) },
+      { key: "analysis", label: "AI分析", complete: sources.productionRunReports?.length > 0 || hasLog(/AI|分析|一括/) },
+      { key: "tickets", label: "買い目", complete: sources.productionRunReports?.some((item) => /三連単|WIN5|ticket|買い目/i.test(JSON.stringify(item))) || hasLog(/買い目/) },
+      { key: "investment", label: "投資判断", complete: sources.fundManagementReports?.length > 0 || hasLog(/資金|投資/) },
+      { key: "validation", label: "結果検証", complete: sources.raceDatabase?.some((item) => item.result || item.validation || item.payout !== undefined) || hasLog(/結果|検証/) },
+      { key: "learning", label: "自己学習", complete: sources.selfLearningSuggestions?.length > 0 || sources.courseEvolutionReports?.length > 0 || hasLog(/自己学習|進化/) },
+      { key: "backup", label: "バックアップ", complete: hasLog(/バックアップ|復元|backup/i) },
+    ].map((step, index, all) => ({ ...step, current: !step.complete && all.slice(0, index).every((s) => s.complete) }));
+  };
+
+  const calculateIntegratedScore = ({ moduleStatuses = [], summary = {}, steps = [] } = {}) => {
+    const moduleScore = moduleStatuses.length ? moduleStatuses.reduce((sum, item) => sum + STATUS_SCORE[item.status], 0) / moduleStatuses.length : 0;
+    const roiScore = Math.max(0, Math.min(100, toNumber(summary.expectedRoi, 0) - 50));
+    const raceScore = Math.min(100, toNumber(summary.battleRaceCount, 0) * 12 + toNumber(summary.godRaceCount, 0) * 8);
+    const flowScore = steps.length ? steps.filter((step) => step.complete).length / steps.length * 100 : 0;
+    return round(moduleScore * 0.45 + roiScore * 0.22 + raceScore * 0.13 + flowScore * 0.20, 1);
+  };
+
+  const buildCompleteIntegrationDashboardReport = ({ storage = window.localStorage } = {}) => {
+    const sources = loadSources(storage);
+    const ranking = collectRaceSelectionRanking(sources, storage);
+    const battleRaces = ranking.filter((race) => !/見送り|skip/i.test(race.recommendation) && race.score >= 70);
+    const godRaces = ranking.filter((race) => /神|資金集中|S/i.test(`${race.recommendation} ${race.investmentProposal}`) || race.score >= 88);
+    const skipRaces = ranking.filter((race) => /見送り|skip/i.test(`${race.recommendation} ${race.investmentProposal}`) || race.score < 48);
+    const latestFund = latest(sources.fundManagementReports) || {};
+    const raceProposals = asArray(latestFund.raceProposals || latestFund.recommendations || latestFund.races);
+    const recommendedStake = toNumber(latestFund.recommendation?.recommendedStake ?? latestFund.summary?.recommendedStake, 0) || raceProposals.reduce((sum, item) => sum + investmentOf(item), 0);
+    const latestRoi = latest(sources.roiOptimizationReports) || {};
+    const fallbackRoi = (() => {
+      const investment = asArray(sources.fundCurveRecords).reduce((sum, item) => sum + investmentOf(item), 0);
+      const payout = asArray(sources.fundCurveRecords).reduce((sum, item) => sum + toNumber(item.payout ?? item.payoutAmount, 0), 0);
+      return investment > 0 ? round((payout / investment) * 100, 1) : 0;
+    })();
+    const expectedRoi = roiOf(latestRoi) || roiOf(latestFund.summary || {}) || fallbackRoi;
+    const moduleStatuses = calculateModuleStatuses(sources);
+    const steps = calculateOperationSteps(sources);
+    const runReports = sources.productionRunReports;
+    const evCandidates = flattenCandidates(runReports, ["evRanking", "evRankings", "ev", "evCandidates", "summary.evTop"]);
+    const kamianaCandidates = flattenCandidates(runReports, ["kamianaRanking", "darkHorseRanking", "kamiana", "summary.kamianaTop"]);
+    const dangerCandidates = flattenCandidates(runReports, ["dangerRanking", "dangerPopularRanking", "dangerPopular", "summary.dangerTop"]);
+    const summary = {
+      battleRaceCount: battleRaces.length,
+      godRaceCount: godRaces.length,
+      skipRaceCount: skipRaces.length,
+      recommendedTotalInvestment: Math.round(recommendedStake),
+      expectedRoi: round(expectedRoi, 1),
+      productionStatus: compactText(readJson(storage, "productionOperationMode", "development"), "development"),
+    };
+    const aiOperationScore = calculateIntegratedScore({ moduleStatuses, summary, steps });
+    return {
+      id: `complete-integration-dashboard:${new Date().toISOString()}`,
+      generatedAt: new Date().toISOString(),
+      storageKey: REPORT_STORAGE_KEY,
+      sourceStorageKeys: SOURCE_KEYS,
+      summary: { ...summary, aiOperationScore },
+      moduleStatuses,
+      importantCards: {
+        bestBattleRace: findTopCandidate(battleRaces, scoreOf, "勝負レース未選定"),
+        maxEvRace: findTopCandidate([...evCandidates, ...ranking], (item) => evOf(item) || scoreOf(item), "EV未計算"),
+        maxKamiana: findTopCandidate(kamianaCandidates, scoreOf, "神穴未計算"),
+        maxDangerPopular: findTopCandidate(dangerCandidates, scoreOf, "危険人気馬未計算"),
+        maxInvestmentRace: findTopCandidate(raceProposals, investmentOf, "資金配分未計算"),
+        maxSkipRace: findTopCandidate(skipRaces, scoreOf, "見送りレース未選定"),
+      },
+      operationSteps: steps,
+      sourceCounts: Object.fromEntries(SOURCE_KEYS.map((key) => [key, asArray(sources[key]).length])),
+    };
+  };
+
+  const saveReport = (report, storage = window.localStorage) => {
+    if (!storage?.setItem) return [report];
+    const current = asArray(readJson(storage, REPORT_STORAGE_KEY, []));
+    const next = [report, ...current.filter((item) => item.id !== report.id)].slice(0, 30);
+    storage.setItem(REPORT_STORAGE_KEY, JSON.stringify(next));
+    return next;
+  };
+
+  window.HashimotoCompleteIntegrationDashboardEngine = {
+    REPORT_STORAGE_KEY,
+    SOURCE_KEYS,
+    MODULE_DEFINITIONS,
+    STATUS_LABELS,
+    loadSources,
+    calculateModuleStatuses,
+    calculateOperationSteps,
+    calculateIntegratedScore,
+    buildCompleteIntegrationDashboardReport,
+    saveReport,
+  };
+})();
+
 (() => {
   const documentRef = window.document;
   const engine = window.HashimotoFundManagementEngine;
@@ -6353,5 +6542,86 @@
   bankrollInput?.addEventListener("change", () => render({ persist: true }));
   modeInputs.forEach((input) => input.addEventListener("change", () => render({ persist: true })));
   applySavedSettings();
+  render({ persist: true });
+})();
+
+(() => {
+  const documentRef = window.document;
+  const engine = window.HashimotoCompleteIntegrationDashboardEngine;
+  if (!documentRef?.querySelector || !engine || !documentRef.querySelector("#complete-integration-dashboard")) return;
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+  const setText = (selector, value) => {
+    const target = documentRef.querySelector(selector);
+    if (target) target.textContent = value;
+  };
+  const yen = (value) => `${Math.round(Number(value || 0)).toLocaleString("ja-JP")}円`;
+  const statusClass = (status) => ({ running: "is-running", review: "is-review", idle: "is-idle", error: "is-error" }[status] || "is-idle");
+  const renderCards = (cards = {}) => {
+    const target = documentRef.querySelector("#complete-dashboard-important-cards");
+    if (!target) return;
+    const labels = {
+      bestBattleRace: "最有力勝負レース",
+      maxEvRace: "最大EVレース",
+      maxKamiana: "最大神穴候補",
+      maxDangerPopular: "最大危険人気馬",
+      maxInvestmentRace: "最大投資推奨レース",
+      maxSkipRace: "最大見送り推奨レース",
+    };
+    target.innerHTML = Object.entries(labels).map(([key, label]) => {
+      const card = cards[key] || {};
+      return `<article><span>${escapeHtml(label)}</span><strong>${escapeHtml(card.label || "未実行")}</strong><b>${escapeHtml(card.value ?? "-")}</b><small>${escapeHtml(card.note || "対象データなし")}</small></article>`;
+    }).join("");
+  };
+  const renderModules = (modules = []) => {
+    const target = documentRef.querySelector("#complete-dashboard-module-list");
+    if (!target) return;
+    target.innerHTML = modules.map((module) => `<li class="${statusClass(module.status)}"><strong>${escapeHtml(module.label)}</strong><span>${escapeHtml(module.statusLabel)}</span><small>${escapeHtml(module.reason)} / ${escapeHtml(module.sourceCount)}件</small></li>`).join("");
+  };
+  const renderSteps = (steps = []) => {
+    const target = documentRef.querySelector("#complete-dashboard-status-flow");
+    if (!target) return;
+    target.innerHTML = steps.map((step) => `<li class="${step.complete ? "is-complete" : step.current ? "is-current" : ""}">${escapeHtml(step.label)}</li>`).join("");
+  };
+  const renderSources = (counts = {}) => {
+    const target = documentRef.querySelector("#complete-dashboard-source-keys");
+    if (!target) return;
+    target.textContent = `参照: ${engine.SOURCE_KEYS.map((key) => `${key}:${counts[key] || 0}`).join(" / ")}`;
+  };
+  const render = ({ persist = true } = {}) => {
+    const report = engine.buildCompleteIntegrationDashboardReport({ storage: window.localStorage });
+    if (persist) engine.saveReport(report, window.localStorage);
+    setText("#complete-dashboard-battle-count", report.summary.battleRaceCount);
+    setText("#complete-dashboard-god-count", report.summary.godRaceCount);
+    setText("#complete-dashboard-skip-count", report.summary.skipRaceCount);
+    setText("#complete-dashboard-investment", yen(report.summary.recommendedTotalInvestment));
+    setText("#complete-dashboard-roi", `${report.summary.expectedRoi}%`);
+    setText("#complete-dashboard-ai-score", `${report.summary.aiOperationScore}`);
+    setText("#complete-dashboard-production-status", report.summary.productionStatus === "production" ? "本番運用" : report.summary.productionStatus === "test" ? "テスト運用" : "開発/待機");
+    setText("#complete-dashboard-status", `統合スコア ${report.summary.aiOperationScore} / 100`);
+    renderModules(report.moduleStatuses);
+    renderCards(report.importantCards);
+    renderSteps(report.operationSteps);
+    renderSources(report.sourceCounts);
+    return report;
+  };
+  const shortcuts = {
+    input: "#production-operation-mode",
+    bulk: "#production-operation-run-ai",
+    tickets: "#trifecta-generator",
+    funds: "#fund-management-panel",
+    validation: "#production-result-validation",
+    learning: "#self-learning-engine-panel",
+    backup: "#backup-restore",
+  };
+  documentRef.querySelectorAll("[data-complete-dashboard-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const selector = shortcuts[button.dataset.completeDashboardAction];
+      const target = selector ? documentRef.querySelector(selector) : null;
+      if (target?.click && target.tagName === "BUTTON") target.click();
+      (target || documentRef.querySelector("#complete-integration-dashboard"))?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+      render({ persist: true });
+    });
+  });
+  documentRef.querySelector("#complete-dashboard-refresh")?.addEventListener("click", () => render({ persist: true }));
   render({ persist: true });
 })();
