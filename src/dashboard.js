@@ -3161,3 +3161,318 @@
     window.addEventListener("load", runCheck, { once: true });
   }
 })();
+
+(() => {
+  const MODE_STORAGE_KEY = "productionOperationMode";
+  const SCORE_STORAGE_KEY = "productionOperationScores";
+  const BACKUP_LATEST_KEY = "productionOperationBackupLatest";
+  const DEFAULT_HORSES = [
+    { number: 1, name: "プロダクションワン", popularity: 1, odds: 2.4, jockey: "ルメール", trainer: "木村", runningStyle: "先行", training: "A" },
+    { number: 2, name: "カミアナスター", popularity: 8, odds: 24.5, jockey: "坂井", trainer: "矢作", runningStyle: "差し", training: "S" },
+    { number: 3, name: "デンジャー人気", popularity: 2, odds: 3.8, jockey: "新人", trainer: "田中", runningStyle: "追込", training: "C" },
+    { number: 4, name: "フロントランナー", popularity: 5, odds: 12.2, jockey: "横山武", trainer: "斎藤", runningStyle: "逃げ", training: "B" },
+    { number: 5, name: "ミドルホース", popularity: 4, odds: 9.1, jockey: "戸崎", trainer: "国枝", runningStyle: "自在", training: "B" },
+    { number: 6, name: "ロングショット", popularity: 10, odds: 41.0, jockey: "若手", trainer: "高橋", runningStyle: "追込", training: "A" },
+  ];
+  const FLOW_STEPS = ["input", "ai", "tickets", "investment", "result", "validation", "evolution", "backup"];
+  const MODE_LABELS = { development: "開発モード", test: "テストモード", production: "本番運用モード" };
+  const toNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const round = (value, digits = 0) => Math.round(toNumber(value) * (10 ** digits)) / (10 ** digits);
+  const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, toNumber(value)));
+  const safeParse = (raw, fallback = null) => {
+    try {
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  };
+  const readJson = (storage, key, fallback) => safeParse(storage?.getItem?.(key), fallback);
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const includesNumber = (items, number) => asArray(items).some((item) => String(item?.number ?? item?.horseNumber ?? item) === String(number));
+  const flattenTickets = (tickets = {}) => [
+    ...asArray(tickets.main),
+    ...asArray(tickets.attack),
+    ...asArray(tickets.jackpot),
+  ];
+  const flattenWin5 = (zones = {}) => Object.values(zones || {}).flatMap((items) => asArray(items));
+  const ticketText = (ticket = {}) => ticket.notation || [ticket.first, ticket.second, ticket.third].map((horse) => horse?.number ?? horse).filter(Boolean).join("→");
+
+  const calculateOperationScore = (input = {}) => {
+    const completion = clamp(input.completion ?? input.readiness ?? 0);
+    const roiScore = clamp(input.roi ?? 0);
+    const godRaceRate = clamp(input.godRaceRate ?? input.godRaceJudgementRate ?? 0);
+    const dangerPopularSuccessRate = clamp(input.dangerPopularSuccessRate ?? 0);
+    const kamianaSuccessRate = clamp(input.kamianaSuccessRate ?? 0);
+    const trifectaHitRate = clamp(input.trifectaHitRate ?? 0);
+    const total = round((completion * 0.28) + (roiScore * 0.22) + (godRaceRate * 0.14) + (dangerPopularSuccessRate * 0.12) + (kamianaSuccessRate * 0.12) + (trifectaHitRate * 0.12));
+    return {
+      completion,
+      roi: roiScore,
+      godRaceRate,
+      dangerPopularSuccessRate,
+      kamianaSuccessRate,
+      trifectaHitRate,
+      score: clamp(total),
+      judgement: judgeOperation(total),
+      calculatedAt: new Date().toISOString(),
+    };
+  };
+
+  const judgeOperation = (score) => {
+    const value = clamp(score);
+    if (value >= 90) return "完全運用";
+    if (value >= 70) return "実戦運用";
+    if (value >= 40) return "テスト運用";
+    return "準備中";
+  };
+
+  const deriveScoresFromStorage = (storage = window.localStorage) => {
+    const saved = readJson(storage, SCORE_STORAGE_KEY, null);
+    const readiness = asArray(readJson(storage, "productionReadinessAuditReports", [])).at(0);
+    const validationReports = asArray(readJson(storage, "productionResultValidationReports", []));
+    const runReports = asArray(readJson(storage, "productionRunReports", []));
+    const completion = toNumber(readiness?.completion?.percentage ?? readiness?.summary?.completionRate ?? saved?.completion, runReports.length ? 82 : 25);
+    const recent = validationReports.slice(0, 20);
+    const roiAverage = recent.length
+      ? recent.reduce((sum, item) => sum + toNumber(item.roi ?? item.summary?.roi), 0) / recent.length
+      : toNumber(saved?.roi, runReports.length ? 75 : 0);
+    const rate = (field) => recent.length ? (recent.filter((item) => item[field] || item.judgements?.[field]).length / recent.length) * 100 : toNumber(saved?.[field], 0);
+    return calculateOperationScore({
+      completion,
+      roi: Math.min(100, roiAverage),
+      godRaceRate: recent.length ? rate("godRaceHit") : toNumber(saved?.godRaceRate, runReports.length ? 80 : 0),
+      dangerPopularSuccessRate: rate("dangerPopularSuccess"),
+      kamianaSuccessRate: rate("kamianaHit"),
+      trifectaHitRate: rate("trifectaHit"),
+    });
+  };
+
+  const saveMode = (mode, storage = window.localStorage) => {
+    const normalized = MODE_LABELS[mode] ? mode : "development";
+    storage?.setItem?.(MODE_STORAGE_KEY, normalized);
+    return normalized;
+  };
+
+  const saveScores = (scores, storage = window.localStorage) => {
+    storage?.setItem?.(SCORE_STORAGE_KEY, JSON.stringify(scores));
+    return scores;
+  };
+
+  const buildValidationReport = ({ payload = {}, result = {} } = {}) => {
+    const tickets = flattenTickets(payload.trifecta?.tickets);
+    const win5Candidates = flattenWin5(payload.win5?.zones);
+    const topAi = payload.aiIndexRanking?.[0];
+    const topKamiana = payload.kamianaRanking?.[0];
+    const topDanger = payload.dangerPopularRanking?.[0];
+    const firstNumber = String(result.firstNumber || "");
+    const top3 = [result.firstNumber, result.secondNumber, result.thirdNumber].map((value) => String(value || ""));
+    const trifectaHit = tickets.some((ticket) => [ticket.first, ticket.second, ticket.third].map((horse) => String(horse?.number ?? horse)).join("-") === top3.join("-"));
+    const investment = toNumber(result.investment, 0);
+    const payout = toNumber(result.payout, 0);
+    const roi = investment > 0 ? round((payout / investment) * 100, 1) : 0;
+    return {
+      id: `production-operation-validation-${Date.now()}`,
+      generatedAt: new Date().toISOString(),
+      race: payload.race || {},
+      result,
+      investment,
+      payout,
+      roi,
+      topAiHit: String(topAi?.number || "") === firstNumber,
+      kamianaHit: includesNumber([topKamiana], result.firstNumber) || includesNumber([topKamiana], result.secondNumber) || includesNumber([topKamiana], result.thirdNumber),
+      dangerPopularSuccess: topDanger ? !top3.includes(String(topDanger.number)) : false,
+      trifectaHit,
+      win5Hit: includesNumber(win5Candidates, result.firstNumber),
+      godRaceHit: Boolean(payload.godRace?.skip === false && roi >= 100),
+      summary: `ROI ${roi}% / 三連単${trifectaHit ? "的中" : "不的中"} / 神穴${topKamiana?.name || "未判定"}`,
+    };
+  };
+
+  const buildSelfEvolutionLog = (report = {}) => ({
+    id: `production-operation-evolution-${Date.now()}`,
+    date: new Date().toISOString().slice(0, 10),
+    source: "production-operation-mode",
+    targetAi: report.trifectaHit ? "三連単AI・EV資金配分" : "AI指数・神穴・危険人気馬補正",
+    improvement: report.trifectaHit ? "的中買い目の指数配列と資金配分を採用候補へ昇格" : "不的中パターンを保留し、展開・馬場・危険人気馬の閾値を再学習候補へ追加",
+    status: report.trifectaHit || report.roi >= 100 ? "採用" : "保留",
+    evidenceRace: `${report.race?.date || "未日付"} ${report.race?.course || "未競馬場"} ${report.race?.raceNumber || "?"}R ${report.race?.raceName || "本番運用レース"}`,
+    reason: report.summary,
+    nextReflectionMemo: `次回本番運用スコアへROI ${report.roi}%と判定結果を反映`,
+  });
+
+  const saveValidationAndEvolution = ({ payload, result, storage = window.localStorage }) => {
+    const report = buildValidationReport({ payload, result });
+    const reports = [report, ...asArray(readJson(storage, "productionResultValidationReports", []))].slice(0, 100);
+    storage?.setItem?.("productionResultValidationReports", JSON.stringify(reports));
+    const evolutionLog = buildSelfEvolutionLog(report);
+    const legacyLogs = readJson(storage, "selfEvolutionLogs", { logs: { resultVerifications: [], backtests: [], improvementProposals: [] } }) || { logs: { resultVerifications: [], backtests: [], improvementProposals: [] } };
+    const logs = legacyLogs.logs || legacyLogs;
+    logs.resultVerifications = [evolutionLog, ...asArray(logs.resultVerifications)].slice(0, 100);
+    storage?.setItem?.("selfEvolutionLogs", JSON.stringify({ ...legacyLogs, logs }));
+    storage?.setItem?.("hashimoto-keiba-ai:self-evolution-logs:v1", JSON.stringify({ ...legacyLogs, logs }));
+    const fundCurveRecords = [
+      { id: report.id, date: report.generatedAt, investment: report.investment, payout: report.payout, roi: report.roi, race: report.race },
+      ...asArray(readJson(storage, "fundCurveRecords", [])),
+    ].slice(0, 200);
+    storage?.setItem?.("fundCurveRecords", JSON.stringify(fundCurveRecords));
+    return { report, evolutionLog, fundCurveRecords };
+  };
+
+  const createOperationBackup = (storage = window.localStorage) => {
+    const backupEngine = window.HashimotoProductionOperationBackupEngine;
+    const payload = backupEngine?.createBackupPayload ? backupEngine.createBackupPayload(storage) : {
+      type: "production-operation-mode-backup",
+      generatedAt: new Date().toISOString(),
+      keys: ["productionOperationMode", "productionOperationScores", "productionRunReports", "productionResultValidationReports", "selfEvolutionLogs", "fundCurveRecords"],
+      data: {},
+    };
+    payload.data.productionOperationMode = { label: "Phase5-1運用モード", storageKey: MODE_STORAGE_KEY, required: true, value: storage?.getItem?.(MODE_STORAGE_KEY), itemCount: storage?.getItem?.(MODE_STORAGE_KEY) ? 1 : 0 };
+    payload.data.productionOperationScores = { label: "Phase5-1運用スコア", storageKey: SCORE_STORAGE_KEY, required: true, value: readJson(storage, SCORE_STORAGE_KEY, null), itemCount: storage?.getItem?.(SCORE_STORAGE_KEY) ? 1 : 0 };
+    payload.keys = Array.from(new Set([...(payload.keys || []), MODE_STORAGE_KEY, SCORE_STORAGE_KEY]));
+    storage?.setItem?.(BACKUP_LATEST_KEY, JSON.stringify(payload));
+    return payload;
+  };
+
+  window.HashimotoProductionOperationModeEngine = {
+    MODE_STORAGE_KEY,
+    SCORE_STORAGE_KEY,
+    BACKUP_LATEST_KEY,
+    DEFAULT_HORSES,
+    FLOW_STEPS,
+    MODE_LABELS,
+    calculateOperationScore,
+    deriveScoresFromStorage,
+    saveMode,
+    saveScores,
+    judgeOperation,
+    buildValidationReport,
+    buildSelfEvolutionLog,
+    saveValidationAndEvolution,
+    createOperationBackup,
+  };
+
+  const documentRef = window.document;
+  if (!documentRef?.querySelector) return;
+
+  const modeInputs = Array.from(documentRef.querySelectorAll('input[name="production-operation-mode"]'));
+  const modeLabel = documentRef.querySelector("#production-operation-mode-label");
+  const raceForm = documentRef.querySelector("#production-operation-race-form");
+  const resultForm = documentRef.querySelector("#production-operation-result-form");
+  const status = documentRef.querySelector("#production-operation-status");
+  const scoreValue = documentRef.querySelector("#production-operation-score");
+  const scoreNote = documentRef.querySelector("#production-operation-score-note");
+  const judgementValue = documentRef.querySelector("#production-operation-judgement");
+  const refreshScoreButton = documentRef.querySelector("#production-operation-score-refresh");
+  const backupButton = documentRef.querySelector("#production-operation-backup");
+  const latestPayload = () => readJson(window.localStorage, "hashimoto-keiba-ai:production-race-entry:v1", null) || readJson(window.localStorage, "productionRaceEntries", [])[0] || null;
+  let currentPayload = latestPayload();
+
+  const setFlow = (activeSteps = []) => {
+    const active = new Set(activeSteps);
+    documentRef.querySelectorAll("#production-operation-flow li").forEach((item) => {
+      item.classList.toggle("is-complete", active.has(item.dataset.step));
+    });
+  };
+
+  const renderList = (selector, items, formatter) => {
+    const target = documentRef.querySelector(selector);
+    if (!target) return;
+    target.innerHTML = items.length ? items.map((item, index) => `<li><strong>${index + 1}. ${formatter(item)}</strong></li>`).join("") : '<li class="empty-state">未実行</li>';
+  };
+
+  const renderScores = (scores) => {
+    if (scoreValue) scoreValue.textContent = String(scores.score);
+    if (judgementValue) judgementValue.textContent = scores.judgement;
+    if (scoreNote) scoreNote.textContent = `完成度${scores.completion}% / ROI${scores.roi}% / 神レース${scores.godRaceRate}% / 危険人気馬${scores.dangerPopularSuccessRate}% / 神穴${scores.kamianaSuccessRate}% / 三連単${scores.trifectaHitRate}%`;
+  };
+
+  const refreshScores = () => {
+    const scores = saveScores(deriveScoresFromStorage(window.localStorage), window.localStorage);
+    renderScores(scores);
+    return scores;
+  };
+
+  const renderPayload = (payload = currentPayload) => {
+    if (!payload) {
+      setFlow([]);
+      return;
+    }
+    currentPayload = payload;
+    renderList("#production-operation-ai-ranking", asArray(payload.aiIndexRanking).slice(0, 5), (horse) => `${horse.name} AI${horse.aiIndex}`);
+    renderList("#production-operation-kamiana-ranking", asArray(payload.kamianaRanking).slice(0, 5), (horse) => `${horse.name} 神穴${horse.kamianaIndex}`);
+    renderList("#production-operation-danger-ranking", asArray(payload.dangerPopularRanking).slice(0, 5), (horse) => `${horse.name} 危険${horse.dangerIndex}`);
+    renderList("#production-operation-trifecta", flattenTickets(payload.trifecta?.tickets).slice(0, 6), (ticket) => `${ticketText(ticket)} ${ticket.type || "三連単"}`);
+    renderList("#production-operation-win5", flattenWin5(payload.win5?.zones).slice(0, 6), (horse) => `${horse.name} ${horse.zone || "WIN5"}`);
+    renderList("#production-operation-simulation", asArray(payload.raceSimulation?.rankings?.winRate).slice(0, 5), (horse) => `${horse.name} 勝率${horse.winRate}%`);
+    renderList("#production-operation-ev", asArray(payload.ev?.evRanking).slice(0, 5), (item) => `${item.name} EV${item.ev}`);
+    const capital = documentRef.querySelector("#production-operation-capital");
+    if (capital) capital.textContent = `推奨投資 ${toNumber(payload.capital?.summary?.totalRecommended).toLocaleString()}円 / ${payload.capital?.summary?.totalTickets || 0}点`;
+    const godRace = documentRef.querySelector("#production-operation-god-race");
+    if (godRace) godRace.textContent = `${payload.godRace?.label || "未判定"} / ${payload.godRace?.score ?? 0}点`;
+    setFlow(["input", "ai", "tickets", "investment"]);
+    if (status) status.textContent = "AI実行・買い目生成完了";
+  };
+
+  if (raceForm?.elements?.horses) {
+    raceForm.elements.date.value = new Date().toISOString().slice(0, 10);
+    raceForm.elements.horses.value = JSON.stringify(DEFAULT_HORSES, null, 2);
+  }
+
+  const initialMode = saveMode(window.localStorage?.getItem?.(MODE_STORAGE_KEY) || "development", window.localStorage);
+  modeInputs.forEach((input) => {
+    input.checked = input.value === initialMode;
+    input.addEventListener("change", () => {
+      const mode = saveMode(input.value, window.localStorage);
+      if (modeLabel) modeLabel.textContent = MODE_LABELS[mode];
+      if (status) status.textContent = `${MODE_LABELS[mode]}へ切替保存済み`;
+    });
+  });
+  if (modeLabel) modeLabel.textContent = MODE_LABELS[initialMode];
+
+  raceForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const values = Object.fromEntries(new FormData(raceForm).entries());
+    const horses = safeParse(values.horses, DEFAULT_HORSES);
+    const race = { ...values, raceNumber: toNumber(values.raceNumber), distance: toNumber(values.distance), fieldSize: asArray(horses).length };
+    const productionEngine = window.HashimotoProductionRaceEngine;
+    if (!productionEngine?.buildAndSaveProductionRunReport) {
+      if (status) status.textContent = "本番AIエンジン未読込";
+      return;
+    }
+    const report = productionEngine.buildAndSaveProductionRunReport({ race, horses, simulationCount: 1000, persistEngines: true }, window.localStorage);
+    currentPayload = report.productionPayload;
+    renderPayload(currentPayload);
+    refreshScores();
+  });
+
+  resultForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!currentPayload) renderPayload(latestPayload());
+    if (!currentPayload) {
+      if (status) status.textContent = "先にAI実行してください";
+      return;
+    }
+    const result = Object.fromEntries(new FormData(resultForm).entries());
+    const { report, evolutionLog, fundCurveRecords } = saveValidationAndEvolution({ payload: currentPayload, result, storage: window.localStorage });
+    const validation = documentRef.querySelector("#production-operation-validation");
+    if (validation) validation.textContent = report.summary;
+    renderList("#production-operation-evolution", [evolutionLog], (item) => `${item.status}: ${item.improvement}`);
+    const fundCurve = documentRef.querySelector("#production-operation-fund-curve");
+    if (fundCurve) fundCurve.textContent = `最新ROI ${report.roi}% / 資金曲線 ${fundCurveRecords.length}件保存`;
+    setFlow(["input", "ai", "tickets", "investment", "result", "validation", "evolution"]);
+    refreshScores();
+    if (status) status.textContent = "結果検証・自己進化ログ保存済み";
+  });
+
+  refreshScoreButton?.addEventListener("click", refreshScores);
+  backupButton?.addEventListener("click", () => {
+    const payload = createOperationBackup(window.localStorage);
+    const backupStatus = documentRef.querySelector("#production-operation-backup-status");
+    if (backupStatus) backupStatus.textContent = `${payload.keys.length}キーを${payload.generatedAt || new Date().toISOString()}に保存`;
+    setFlow(["input", "ai", "tickets", "investment", "result", "validation", "evolution", "backup"]);
+    if (status) status.textContent = "本番運用バックアップ保存済み";
+  });
+
+  renderPayload(currentPayload);
+  refreshScores();
+})();
