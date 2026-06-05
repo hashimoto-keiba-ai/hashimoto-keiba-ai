@@ -56,6 +56,29 @@ const dashboardData = {
   ],
   latestLogs: [],
   courseMemos: [],
+  divineRaceRanking: [],
+  roiMonitor: {
+    totalInvestment: 0,
+    totalPayout: 0,
+    profit: 0,
+    roi: 0,
+    hitRate: 0,
+    raceCount: 0,
+    hitCount: 0,
+    byCourse: [],
+    byTicketType: [],
+    monthly: [],
+    recent: []
+  },
+  win5Dashboard: {
+    date: "",
+    investment: 0,
+    targetPayout: 0,
+    confidence: "",
+    combinationCount: 0,
+    races: [],
+    file: ""
+  },
   updatedAt: null,
   source: "sample",
   auditBase: {
@@ -111,6 +134,14 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function formatYen(value) {
+  return `${Number(value || 0).toLocaleString("ja-JP")}円`;
+}
+
+function formatPercent(value) {
+  return `${Number(value || 0).toFixed(1)}%`;
+}
+
 async function loadDashboardData() {
   if (typeof fetch !== "function") return null;
   try {
@@ -125,10 +156,17 @@ async function loadDashboardData() {
 function mergeDashboardData(loadedData) {
   if (!loadedData || typeof loadedData !== "object") return;
 
-  for (const key of ["races", "aiRanking", "latestLogs", "courseMemos"]) {
+  for (const key of ["races", "aiRanking", "latestLogs", "courseMemos", "divineRaceRanking"]) {
     if (Array.isArray(loadedData[key])) {
       dashboardData[key] = loadedData[key];
     }
+  }
+
+  if (loadedData.roiMonitor && typeof loadedData.roiMonitor === "object") {
+    dashboardData.roiMonitor = { ...dashboardData.roiMonitor, ...loadedData.roiMonitor };
+  }
+  if (loadedData.win5Dashboard && typeof loadedData.win5Dashboard === "object") {
+    dashboardData.win5Dashboard = { ...dashboardData.win5Dashboard, ...loadedData.win5Dashboard };
   }
 
   dashboardData.updatedAt = loadedData.updatedAt || dashboardData.updatedAt;
@@ -415,12 +453,115 @@ function renderCourseMemos() {
     : `<article class="race-card"><strong>馬場・展開メモ未登録</strong><span class="race-meta">Markdownの「## 馬場・展開メモ」または「## 展開メモ」を読み取ります。</span></article>`;
 }
 
+function renderRoiMonitor() {
+  const data = dashboardData.roiMonitor;
+  setText("roi-total-investment", formatYen(data.totalInvestment));
+  setText("roi-total-payout", formatYen(data.totalPayout));
+  setText("roi-rate", formatPercent(data.roi));
+  setText("roi-hit-rate", formatPercent(data.hitRate));
+  setText("roi-race-count", `${Number(data.raceCount || 0).toLocaleString("ja-JP")}R`);
+  setText("roi-profit", formatYen(data.profit));
+
+  const courseTarget = document.getElementById("roi-by-course");
+  if (courseTarget) {
+    courseTarget.innerHTML = data.byCourse.length
+      ? data.byCourse
+          .map(
+            (item) => `
+              <tr>
+                <td>${escapeHtml(item.label)}</td>
+                <td>${formatYen(item.investment)}</td>
+                <td>${formatYen(item.payout)}</td>
+                <td>${formatPercent(item.roi)}</td>
+                <td>${formatPercent(item.hitRate)}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="5">結果検証データはまだありません。</td></tr>`;
+  }
+
+  const ticketTarget = document.getElementById("roi-by-ticket");
+  if (ticketTarget) {
+    ticketTarget.innerHTML = data.byTicketType.length
+      ? data.byTicketType
+          .map(
+            (item) => `
+              <tr>
+                <td>${escapeHtml(item.label)}</td>
+                <td>${formatYen(item.investment)}</td>
+                <td>${formatYen(item.payout)}</td>
+                <td>${formatPercent(item.roi)}</td>
+                <td>${formatPercent(item.hitRate)}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="5">券種別データはまだありません。</td></tr>`;
+  }
+}
+
+function renderDivineRaceRanking() {
+  const target = document.getElementById("divine-race-ranking");
+  if (!target) return;
+  target.innerHTML = dashboardData.divineRaceRanking.length
+    ? dashboardData.divineRaceRanking
+        .map(
+          (item) => `
+            <tr>
+              <td>${escapeHtml(item.rank)}</td>
+              <td>${escapeHtml(item.course)} ${escapeHtml(item.race)}</td>
+              <td>${escapeHtml(item.name)}</td>
+              <td>${escapeHtml(item.divineScore || "--")}</td>
+              <td>${escapeHtml(item.confidence || "--")}</td>
+              <td>${escapeHtml(item.expectedValue || "--")}</td>
+              <td>${formatYen(item.recommendedStake)}</td>
+              <td>${escapeHtml(item.reason || "--")}</td>
+            </tr>
+          `
+        )
+        .join("")
+    : `<tr><td colspan="8">神レース指数つきの事前予想はまだありません。</td></tr>`;
+}
+
+function renderWin5Dashboard() {
+  const data = dashboardData.win5Dashboard;
+  setText("win5-date", data.date || "--");
+  setText("win5-investment", formatYen(data.investment));
+  setText("win5-target-payout", formatYen(data.targetPayout));
+  setText("win5-confidence", data.confidence || "--");
+  setText("win5-combination-count", `${Number(data.combinationCount || 0).toLocaleString("ja-JP")}点`);
+
+  const target = document.getElementById("win5-races");
+  if (!target) return;
+  target.innerHTML = data.races.length
+    ? data.races
+        .map(
+          (race) => `
+            <article class="race-card win5-race-card">
+              <span class="race-meta">${escapeHtml(race.label)}</span>
+              <strong>Zone ${escapeHtml(race.zone || "--")}</strong>
+              <div class="race-kpi">
+                <span>本命 ${escapeHtml(race.favorite || "--")}</span>
+                <span>押さえ ${escapeHtml(race.backup || "--")}</span>
+                <span>穴 ${escapeHtml(race.longshot || "--")}</span>
+              </div>
+            </article>
+          `
+        )
+        .join("")
+    : `<article class="race-card"><strong>WIN5未登録</strong><span class="race-meta">既存のWIN5フォルダにMarkdownを保存すると表示されます。</span></article>`;
+}
+
 function renderOperationalData() {
   renderDataStatus();
   renderRaceMonitor();
   renderLatestLogs();
   renderAiRanking();
   renderCourseMemos();
+  renderRoiMonitor();
+  renderDivineRaceRanking();
+  renderWin5Dashboard();
 }
 
 function renderAuditReport(report) {

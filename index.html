@@ -175,6 +175,144 @@
         <div class="race-cards" id="race-monitor"></div>
       </section>
 
+      <section class="panel roi-monitor-panel" aria-label="回収率モニター">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ROI Monitor</p>
+            <h2>回収率モニター</h2>
+          </div>
+          <span class="pill">結果検証</span>
+        </div>
+        <div class="phase2-kpis">
+          <article>
+            <span>総投資額</span>
+            <strong id="roi-total-investment">0円</strong>
+          </article>
+          <article>
+            <span>総払戻額</span>
+            <strong id="roi-total-payout">0円</strong>
+          </article>
+          <article>
+            <span>回収率</span>
+            <strong id="roi-rate">0.0%</strong>
+          </article>
+          <article>
+            <span>的中率</span>
+            <strong id="roi-hit-rate">0.0%</strong>
+          </article>
+          <article>
+            <span>対象レース</span>
+            <strong id="roi-race-count">0R</strong>
+          </article>
+          <article>
+            <span>収支</span>
+            <strong id="roi-profit">0円</strong>
+          </article>
+        </div>
+        <div class="phase2-grid">
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>競馬場別</h3>
+              <span>ROI / 的中率</span>
+            </div>
+            <div class="table-wrap">
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th>競馬場</th>
+                    <th>投資</th>
+                    <th>払戻</th>
+                    <th>回収率</th>
+                    <th>的中率</th>
+                  </tr>
+                </thead>
+                <tbody id="roi-by-course"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>券種別</h3>
+              <span>ROI / 的中率</span>
+            </div>
+            <div class="table-wrap">
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th>券種</th>
+                    <th>投資</th>
+                    <th>払戻</th>
+                    <th>回収率</th>
+                    <th>的中率</th>
+                  </tr>
+                </thead>
+                <tbody id="roi-by-ticket"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel divine-race-panel" aria-label="神レースランキング">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Divine Race Ranking</p>
+            <h2>神レースランキング</h2>
+          </div>
+          <span class="pill">勝負度</span>
+        </div>
+        <div class="table-wrap">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>順位</th>
+                <th>レース</th>
+                <th>レース名</th>
+                <th>神指数</th>
+                <th>信頼度</th>
+                <th>期待値</th>
+                <th>推奨額</th>
+                <th>理由</th>
+              </tr>
+            </thead>
+            <tbody id="divine-race-ranking"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel win5-panel" aria-label="WIN5ダッシュボード">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">WIN5 Dashboard</p>
+            <h2>WIN5ダッシュボード</h2>
+          </div>
+          <span class="pill">既存WIN5フォルダ</span>
+        </div>
+        <div class="phase2-kpis">
+          <article>
+            <span>対象日</span>
+            <strong id="win5-date">--</strong>
+          </article>
+          <article>
+            <span>想定投資額</span>
+            <strong id="win5-investment">0円</strong>
+          </article>
+          <article>
+            <span>回収目標</span>
+            <strong id="win5-target-payout">0円</strong>
+          </article>
+          <article>
+            <span>信頼度</span>
+            <strong id="win5-confidence">--</strong>
+          </article>
+          <article>
+            <span>組み合わせ数</span>
+            <strong id="win5-combination-count">0点</strong>
+          </article>
+        </div>
+        <div class="race-cards" id="win5-races"></div>
+      </section>
+
       <section class="panel latest-logs-panel" aria-label="最新保存ログ">
         <div class="section-heading">
           <div>

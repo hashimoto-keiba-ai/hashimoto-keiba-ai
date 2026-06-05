@@ -1,8 +1,50 @@
 {
-  "updatedAt": "2026-06-05T05:38:21.900406+00:00",
+  "updatedAt": "2026-06-05T06:33:26.334561+00:00",
   "source": "markdown",
-  "latestLogs": [],
+  "latestLogs": [
+    {
+      "title": "2026-03-15_中山総括",
+      "course": "中山競馬場",
+      "type": "総括",
+      "race": "",
+      "date": "",
+      "summary": "",
+      "file": "中山競馬場/2026-03-15_中山総括.md"
+    },
+    {
+      "title": "WIN5_AI",
+      "course": "WIN5",
+      "type": "WIN5",
+      "race": "",
+      "date": "",
+      "summary": "",
+      "file": "WIN5/WIN5_AI.md"
+    }
+  ],
   "races": [],
   "aiRanking": [],
-  "courseMemos": []
+  "courseMemos": [],
+  "roiMonitor": {
+    "totalInvestment": 0,
+    "totalPayout": 0,
+    "profit": 0,
+    "roi": 0.0,
+    "hitRate": 0.0,
+    "raceCount": 0,
+    "hitCount": 0,
+    "byCourse": [],
+    "byTicketType": [],
+    "monthly": [],
+    "recent": []
+  },
+  "divineRaceRanking": [],
+  "win5Dashboard": {
+    "date": "",
+    "investment": 0,
+    "targetPayout": 0,
+    "confidence": "",
+    "combinationCount": 0,
+    "races": [],
+    "file": "WIN5/WIN5_AI.md"
+  }
 }

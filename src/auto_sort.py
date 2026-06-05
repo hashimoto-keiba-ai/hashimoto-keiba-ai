@@ -28,6 +28,7 @@ DOC_TYPE_DIRS = {
     "OSアップデート": "OSアップデート",
     "総括": "保存ログ",
     "保存ログ": "保存ログ",
+    "WIN5": "",
 }
 
 SORT_RULES = [
@@ -70,6 +71,8 @@ def normalize_course_name(value: str) -> str | None:
 
 def normalize_doc_type(value: str) -> str | None:
     cleaned = value.strip()
+    if "WIN5" in cleaned or "WIN５" in cleaned:
+        return "WIN5"
     if "OS" in cleaned and "アップデート" in cleaned:
         return "OSアップデート"
     if "結果" in cleaned and "検証" in cleaned:
@@ -124,7 +127,7 @@ def detect_doc_type(content: str, file_name: str) -> str | None:
                 return doc_type
 
     haystack = f"{file_name}\n{content}"
-    for candidate in ("OSアップデート", "結果検証", "事前予想", "保存ログ", "総括", "月次総括"):
+    for candidate in ("WIN5", "WIN５", "OSアップデート", "結果検証", "事前予想", "保存ログ", "総括", "月次総括"):
         doc_type = normalize_doc_type(candidate)
         if candidate in haystack and doc_type:
             return doc_type
@@ -152,6 +155,8 @@ def detect_year(content: str, file_name: str) -> str:
 
 
 def build_destination(course: str, year: str, doc_type: str) -> Path:
+    if doc_type == "WIN5":
+        return PROJECT_ROOT / "WIN5"
     return PROJECT_ROOT / course / year / DOC_TYPE_DIRS[doc_type]
 
 
@@ -170,6 +175,9 @@ def find_destination(content: str, file_name: str) -> Path | None:
     if course and doc_type:
         year = detect_year(content, file_name)
         return build_destination(course, year, doc_type)
+
+    if doc_type == "WIN5":
+        return PROJECT_ROOT / "WIN5"
 
     return find_legacy_destination(content, file_name)
 
