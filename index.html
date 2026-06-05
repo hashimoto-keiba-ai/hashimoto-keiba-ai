@@ -100,6 +100,99 @@
         </div>
       </section>
 
+      <section class="panel racecourse-learning-panel" aria-label="全競馬場学習DB">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase5-2A Learning Database</p>
+            <h2>全競馬場過去データ学習DB</h2>
+          </div>
+          <span class="pill">競馬場別解析</span>
+        </div>
+        <div class="phase2-kpis">
+          <article>
+            <span>読み取り競馬場</span>
+            <strong id="racecourse-learning-course-count">0場</strong>
+          </article>
+          <article>
+            <span>Markdown数</span>
+            <strong id="racecourse-learning-source-count">0件</strong>
+          </article>
+          <article>
+            <span>事前予想</span>
+            <strong id="racecourse-learning-prediction-count">0件</strong>
+          </article>
+          <article>
+            <span>結果検証</span>
+            <strong id="racecourse-learning-result-count">0件</strong>
+          </article>
+          <article>
+            <span>全体回収率</span>
+            <strong id="racecourse-learning-roi">0.0%</strong>
+          </article>
+          <article>
+            <span>的中数</span>
+            <strong id="racecourse-learning-hit-count">0件</strong>
+          </article>
+          <article>
+            <span>得意競馬場</span>
+            <strong id="racecourse-strong-course">--</strong>
+          </article>
+          <article>
+            <span>苦手競馬場</span>
+            <strong id="racecourse-weak-course">--</strong>
+          </article>
+        </div>
+        <div class="table-wrap">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>競馬場</th>
+                <th>状態</th>
+                <th>Markdown</th>
+                <th>予想</th>
+                <th>検証</th>
+                <th>的中率</th>
+                <th>回収率</th>
+                <th>最終更新</th>
+              </tr>
+            </thead>
+            <tbody id="racecourse-learning-courses"></tbody>
+          </table>
+        </div>
+        <div class="phase2-grid">
+          <div class="table-wrap">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>人気ゾーン</th>
+                  <th>出現数</th>
+                  <th>的中数</th>
+                  <th>的中率</th>
+                  <th>払戻</th>
+                </tr>
+              </thead>
+              <tbody id="racecourse-popularity-zones"></tbody>
+            </table>
+          </div>
+          <div class="table-wrap">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>競馬場</th>
+                  <th>日付</th>
+                  <th>タイトル</th>
+                  <th>ゾーン</th>
+                  <th>払戻</th>
+                </tr>
+              </thead>
+              <tbody id="racecourse-high-payout-patterns"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="race-cards" id="racecourse-reflection-policy"></div>
+        <p class="data-footnote" id="racecourse-win5-link">--</p>
+      </section>
+
       <section class="panel prediction-engine-panel" aria-label="自動予想エンジン">
         <div class="section-heading">
           <div>
@@ -481,6 +574,80 @@
           </article>
         </div>
         <div class="race-cards" id="win5-races"></div>
+
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">WIN5 Pattern Analysis</p>
+            <h2>WIN5人気ゾーン構造と高配当パターン解析</h2>
+          </div>
+          <span class="pill">Phase5-2</span>
+        </div>
+        <div class="phase2-kpis">
+          <article>
+            <span>学習ソース</span>
+            <strong id="win5-learning-source-count">0件</strong>
+          </article>
+          <article>
+            <span>結果検証</span>
+            <strong id="win5-pattern-result-count">0件</strong>
+          </article>
+          <article>
+            <span>的中/不的中</span>
+            <strong id="win5-pattern-hit-miss">0勝 / 0敗</strong>
+          </article>
+          <article>
+            <span>最大払戻</span>
+            <strong id="win5-pattern-max-payout">0円</strong>
+          </article>
+          <article>
+            <span>平均払戻</span>
+            <strong id="win5-pattern-average-payout">0円</strong>
+          </article>
+        </div>
+        <div class="table-wrap">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>ゾーン</th>
+                <th>構造</th>
+                <th>出現数</th>
+                <th>的中数</th>
+                <th>的中率</th>
+              </tr>
+            </thead>
+            <tbody id="win5-zone-structure"></tbody>
+          </table>
+        </div>
+        <div class="phase2-grid">
+          <div class="table-wrap">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>日付</th>
+                  <th>タイトル</th>
+                  <th>ゾーン</th>
+                  <th>払戻金</th>
+                </tr>
+              </thead>
+              <tbody id="win5-high-payout-patterns"></tbody>
+            </table>
+          </div>
+          <div class="table-wrap">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>日付</th>
+                  <th>結果</th>
+                  <th>ゾーン</th>
+                  <th>払戻金</th>
+                  <th>検証メモ</th>
+                </tr>
+              </thead>
+              <tbody id="win5-hit-miss-patterns"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="race-cards" id="win5-reflection-policy"></div>
       </section>
 
       <section class="panel risk-longshot-panel" aria-label="危険人気馬と爆穴ランキング">

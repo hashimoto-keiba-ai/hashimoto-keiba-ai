@@ -12,6 +12,19 @@ from auto_sort import COURSE_NAMES, DOC_TYPE_DIRS, detect_course, detect_doc_typ
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
 OUTPUT_PATH = DATA_DIR / "dashboard-data.json"
+WIN5_ROOT = PROJECT_ROOT / "WIN5"
+LEARNING_COURSE_NAMES = [
+    "福島競馬場",
+    "中山競馬場",
+    "阪神競馬場",
+    "中京競馬場",
+    "東京競馬場",
+    "小倉競馬場",
+    "京都競馬場",
+    "新潟競馬場",
+    "函館競馬場",
+    "札幌競馬場",
+]
 
 SECTION_PATTERN = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
 
@@ -183,6 +196,214 @@ def markdown_files() -> list[Path]:
             continue
         files.extend(path for path in course_dir.rglob("*.md") if path.is_file() and path.name.lower() != "readme.md")
     return sorted(files)
+
+
+def win5_markdown_files() -> list[Path]:
+    if not WIN5_ROOT.exists():
+        return []
+    targets = [WIN5_ROOT / "README.md", WIN5_ROOT / "WIN5_AI.md"]
+    for folder_name in ("対象レース", "買い目", "結果検証"):
+        folder = WIN5_ROOT / folder_name
+        if folder.exists():
+            targets.extend(folder.glob("*.md"))
+    return sorted(path for path in targets if path.exists() and path.is_file())
+
+
+def racecourse_markdown_files() -> list[Path]:
+    files: list[Path] = []
+    for course_name in LEARNING_COURSE_NAMES:
+        course_dir = PROJECT_ROOT / course_name
+        if not course_dir.exists():
+            continue
+        files.extend(path for path in course_dir.rglob("*.md") if path.is_file())
+    return sorted(files)
+
+
+def racecourse_source_record(path: Path) -> dict[str, Any]:
+    content = read_markdown(path)
+    metadata = parse_metadata(content)
+    sections = split_sections(content)
+    title_match = re.search(r"^#\s+(.+?)\s*$", content, re.MULTILINE)
+    stat = path.stat()
+    entry = build_log_entry(path)
+    course = entry["course"] if entry else detect_course(content, path.name)
+    doc_type = entry["type"] if entry else detect_doc_type(content, path.name)
+    hit_value = bool_value(first_value(metadata, ["的中", "hit", "result"], ""))
+    investment = yen(pick_number(metadata, ["投資額", "購入額", "investment"]))
+    payout = yen(pick_number(metadata, ["払戻", "払戻金", "payout"]))
+    popularity = number_value(first_value(metadata, ["人気", "想定人気", "popularity"], ""))
+    relative_parts = path.relative_to(PROJECT_ROOT).parts
+    return {
+        "file": str(path.relative_to(PROJECT_ROOT)).replace("\\", "/"),
+        "course": course or (relative_parts[0] if relative_parts else ""),
+        "year": detect_year(content, path.name),
+        "date": normalize_date(first_value(metadata, ["日付", "date", "開催日"], ""), path.name),
+        "race": first_value(metadata, ["レース番号", "R", "race"], ""),
+        "title": first_value(metadata, ["レース名", "タイトル", "title"], title_match.group(1).strip() if title_match else path.stem),
+        "type": doc_type or "メモ",
+        "category": DOC_TYPE_DIRS.get(doc_type or "", "学習メモ"),
+        "summary": first_line(first_value(metadata, ["概要", "summary"], "") or first_line(sections.get("総括", "") or sections.get("用途", "")) or content),
+        "updatedAt": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+        "aiScore": number_value(first_value(metadata, ["AI指数", "指数", "score"], "")),
+        "horse": first_value(metadata, ["馬名", "軸候補", "軸", "topHorse"], ""),
+        "confidence": first_value(metadata, ["信頼度", "confidence"], ""),
+        "expectedValue": number_value(first_value(metadata, ["期待値", "value", "expectedValue"], "")),
+        "popularity": popularity,
+        "popularityZone": first_value(metadata, ["人気ゾーン", "ゾーン"], popularity_zone(popularity)),
+        "hit": hit_value,
+        "investment": investment,
+        "payout": payout,
+        "roi": percent(payout, investment),
+        "metadata": metadata,
+        "sections": sections,
+    }
+
+
+def build_racecourse_learning_database(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    source_records = [racecourse_source_record(path) for path in racecourse_markdown_files()]
+    missing_courses = [course for course in LEARNING_COURSE_NAMES if not (PROJECT_ROOT / course).exists()]
+    prediction_records = [record for record in source_records if record["type"] == "事前予想"]
+    result_reviews = [record for record in source_records if record["type"] == "結果検証"]
+    learning_signals = [
+        record
+        for record in source_records
+        if record["type"] in ("保存ログ", "OSアップデート", "メモ") or record["category"] in ("保存ログ", "OSアップデート", "学習メモ")
+    ]
+    hit_count = sum(1 for record in result_reviews if record["hit"])
+    total_investment = sum(record["investment"] for record in result_reviews)
+    total_payout = sum(record["payout"] for record in result_reviews)
+    courses = []
+    for course_name in LEARNING_COURSE_NAMES:
+        course_records = [record for record in source_records if record["course"] == course_name or record["file"].startswith(f"{course_name}/")]
+        course_results = [record for record in course_records if record["type"] == "結果検証"]
+        course_investment = sum(record["investment"] for record in course_results)
+        course_payout = sum(record["payout"] for record in course_results)
+        courses.append(
+            {
+                "course": course_name,
+                "exists": (PROJECT_ROOT / course_name).exists(),
+                "sourceFileCount": len(course_records),
+                "predictionCount": sum(1 for record in course_records if record["type"] == "事前予想"),
+                "resultReviewCount": len(course_results),
+                "hitCount": sum(1 for record in course_results if record["hit"]),
+                "investment": course_investment,
+                "payout": course_payout,
+                "roi": percent(course_payout, course_investment),
+                "hitRate": percent(sum(1 for record in course_results if record["hit"]), len(course_results)),
+                "latestUpdatedAt": max((record["updatedAt"] for record in course_records), default=""),
+            }
+        )
+
+    return {
+        "summary": {
+            "courseCount": len([course for course in courses if course["exists"]]),
+            "missingCourseCount": len(missing_courses),
+            "sourceFileCount": len(source_records),
+            "predictionCount": len(prediction_records),
+            "resultReviewCount": len(result_reviews),
+            "hitCount": hit_count,
+            "totalInvestment": total_investment,
+            "totalPayout": total_payout,
+            "overallRoi": percent(total_payout, total_investment),
+        },
+        "missingCourses": missing_courses,
+        "courses": courses,
+        "sourceFiles": [
+            {
+                "file": record["file"],
+                "course": record["course"],
+                "type": record["type"],
+                "title": record["title"],
+                "summary": record["summary"],
+                "updatedAt": record["updatedAt"],
+            }
+            for record in source_records
+        ],
+        "predictionRecords": prediction_records,
+        "resultReviews": result_reviews,
+        "learningSignals": learning_signals,
+        "win5Link": {
+            "source": "win5LearningDatabase",
+            "role": "複数競馬場を横断するWIN5学習データとして連携",
+        },
+    }
+
+
+def build_racecourse_pattern_analysis(learning_database: dict[str, Any], win5_pattern_analysis: dict[str, Any]) -> dict[str, Any]:
+    courses = learning_database["courses"]
+    active_courses = [course for course in courses if course["resultReviewCount"] > 0]
+    strong_course = max(active_courses, key=lambda item: (item["roi"], item["hitRate"]), default={})
+    weak_course = min(active_courses, key=lambda item: (item["roi"], item["hitRate"]), default={})
+    result_reviews = learning_database["resultReviews"]
+    hit_count = sum(1 for record in result_reviews if record["hit"])
+    total_investment = sum(record["investment"] for record in result_reviews)
+    total_payout = sum(record["payout"] for record in result_reviews)
+    zone_groups: dict[str, dict[str, Any]] = {}
+    for record in learning_database["predictionRecords"] + result_reviews:
+        zone = record.get("popularityZone") or "未分類"
+        group = zone_groups.setdefault(zone, {"zone": zone, "appearanceCount": 0, "hitCount": 0, "payout": 0})
+        group["appearanceCount"] += 1
+        group["hitCount"] += 1 if record.get("hit") else 0
+        group["payout"] += record.get("payout") or 0
+
+    by_popularity_zone = [
+        {**group, "hitRate": percent(group["hitCount"], group["appearanceCount"])}
+        for group in zone_groups.values()
+    ]
+    high_payout_patterns = [
+        {
+            "course": record["course"],
+            "date": record["date"],
+            "title": record["title"],
+            "payout": record["payout"],
+            "popularityZone": record["popularityZone"],
+            "file": record["file"],
+        }
+        for record in sorted(result_reviews, key=lambda item: item["payout"], reverse=True)
+        if record["payout"] >= 100_000
+    ][:10]
+    miss_patterns = [
+        {
+            "course": record["course"],
+            "date": record["date"],
+            "title": record["title"],
+            "popularityZone": record["popularityZone"],
+            "file": record["file"],
+        }
+        for record in result_reviews
+        if record["hit"] is False
+    ][:10]
+    course_weights = {
+        course["course"]: round(1 + min(course["roi"], 200) / 1000 + min(course["hitRate"], 100) / 500, 2)
+        for course in courses
+        if course["exists"]
+    }
+    popularity_zone_weights = {
+        group["zone"]: round(1 + min(group["hitRate"], 100) / 500, 2)
+        for group in by_popularity_zone
+    }
+    notes = ["競馬場別の回収率と的中率を次回予想の補助重みに利用します"]
+    if win5_pattern_analysis["summary"]["resultReviewCount"] > 0:
+        notes.append("WIN5人気ゾーン解析を横断レースのA/B/C/D補正に接続します")
+    return {
+        "summary": {
+            "analyzedCourseCount": len([course for course in courses if course["sourceFileCount"] > 0]),
+            "strongCourse": strong_course.get("course", ""),
+            "weakCourse": weak_course.get("course", ""),
+            "overallHitRate": percent(hit_count, len(result_reviews)),
+            "overallRoi": percent(total_payout, total_investment),
+        },
+        "byCourse": courses,
+        "byPopularityZone": sorted(by_popularity_zone, key=lambda item: item["appearanceCount"], reverse=True),
+        "highPayoutPatterns": high_payout_patterns,
+        "missPatterns": miss_patterns,
+        "reflectionPolicy": {
+            "courseWeights": course_weights,
+            "popularityZoneWeights": popularity_zone_weights,
+            "win5ZoneWeights": win5_pattern_analysis["reflectionPolicy"],
+            "notes": notes,
+        },
+    }
 
 
 def build_race_monitor(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -665,6 +886,192 @@ def build_win5_dashboard(entries: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def win5_source_category(path: Path) -> str:
+    relative_parts = path.relative_to(WIN5_ROOT).parts
+    if path.name == "WIN5_AI.md":
+        return "aiNotes"
+    if relative_parts[0] == "対象レース":
+        return "targetRace"
+    if relative_parts[0] == "買い目":
+        return "ticketPlan"
+    if relative_parts[0] == "結果検証":
+        return "resultReview"
+    return "overview"
+
+
+def win5_source_record(path: Path) -> dict[str, Any]:
+    content = read_markdown(path)
+    metadata = parse_metadata(content)
+    sections = split_sections(content)
+    title_match = re.search(r"^#\s+(.+?)\s*$", content, re.MULTILINE)
+    stat = path.stat()
+    return {
+        "file": str(path.relative_to(PROJECT_ROOT)).replace("\\", "/"),
+        "category": win5_source_category(path),
+        "title": first_value(metadata, ["タイトル", "title"], title_match.group(1).strip() if title_match else path.stem),
+        "date": normalize_date(first_value(metadata, ["日付", "date", "開催日"], ""), path.name),
+        "updatedAt": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+        "metadata": metadata,
+        "sections": sections,
+        "content": content,
+        "summary": first_line(first_value(metadata, ["概要", "summary"], "") or first_line(sections.get("用途", "")) or content),
+    }
+
+
+def build_win5_learning_database() -> dict[str, Any]:
+    sources = [win5_source_record(path) for path in win5_markdown_files()]
+    target_races = [source for source in sources if source["category"] == "targetRace"]
+    ticket_plans = [source for source in sources if source["category"] == "ticketPlan"]
+    result_reviews = [source for source in sources if source["category"] == "resultReview"]
+    ai_notes = [source for source in sources if source["category"] in ("aiNotes", "overview")]
+    return {
+        "summary": {
+            "sourceFileCount": len(sources),
+            "targetRaceCount": len(target_races),
+            "ticketPlanCount": len(ticket_plans),
+            "resultReviewCount": len(result_reviews),
+            "aiNoteCount": len(ai_notes),
+        },
+        "sourceFiles": [
+            {
+                "file": source["file"],
+                "category": source["category"],
+                "title": source["title"],
+                "summary": source["summary"],
+                "updatedAt": source["updatedAt"],
+            }
+            for source in sources
+        ],
+        "targetRaces": target_races,
+        "ticketPlans": ticket_plans,
+        "resultReviews": result_reviews,
+        "aiNotes": ai_notes,
+    }
+
+
+def classify_win5_zone_text(value: str) -> str:
+    upper = value.upper()
+    if "Aゾーン" in value or "A_ZONE" in upper or "ZONE A" in upper:
+        return "A"
+    if "Bゾーン" in value or "B_ZONE" in upper or "ZONE B" in upper:
+        return "B"
+    if "Cゾーン" in value or "C_ZONE" in upper or "ZONE C" in upper:
+        return "C"
+    if "Dゾーン" in value or "D_ZONE" in upper or "ZONE D" in upper or "想定外" in value:
+        return "D"
+    return ""
+
+
+def win5_result_review_item(source: dict[str, Any]) -> dict[str, Any]:
+    metadata = source["metadata"]
+    content = source["content"]
+    hit_value = bool_value(first_value(metadata, ["的中", "hit", "result"], ""))
+    if hit_value is None:
+        hit_value = "不的中" not in content and ("的中" in content or "当たり" in content)
+    payout = yen(pick_number(metadata, ["払戻", "払戻金", "payout"]))
+    if payout == 0:
+        payout = yen(number_value(content) if ("払戻" in content or "配当" in content) else 0)
+    investment = yen(pick_number(metadata, ["投資額", "購入額", "investment"]))
+    zone_text = first_value(metadata, ["人気ゾーン", "ゾーン", "zone"], content)
+    return {
+        "file": source["file"],
+        "title": source["title"],
+        "date": source["date"],
+        "hit": bool(hit_value),
+        "payout": payout,
+        "investment": investment,
+        "roi": percent(payout, investment),
+        "zone": classify_win5_zone_text(zone_text),
+        "missReason": first_value(metadata, ["不的中理由", "missReason"], first_line(source["sections"].get("不的中理由", ""))),
+        "improvement": first_value(metadata, ["次回改善点", "改善点", "improvement"], first_line(source["sections"].get("次回改善点", ""))),
+    }
+
+
+def count_win5_zone_appearances(sources: list[dict[str, Any]]) -> dict[str, int]:
+    counts = {zone: 0 for zone in ("A", "B", "C", "D")}
+    for source in sources:
+        text = f"{source['content']}\n{' '.join(source['metadata'].values())}"
+        for zone in counts:
+            if f"{zone}ゾーン" in text or f"Zone {zone}" in text or f"ZONE {zone}" in text.upper():
+                counts[zone] += 1
+        if "想定外" in text:
+            counts["D"] += 1
+    return counts
+
+
+def build_win5_pattern_analysis(learning_database: dict[str, Any]) -> dict[str, Any]:
+    sources = learning_database["targetRaces"] + learning_database["ticketPlans"] + learning_database["resultReviews"] + learning_database["aiNotes"]
+    result_items = [win5_result_review_item(source) for source in learning_database["resultReviews"]]
+    hit_items = [item for item in result_items if item["hit"]]
+    miss_items = [item for item in result_items if not item["hit"]]
+    payouts = [item["payout"] for item in result_items if item["payout"] > 0]
+    zone_appearances = count_win5_zone_appearances(sources)
+    zone_hits = {zone: 0 for zone in ("A", "B", "C", "D")}
+    for item in hit_items:
+        if item["zone"] in zone_hits:
+            zone_hits[item["zone"]] += 1
+
+    zone_labels = {
+        "A": "本命・対抗級",
+        "B": "単穴・連下級",
+        "C": "爆穴候補",
+        "D": "想定外・未評価馬",
+    }
+    popularity_structure = {}
+    for zone in ("A", "B", "C", "D"):
+        popularity_structure[f"{zone.lower()}Zone"] = {
+            "label": zone,
+            "definition": zone_labels[zone],
+            "appearanceCount": zone_appearances[zone],
+            "hitCount": zone_hits[zone],
+            "hitRate": percent(zone_hits[zone], zone_appearances[zone]),
+        }
+
+    high_payout_patterns = [
+        {
+            "title": item["title"],
+            "date": item["date"],
+            "payout": item["payout"],
+            "zone": item["zone"] or "未分類",
+            "file": item["file"],
+        }
+        for item in sorted(result_items, key=lambda row: row["payout"], reverse=True)
+        if item["payout"] >= 1_000_000
+    ][:10]
+
+    c_or_d_count = popularity_structure["cZone"]["appearanceCount"] + popularity_structure["dZone"]["appearanceCount"]
+    notes = []
+    if c_or_d_count > 0:
+        notes.append("高配当検出時はC/Dゾーン候補をWIN5の押さえに残す")
+    if miss_items:
+        notes.append("不的中レビューの不足ゾーンを次回候補生成で確認する")
+    if not notes:
+        notes.append("結果検証Markdownが増えると人気ゾーン別の反映方針を自動更新します")
+
+    return {
+        "summary": {
+            "analyzedRaceCount": learning_database["summary"]["targetRaceCount"],
+            "ticketPlanCount": learning_database["summary"]["ticketPlanCount"],
+            "resultReviewCount": len(result_items),
+            "hitCount": len(hit_items),
+            "missCount": len(miss_items),
+            "totalPayout": sum(payouts),
+            "averagePayout": round(sum(payouts) / len(payouts), 1) if payouts else 0,
+            "maxPayout": max(payouts) if payouts else 0,
+        },
+        "popularityZoneStructure": popularity_structure,
+        "highPayoutPatterns": high_payout_patterns,
+        "hitMissPatterns": result_items[:20],
+        "reflectionPolicy": {
+            "aZoneWeight": 1.0,
+            "bZoneWeight": 1.05 if popularity_structure["bZone"]["appearanceCount"] else 1.0,
+            "cZoneWeight": 1.15 if popularity_structure["cZone"]["appearanceCount"] else 1.0,
+            "dZoneAlert": popularity_structure["dZone"]["appearanceCount"] > 0,
+            "notes": notes,
+        },
+    }
+
+
 def build_ai_overall_dashboard(entries: list[dict[str, Any]]) -> dict[str, Any]:
     ai_summary = build_ai_index_summary(entries)
     auto_divine = build_auto_divine_races(entries)
@@ -970,6 +1377,10 @@ def generate_dashboard_data() -> dict[str, Any]:
     auto_win5_candidates = build_auto_win5_candidates(entries)
     risky_favorite_ranking = build_risky_favorite_ranking(entries)
     longshot_ranking = build_longshot_ranking(entries)
+    win5_learning_database = build_win5_learning_database()
+    win5_pattern_analysis = build_win5_pattern_analysis(win5_learning_database)
+    racecourse_learning_database = build_racecourse_learning_database(entries)
+    racecourse_pattern_analysis = build_racecourse_pattern_analysis(racecourse_learning_database, win5_pattern_analysis)
 
     return {
         "updatedAt": datetime.now(timezone.utc).isoformat(),
@@ -1024,6 +1435,10 @@ def generate_dashboard_data() -> dict[str, Any]:
         "predictionEngine": build_prediction_engine(),
         "autoPrediction": build_auto_prediction(entries),
         "win5Dashboard": build_win5_dashboard(entries),
+        "win5LearningDatabase": win5_learning_database,
+        "win5PatternAnalysis": win5_pattern_analysis,
+        "racecourseLearningDatabase": racecourse_learning_database,
+        "racecoursePatternAnalysis": racecourse_pattern_analysis,
     }
 
 

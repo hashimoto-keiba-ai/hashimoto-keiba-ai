@@ -161,6 +161,86 @@ const dashboardData = {
     races: [],
     file: ""
   },
+  win5LearningDatabase: {
+    summary: {
+      sourceFileCount: 0,
+      targetRaceCount: 0,
+      ticketPlanCount: 0,
+      resultReviewCount: 0,
+      aiNoteCount: 0
+    },
+    sourceFiles: [],
+    targetRaces: [],
+    ticketPlans: [],
+    resultReviews: [],
+    aiNotes: []
+  },
+  win5PatternAnalysis: {
+    summary: {
+      analyzedRaceCount: 0,
+      ticketPlanCount: 0,
+      resultReviewCount: 0,
+      hitCount: 0,
+      missCount: 0,
+      totalPayout: 0,
+      averagePayout: 0,
+      maxPayout: 0
+    },
+    popularityZoneStructure: {
+      aZone: { label: "A", definition: "本命・対抗級", appearanceCount: 0, hitCount: 0, hitRate: 0 },
+      bZone: { label: "B", definition: "単穴・連下級", appearanceCount: 0, hitCount: 0, hitRate: 0 },
+      cZone: { label: "C", definition: "爆穴候補", appearanceCount: 0, hitCount: 0, hitRate: 0 },
+      dZone: { label: "D", definition: "想定外・未評価馬", appearanceCount: 0, hitCount: 0, hitRate: 0 }
+    },
+    highPayoutPatterns: [],
+    hitMissPatterns: [],
+    reflectionPolicy: {
+      aZoneWeight: 1,
+      bZoneWeight: 1,
+      cZoneWeight: 1,
+      dZoneAlert: false,
+      notes: []
+    }
+  },
+  racecourseLearningDatabase: {
+    summary: {
+      courseCount: 0,
+      missingCourseCount: 0,
+      sourceFileCount: 0,
+      predictionCount: 0,
+      resultReviewCount: 0,
+      hitCount: 0,
+      totalInvestment: 0,
+      totalPayout: 0,
+      overallRoi: 0
+    },
+    missingCourses: [],
+    courses: [],
+    sourceFiles: [],
+    predictionRecords: [],
+    resultReviews: [],
+    learningSignals: [],
+    win5Link: { source: "win5LearningDatabase", role: "" }
+  },
+  racecoursePatternAnalysis: {
+    summary: {
+      analyzedCourseCount: 0,
+      strongCourse: "",
+      weakCourse: "",
+      overallHitRate: 0,
+      overallRoi: 0
+    },
+    byCourse: [],
+    byPopularityZone: [],
+    highPayoutPatterns: [],
+    missPatterns: [],
+    reflectionPolicy: {
+      courseWeights: {},
+      popularityZoneWeights: {},
+      win5ZoneWeights: {},
+      notes: []
+    }
+  },
   updatedAt: null,
   source: "sample",
   auditBase: {
@@ -267,6 +347,18 @@ function mergeDashboardData(loadedData) {
   }
   if (loadedData.autoPrediction && typeof loadedData.autoPrediction === "object") {
     dashboardData.autoPrediction = { ...dashboardData.autoPrediction, ...loadedData.autoPrediction };
+  }
+  if (loadedData.win5LearningDatabase && typeof loadedData.win5LearningDatabase === "object") {
+    dashboardData.win5LearningDatabase = { ...dashboardData.win5LearningDatabase, ...loadedData.win5LearningDatabase };
+  }
+  if (loadedData.win5PatternAnalysis && typeof loadedData.win5PatternAnalysis === "object") {
+    dashboardData.win5PatternAnalysis = { ...dashboardData.win5PatternAnalysis, ...loadedData.win5PatternAnalysis };
+  }
+  if (loadedData.racecourseLearningDatabase && typeof loadedData.racecourseLearningDatabase === "object") {
+    dashboardData.racecourseLearningDatabase = { ...dashboardData.racecourseLearningDatabase, ...loadedData.racecourseLearningDatabase };
+  }
+  if (loadedData.racecoursePatternAnalysis && typeof loadedData.racecoursePatternAnalysis === "object") {
+    dashboardData.racecoursePatternAnalysis = { ...dashboardData.racecoursePatternAnalysis, ...loadedData.racecoursePatternAnalysis };
   }
 
   dashboardData.updatedAt = loadedData.updatedAt || dashboardData.updatedAt;
@@ -900,6 +992,179 @@ function renderWin5Dashboard() {
     : `<article class="race-card"><strong>WIN5未登録</strong><span class="race-meta">既存のWIN5フォルダにMarkdownを保存すると表示されます。</span></article>`;
 }
 
+function renderWin5PatternAnalysis() {
+  const learning = dashboardData.win5LearningDatabase;
+  const analysis = dashboardData.win5PatternAnalysis;
+  setText("win5-learning-source-count", `${Number(learning.summary?.sourceFileCount || 0).toLocaleString("ja-JP")}件`);
+  setText("win5-pattern-result-count", `${Number(analysis.summary?.resultReviewCount || 0).toLocaleString("ja-JP")}件`);
+  setText("win5-pattern-hit-miss", `${Number(analysis.summary?.hitCount || 0).toLocaleString("ja-JP")}勝 / ${Number(analysis.summary?.missCount || 0).toLocaleString("ja-JP")}敗`);
+  setText("win5-pattern-max-payout", formatYen(analysis.summary?.maxPayout));
+  setText("win5-pattern-average-payout", formatYen(analysis.summary?.averagePayout));
+
+  const zones = ["aZone", "bZone", "cZone", "dZone"];
+  const zoneTarget = document.getElementById("win5-zone-structure");
+  if (zoneTarget) {
+    zoneTarget.innerHTML = zones
+      .map((key) => {
+        const zone = analysis.popularityZoneStructure?.[key] || {};
+        return `
+          <tr>
+            <td>${escapeHtml(zone.label || key)}</td>
+            <td>${escapeHtml(zone.definition || "--")}</td>
+            <td>${escapeHtml(zone.appearanceCount || 0)}</td>
+            <td>${escapeHtml(zone.hitCount || 0)}</td>
+            <td>${formatPercent(zone.hitRate || 0)}</td>
+          </tr>
+        `;
+      })
+      .join("");
+  }
+
+  const payoutTarget = document.getElementById("win5-high-payout-patterns");
+  if (payoutTarget) {
+    payoutTarget.innerHTML = analysis.highPayoutPatterns.length
+      ? analysis.highPayoutPatterns
+          .map(
+            (item) => `
+              <tr>
+                <td>${escapeHtml(item.date || "--")}</td>
+                <td>${escapeHtml(item.title || "--")}</td>
+                <td>${escapeHtml(item.zone || "--")}</td>
+                <td>${formatYen(item.payout)}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="4">高配当パターンはまだ検出されていません。</td></tr>`;
+  }
+
+  const hitMissTarget = document.getElementById("win5-hit-miss-patterns");
+  if (hitMissTarget) {
+    hitMissTarget.innerHTML = analysis.hitMissPatterns.length
+      ? analysis.hitMissPatterns
+          .map(
+            (item) => `
+              <tr>
+                <td>${escapeHtml(item.date || "--")}</td>
+                <td>${item.hit ? "的中" : "不的中"}</td>
+                <td>${escapeHtml(item.zone || "--")}</td>
+                <td>${formatYen(item.payout)}</td>
+                <td>${escapeHtml(item.missReason || item.improvement || "--")}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="5">結果検証データはまだありません。</td></tr>`;
+  }
+
+  const policyTarget = document.getElementById("win5-reflection-policy");
+  if (policyTarget) {
+    const policy = analysis.reflectionPolicy || {};
+    const notes = Array.isArray(policy.notes) ? policy.notes : [];
+    policyTarget.innerHTML = `
+      <article class="race-card win5-race-card">
+        <span class="race-meta">次回WIN5候補生成への反映方針</span>
+        <strong>A ${escapeHtml(policy.aZoneWeight ?? 1)} / B ${escapeHtml(policy.bZoneWeight ?? 1)} / C ${escapeHtml(policy.cZoneWeight ?? 1)}</strong>
+        <div class="race-kpi">
+          <span>D警戒 ${policy.dZoneAlert ? "ON" : "OFF"}</span>
+          ${notes.map((note) => `<span>${escapeHtml(note)}</span>`).join("")}
+        </div>
+      </article>
+    `;
+  }
+}
+
+function renderRacecourseLearningDatabase() {
+  const database = dashboardData.racecourseLearningDatabase;
+  const analysis = dashboardData.racecoursePatternAnalysis;
+  setText("racecourse-learning-course-count", `${Number(database.summary?.courseCount || 0).toLocaleString("ja-JP")}場`);
+  setText("racecourse-learning-source-count", `${Number(database.summary?.sourceFileCount || 0).toLocaleString("ja-JP")}件`);
+  setText("racecourse-learning-prediction-count", `${Number(database.summary?.predictionCount || 0).toLocaleString("ja-JP")}件`);
+  setText("racecourse-learning-result-count", `${Number(database.summary?.resultReviewCount || 0).toLocaleString("ja-JP")}件`);
+  setText("racecourse-learning-roi", formatPercent(database.summary?.overallRoi || 0));
+  setText("racecourse-learning-hit-count", `${Number(database.summary?.hitCount || 0).toLocaleString("ja-JP")}件`);
+  setText("racecourse-strong-course", analysis.summary?.strongCourse || "--");
+  setText("racecourse-weak-course", analysis.summary?.weakCourse || "--");
+  setText("racecourse-win5-link", database.win5Link?.role || "--");
+
+  const courseTarget = document.getElementById("racecourse-learning-courses");
+  if (courseTarget) {
+    courseTarget.innerHTML = database.courses.length
+      ? database.courses
+          .map(
+            (course) => `
+              <tr>
+                <td>${escapeHtml(course.course)}</td>
+                <td>${course.exists ? "読取可" : "未作成"}</td>
+                <td>${escapeHtml(course.sourceFileCount || 0)}</td>
+                <td>${escapeHtml(course.predictionCount || 0)}</td>
+                <td>${escapeHtml(course.resultReviewCount || 0)}</td>
+                <td>${formatPercent(course.hitRate || 0)}</td>
+                <td>${formatPercent(course.roi || 0)}</td>
+                <td>${escapeHtml(course.latestUpdatedAt || "--")}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="8">競馬場学習データはまだありません。</td></tr>`;
+  }
+
+  const zoneTarget = document.getElementById("racecourse-popularity-zones");
+  if (zoneTarget) {
+    zoneTarget.innerHTML = analysis.byPopularityZone.length
+      ? analysis.byPopularityZone
+          .map(
+            (zone) => `
+              <tr>
+                <td>${escapeHtml(zone.zone || "--")}</td>
+                <td>${escapeHtml(zone.appearanceCount || 0)}</td>
+                <td>${escapeHtml(zone.hitCount || 0)}</td>
+                <td>${formatPercent(zone.hitRate || 0)}</td>
+                <td>${formatYen(zone.payout || 0)}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="5">人気ゾーン別データはまだありません。</td></tr>`;
+  }
+
+  const payoutTarget = document.getElementById("racecourse-high-payout-patterns");
+  if (payoutTarget) {
+    payoutTarget.innerHTML = analysis.highPayoutPatterns.length
+      ? analysis.highPayoutPatterns
+          .map(
+            (item) => `
+              <tr>
+                <td>${escapeHtml(item.course || "--")}</td>
+                <td>${escapeHtml(item.date || "--")}</td>
+                <td>${escapeHtml(item.title || "--")}</td>
+                <td>${escapeHtml(item.popularityZone || "--")}</td>
+                <td>${formatYen(item.payout || 0)}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="5">高配当パターンはまだありません。</td></tr>`;
+  }
+
+  const policyTarget = document.getElementById("racecourse-reflection-policy");
+  if (policyTarget) {
+    const policy = analysis.reflectionPolicy || {};
+    const notes = Array.isArray(policy.notes) ? policy.notes : [];
+    policyTarget.innerHTML = `
+      <article class="race-card">
+        <span class="race-meta">全競馬場DBから次回予想への反映</span>
+        <strong>${escapeHtml(notes[0] || "競馬場別の傾向を補助重みに利用します")}</strong>
+        <div class="race-kpi">
+          <span>競馬場重み ${escapeHtml(Object.keys(policy.courseWeights || {}).length)}件</span>
+          <span>人気ゾーン重み ${escapeHtml(Object.keys(policy.popularityZoneWeights || {}).length)}件</span>
+          <span>WIN5連携 ${policy.win5ZoneWeights ? "ON" : "OFF"}</span>
+        </div>
+      </article>
+    `;
+  }
+}
+
 function renderOperationalData() {
   renderDataStatus();
   renderAiOverallDashboard();
@@ -913,6 +1178,8 @@ function renderOperationalData() {
   renderDivineRaceRanking();
   renderAutoDivineRaces();
   renderAutoWin5Candidates();
+  renderWin5PatternAnalysis();
+  renderRacecourseLearningDatabase();
   renderRiskyFavoriteRanking();
   renderLongshotRanking();
   renderWin5Dashboard();
