@@ -238,6 +238,77 @@ def build_ai_ranking(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return ranking[:20]
 
 
+def ai_index_entries(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    items = []
+    for entry in entries:
+        if entry["type"] != "事前予想":
+            continue
+        metadata = entry["metadata"]
+        score = number_value(first_value(metadata, ["AI指数", "指数", "score"], ""))
+        horse = first_value(metadata, ["馬名", "軸候補", "軸", "topHorse"], "")
+        if score is None or not horse:
+            continue
+        items.append(
+            {
+                "horse": horse,
+                "score": score,
+                "course": entry["course"],
+                "race": f"{entry['course'].replace('競馬場', '')}{entry['race']}",
+                "raceName": entry["title"],
+                "date": entry["date"],
+                "popularity": number_value(first_value(metadata, ["人気", "想定人気", "popularity"], "")),
+                "odds": number_value(first_value(metadata, ["単勝オッズ", "単勝", "odds"], "")),
+                "expectedValue": number_value(first_value(metadata, ["期待値", "value", "expectedValue"], "")),
+                "confidence": first_value(metadata, ["信頼度", "confidence"], ""),
+                "file": entry["file"],
+            }
+        )
+    return items
+
+
+def build_ai_index_summary(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    items = ai_index_entries(entries)
+    if not items:
+        return {
+            "entryCount": 0,
+            "averageScore": 0.0,
+            "topScore": 0.0,
+            "byCourse": [],
+            "topHorses": [],
+        }
+
+    by_course: dict[str, dict[str, Any]] = {}
+    for item in items:
+        group = by_course.setdefault(item["course"], {"course": item["course"], "entryCount": 0, "scoreTotal": 0.0, "topScore": 0.0})
+        group["entryCount"] += 1
+        group["scoreTotal"] += item["score"]
+        group["topScore"] = max(group["topScore"], item["score"])
+
+    course_summary = [
+        {
+            "course": group["course"],
+            "entryCount": group["entryCount"],
+            "averageScore": round(group["scoreTotal"] / group["entryCount"], 1),
+            "topScore": round(group["topScore"], 1),
+        }
+        for group in by_course.values()
+    ]
+    course_summary.sort(key=lambda item: (item["averageScore"], item["topScore"]), reverse=True)
+
+    top_horses = sorted(items, key=lambda item: item["score"], reverse=True)[:10]
+    for index, item in enumerate(top_horses, start=1):
+        item["rank"] = index
+        item["score"] = round(item["score"], 1)
+
+    return {
+        "entryCount": len(items),
+        "averageScore": round(sum(item["score"] for item in items) / len(items), 1),
+        "topScore": round(max(item["score"] for item in items), 1),
+        "byCourse": course_summary,
+        "topHorses": top_horses,
+    }
+
+
 def build_course_memos(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
     memos = []
     for entry in entries:
@@ -380,6 +451,7 @@ def generate_dashboard_data() -> dict[str, Any]:
         ],
         "races": build_race_monitor(entries),
         "aiRanking": build_ai_ranking(entries),
+        "aiIndexSummary": build_ai_index_summary(entries),
         "courseMemos": build_course_memos(entries),
         "roiMonitor": build_roi_monitor(entries),
         "divineRaceRanking": build_divine_race_ranking(entries),

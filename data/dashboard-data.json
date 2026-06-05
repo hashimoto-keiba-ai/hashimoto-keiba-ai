@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-05T06:33:26.334561+00:00",
+  "updatedAt": "2026-06-05T06:50:28.136386+00:00",
   "source": "markdown",
   "latestLogs": [
     {
@@ -23,6 +23,13 @@
   ],
   "races": [],
   "aiRanking": [],
+  "aiIndexSummary": {
+    "entryCount": 0,
+    "averageScore": 0.0,
+    "topScore": 0.0,
+    "byCourse": [],
+    "topHorses": []
+  },
   "courseMemos": [],
   "roiMonitor": {
     "totalInvestment": 0,

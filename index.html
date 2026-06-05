@@ -340,6 +340,70 @@
       <section class="panel ai-ranking-panel" aria-label="AI指数ランキング">
         <div class="section-heading">
           <div>
+            <p class="eyebrow">AI Index Summary</p>
+            <h2>AI指数集計</h2>
+          </div>
+          <span class="pill">Phase3-1</span>
+        </div>
+        <div class="phase2-kpis">
+          <article>
+            <span>登録頭数</span>
+            <strong id="ai-index-count">0頭</strong>
+          </article>
+          <article>
+            <span>平均指数</span>
+            <strong id="ai-index-average">0.0</strong>
+          </article>
+          <article>
+            <span>最高指数</span>
+            <strong id="ai-index-top">0.0</strong>
+          </article>
+        </div>
+        <div class="phase2-grid">
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>競馬場別</h3>
+              <span>平均 / 最高</span>
+            </div>
+            <div class="table-wrap">
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th>競馬場</th>
+                    <th>頭数</th>
+                    <th>平均指数</th>
+                    <th>最高指数</th>
+                  </tr>
+                </thead>
+                <tbody id="ai-index-by-course"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>上位馬</h3>
+              <span>Top 10</span>
+            </div>
+            <div class="table-wrap">
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th>順位</th>
+                    <th>馬名</th>
+                    <th>レース</th>
+                    <th>指数</th>
+                    <th>信頼度</th>
+                    <th>期待値</th>
+                  </tr>
+                </thead>
+                <tbody id="ai-index-top-horses"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <div class="section-heading">
+          <div>
             <p class="eyebrow">AI Ranking</p>
             <h2>AI指数ランキング</h2>
           </div>

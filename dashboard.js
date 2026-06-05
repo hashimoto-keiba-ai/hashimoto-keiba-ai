@@ -54,6 +54,13 @@ const dashboardData = {
     { rank: 2, horse: "サクラヴェローチェ", race: "京都11R", score: 91.4, value: 112 },
     { rank: 3, horse: "レッドブリッツ", race: "東京11R", score: 89.7, value: 121 }
   ],
+  aiIndexSummary: {
+    entryCount: 3,
+    averageScore: 91.3,
+    topScore: 92.8,
+    byCourse: [],
+    topHorses: []
+  },
   latestLogs: [],
   courseMemos: [],
   divineRaceRanking: [],
@@ -167,6 +174,9 @@ function mergeDashboardData(loadedData) {
   }
   if (loadedData.win5Dashboard && typeof loadedData.win5Dashboard === "object") {
     dashboardData.win5Dashboard = { ...dashboardData.win5Dashboard, ...loadedData.win5Dashboard };
+  }
+  if (loadedData.aiIndexSummary && typeof loadedData.aiIndexSummary === "object") {
+    dashboardData.aiIndexSummary = { ...dashboardData.aiIndexSummary, ...loadedData.aiIndexSummary };
   }
 
   dashboardData.updatedAt = loadedData.updatedAt || dashboardData.updatedAt;
@@ -435,6 +445,51 @@ function renderAiRanking() {
     : `<tr><td colspan="5">AI指数はまだ登録されていません。</td></tr>`;
 }
 
+function renderAiIndexSummary() {
+  const data = dashboardData.aiIndexSummary;
+  setText("ai-index-count", `${Number(data.entryCount || 0).toLocaleString("ja-JP")}頭`);
+  setText("ai-index-average", Number(data.averageScore || 0).toFixed(1));
+  setText("ai-index-top", Number(data.topScore || 0).toFixed(1));
+
+  const courseTarget = document.getElementById("ai-index-by-course");
+  if (courseTarget) {
+    courseTarget.innerHTML = data.byCourse.length
+      ? data.byCourse
+          .map(
+            (item) => `
+              <tr>
+                <td>${escapeHtml(item.course)}</td>
+                <td>${escapeHtml(item.entryCount)}頭</td>
+                <td>${escapeHtml(Number(item.averageScore || 0).toFixed(1))}</td>
+                <td>${escapeHtml(Number(item.topScore || 0).toFixed(1))}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="4">AI指数集計データはまだありません。</td></tr>`;
+  }
+
+  const topTarget = document.getElementById("ai-index-top-horses");
+  if (topTarget) {
+    topTarget.innerHTML = data.topHorses.length
+      ? data.topHorses
+          .map(
+            (item) => `
+              <tr>
+                <td>${escapeHtml(item.rank)}</td>
+                <td>${escapeHtml(item.horse)}</td>
+                <td>${escapeHtml(item.race || "--")}</td>
+                <td>${escapeHtml(Number(item.score || 0).toFixed(1))}</td>
+                <td>${escapeHtml(item.confidence || "--")}</td>
+                <td>${escapeHtml(item.expectedValue ?? "--")}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="6">AI指数上位馬はまだありません。</td></tr>`;
+  }
+}
+
 function renderCourseMemos() {
   const target = document.getElementById("course-memos");
   if (!target) return;
@@ -557,6 +612,7 @@ function renderOperationalData() {
   renderDataStatus();
   renderRaceMonitor();
   renderLatestLogs();
+  renderAiIndexSummary();
   renderAiRanking();
   renderCourseMemos();
   renderRoiMonitor();
