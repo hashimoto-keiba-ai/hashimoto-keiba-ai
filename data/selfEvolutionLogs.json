@@ -1,0 +1,47 @@
+{
+  "storageVersion": 1,
+  "type": "selfEvolutionLogs",
+  "provider": "github-ready-placeholder",
+  "description": "橋本競馬AIの自己進化ループログ。採用/保留/却下の判断と根拠レース、次回反映メモをdataファイルまたはlocalStorageで管理します。",
+  "updatedAt": "2026-06-02T09:30:00.000Z",
+  "items": [
+    {
+      "id": "self-evolution-2026-06-02-tokyo-1600-ai-index",
+      "date": "2026-06-02",
+      "course": "東京競馬場",
+      "distance": "芝1600m",
+      "targetAi": "AI指数エンジン",
+      "improvement": "高速馬場の東京芝1600mで上がり3F上位かつ中団外差し想定の馬をAI指数で+3補正する。",
+      "status": "採用",
+      "evidenceRace": "2026/06/02 東京11R 安田記念：直線外差し優勢でAI指数上位の評価差が着順に反映。",
+      "nextReflectionMemo": "次回の東京芝1600m良馬場では、展開AIの外差し判定と連動してAI指数補正を自動適用する。"
+    },
+    {
+      "id": "self-evolution-2026-06-02-hanshin-1800-danger",
+      "date": "2026-06-02",
+      "course": "阪神競馬場",
+      "distance": "ダート1800m",
+      "targetAi": "危険人気馬AI",
+      "improvement": "内枠先行人気馬がハイペース想定で揉まれる条件では危険人気馬指数を+8し、軸候補から降格する。",
+      "status": "保留",
+      "evidenceRace": "2026/06/02 阪神10R：1番人気の内枠先行馬が前半ハイペースで失速。",
+      "nextReflectionMemo": "同条件のサンプルを3レース以上追加確認し、危険人気馬AIの閾値を72以上に固定するか検討する。"
+    },
+    {
+      "id": "self-evolution-2026-06-02-kyoto-1200-win5",
+      "date": "2026-06-02",
+      "course": "京都競馬場",
+      "distance": "芝1200m",
+      "targetAi": "WIN5 AI",
+      "improvement": "短距離戦で人気薄を機械的に3列目へ追加するルールは、展開根拠が薄い場合はWIN5候補へ採用しない。",
+      "status": "却下",
+      "evidenceRace": "2026/06/02 京都9R：人気薄候補の根拠がオッズのみで、展開・馬場の裏付けが不足。",
+      "nextReflectionMemo": "WIN5候補はAI指数上位、展開利、馬場適性のうち2条件以上を満たす馬だけに限定する。"
+    }
+  ],
+  "logs": {
+    "resultVerifications": [],
+    "backtests": [],
+    "improvementProposals": []
+  }
+}

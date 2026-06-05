@@ -1,0 +1,18 @@
+{
+  "name": "橋本競馬AI",
+  "short_name": "競馬AI",
+  "description": "橋本競馬AIをiPad・スマホのホーム画面から起動するためのPWA設定です。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "theme_color": "#0f0a00",
+  "background_color": "#0f0a00",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
