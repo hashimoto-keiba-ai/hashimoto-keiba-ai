@@ -1,0 +1,30 @@
+{
+  "storageVersion": 1,
+  "type": "win5Database",
+  "records": [
+    {
+      "date": "2026-06-06",
+      "race1": "Tokyo 10R",
+      "race2": "Hanshin 10R",
+      "race3": "Tokyo 11R",
+      "race4": "Hanshin 11R",
+      "race5": "Hakodate 11R",
+      "selections": {
+        "race1": ["A-01", "B-05"],
+        "race2": ["A-03"],
+        "race3": ["A-08", "C-12"],
+        "race4": ["A-02", "B-07"],
+        "race5": ["A-04"]
+      },
+      "aiScore": 86,
+      "hitProbability": 12.8,
+      "expectedReturn": 168000,
+      "riskLevel": "Balanced",
+      "raceType": "A/B/C",
+      "godHoleCandidates": ["C-12"],
+      "dangerPopularHorses": ["No.1 heavy favorite"],
+      "kamiAnaCandidates": ["B-07", "C-12"],
+      "notes": "Phase9-5 seed record. Replace with live WIN5 card after entries are loaded."
+    }
+  ]
+}

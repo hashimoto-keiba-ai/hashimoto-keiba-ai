@@ -130,6 +130,25 @@ button:hover {
   background: #2a210f;
 }
 
+.button-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.48);
+  border-radius: 6px;
+  background: #211b0f;
+  color: var(--gold-2);
+  padding: 0 14px;
+  font: inherit;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.button-link:hover {
+  border-color: var(--gold-2);
+  background: #2a210f;
+}
+
 .dashboard {
   display: grid;
   gap: 18px;
@@ -243,6 +262,31 @@ button:hover {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.phase95-win5-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.phase95-win5-grid > section {
+  min-width: 0;
+}
+
+.phase95-win5-grid h3 {
+  margin-bottom: 10px;
+  color: var(--gold-2);
+}
+
+.phase95-win5-card strong {
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.phase95-win5-table {
+  min-width: 1400px;
+}
+
 .release-info-grid article {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -348,26 +392,26 @@ tbody tr:last-child td {
   font-weight: 900;
 }
 
-.audit-result.正常,
+.audit-result.豁｣蟶ｸ,
 .severity.ok {
   background: rgba(105, 196, 143, 0.14);
   color: var(--green);
 }
 
-.audit-result.要確認,
-.severity.軽微 {
+.audit-result.隕∫｢ｺ隱・
+.severity.霆ｽ蠕ｮ {
   background: rgba(125, 167, 255, 0.14);
   color: var(--blue);
 }
 
-.audit-result.警告,
-.severity.中 {
+.audit-result.隴ｦ蜻・
+.severity.荳ｭ {
   background: rgba(227, 167, 47, 0.16);
   color: var(--amber);
 }
 
-.audit-result.エラー,
-.severity.重大 {
+.audit-result.繧ｨ繝ｩ繝ｼ,
+.severity.驥榊､ｧ {
   background: rgba(220, 91, 79, 0.16);
   color: var(--red);
 }
@@ -567,7 +611,8 @@ tbody tr:last-child td {
 @media (max-width: 1100px) {
   .status-strip,
   .audit-summary,
-  .release-info-grid {
+  .release-info-grid,
+  .phase95-win5-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -591,7 +636,8 @@ tbody tr:last-child td {
 
   .status-strip,
   .audit-summary,
-  .release-info-grid {
+  .release-info-grid,
+  .phase95-win5-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -613,6 +659,7 @@ tbody tr:last-child td {
 
   .audit-summary,
   .release-info-grid,
+  .phase95-win5-grid,
   .audit-grid,
   .phase2-grid {
     padding-inline: 12px;
