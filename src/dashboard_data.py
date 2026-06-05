@@ -665,9 +665,48 @@ def build_win5_dashboard(entries: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def build_ai_overall_dashboard(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    ai_summary = build_ai_index_summary(entries)
+    auto_divine = build_auto_divine_races(entries)
+    auto_win5 = build_auto_win5_candidates(entries)
+    risky = build_risky_favorite_ranking(entries)
+    longshots = build_longshot_ranking(entries)
+
+    return {
+        "aiIndex": {
+            "entryCount": ai_summary["entryCount"],
+            "averageScore": ai_summary["averageScore"],
+            "topScore": ai_summary["topScore"],
+            "topHorse": ai_summary["topHorses"][0] if ai_summary["topHorses"] else None,
+        },
+        "autoDivine": {
+            "candidateCount": len(auto_divine),
+            "topRace": auto_divine[0] if auto_divine else None,
+        },
+        "autoWin5": {
+            "raceCount": auto_win5["raceCount"],
+            "combinationCount": auto_win5["combinationCount"],
+            "estimatedInvestment": auto_win5["estimatedInvestment"],
+        },
+        "risk": {
+            "candidateCount": len(risky),
+            "topHorse": risky[0] if risky else None,
+        },
+        "longshot": {
+            "candidateCount": len(longshots),
+            "topHorse": longshots[0] if longshots else None,
+        },
+    }
+
+
 def generate_dashboard_data() -> dict[str, Any]:
     entries = [entry for path in markdown_files() if (entry := build_log_entry(path))]
     entries.sort(key=lambda item: (item["date"], item["updatedAt"]), reverse=True)
+    ai_index_summary = build_ai_index_summary(entries)
+    auto_divine_races = build_auto_divine_races(entries)
+    auto_win5_candidates = build_auto_win5_candidates(entries)
+    risky_favorite_ranking = build_risky_favorite_ranking(entries)
+    longshot_ranking = build_longshot_ranking(entries)
 
     return {
         "updatedAt": datetime.now(timezone.utc).isoformat(),
@@ -686,14 +725,39 @@ def generate_dashboard_data() -> dict[str, Any]:
         ],
         "races": build_race_monitor(entries),
         "aiRanking": build_ai_ranking(entries),
-        "aiIndexSummary": build_ai_index_summary(entries),
+        "aiIndexSummary": ai_index_summary,
         "courseMemos": build_course_memos(entries),
         "roiMonitor": build_roi_monitor(entries),
         "divineRaceRanking": build_divine_race_ranking(entries),
-        "autoDivineRaces": build_auto_divine_races(entries),
-        "autoWin5Candidates": build_auto_win5_candidates(entries),
-        "riskyFavoriteRanking": build_risky_favorite_ranking(entries),
-        "longshotRanking": build_longshot_ranking(entries),
+        "autoDivineRaces": auto_divine_races,
+        "autoWin5Candidates": auto_win5_candidates,
+        "riskyFavoriteRanking": risky_favorite_ranking,
+        "longshotRanking": longshot_ranking,
+        "aiOverallDashboard": {
+            "aiIndex": {
+                "entryCount": ai_index_summary["entryCount"],
+                "averageScore": ai_index_summary["averageScore"],
+                "topScore": ai_index_summary["topScore"],
+                "topHorse": ai_index_summary["topHorses"][0] if ai_index_summary["topHorses"] else None,
+            },
+            "autoDivine": {
+                "candidateCount": len(auto_divine_races),
+                "topRace": auto_divine_races[0] if auto_divine_races else None,
+            },
+            "autoWin5": {
+                "raceCount": auto_win5_candidates["raceCount"],
+                "combinationCount": auto_win5_candidates["combinationCount"],
+                "estimatedInvestment": auto_win5_candidates["estimatedInvestment"],
+            },
+            "risk": {
+                "candidateCount": len(risky_favorite_ranking),
+                "topHorse": risky_favorite_ranking[0] if risky_favorite_ranking else None,
+            },
+            "longshot": {
+                "candidateCount": len(longshot_ranking),
+                "topHorse": longshot_ranking[0] if longshot_ranking else None,
+            },
+        },
         "win5Dashboard": build_win5_dashboard(entries),
     }
 

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-05T07:05:05.928930+00:00",
+  "updatedAt": "2026-06-05T07:11:29.897765+00:00",
   "source": "markdown",
   "latestLogs": [
     {
@@ -54,6 +54,31 @@
   },
   "riskyFavoriteRanking": [],
   "longshotRanking": [],
+  "aiOverallDashboard": {
+    "aiIndex": {
+      "entryCount": 0,
+      "averageScore": 0.0,
+      "topScore": 0.0,
+      "topHorse": null
+    },
+    "autoDivine": {
+      "candidateCount": 0,
+      "topRace": null
+    },
+    "autoWin5": {
+      "raceCount": 0,
+      "combinationCount": 0,
+      "estimatedInvestment": 0
+    },
+    "risk": {
+      "candidateCount": 0,
+      "topHorse": null
+    },
+    "longshot": {
+      "candidateCount": 0,
+      "topHorse": null
+    }
+  },
   "win5Dashboard": {
     "date": "",
     "investment": 0,

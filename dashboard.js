@@ -61,6 +61,13 @@ const dashboardData = {
     byCourse: [],
     topHorses: []
   },
+  aiOverallDashboard: {
+    aiIndex: { entryCount: 0, averageScore: 0, topScore: 0, topHorse: null },
+    autoDivine: { candidateCount: 0, topRace: null },
+    autoWin5: { raceCount: 0, combinationCount: 0, estimatedInvestment: 0 },
+    risk: { candidateCount: 0, topHorse: null },
+    longshot: { candidateCount: 0, topHorse: null }
+  },
   latestLogs: [],
   courseMemos: [],
   divineRaceRanking: [],
@@ -189,6 +196,12 @@ function mergeDashboardData(loadedData) {
   }
   if (loadedData.autoWin5Candidates && typeof loadedData.autoWin5Candidates === "object") {
     dashboardData.autoWin5Candidates = { ...dashboardData.autoWin5Candidates, ...loadedData.autoWin5Candidates };
+  }
+  if (loadedData.aiOverallDashboard && typeof loadedData.aiOverallDashboard === "object") {
+    dashboardData.aiOverallDashboard = {
+      ...dashboardData.aiOverallDashboard,
+      ...loadedData.aiOverallDashboard
+    };
   }
 
   dashboardData.updatedAt = loadedData.updatedAt || dashboardData.updatedAt;
@@ -502,6 +515,21 @@ function renderAiIndexSummary() {
   }
 }
 
+function renderAiOverallDashboard() {
+  const data = dashboardData.aiOverallDashboard;
+  setText("overall-ai-count", `${Number(data.aiIndex.entryCount || 0).toLocaleString("ja-JP")}頭`);
+  setText("overall-ai-average", Number(data.aiIndex.averageScore || 0).toFixed(1));
+  setText("overall-ai-top", data.aiIndex.topHorse ? `${data.aiIndex.topHorse.horse} / ${Number(data.aiIndex.topScore || 0).toFixed(1)}` : "--");
+  setText("overall-divine-count", `${Number(data.autoDivine.candidateCount || 0).toLocaleString("ja-JP")}R`);
+  setText("overall-divine-top", data.autoDivine.topRace ? `${data.autoDivine.topRace.course} ${data.autoDivine.topRace.race}` : "--");
+  setText("overall-win5-races", `${Number(data.autoWin5.raceCount || 0).toLocaleString("ja-JP")}R`);
+  setText("overall-win5-combinations", `${Number(data.autoWin5.combinationCount || 0).toLocaleString("ja-JP")}点 / ${formatYen(data.autoWin5.estimatedInvestment)}`);
+  setText("overall-risk-count", `${Number(data.risk.candidateCount || 0).toLocaleString("ja-JP")}頭`);
+  setText("overall-risk-top", data.risk.topHorse ? `${data.risk.topHorse.horse} / 危険度 ${data.risk.topHorse.riskScore}` : "--");
+  setText("overall-longshot-count", `${Number(data.longshot.candidateCount || 0).toLocaleString("ja-JP")}頭`);
+  setText("overall-longshot-top", data.longshot.topHorse ? `${data.longshot.topHorse.horse} / 爆穴 ${data.longshot.topHorse.longshotScore}` : "--");
+}
+
 function renderCourseMemos() {
   const target = document.getElementById("course-memos");
   if (!target) return;
@@ -719,6 +747,7 @@ function renderWin5Dashboard() {
 
 function renderOperationalData() {
   renderDataStatus();
+  renderAiOverallDashboard();
   renderRaceMonitor();
   renderLatestLogs();
   renderAiIndexSummary();

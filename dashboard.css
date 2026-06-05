@@ -490,6 +490,44 @@ tbody tr:last-child td {
   color: var(--gold-2);
 }
 
+.overall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.overall-grid article {
+  display: grid;
+  min-height: 132px;
+  align-content: start;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+  padding: 14px;
+}
+
+.overall-grid span,
+.overall-grid em,
+.overall-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.overall-grid strong {
+  color: var(--gold-2);
+  font-size: 26px;
+  line-height: 1.15;
+}
+
+.overall-grid b {
+  color: var(--ink);
+}
+
 @media (max-width: 1100px) {
   .status-strip,
   .audit-summary,
