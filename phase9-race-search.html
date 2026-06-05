@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase9-1 Race Search System</title>
+  <style>
+    :root{--bg:#0d0d0c;--panel:#151410;--panel2:#1d1a13;--ink:#f7f1df;--muted:#b8ad91;--line:rgba(212,175,55,.24);--gold:#f2d675;--focus:#7dd3fc}*{box-sizing:border-box}body{margin:0;min-width:320px;background:linear-gradient(180deg,rgba(212,175,55,.08),rgba(13,13,12,0) 260px),var(--bg);color:var(--ink);font-family:"Yu Gothic","Meiryo",system-ui,sans-serif}header,main{padding-inline:clamp(16px,4vw,46px)}header{display:grid;gap:12px;padding-block:28px 18px;border-bottom:1px solid var(--line);background:rgba(10,10,9,.96)}h1,h2,p{margin:0}h1{color:var(--gold);font-size:clamp(26px,3vw,42px)}h2{font-size:18px}.eyebrow,.meta,label span,.search-result span,.empty-state{color:var(--muted);font-size:12px;font-weight:800;line-height:1.5}main{display:grid;gap:18px;padding-block:20px 44px}.search-panel,.results-panel,.search-result{border:1px solid var(--line);border-radius:8px;background:var(--panel);box-shadow:0 18px 42px rgba(0,0,0,.32)}.search-panel{display:grid;gap:14px;padding:16px 18px}.search-grid{display:grid;grid-template-columns:1fr repeat(3,minmax(150px,220px)) auto;gap:12px;align-items:end}label{display:grid;gap:8px}input,select{width:100%;min-height:42px;border:1px solid rgba(212,175,55,.42);border-radius:6px;background:#0f0e0b;color:var(--ink);padding:0 10px;font:inherit;font-weight:800}button{min-height:42px;border:1px solid var(--gold);border-radius:6px;background:var(--gold);color:#16120a;padding:0 14px;font:inherit;font-weight:900;cursor:pointer}input:focus,select:focus,button:focus{outline:2px solid var(--focus);outline-offset:2px}.results-panel{overflow:hidden}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:62px;padding:14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(212,175,55,.12),rgba(212,175,55,0))}.pill{border:1px solid rgba(212,175,55,.36);border-radius:999px;background:rgba(212,175,55,.12);color:var(--gold);padding:6px 10px;font-size:12px;font-weight:900;white-space:nowrap}.results-stack{display:grid;gap:10px;padding:14px}.search-result{display:grid;gap:8px;background:var(--panel2);box-shadow:none;padding:14px}.search-result strong{color:var(--gold);font-size:18px}.search-result p{font-size:13px;font-weight:800;line-height:1.45}.search-result dl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0}.search-result dt{color:var(--muted);font-size:11px;font-weight:900}.search-result dd{margin:0;color:var(--ink);font-size:13px;font-weight:800;overflow-wrap:anywhere}.empty-state{padding:8px 0}@media(max-width:1100px){.search-grid,.search-result dl{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">Hashimoto Keiba AI / Phase9-1</p>
+    <h1>Race Search System</h1>
+    <p class="meta">Race name, racecourse, horse name, jockey, trainer, prediction entries, result entries, OS updates, and AI index entries を横断検索します。</p>
+  </header>
+  <main>
+    <section class="search-panel" aria-label="Global search and filters">
+      <div><p class="eyebrow">Global Search</p><h2>Race Database Search</h2></div>
+      <div class="search-grid">
+        <label><span>Search</span><input id="phase91-search" type="search" placeholder="Race, course, horse, jockey, trainer, rule, AI index"></label>
+        <label><span>Racecourse</span><select id="phase91-filter-racecourse"></select></label>
+        <label><span>Distance</span><select id="phase91-filter-distance"></select></label>
+        <label><span>Surface</span><select id="phase91-filter-surface"></select></label>
+        <button id="phase91-clear" type="button">Clear</button>
+      </div>
+    </section>
+
+    <section class="results-panel" aria-label="Matching records">
+      <div class="section-heading"><h2>Matching Records</h2><span class="pill" id="phase91-count">0 records</span></div>
+      <div class="results-stack" id="phase91-results"></div>
+    </section>
+  </main>
+  <script src="phase8-racecourse.js"></script>
+  <script src="phase9-race-search.js"></script>
+</body>
+</html>
