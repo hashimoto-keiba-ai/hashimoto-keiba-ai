@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-05T06:50:28.136386+00:00",
+  "updatedAt": "2026-06-05T06:59:05.020301+00:00",
   "source": "markdown",
   "latestLogs": [
     {
@@ -45,6 +45,13 @@
     "recent": []
   },
   "divineRaceRanking": [],
+  "autoDivineRaces": [],
+  "autoWin5Candidates": {
+    "raceCount": 0,
+    "combinationCount": 0,
+    "estimatedInvestment": 0,
+    "races": []
+  },
   "win5Dashboard": {
     "date": "",
     "investment": 0,

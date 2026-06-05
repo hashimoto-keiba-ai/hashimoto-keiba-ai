@@ -64,6 +64,13 @@ const dashboardData = {
   latestLogs: [],
   courseMemos: [],
   divineRaceRanking: [],
+  autoDivineRaces: [],
+  autoWin5Candidates: {
+    raceCount: 0,
+    combinationCount: 0,
+    estimatedInvestment: 0,
+    races: []
+  },
   roiMonitor: {
     totalInvestment: 0,
     totalPayout: 0,
@@ -163,7 +170,7 @@ async function loadDashboardData() {
 function mergeDashboardData(loadedData) {
   if (!loadedData || typeof loadedData !== "object") return;
 
-  for (const key of ["races", "aiRanking", "latestLogs", "courseMemos", "divineRaceRanking"]) {
+  for (const key of ["races", "aiRanking", "latestLogs", "courseMemos", "divineRaceRanking", "autoDivineRaces"]) {
     if (Array.isArray(loadedData[key])) {
       dashboardData[key] = loadedData[key];
     }
@@ -177,6 +184,9 @@ function mergeDashboardData(loadedData) {
   }
   if (loadedData.aiIndexSummary && typeof loadedData.aiIndexSummary === "object") {
     dashboardData.aiIndexSummary = { ...dashboardData.aiIndexSummary, ...loadedData.aiIndexSummary };
+  }
+  if (loadedData.autoWin5Candidates && typeof loadedData.autoWin5Candidates === "object") {
+    dashboardData.autoWin5Candidates = { ...dashboardData.autoWin5Candidates, ...loadedData.autoWin5Candidates };
   }
 
   dashboardData.updatedAt = loadedData.updatedAt || dashboardData.updatedAt;
@@ -579,6 +589,57 @@ function renderDivineRaceRanking() {
     : `<tr><td colspan="8">神レース指数つきの事前予想はまだありません。</td></tr>`;
 }
 
+function renderAutoDivineRaces() {
+  const target = document.getElementById("auto-divine-races");
+  if (!target) return;
+  target.innerHTML = dashboardData.autoDivineRaces.length
+    ? dashboardData.autoDivineRaces
+        .map(
+          (item) => `
+            <tr>
+              <td>${escapeHtml(item.rank)}</td>
+              <td>${escapeHtml(item.course)} ${escapeHtml(item.race)}</td>
+              <td>${escapeHtml(item.name)}</td>
+              <td>${escapeHtml(item.autoScore)}</td>
+              <td>${escapeHtml(item.aiScore)}</td>
+              <td>${escapeHtml(item.confidence || "--")}</td>
+              <td>${escapeHtml(item.expectedValue || "--")}</td>
+              <td>${formatYen(item.recommendedStake)}</td>
+              <td>${escapeHtml((item.reasons || []).join(" / ") || "--")}</td>
+            </tr>
+          `
+        )
+        .join("")
+    : `<tr><td colspan="9">自動判定できる神レース候補はまだありません。</td></tr>`;
+}
+
+function renderAutoWin5Candidates() {
+  const data = dashboardData.autoWin5Candidates;
+  setText("auto-win5-race-count", `${Number(data.raceCount || 0).toLocaleString("ja-JP")}R`);
+  setText("auto-win5-combination-count", `${Number(data.combinationCount || 0).toLocaleString("ja-JP")}点`);
+  setText("auto-win5-investment", formatYen(data.estimatedInvestment));
+
+  const target = document.getElementById("auto-win5-candidates");
+  if (!target) return;
+  target.innerHTML = data.races.length
+    ? data.races
+        .map(
+          (race) => `
+            <article class="race-card win5-race-card">
+              <span class="race-meta">${escapeHtml(race.label)} ${escapeHtml(race.name || "")}</span>
+              <strong>${escapeHtml(race.candidates.length)}頭</strong>
+              <div class="race-kpi">
+                ${race.candidates
+                  .map((candidate) => `<span>${escapeHtml(candidate.zone)} ${escapeHtml(candidate.horse)} / 指数 ${escapeHtml(candidate.aiScore)}</span>`)
+                  .join("")}
+              </div>
+            </article>
+          `
+        )
+        .join("")
+    : `<article class="race-card"><strong>WIN5候補未生成</strong><span class="race-meta">事前予想MarkdownにWIN5対象・WIN5ゾーン・高AI指数が入ると自動生成されます。</span></article>`;
+}
+
 function renderWin5Dashboard() {
   const data = dashboardData.win5Dashboard;
   setText("win5-date", data.date || "--");
@@ -617,6 +678,8 @@ function renderOperationalData() {
   renderCourseMemos();
   renderRoiMonitor();
   renderDivineRaceRanking();
+  renderAutoDivineRaces();
+  renderAutoWin5Candidates();
   renderWin5Dashboard();
 }
 

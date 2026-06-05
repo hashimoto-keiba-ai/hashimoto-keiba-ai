@@ -256,6 +256,32 @@
       <section class="panel divine-race-panel" aria-label="神レースランキング">
         <div class="section-heading">
           <div>
+            <p class="eyebrow">Auto Divine Race</p>
+            <h2>神レース自動判定</h2>
+          </div>
+          <span class="pill">Phase3-2</span>
+        </div>
+        <div class="table-wrap">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>順位</th>
+                <th>レース</th>
+                <th>レース名</th>
+                <th>自動スコア</th>
+                <th>AI指数</th>
+                <th>信頼度</th>
+                <th>期待値</th>
+                <th>推奨額</th>
+                <th>判定理由</th>
+              </tr>
+            </thead>
+            <tbody id="auto-divine-races"></tbody>
+          </table>
+        </div>
+
+        <div class="section-heading">
+          <div>
             <p class="eyebrow">Divine Race Ranking</p>
             <h2>神レースランキング</h2>
           </div>
@@ -281,6 +307,29 @@
       </section>
 
       <section class="panel win5-panel" aria-label="WIN5ダッシュボード">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Auto WIN5 Candidates</p>
+            <h2>WIN5候補自動生成</h2>
+          </div>
+          <span class="pill">Phase3-2</span>
+        </div>
+        <div class="phase2-kpis">
+          <article>
+            <span>対象レース</span>
+            <strong id="auto-win5-race-count">0R</strong>
+          </article>
+          <article>
+            <span>組み合わせ数</span>
+            <strong id="auto-win5-combination-count">0点</strong>
+          </article>
+          <article>
+            <span>想定投資額</span>
+            <strong id="auto-win5-investment">0円</strong>
+          </article>
+        </div>
+        <div class="race-cards" id="auto-win5-candidates"></div>
+
         <div class="section-heading">
           <div>
             <p class="eyebrow">WIN5 Dashboard</p>

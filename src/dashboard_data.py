@@ -403,6 +403,158 @@ def build_divine_race_ranking(entries: list[dict[str, Any]]) -> list[dict[str, A
     return ranking[:20]
 
 
+def confidence_points(value: str) -> int:
+    normalized = value.strip().upper()
+    if normalized.startswith("S"):
+        return 12
+    if normalized.startswith("A"):
+        return 10
+    if normalized.startswith("B"):
+        return 6
+    if normalized.startswith("C"):
+        return 2
+    return 0
+
+
+def build_auto_divine_races(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    races = []
+    for entry in entries:
+        if entry["type"] != "事前予想":
+            continue
+
+        metadata = entry["metadata"]
+        ai_score = pick_number(metadata, ["AI指数", "指数", "score"])
+        expected_value = pick_number(metadata, ["期待値", "EV", "expectedValue"])
+        confidence = first_value(metadata, ["信頼度", "confidence"], "")
+        risky_count = yen(pick_number(metadata, ["危険人気馬数", "危険馬数", "riskyFavoriteCount"]))
+        longshot_count = yen(pick_number(metadata, ["爆穴候補数", "穴候補数", "longshotCount"]))
+        recommended_stake = yen(pick_number(metadata, ["推奨投資額", "推奨額", "recommendedStake"]))
+
+        auto_score = min(
+            100,
+            round(
+                ai_score * 0.55
+                + min(expected_value, 200) * 0.16
+                + confidence_points(confidence)
+                + min(risky_count, 3) * 4
+                + min(longshot_count, 3) * 3
+                + (4 if recommended_stake > 0 else 0)
+            ),
+        )
+        if auto_score < 70:
+            continue
+
+        reasons = []
+        if ai_score >= 88:
+            reasons.append("AI指数が高い")
+        if expected_value >= 120:
+            reasons.append("期待値が高い")
+        if confidence_points(confidence) >= 10:
+            reasons.append("信頼度が高い")
+        if risky_count > 0:
+            reasons.append("危険人気馬あり")
+        if longshot_count > 0:
+            reasons.append("爆穴候補あり")
+        if recommended_stake > 0:
+            reasons.append("推奨投資額あり")
+
+        races.append(
+            {
+                "course": entry["course"],
+                "race": entry["race"],
+                "name": entry["title"],
+                "autoScore": auto_score,
+                "aiScore": round(ai_score, 1),
+                "confidence": confidence,
+                "expectedValue": expected_value,
+                "recommendedStake": recommended_stake,
+                "reasons": reasons,
+                "date": entry["date"],
+                "file": entry["file"],
+            }
+        )
+
+    races.sort(key=lambda item: (item["autoScore"], item["expectedValue"], item["aiScore"]), reverse=True)
+    for index, item in enumerate(races, start=1):
+        item["rank"] = index
+    return races[:20]
+
+
+def win5_zone(metadata: dict[str, str], ai_score: float, expected_value: float, confidence: str) -> str:
+    zone = first_value(metadata, ["WIN5ゾーン", "ゾーン", "zone"], "").upper()
+    if zone in ("A", "B", "C"):
+        return zone
+    if ai_score >= 90 and confidence_points(confidence) >= 10:
+        return "A"
+    if ai_score >= 84 or expected_value >= 120:
+        return "B"
+    return "C"
+
+
+def is_win5_candidate(metadata: dict[str, str], ai_score: float, expected_value: float, confidence: str) -> bool:
+    target = bool_value(first_value(metadata, ["WIN5対象", "WIN5候補", "win5Target"], ""))
+    if target is not None:
+        return target
+    if first_value(metadata, ["WIN5ゾーン", "ゾーン", "zone"], ""):
+        return True
+    return ai_score >= 88 and confidence_points(confidence) >= 10 and expected_value >= 100
+
+
+def build_auto_win5_candidates(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    grouped: dict[str, dict[str, Any]] = {}
+    for entry in entries:
+        if entry["type"] != "事前予想":
+            continue
+
+        metadata = entry["metadata"]
+        horse = first_value(metadata, ["馬名", "軸候補", "軸", "topHorse"], "")
+        ai_score = pick_number(metadata, ["AI指数", "指数", "score"])
+        expected_value = pick_number(metadata, ["期待値", "EV", "expectedValue"])
+        confidence = first_value(metadata, ["信頼度", "confidence"], "")
+        if not horse or not is_win5_candidate(metadata, ai_score, expected_value, confidence):
+            continue
+
+        label = f"{entry['course'].replace('競馬場', '')}{entry['race']}"
+        group = grouped.setdefault(
+            label,
+            {
+                "label": label,
+                "course": entry["course"],
+                "race": entry["race"],
+                "name": entry["title"],
+                "date": entry["date"],
+                "candidates": [],
+            },
+        )
+        group["candidates"].append(
+            {
+                "horse": horse,
+                "zone": win5_zone(metadata, ai_score, expected_value, confidence),
+                "aiScore": round(ai_score, 1),
+                "confidence": confidence,
+                "expectedValue": expected_value,
+                "file": entry["file"],
+            }
+        )
+
+    races = list(grouped.values())
+    for race in races:
+        race["candidates"].sort(key=lambda item: (item["zone"] != "A", -item["aiScore"], -(item["expectedValue"] or 0)))
+
+    races.sort(key=lambda item: max((candidate["aiScore"] for candidate in item["candidates"]), default=0), reverse=True)
+    races = races[:5]
+    combination_count = 1
+    for race in races:
+        combination_count *= max(1, len(race["candidates"]))
+
+    return {
+        "raceCount": len(races),
+        "combinationCount": combination_count if races else 0,
+        "estimatedInvestment": combination_count * 100 if races else 0,
+        "races": races,
+    }
+
+
 def build_win5_dashboard(entries: list[dict[str, Any]]) -> dict[str, Any]:
     win5_entries = [entry for entry in entries if entry["type"] == "WIN5"]
     if not win5_entries:
@@ -455,6 +607,8 @@ def generate_dashboard_data() -> dict[str, Any]:
         "courseMemos": build_course_memos(entries),
         "roiMonitor": build_roi_monitor(entries),
         "divineRaceRanking": build_divine_race_ranking(entries),
+        "autoDivineRaces": build_auto_divine_races(entries),
+        "autoWin5Candidates": build_auto_win5_candidates(entries),
         "win5Dashboard": build_win5_dashboard(entries),
     }
 
