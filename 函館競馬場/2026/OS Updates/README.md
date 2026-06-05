@@ -1,9 +1,31 @@
 # Hakodate OS Updates
 
-Race-specific database section for Hakodate OS updates.
+Racecourse-specific operating system updates for Hakodate.
 
-Prepared for:
-- Operating system notes
-- Model update tracking
-- Racecourse workflow changes
-- Phase8-2 racecourse selector links
+## OS Updates Manager
+
+Use the Phase8-5 OS Updates Manager to store Hakodate OS rules in localStorage and connect them back to this racecourse database.
+
+Manager fields:
+- Racecourse
+- Distance
+- Surface
+- Condition
+- OS Rule Title
+- OS Rule Content
+- Verification Race
+- Adoption Date
+- Importance: Critical, High, Medium, Low
+
+Search and filter:
+- Search by rule title, content, distance, surface, condition, verification race, adoption date, or importance.
+- Filter by importance level.
+
+Manager screen: [Phase8-5 OS Updates Manager](../../../phase8-racecourse-management.html)
+
+## Stores
+
+- Rule changes
+- Weight adjustments
+- Exclusion conditions
+- Next validation points
