@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-05T06:59:05.020301+00:00",
+  "updatedAt": "2026-06-05T07:05:05.928930+00:00",
   "source": "markdown",
   "latestLogs": [
     {
@@ -52,6 +52,8 @@
     "estimatedInvestment": 0,
     "races": []
   },
+  "riskyFavoriteRanking": [],
+  "longshotRanking": [],
   "win5Dashboard": {
     "date": "",
     "investment": 0,

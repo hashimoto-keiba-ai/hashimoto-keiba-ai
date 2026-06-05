@@ -555,6 +555,89 @@ def build_auto_win5_candidates(entries: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def popularity_zone(value: float | None) -> str:
+    if value is None or value <= 0:
+        return "未設定"
+    if value <= 3:
+        return "上位人気"
+    if value <= 6:
+        return "中位人気"
+    if value <= 9:
+        return "伏兵"
+    return "大穴"
+
+
+def build_risky_favorite_ranking(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ranking = []
+    for entry in entries:
+        if entry["type"] != "事前予想":
+            continue
+
+        metadata = entry["metadata"]
+        horse = first_value(metadata, ["危険人気馬", "危険馬", "riskyFavorite"], "")
+        risk_score = pick_number(metadata, ["危険度", "危険度スコア", "riskScore"])
+        if not horse or risk_score <= 0:
+            continue
+
+        popularity = number_value(first_value(metadata, ["危険人気馬人気", "人気", "想定人気", "popularity"], ""))
+        ranking.append(
+            {
+                "horse": horse,
+                "course": entry["course"],
+                "race": entry["race"],
+                "name": entry["title"],
+                "riskScore": round(risk_score, 1),
+                "popularity": popularity,
+                "popularityZone": first_value(metadata, ["人気ゾーン", "危険人気ゾーン"], popularity_zone(popularity)),
+                "reason": first_value(metadata, ["危険理由", "理由", "riskReason"], first_line(entry["sections"].get("危険人気馬", ""))),
+                "date": entry["date"],
+                "file": entry["file"],
+            }
+        )
+
+    ranking.sort(key=lambda item: item["riskScore"], reverse=True)
+    for index, item in enumerate(ranking, start=1):
+        item["rank"] = index
+    return ranking[:20]
+
+
+def build_longshot_ranking(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ranking = []
+    for entry in entries:
+        if entry["type"] != "事前予想":
+            continue
+
+        metadata = entry["metadata"]
+        horse = first_value(metadata, ["爆穴馬", "爆穴", "穴馬", "longshot"], "")
+        longshot_score = pick_number(metadata, ["爆穴指数", "穴指数", "longshotScore"])
+        expected_value = pick_number(metadata, ["爆穴期待値", "期待値", "expectedValue"])
+        if not horse or longshot_score <= 0:
+            continue
+
+        popularity = number_value(first_value(metadata, ["爆穴人気", "人気", "想定人気", "popularity"], ""))
+        ranking.append(
+            {
+                "horse": horse,
+                "course": entry["course"],
+                "race": entry["race"],
+                "name": entry["title"],
+                "longshotScore": round(longshot_score, 1),
+                "popularity": popularity,
+                "popularityZone": first_value(metadata, ["人気ゾーン", "爆穴人気ゾーン"], popularity_zone(popularity)),
+                "expectedValue": expected_value,
+                "ticket": first_value(metadata, ["買い目", "推奨買い目", "ticket"], ""),
+                "reason": first_value(metadata, ["爆穴理由", "推奨理由", "longshotReason"], first_line(entry["sections"].get("爆穴理由", ""))),
+                "date": entry["date"],
+                "file": entry["file"],
+            }
+        )
+
+    ranking.sort(key=lambda item: (item["longshotScore"], item["expectedValue"]), reverse=True)
+    for index, item in enumerate(ranking, start=1):
+        item["rank"] = index
+    return ranking[:20]
+
+
 def build_win5_dashboard(entries: list[dict[str, Any]]) -> dict[str, Any]:
     win5_entries = [entry for entry in entries if entry["type"] == "WIN5"]
     if not win5_entries:
@@ -609,6 +692,8 @@ def generate_dashboard_data() -> dict[str, Any]:
         "divineRaceRanking": build_divine_race_ranking(entries),
         "autoDivineRaces": build_auto_divine_races(entries),
         "autoWin5Candidates": build_auto_win5_candidates(entries),
+        "riskyFavoriteRanking": build_risky_favorite_ranking(entries),
+        "longshotRanking": build_longshot_ranking(entries),
         "win5Dashboard": build_win5_dashboard(entries),
     }
 

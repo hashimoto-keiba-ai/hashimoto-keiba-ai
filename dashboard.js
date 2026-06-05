@@ -65,6 +65,8 @@ const dashboardData = {
   courseMemos: [],
   divineRaceRanking: [],
   autoDivineRaces: [],
+  riskyFavoriteRanking: [],
+  longshotRanking: [],
   autoWin5Candidates: {
     raceCount: 0,
     combinationCount: 0,
@@ -170,7 +172,7 @@ async function loadDashboardData() {
 function mergeDashboardData(loadedData) {
   if (!loadedData || typeof loadedData !== "object") return;
 
-  for (const key of ["races", "aiRanking", "latestLogs", "courseMemos", "divineRaceRanking", "autoDivineRaces"]) {
+  for (const key of ["races", "aiRanking", "latestLogs", "courseMemos", "divineRaceRanking", "autoDivineRaces", "riskyFavoriteRanking", "longshotRanking"]) {
     if (Array.isArray(loadedData[key])) {
       dashboardData[key] = loadedData[key];
     }
@@ -640,6 +642,52 @@ function renderAutoWin5Candidates() {
     : `<article class="race-card"><strong>WIN5候補未生成</strong><span class="race-meta">事前予想MarkdownにWIN5対象・WIN5ゾーン・高AI指数が入ると自動生成されます。</span></article>`;
 }
 
+function renderRiskyFavoriteRanking() {
+  const target = document.getElementById("risky-favorite-ranking");
+  if (!target) return;
+  target.innerHTML = dashboardData.riskyFavoriteRanking.length
+    ? dashboardData.riskyFavoriteRanking
+        .map(
+          (item) => `
+            <tr>
+              <td>${escapeHtml(item.rank)}</td>
+              <td>${escapeHtml(item.horse)}</td>
+              <td>${escapeHtml(item.course)} ${escapeHtml(item.race)}</td>
+              <td>${escapeHtml(item.riskScore)}</td>
+              <td>${escapeHtml(item.popularity ?? "--")}</td>
+              <td>${escapeHtml(item.popularityZone || "--")}</td>
+              <td>${escapeHtml(item.reason || "--")}</td>
+            </tr>
+          `
+        )
+        .join("")
+    : `<tr><td colspan="7">危険人気馬データはまだありません。</td></tr>`;
+}
+
+function renderLongshotRanking() {
+  const target = document.getElementById("longshot-ranking");
+  if (!target) return;
+  target.innerHTML = dashboardData.longshotRanking.length
+    ? dashboardData.longshotRanking
+        .map(
+          (item) => `
+            <tr>
+              <td>${escapeHtml(item.rank)}</td>
+              <td>${escapeHtml(item.horse)}</td>
+              <td>${escapeHtml(item.course)} ${escapeHtml(item.race)}</td>
+              <td>${escapeHtml(item.longshotScore)}</td>
+              <td>${escapeHtml(item.popularity ?? "--")}</td>
+              <td>${escapeHtml(item.popularityZone || "--")}</td>
+              <td>${escapeHtml(item.expectedValue || "--")}</td>
+              <td>${escapeHtml(item.ticket || "--")}</td>
+              <td>${escapeHtml(item.reason || "--")}</td>
+            </tr>
+          `
+        )
+        .join("")
+    : `<tr><td colspan="9">爆穴データはまだありません。</td></tr>`;
+}
+
 function renderWin5Dashboard() {
   const data = dashboardData.win5Dashboard;
   setText("win5-date", data.date || "--");
@@ -680,6 +728,8 @@ function renderOperationalData() {
   renderDivineRaceRanking();
   renderAutoDivineRaces();
   renderAutoWin5Candidates();
+  renderRiskyFavoriteRanking();
+  renderLongshotRanking();
   renderWin5Dashboard();
 }
 
