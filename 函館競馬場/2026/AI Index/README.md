@@ -1,9 +1,35 @@
 # Hakodate AI Index
 
-Race-specific database section for Hakodate AI index.
+Race-specific AI index database for Hakodate.
 
-Prepared for:
-- AI feature references
-- Prediction and result cross-links
-- Racecourse analysis index records
-- Phase8-2 racecourse selector links
+## AI Index Manager
+
+Use the Phase8-6 AI Index Manager to store Hakodate horse-level AI index entries in localStorage and connect them back to this racecourse database.
+
+Manager fields:
+- Racecourse
+- Race name
+- Horse number
+- Horse name
+- AI Index
+- Attack AI Index
+- Danger Popular Index
+- God Hole Index
+- Longshot Index
+- Race Score
+- Prediction Rank
+- Notes
+
+Search, sort, and filter:
+- Search by race, horse, notes, rank, or index values.
+- Sort by newest, Race Score, AI Index, Attack AI Index, Danger Popular Index, God Hole Index, Longshot Index, or Prediction Rank.
+- Filter by Prediction Rank.
+
+Manager screen: [Phase8-6 AI Index Manager](../../../phase8-racecourse-management.html)
+
+## Stores
+
+- AI index rankings
+- Score evidence
+- Horse-level factors
+- Racecourse-specific index adjustments
