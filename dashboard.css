@@ -528,6 +528,42 @@ tbody tr:last-child td {
   color: var(--ink);
 }
 
+.prediction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.prediction-grid article {
+  display: grid;
+  min-height: 108px;
+  align-content: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+  padding: 14px;
+}
+
+.prediction-grid span,
+.prediction-grid em {
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.prediction-grid strong {
+  color: var(--gold-2);
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.prediction-race-card strong {
+  color: var(--gold-2);
+}
+
 @media (max-width: 1100px) {
   .status-strip,
   .audit-summary,

@@ -68,6 +68,65 @@ const dashboardData = {
     risk: { candidateCount: 0, topHorse: null },
     longshot: { candidateCount: 0, topHorse: null }
   },
+  predictionEngine: {
+    version: "phase4-5-win5",
+    status: "win5-enabled",
+    calculationEnabled: true,
+    description: "AI指数順の印、爆穴馬AI、三連単フォーメーションに加えてWIN5候補をA/B/Cゾーンで自動生成します。",
+    enabledFeatures: ["marks", "riskyFavorite", "longshot", "trifecta", "win5"],
+    pendingFeatures: [],
+    markLabels: {
+      favorite: "本命",
+      rival: "対抗",
+      third: "単穴",
+      fringe: "連下",
+      riskyFavorite: "危険人気馬",
+      longshot: "爆穴馬",
+      trifectaFormation: "三連単フォーメーション",
+      win5Candidate: "WIN5候補"
+    }
+  },
+  autoPrediction: {
+    summary: {
+      raceCount: 0,
+      favoriteCount: 0,
+      rivalCount: 0,
+      thirdCount: 0,
+      fringeCount: 0,
+      riskyFavoriteCount: 0,
+      longshotCount: 0,
+      trifectaFormationCount: 0,
+      trifectaCombinationCount: 0,
+      win5RaceCount: 0,
+      win5RecommendedHorseCount: 0,
+      win5CombinationCount: 0
+    },
+    races: [],
+    emptyMarks: {
+      favorite: null,
+      rival: null,
+      third: null,
+      fringe: [],
+      riskyFavorite: null,
+      longshot: null,
+      trifectaFormation: {
+        first: [],
+        second: [],
+        third: [],
+        candidateCount: 0,
+        combinationCount: 0,
+        reason: ""
+      },
+      win5Candidate: {
+        aZone: [],
+        bZone: [],
+        cZone: [],
+        recommendedCount: 0,
+        estimatedPoints: 0,
+        reason: ""
+      }
+    }
+  },
   latestLogs: [],
   courseMemos: [],
   divineRaceRanking: [],
@@ -202,6 +261,12 @@ function mergeDashboardData(loadedData) {
       ...dashboardData.aiOverallDashboard,
       ...loadedData.aiOverallDashboard
     };
+  }
+  if (loadedData.predictionEngine && typeof loadedData.predictionEngine === "object") {
+    dashboardData.predictionEngine = { ...dashboardData.predictionEngine, ...loadedData.predictionEngine };
+  }
+  if (loadedData.autoPrediction && typeof loadedData.autoPrediction === "object") {
+    dashboardData.autoPrediction = { ...dashboardData.autoPrediction, ...loadedData.autoPrediction };
   }
 
   dashboardData.updatedAt = loadedData.updatedAt || dashboardData.updatedAt;
@@ -530,6 +595,96 @@ function renderAiOverallDashboard() {
   setText("overall-longshot-top", data.longshot.topHorse ? `${data.longshot.topHorse.horse} / 爆穴 ${data.longshot.topHorse.longshotScore}` : "--");
 }
 
+function predictionMarkText(value, emptyText = "未計算") {
+  if (!value) return emptyText;
+  if (Array.isArray(value)) return value.length ? value.map((item) => item.horse || item.name || item).join(" / ") : emptyText;
+  return value.horse || value.name || String(value);
+}
+
+function predictionMarkDetail(value) {
+  if (!value) return "未計算";
+  return `${value.horse || "--"} / AI ${value.aiScore ?? "--"}`;
+}
+
+function predictionReasonText(value, emptyText = "--") {
+  if (!value) return emptyText;
+  return value.reason || value.comment || emptyText;
+}
+
+function predictionHorseList(values, emptyText = "未生成") {
+  if (!Array.isArray(values) || !values.length) return emptyText;
+  return values.map((item) => item.horse || item.name || item).join(" / ");
+}
+
+function trifectaSummaryText(formation) {
+  if (!formation) return "0頭 / 0点";
+  return `${Number(formation.candidateCount || 0).toLocaleString("ja-JP")}頭 / ${Number(formation.combinationCount || 0).toLocaleString("ja-JP")}点`;
+}
+
+function win5SummaryText(candidate) {
+  if (!candidate) return "0頭 / 0点";
+  return `${Number(candidate.recommendedCount || 0).toLocaleString("ja-JP")}頭 / ${Number(candidate.estimatedPoints || 0).toLocaleString("ja-JP")}点`;
+}
+
+function renderPredictionEngine() {
+  const engine = dashboardData.predictionEngine;
+  const prediction = dashboardData.autoPrediction;
+  const primaryRace = prediction.races?.[0] || null;
+  const marks = primaryRace?.marks || prediction.emptyMarks || {};
+  const trifectaFormation = marks.trifectaFormation || prediction.emptyMarks?.trifectaFormation || {};
+  const win5Candidate = marks.win5Candidate || prediction.emptyMarks?.win5Candidate || {};
+  setText("prediction-engine-status", engine.calculationEnabled ? "印生成" : "基盤のみ");
+  setText("prediction-engine-version", engine.version || "--");
+  setText("prediction-race-count", `${Number(prediction.summary?.raceCount || 0).toLocaleString("ja-JP")}R`);
+  setText("prediction-favorite", predictionMarkDetail(marks.favorite));
+  setText("prediction-rival", predictionMarkDetail(marks.rival));
+  setText("prediction-third", predictionMarkDetail(marks.third));
+  setText("prediction-fringe", predictionMarkText(marks.fringe));
+  setText("prediction-risky", predictionMarkText(marks.riskyFavorite, "未検出"));
+  setText("prediction-risky-reason", predictionReasonText(marks.riskyFavorite));
+  setText("prediction-longshot", predictionMarkText(marks.longshot, "未検出"));
+  setText("prediction-longshot-reason", predictionReasonText(marks.longshot));
+  setText("prediction-trifecta", trifectaSummaryText(trifectaFormation));
+  setText("prediction-trifecta-reason", trifectaFormation.reason || "--");
+  setText("prediction-win5", win5SummaryText(win5Candidate));
+  setText("prediction-win5-a", predictionHorseList(win5Candidate.aZone, "未生成"));
+  setText("prediction-win5-b", predictionHorseList(win5Candidate.bZone, "未生成"));
+  setText("prediction-win5-c", predictionHorseList(win5Candidate.cZone, "未生成"));
+  setText("prediction-win5-count", `${Number(win5Candidate.recommendedCount || 0).toLocaleString("ja-JP")}頭`);
+  setText("prediction-win5-points", `${Number(prediction.summary?.win5CombinationCount || 0).toLocaleString("ja-JP")}点`);
+
+  const target = document.getElementById("prediction-races");
+  if (!target) return;
+  target.innerHTML = prediction.races.length
+    ? prediction.races
+        .map(
+          (race) => `
+            <article class="race-card prediction-race-card">
+              <span class="race-meta">${escapeHtml(race.course)} ${escapeHtml(race.race)} ${escapeHtml(race.name || "")}</span>
+              <strong>${escapeHtml(predictionMarkDetail(race.marks.favorite))}</strong>
+              <div class="race-kpi">
+                <span>対抗 ${escapeHtml(predictionMarkDetail(race.marks.rival))}</span>
+                <span>単穴 ${escapeHtml(predictionMarkDetail(race.marks.third))}</span>
+                <span>連下 ${escapeHtml(predictionMarkText(race.marks.fringe))}</span>
+                <span>危険 ${escapeHtml(predictionMarkText(race.marks.riskyFavorite, "未検出"))} / ${escapeHtml(predictionReasonText(race.marks.riskyFavorite))}</span>
+                <span>爆穴 ${escapeHtml(predictionMarkText(race.marks.longshot, "未検出"))} / ${escapeHtml(predictionReasonText(race.marks.longshot))}</span>
+                <span>三連単 ${escapeHtml(trifectaSummaryText(race.marks.trifectaFormation))}</span>
+                <span>1着 ${escapeHtml(predictionHorseList(race.marks.trifectaFormation?.first))}</span>
+                <span>2着 ${escapeHtml(predictionHorseList(race.marks.trifectaFormation?.second))}</span>
+                <span>3着 ${escapeHtml(predictionHorseList(race.marks.trifectaFormation?.third))}</span>
+                <span>理由 ${escapeHtml(race.marks.trifectaFormation?.reason || "--")}</span>
+                <span>WIN5 ${escapeHtml(win5SummaryText(race.marks.win5Candidate))}</span>
+                <span>A ${escapeHtml(predictionHorseList(race.marks.win5Candidate?.aZone))}</span>
+                <span>B ${escapeHtml(predictionHorseList(race.marks.win5Candidate?.bZone))}</span>
+                <span>C ${escapeHtml(predictionHorseList(race.marks.win5Candidate?.cZone))}</span>
+              </div>
+            </article>
+          `
+        )
+        .join("")
+    : `<article class="race-card"><strong>自動印は未生成</strong><span class="race-meta">AI指数つきの事前予想Markdownがあると、本命・対抗・単穴・連下を生成します。</span></article>`;
+}
+
 function renderCourseMemos() {
   const target = document.getElementById("course-memos");
   if (!target) return;
@@ -748,6 +903,7 @@ function renderWin5Dashboard() {
 function renderOperationalData() {
   renderDataStatus();
   renderAiOverallDashboard();
+  renderPredictionEngine();
   renderRaceMonitor();
   renderLatestLogs();
   renderAiIndexSummary();

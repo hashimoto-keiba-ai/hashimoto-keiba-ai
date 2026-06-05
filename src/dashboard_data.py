@@ -699,6 +699,269 @@ def build_ai_overall_dashboard(entries: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def empty_prediction_marks() -> dict[str, Any]:
+    return {
+        "favorite": None,
+        "rival": None,
+        "third": None,
+        "fringe": [],
+        "riskyFavorite": None,
+        "longshot": None,
+        "trifectaFormation": {
+            "first": [],
+            "second": [],
+            "third": [],
+            "candidateCount": 0,
+            "combinationCount": 0,
+            "reason": "",
+        },
+        "win5Candidate": {
+            "aZone": [],
+            "bZone": [],
+            "cZone": [],
+            "recommendedCount": 0,
+            "estimatedPoints": 0,
+            "reason": "",
+        },
+    }
+
+
+def build_prediction_engine() -> dict[str, Any]:
+    return {
+        "version": "phase4-5-win5",
+        "status": "win5-enabled",
+        "calculationEnabled": True,
+        "description": "AI指数順の印、爆穴馬AI、三連単フォーメーションに加えてWIN5候補をA/B/Cゾーンで自動生成します。",
+        "enabledFeatures": ["marks", "riskyFavorite", "longshot", "trifecta", "win5"],
+        "pendingFeatures": [],
+        "markLabels": {
+            "favorite": "本命",
+            "rival": "対抗",
+            "third": "単穴",
+            "fringe": "連下",
+            "riskyFavorite": "危険人気馬",
+            "longshot": "爆穴馬",
+            "trifectaFormation": "三連単フォーメーション",
+            "win5Candidate": "WIN5候補",
+        },
+    }
+
+
+def prediction_horse(entry: dict[str, Any]) -> dict[str, Any] | None:
+    metadata = entry["metadata"]
+    horse = first_value(metadata, ["馬名", "軸候補", "軸", "topHorse"], "")
+    ai_score = number_value(first_value(metadata, ["AI指数", "指数", "score"], ""))
+    if not horse or ai_score is None:
+        return None
+    return {
+        "horse": horse,
+        "aiScore": round(ai_score, 1),
+        "course": entry["course"],
+        "race": entry["race"],
+        "raceName": entry["title"],
+        "date": entry["date"],
+        "confidence": first_value(metadata, ["信頼度", "confidence"], ""),
+        "expectedValue": number_value(first_value(metadata, ["期待値", "value", "expectedValue"], "")),
+        "popularity": number_value(first_value(metadata, ["人気", "想定人気", "popularity"], "")),
+        "riskScore": pick_number(metadata, ["危険度", "危険度スコア", "riskScore"]),
+        "longshotScore": pick_number(metadata, ["爆穴指数", "穴指数", "longshotScore"]),
+        "file": entry["file"],
+    }
+
+
+def risky_prediction_candidate(ranked: list[dict[str, Any]]) -> dict[str, Any] | None:
+    candidates = []
+    for index, horse in enumerate(ranked[:4], start=1):
+        expected_value = horse.get("expectedValue") or 0
+        confidence = horse.get("confidence") or ""
+        risk_score = horse.get("riskScore") or 0
+        unstable_score = risk_score + (12 - confidence_points(confidence)) * 4 + (15 if expected_value and expected_value < 95 else 0)
+        if unstable_score < 20:
+            continue
+        reasons = []
+        if risk_score > 0:
+            reasons.append(f"危険度{round(risk_score, 1)}")
+        if confidence_points(confidence) < 10:
+            reasons.append("信頼度が不安定")
+        if expected_value and expected_value < 95:
+            reasons.append("期待値が低い")
+        candidates.append({**horse, "markRank": index, "unstableScore": round(unstable_score, 1), "reason": " / ".join(reasons) or "AI指数上位だが評価が不安定"})
+
+    if not candidates:
+        return None
+    return sorted(candidates, key=lambda item: item["unstableScore"], reverse=True)[0]
+
+
+def longshot_prediction_candidate(ranked: list[dict[str, Any]]) -> dict[str, Any] | None:
+    candidates = []
+    for index, horse in enumerate(ranked, start=1):
+        expected_value = horse.get("expectedValue") or 0
+        longshot_score = horse.get("longshotScore") or 0
+        popularity = horse.get("popularity")
+        is_middle_or_lower = index >= 4 or (popularity is not None and popularity >= 7)
+        if not is_middle_or_lower or expected_value < 120:
+            continue
+        score = longshot_score + expected_value * 0.25 + max(0, 12 - index)
+        reasons = []
+        reasons.append("AI指数中位以下")
+        reasons.append(f"期待値{round(expected_value, 1)}")
+        if longshot_score > 0:
+            reasons.append(f"爆穴指数{round(longshot_score, 1)}")
+        if popularity is not None:
+            reasons.append(popularity_zone(popularity))
+        candidates.append({**horse, "markRank": index, "longshotAiScore": round(score, 1), "reason": " / ".join(reasons)})
+
+    if not candidates:
+        return None
+    return sorted(candidates, key=lambda item: item["longshotAiScore"], reverse=True)[0]
+
+
+def unique_prediction_horses(horses: list[dict[str, Any] | None]) -> list[dict[str, Any]]:
+    unique = []
+    seen = set()
+    for horse in horses:
+        if not horse:
+            continue
+        name = horse.get("horse")
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        unique.append(horse)
+    return unique
+
+
+def count_trifecta_combinations(first: list[dict[str, Any]], second: list[dict[str, Any]], third: list[dict[str, Any]]) -> int:
+    count = 0
+    for first_horse in first:
+        for second_horse in second:
+            for third_horse in third:
+                names = {first_horse["horse"], second_horse["horse"], third_horse["horse"]}
+                if len(names) == 3:
+                    count += 1
+    return count
+
+
+def build_trifecta_formation(marks: dict[str, Any]) -> dict[str, Any]:
+    first = unique_prediction_horses([marks.get("favorite"), marks.get("rival")])
+    second = unique_prediction_horses([marks.get("favorite"), marks.get("rival"), marks.get("third")])
+    third = unique_prediction_horses(
+        [
+            marks.get("favorite"),
+            marks.get("rival"),
+            marks.get("third"),
+            *marks.get("fringe", []),
+            marks.get("longshot"),
+        ]
+    )
+    candidate_count = len(unique_prediction_horses([*first, *second, *third]))
+    combination_count = count_trifecta_combinations(first, second, third)
+    reason_parts = ["本命・対抗を1着軸", "本命・対抗・単穴を2着候補", "連下と爆穴馬まで3着に拡張"]
+    if marks.get("longshot"):
+        reason_parts.append(f"爆穴馬AI: {marks['longshot']['horse']}")
+    return {
+        "first": first,
+        "second": second,
+        "third": third,
+        "candidateCount": candidate_count,
+        "combinationCount": combination_count,
+        "reason": " / ".join(reason_parts),
+    }
+
+
+def build_win5_candidate(marks: dict[str, Any]) -> dict[str, Any]:
+    a_zone = unique_prediction_horses([marks.get("favorite"), marks.get("rival")])
+    b_zone = unique_prediction_horses([marks.get("third"), *marks.get("fringe", [])])
+    c_zone = unique_prediction_horses([marks.get("longshot")])
+    recommended = unique_prediction_horses([*a_zone, *b_zone, *c_zone])
+    reason_parts = ["Aゾーンは本命・対抗", "Bゾーンは単穴・連下", "Cゾーンは爆穴馬AI"]
+    if c_zone:
+        reason_parts.append(f"爆穴補強: {c_zone[0]['horse']}")
+    return {
+        "aZone": a_zone,
+        "bZone": b_zone,
+        "cZone": c_zone,
+        "recommendedCount": len(recommended),
+        "estimatedPoints": len(recommended),
+        "reason": " / ".join(reason_parts),
+    }
+
+
+def build_auto_prediction(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    grouped: dict[str, dict[str, Any]] = {}
+    for entry in entries:
+        if entry["type"] != "事前予想":
+            continue
+        horse = prediction_horse(entry)
+        if horse is None:
+            continue
+
+        key = f"{entry['course']}|{entry['race']}|{entry['title']}"
+        group = grouped.setdefault(
+            key,
+            {
+                "course": entry["course"],
+                "race": entry["race"],
+                "name": entry["title"],
+                "date": entry["date"],
+                "marks": empty_prediction_marks(),
+                "rankedHorses": [],
+            },
+        )
+        group["rankedHorses"].append(horse)
+
+    races = []
+    for group in grouped.values():
+        ranked = sorted(group["rankedHorses"], key=lambda item: item["aiScore"], reverse=True)
+        marks = {
+            "favorite": ranked[0] if len(ranked) >= 1 else None,
+            "rival": ranked[1] if len(ranked) >= 2 else None,
+            "third": ranked[2] if len(ranked) >= 3 else None,
+            "fringe": ranked[3:7],
+            "riskyFavorite": risky_prediction_candidate(ranked),
+            "longshot": longshot_prediction_candidate(ranked),
+        }
+        marks["trifectaFormation"] = build_trifecta_formation(marks)
+        marks["win5Candidate"] = build_win5_candidate(marks)
+        races.append({**group, "marks": marks, "rankedHorses": ranked})
+
+    races.sort(key=lambda item: item["rankedHorses"][0]["aiScore"] if item["rankedHorses"] else 0, reverse=True)
+    favorite_count = sum(1 for race in races if race["marks"]["favorite"])
+    rival_count = sum(1 for race in races if race["marks"]["rival"])
+    third_count = sum(1 for race in races if race["marks"]["third"])
+    fringe_count = sum(len(race["marks"]["fringe"]) for race in races)
+    risky_count = sum(1 for race in races if race["marks"]["riskyFavorite"])
+    longshot_count = sum(1 for race in races if race["marks"]["longshot"])
+    trifecta_count = sum(1 for race in races if race["marks"]["trifectaFormation"]["combinationCount"] > 0)
+    trifecta_combination_count = sum(race["marks"]["trifectaFormation"]["combinationCount"] for race in races)
+    win5_race_count = sum(1 for race in races if race["marks"]["win5Candidate"]["recommendedCount"] > 0)
+    win5_recommended_count = sum(race["marks"]["win5Candidate"]["recommendedCount"] for race in races)
+    win5_combination_count = 0
+    for race in races:
+        recommended_count = race["marks"]["win5Candidate"]["recommendedCount"]
+        if recommended_count <= 0:
+            continue
+        win5_combination_count = recommended_count if win5_combination_count == 0 else win5_combination_count * recommended_count
+
+    return {
+        "summary": {
+            "raceCount": len(races),
+            "favoriteCount": favorite_count,
+            "rivalCount": rival_count,
+            "thirdCount": third_count,
+            "fringeCount": fringe_count,
+            "riskyFavoriteCount": risky_count,
+            "longshotCount": longshot_count,
+            "trifectaFormationCount": trifecta_count,
+            "trifectaCombinationCount": trifecta_combination_count,
+            "win5RaceCount": win5_race_count,
+            "win5RecommendedHorseCount": win5_recommended_count,
+            "win5CombinationCount": win5_combination_count,
+        },
+        "races": races,
+        "emptyMarks": empty_prediction_marks(),
+    }
+
+
 def generate_dashboard_data() -> dict[str, Any]:
     entries = [entry for path in markdown_files() if (entry := build_log_entry(path))]
     entries.sort(key=lambda item: (item["date"], item["updatedAt"]), reverse=True)
@@ -758,6 +1021,8 @@ def generate_dashboard_data() -> dict[str, Any]:
                 "topHorse": longshot_ranking[0] if longshot_ranking else None,
             },
         },
+        "predictionEngine": build_prediction_engine(),
+        "autoPrediction": build_auto_prediction(entries),
         "win5Dashboard": build_win5_dashboard(entries),
     }
 

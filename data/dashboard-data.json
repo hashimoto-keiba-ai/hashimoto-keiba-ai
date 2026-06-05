@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-05T07:11:29.897765+00:00",
+  "updatedAt": "2026-06-05T07:45:35.674355+00:00",
   "source": "markdown",
   "latestLogs": [
     {
@@ -77,6 +77,71 @@
     "longshot": {
       "candidateCount": 0,
       "topHorse": null
+    }
+  },
+  "predictionEngine": {
+    "version": "phase4-5-win5",
+    "status": "win5-enabled",
+    "calculationEnabled": true,
+    "description": "AI指数順の印、爆穴馬AI、三連単フォーメーションに加えてWIN5候補をA/B/Cゾーンで自動生成します。",
+    "enabledFeatures": [
+      "marks",
+      "riskyFavorite",
+      "longshot",
+      "trifecta",
+      "win5"
+    ],
+    "pendingFeatures": [],
+    "markLabels": {
+      "favorite": "本命",
+      "rival": "対抗",
+      "third": "単穴",
+      "fringe": "連下",
+      "riskyFavorite": "危険人気馬",
+      "longshot": "爆穴馬",
+      "trifectaFormation": "三連単フォーメーション",
+      "win5Candidate": "WIN5候補"
+    }
+  },
+  "autoPrediction": {
+    "summary": {
+      "raceCount": 0,
+      "favoriteCount": 0,
+      "rivalCount": 0,
+      "thirdCount": 0,
+      "fringeCount": 0,
+      "riskyFavoriteCount": 0,
+      "longshotCount": 0,
+      "trifectaFormationCount": 0,
+      "trifectaCombinationCount": 0,
+      "win5RaceCount": 0,
+      "win5RecommendedHorseCount": 0,
+      "win5CombinationCount": 0
+    },
+    "races": [],
+    "emptyMarks": {
+      "favorite": null,
+      "rival": null,
+      "third": null,
+      "fringe": [],
+      "riskyFavorite": null,
+      "longshot": null,
+      "trifectaFormation": {
+        "first": [],
+        "second": [],
+        "third": [],
+        "candidateCount": 0,
+        "combinationCount": 0,
+        "reason": ""
+      },
+      "win5Candidate": {
+        "aZone": [],
+        "bZone": [],
+        "cZone": [],
+        "recommendedCount": 0,
+        "estimatedPoints": 0,
+        "reason": ""
+      }
     }
   },
   "win5Dashboard": {
