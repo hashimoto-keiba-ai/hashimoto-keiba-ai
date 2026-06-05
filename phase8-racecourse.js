@@ -11,14 +11,20 @@ const phase8Racecourses = [
   { id: "sapporo", label: "Sapporo", name: "札幌競馬場", ai: "札幌AI", folder: "札幌競馬場", feature: "洋芝・平坦・持久力補正" }
 ].map((course) => ({ ...course, dashboardPath: `${course.folder}/README.md` }));
 
+const phase8DatabaseSections = [
+  { label: "Predictions", folder: "Predictions", purpose: "Race predictions, marks, tickets, and pre-race AI notes" },
+  { label: "Results", folder: "Results", purpose: "Race results, payouts, hit/miss review, and ROI" },
+  { label: "OS Updates", folder: "OS Updates", purpose: "Racecourse-specific rule changes and tuning history" },
+  { label: "Saved Logs", folder: "Saved Logs", purpose: "Weekly, monthly, and meeting summary logs" },
+  { label: "AI Index", folder: "AI Index", purpose: "Race-specific AI index records and ranking evidence" }
+];
+
 const phase8FolderTypes = [
-  { label: "Dashboard", folder: null, purpose: "競馬場ダッシュボード", path: (course) => course.dashboardPath },
-  { label: "事前予想", folder: "事前予想", purpose: "レース前の指数・印・買い目" },
-  { label: "結果検証", folder: "結果検証", purpose: "着順・配当・的中/不的中" },
-  { label: "OSアップデート", folder: "OSアップデート", purpose: "補正ルール・改善履歴" },
-  { label: "保存ログ", folder: "保存ログ", purpose: "週次/月次/開催総括" },
-  { label: "レースDB", folder: "レースDB", purpose: "レース固有データベース" },
-  { label: "AI分析", folder: "AI分析", purpose: "競馬場別AI分析" }
+  { label: "Dashboard", purpose: "Racecourse dashboard", path: (course) => course.dashboardPath },
+  ...phase8DatabaseSections.map((section) => ({
+    ...section,
+    path: (course) => `${course.folder}/2026/${section.folder}/README.md`
+  }))
 ];
 
 function phase8SetText(id, value) {
@@ -36,9 +42,7 @@ function phase8Escape(value) {
 }
 
 function phase8CoursePath(course, folderType = null) {
-  if (folderType?.path) return folderType.path(course);
-  const base = `${course.folder}/2026`;
-  return folderType ? `${base}/${folderType.folder}/README.md` : course.dashboardPath;
+  return folderType?.path ? folderType.path(course) : course.dashboardPath;
 }
 
 function renderPhase8RacecourseButtons(selectedCourse) {
@@ -60,9 +64,9 @@ function renderPhase8RacecourseButtons(selectedCourse) {
 function renderPhase8RacecourseManagement(selectedId = "tokyo") {
   const selectedCourse = phase8Racecourses.find((course) => course.id === selectedId) || phase8Racecourses[0];
   phase8SetText("phase8-course-count", `${phase8Racecourses.length.toLocaleString("ja-JP")}場`);
-  phase8SetText("phase8-race-db-count", `${phase8Racecourses.length.toLocaleString("ja-JP")}件`);
-  phase8SetText("phase8-ai-analysis-count", `${phase8Racecourses.length.toLocaleString("ja-JP")}件`);
-  phase8SetText("phase8-next-action", "レース別DB投入");
+  phase8SetText("phase8-race-db-count", `${phase8DatabaseSections.length.toLocaleString("ja-JP")} sections`);
+  phase8SetText("phase8-ai-analysis-count", "AI Index ready");
+  phase8SetText("phase8-next-action", "Race DB input");
   phase8SetText("phase8-selected-course", selectedCourse.name);
   phase8SetText("phase8-selected-ai", `${selectedCourse.ai} / ${selectedCourse.feature}`);
 
@@ -92,9 +96,9 @@ function renderPhase8RacecourseManagement(selectedId = "tokyo") {
       <article class="course-card${selectedCourse.id === course.id ? " active" : ""}">
         <span class="race-meta">${phase8Escape(course.ai)}</span>
         <strong>${phase8Escape(course.name)}</strong>
-        <div class="chips"><span>レースDB</span><span>AI分析</span><span>2026運用</span></div>
+        <div class="chips"><span>Predictions</span><span>Results</span><span>AI Index</span></div>
         <p>${phase8Escape(course.feature)}</p>
-        <a href="${phase8Escape(course.dashboardPath)}">Dashboard</a>
+        <a href="${phase8Escape(`${course.folder}/2026/AI Index/README.md`)}">AI Index</a>
       </article>
     `).join("");
   }
