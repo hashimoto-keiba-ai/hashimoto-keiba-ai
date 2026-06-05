@@ -21,6 +21,8 @@ const phase8DatabaseSections = [
 
 const phase8EntrySections = phase8DatabaseSections.filter((section) => ["Predictions", "Results", "OS Updates"].includes(section.label));
 const phase8ResultsSection = phase8DatabaseSections.find((section) => section.label === "Results");
+const phase8OsUpdatesSection = phase8DatabaseSections.find((section) => section.label === "OS Updates");
+const phase8ImportanceLevels = ["Critical", "High", "Medium", "Low"];
 
 const phase8FolderTypes = [
   { label: "Dashboard", purpose: "Racecourse dashboard", path: (course) => course.dashboardPath },
@@ -32,6 +34,7 @@ const phase8FolderTypes = [
 
 const phase8StorageKey = "phase8PredictionEntries";
 const phase8ResultStorageKey = "phase8ResultVerificationEntries";
+const phase8OsUpdateStorageKey = "phase8OsUpdateRules";
 let phase8SelectedCourseId = "tokyo";
 let phase8SelectedSection = "Predictions";
 
@@ -65,21 +68,12 @@ function phase8WriteStore(key, entries) {
   localStorage.setItem(key, JSON.stringify(entries));
 }
 
-function phase8ReadEntries() {
-  return phase8ReadStore(phase8StorageKey);
-}
-
-function phase8WriteEntries(entries) {
-  phase8WriteStore(phase8StorageKey, entries);
-}
-
-function phase8ReadResults() {
-  return phase8ReadStore(phase8ResultStorageKey);
-}
-
-function phase8WriteResults(entries) {
-  phase8WriteStore(phase8ResultStorageKey, entries);
-}
+function phase8ReadEntries() { return phase8ReadStore(phase8StorageKey); }
+function phase8WriteEntries(entries) { phase8WriteStore(phase8StorageKey, entries); }
+function phase8ReadResults() { return phase8ReadStore(phase8ResultStorageKey); }
+function phase8WriteResults(entries) { phase8WriteStore(phase8ResultStorageKey, entries); }
+function phase8ReadOsUpdates() { return phase8ReadStore(phase8OsUpdateStorageKey); }
+function phase8WriteOsUpdates(entries) { phase8WriteStore(phase8OsUpdateStorageKey, entries); }
 
 function phase8EntryCourseLabel(courseId) {
   const course = phase8Racecourses.find((item) => item.id === courseId);
@@ -88,6 +82,16 @@ function phase8EntryCourseLabel(courseId) {
 
 function phase8SelectedCourse() {
   return phase8Racecourses.find((course) => course.id === phase8SelectedCourseId) || phase8Racecourses[0];
+}
+
+function phase8PopulateCourseSelect(select, selectedCourse) {
+  if (!select) return;
+  if (!select.dataset.ready) {
+    select.innerHTML = phase8Racecourses.map((course) => `<option value="${phase8Escape(course.id)}">${phase8Escape(course.label)} / ${phase8Escape(course.name)}</option>`).join("");
+    select.addEventListener("change", () => renderPhase8RacecourseManagement(select.value));
+    select.dataset.ready = "true";
+  }
+  select.value = selectedCourse.id;
 }
 
 function phase8RenderEntrySections() {
@@ -119,7 +123,6 @@ function phase8RenderSavedEntries() {
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 
   phase8SetText("phase8-local-entry-count", `${entries.length.toLocaleString("ja-JP")} records`);
-
   if (!entries.length) {
     target.innerHTML = `<p class="empty-state">No saved ${phase8Escape(phase8SelectedSection)} entries for ${phase8Escape(phase8EntryCourseLabel(phase8SelectedCourseId))}.</p>`;
     return;
@@ -127,10 +130,7 @@ function phase8RenderSavedEntries() {
 
   target.innerHTML = entries.map((entry) => `
     <article class="entry-card">
-      <div>
-        <span class="race-meta">${phase8Escape(entry.section)} / ${phase8Escape(phase8EntryCourseLabel(entry.racecourse))}</span>
-        <strong>${phase8Escape(entry.raceName || "Race entry")}</strong>
-      </div>
+      <div><span class="race-meta">${phase8Escape(entry.section)} / ${phase8Escape(phase8EntryCourseLabel(entry.racecourse))}</span><strong>${phase8Escape(entry.raceName || "Race entry")}</strong></div>
       <dl>
         <div><dt>Horse</dt><dd>${phase8Escape(entry.horseNumber)} ${phase8Escape(entry.horseName)}</dd></div>
         <div><dt>Distance</dt><dd>${phase8Escape(entry.distance)}m / ${phase8Escape(entry.surface)}</dd></div>
@@ -155,10 +155,8 @@ function phase8RenderResultEntries() {
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 
   phase8SetText("phase8-result-entry-count", `${entries.length.toLocaleString("ja-JP")} results`);
-  const selectedCourse = phase8SelectedCourse();
-  const resultPath = phase8CoursePath(selectedCourse, phase8ResultsSection);
   const resultLink = document.getElementById("phase8-result-database-link");
-  if (resultLink) resultLink.setAttribute("href", resultPath);
+  if (resultLink) resultLink.setAttribute("href", phase8CoursePath(phase8SelectedCourse(), phase8ResultsSection));
 
   if (!entries.length) {
     target.innerHTML = `<p class="empty-state">No result verification entries for ${phase8Escape(phase8EntryCourseLabel(phase8SelectedCourseId))}.</p>`;
@@ -167,10 +165,7 @@ function phase8RenderResultEntries() {
 
   target.innerHTML = entries.map((entry) => `
     <article class="entry-card result-card">
-      <div>
-        <span class="race-meta">Results / ${phase8Escape(phase8EntryCourseLabel(entry.racecourse))}</span>
-        <strong>${phase8Escape(entry.raceName || "Result entry")}</strong>
-      </div>
+      <div><span class="race-meta">Results / ${phase8Escape(phase8EntryCourseLabel(entry.racecourse))}</span><strong>${phase8Escape(entry.raceName || "Result entry")}</strong></div>
       <dl>
         <div><dt>Horse</dt><dd>${phase8Escape(entry.horseNumber)} ${phase8Escape(entry.horseName)}</dd></div>
         <div><dt>Finish</dt><dd>${phase8Escape(entry.finishPosition)}</dd></div>
@@ -186,16 +181,50 @@ function phase8RenderResultEntries() {
   `).join("");
 }
 
-function phase8SyncEntryForm(selectedCourse) {
-  const formCourse = document.getElementById("phase8-entry-racecourse");
-  const formSection = document.getElementById("phase8-entry-section");
+function phase8RenderOsUpdates() {
+  const target = document.getElementById("phase8-os-update-entries");
+  if (!target) return;
 
-  if (formCourse && !formCourse.dataset.ready) {
-    formCourse.innerHTML = phase8Racecourses.map((course) => `<option value="${phase8Escape(course.id)}">${phase8Escape(course.label)} / ${phase8Escape(course.name)}</option>`).join("");
-    formCourse.addEventListener("change", () => renderPhase8RacecourseManagement(formCourse.value));
-    formCourse.dataset.ready = "true";
+  const search = String(document.getElementById("phase8-os-search")?.value || "").trim().toLowerCase();
+  const importance = String(document.getElementById("phase8-os-filter")?.value || "All");
+  const entries = phase8ReadOsUpdates()
+    .filter((entry) => entry.racecourse === phase8SelectedCourseId)
+    .filter((entry) => importance === "All" || entry.importance === importance)
+    .filter((entry) => {
+      if (!search) return true;
+      return [entry.distance, entry.surface, entry.condition, entry.ruleTitle, entry.ruleContent, entry.verificationRace, entry.adoptionDate, entry.importance]
+        .join(" ").toLowerCase().includes(search);
+    })
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+
+  phase8SetText("phase8-os-update-count", `${entries.length.toLocaleString("ja-JP")} rules`);
+  const osLink = document.getElementById("phase8-os-database-link");
+  if (osLink) osLink.setAttribute("href", phase8CoursePath(phase8SelectedCourse(), phase8OsUpdatesSection));
+
+  if (!entries.length) {
+    target.innerHTML = `<p class="empty-state">No OS update rules for ${phase8Escape(phase8EntryCourseLabel(phase8SelectedCourseId))}.</p>`;
+    return;
   }
 
+  target.innerHTML = entries.map((entry) => `
+    <article class="entry-card os-card importance-${phase8Escape(entry.importance).toLowerCase()}">
+      <div><span class="race-meta">${phase8Escape(entry.importance)} / ${phase8Escape(phase8EntryCourseLabel(entry.racecourse))}</span><strong>${phase8Escape(entry.ruleTitle || "OS rule")}</strong></div>
+      <dl>
+        <div><dt>Distance</dt><dd>${phase8Escape(entry.distance)}m</dd></div>
+        <div><dt>Surface</dt><dd>${phase8Escape(entry.surface)}</dd></div>
+        <div><dt>Condition</dt><dd>${phase8Escape(entry.condition)}</dd></div>
+        <div><dt>Verification Race</dt><dd>${phase8Escape(entry.verificationRace)}</dd></div>
+        <div><dt>Adoption Date</dt><dd>${phase8Escape(entry.adoptionDate)}</dd></div>
+        <div><dt>Importance</dt><dd>${phase8Escape(entry.importance)}</dd></div>
+      </dl>
+      <p><strong>OS Rule Content</strong><br>${phase8Escape(entry.ruleContent)}</p>
+    </article>
+  `).join("");
+}
+
+function phase8SyncEntryForm(selectedCourse) {
+  phase8PopulateCourseSelect(document.getElementById("phase8-entry-racecourse"), selectedCourse);
+  const formSection = document.getElementById("phase8-entry-section");
   if (formSection && !formSection.dataset.ready) {
     formSection.innerHTML = phase8EntrySections.map((section) => `<option value="${phase8Escape(section.label)}">${phase8Escape(section.label)}</option>`).join("");
     formSection.addEventListener("change", () => {
@@ -205,28 +234,20 @@ function phase8SyncEntryForm(selectedCourse) {
     });
     formSection.dataset.ready = "true";
   }
-
-  if (formCourse) formCourse.value = selectedCourse.id;
   if (formSection) formSection.value = phase8SelectedSection;
 }
 
 function phase8SyncResultForm(selectedCourse) {
-  const formCourse = document.getElementById("phase8-result-racecourse");
-  if (!formCourse) return;
+  phase8PopulateCourseSelect(document.getElementById("phase8-result-racecourse"), selectedCourse);
+}
 
-  if (!formCourse.dataset.ready) {
-    formCourse.innerHTML = phase8Racecourses.map((course) => `<option value="${phase8Escape(course.id)}">${phase8Escape(course.label)} / ${phase8Escape(course.name)}</option>`).join("");
-    formCourse.addEventListener("change", () => renderPhase8RacecourseManagement(formCourse.value));
-    formCourse.dataset.ready = "true";
-  }
-
-  formCourse.value = selectedCourse.id;
+function phase8SyncOsForm(selectedCourse) {
+  phase8PopulateCourseSelect(document.getElementById("phase8-os-racecourse"), selectedCourse);
 }
 
 function phase8BindEntryForm() {
   const form = document.getElementById("phase8-entry-form");
   if (!form || form.dataset.ready) return;
-
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(form);
@@ -248,31 +269,22 @@ function phase8BindEntryForm() {
       aiScore: String(formData.get("aiScore") || "").trim(),
       predictionMark: String(formData.get("predictionMark") || "").trim()
     };
-
     const entries = phase8ReadEntries();
     entries.push(entry);
     phase8WriteEntries(entries);
     phase8SelectedSection = entry.section;
     renderPhase8RacecourseManagement(entry.racecourse);
     form.reset();
-    phase8SyncEntryForm(phase8Racecourses.find((course) => course.id === entry.racecourse) || phase8Racecourses[0]);
+    phase8SyncEntryForm(phase8SelectedCourse());
     phase8SetText("phase8-entry-status", "Saved to localStorage");
   });
-
-  form.addEventListener("reset", () => {
-    window.setTimeout(() => {
-      phase8SyncEntryForm(phase8SelectedCourse());
-      phase8SetText("phase8-entry-status", "Ready");
-    }, 0);
-  });
-
+  form.addEventListener("reset", () => window.setTimeout(() => phase8SyncEntryForm(phase8SelectedCourse()), 0));
   form.dataset.ready = "true";
 }
 
 function phase8BindResultForm() {
   const form = document.getElementById("phase8-result-form");
   if (!form || form.dataset.ready) return;
-
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(form);
@@ -293,7 +305,6 @@ function phase8BindResultForm() {
       verificationComment: String(formData.get("verificationComment") || "").trim(),
       osUpdateComment: String(formData.get("osUpdateComment") || "").trim()
     };
-
     const entries = phase8ReadResults();
     entries.push(entry);
     phase8WriteResults(entries);
@@ -303,28 +314,69 @@ function phase8BindResultForm() {
     phase8SyncResultForm(phase8SelectedCourse());
     phase8SetText("phase8-result-status", "Saved to localStorage");
   });
-
-  form.addEventListener("reset", () => {
-    window.setTimeout(() => {
-      phase8SyncResultForm(phase8SelectedCourse());
-      phase8SetText("phase8-result-status", "Ready");
-    }, 0);
-  });
-
+  form.addEventListener("reset", () => window.setTimeout(() => phase8SyncResultForm(phase8SelectedCourse()), 0));
   form.dataset.ready = "true";
+}
+
+function phase8BindOsUpdateForm() {
+  const form = document.getElementById("phase8-os-form");
+  if (!form || form.dataset.ready) return;
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const entry = {
+      id: `phase8-os-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      section: "OS Updates",
+      racecourse: String(formData.get("racecourse") || phase8SelectedCourseId),
+      distance: String(formData.get("distance") || "").trim(),
+      surface: String(formData.get("surface") || "").trim(),
+      condition: String(formData.get("condition") || "").trim(),
+      ruleTitle: String(formData.get("ruleTitle") || "").trim(),
+      ruleContent: String(formData.get("ruleContent") || "").trim(),
+      verificationRace: String(formData.get("verificationRace") || "").trim(),
+      adoptionDate: String(formData.get("adoptionDate") || "").trim(),
+      importance: String(formData.get("importance") || "Medium")
+    };
+    const entries = phase8ReadOsUpdates();
+    entries.push(entry);
+    phase8WriteOsUpdates(entries);
+    phase8SelectedSection = "OS Updates";
+    renderPhase8RacecourseManagement(entry.racecourse);
+    form.reset();
+    phase8SyncOsForm(phase8SelectedCourse());
+    phase8SetText("phase8-os-status", "Saved to localStorage");
+  });
+  form.addEventListener("reset", () => window.setTimeout(() => {
+    phase8SyncOsForm(phase8SelectedCourse());
+    phase8SetText("phase8-os-status", "Ready");
+  }, 0));
+  form.dataset.ready = "true";
+}
+
+function phase8BindOsSearch() {
+  const search = document.getElementById("phase8-os-search");
+  const filter = document.getElementById("phase8-os-filter");
+  if (search && !search.dataset.ready) {
+    search.addEventListener("input", phase8RenderOsUpdates);
+    search.dataset.ready = "true";
+  }
+  if (filter && !filter.dataset.ready) {
+    filter.innerHTML = ["All", ...phase8ImportanceLevels].map((level) => `<option value="${level}">${level}</option>`).join("");
+    filter.addEventListener("change", phase8RenderOsUpdates);
+    filter.dataset.ready = "true";
+  }
 }
 
 function renderPhase8RacecourseButtons(selectedCourse) {
   const target = document.getElementById("phase8-racecourse-buttons");
   if (!target) return;
-
   target.innerHTML = phase8Racecourses.map((course) => `
     <button class="racecourse-button${selectedCourse.id === course.id ? " active" : ""}" type="button" data-course-id="${phase8Escape(course.id)}" aria-pressed="${selectedCourse.id === course.id ? "true" : "false"}">
       <strong>${phase8Escape(course.label)}</strong>
       <span>${phase8Escape(course.name)}</span>
     </button>
   `).join("");
-
   target.querySelectorAll("button[data-course-id]").forEach((button) => {
     button.addEventListener("click", () => renderPhase8RacecourseManagement(button.dataset.courseId));
   });
@@ -335,26 +387,25 @@ function renderPhase8RacecourseManagement(selectedId = "tokyo") {
   phase8SelectedCourseId = selectedCourse.id;
   phase8SetText("phase8-course-count", `${phase8Racecourses.length.toLocaleString("ja-JP")}場`);
   phase8SetText("phase8-race-db-count", `${phase8EntrySections.length.toLocaleString("ja-JP")} entry sections`);
-  phase8SetText("phase8-ai-analysis-count", "result verification ready");
-  phase8SetText("phase8-next-action", "Verify result");
+  phase8SetText("phase8-ai-analysis-count", "OS manager ready");
+  phase8SetText("phase8-next-action", "Tune OS rule");
   phase8SetText("phase8-selected-course", selectedCourse.name);
   phase8SetText("phase8-selected-ai", `${selectedCourse.ai} / ${selectedCourse.feature}`);
   phase8SetText("phase8-result-course-label", selectedCourse.name);
+  phase8SetText("phase8-os-course-label", selectedCourse.name);
 
   const selector = document.getElementById("phase8-racecourse-selector");
-  if (selector && !selector.dataset.ready) {
-    selector.innerHTML = phase8Racecourses.map((course) => `<option value="${phase8Escape(course.id)}">${phase8Escape(course.label)} / ${phase8Escape(course.name)}</option>`).join("");
-    selector.addEventListener("change", () => renderPhase8RacecourseManagement(selector.value));
-    selector.dataset.ready = "true";
-  }
-  if (selector) selector.value = selectedCourse.id;
+  phase8PopulateCourseSelect(selector, selectedCourse);
 
   renderPhase8RacecourseButtons(selectedCourse);
   phase8SyncEntryForm(selectedCourse);
   phase8SyncResultForm(selectedCourse);
+  phase8SyncOsForm(selectedCourse);
+  phase8BindOsSearch();
   phase8RenderEntrySections();
   phase8RenderSavedEntries();
   phase8RenderResultEntries();
+  phase8RenderOsUpdates();
 
   const linkTarget = document.getElementById("phase8-selected-links");
   if (linkTarget) {
@@ -374,7 +425,7 @@ function renderPhase8RacecourseManagement(selectedId = "tokyo") {
         <strong>${phase8Escape(course.name)}</strong>
         <div class="chips"><span>Predictions</span><span>Results</span><span>OS Updates</span></div>
         <p>${phase8Escape(course.feature)}</p>
-        <a href="${phase8Escape(`${course.folder}/2026/Results/README.md`)}">Results database</a>
+        <a href="${phase8Escape(`${course.folder}/2026/OS Updates/README.md`)}">OS Updates database</a>
       </article>
     `).join("");
   }
@@ -384,6 +435,7 @@ if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
     phase8BindEntryForm();
     phase8BindResultForm();
+    phase8BindOsUpdateForm();
     renderPhase8RacecourseManagement();
   });
 }
