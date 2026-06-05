@@ -13,13 +13,14 @@ const phase8Racecourses = [
 
 const phase8DatabaseSections = [
   { label: "Predictions", folder: "Predictions", purpose: "Prediction entries, marks, AI scores, and pre-race notes" },
-  { label: "Results", folder: "Results", purpose: "Race result follow-up, finish records, and review notes" },
+  { label: "Results", folder: "Results", purpose: "Race result verification, finish records, and review notes" },
   { label: "OS Updates", folder: "OS Updates", purpose: "Racecourse-specific model tuning and operation updates" },
   { label: "Saved Logs", folder: "Saved Logs", purpose: "Weekly, monthly, and meeting summary logs" },
   { label: "AI Index", folder: "AI Index", purpose: "Race-specific AI index records and ranking evidence" }
 ];
 
 const phase8EntrySections = phase8DatabaseSections.filter((section) => ["Predictions", "Results", "OS Updates"].includes(section.label));
+const phase8ResultsSection = phase8DatabaseSections.find((section) => section.label === "Results");
 
 const phase8FolderTypes = [
   { label: "Dashboard", purpose: "Racecourse dashboard", path: (course) => course.dashboardPath },
@@ -30,6 +31,7 @@ const phase8FolderTypes = [
 ];
 
 const phase8StorageKey = "phase8PredictionEntries";
+const phase8ResultStorageKey = "phase8ResultVerificationEntries";
 let phase8SelectedCourseId = "tokyo";
 let phase8SelectedSection = "Predictions";
 
@@ -43,7 +45,7 @@ function phase8Escape(value) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
+    .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
 
@@ -51,21 +53,41 @@ function phase8CoursePath(course, folderType = null) {
   return folderType?.path ? folderType.path(course) : course.dashboardPath;
 }
 
-function phase8ReadEntries() {
+function phase8ReadStore(key) {
   try {
-    return JSON.parse(localStorage.getItem(phase8StorageKey) || "[]");
+    return JSON.parse(localStorage.getItem(key) || "[]");
   } catch (_error) {
     return [];
   }
 }
 
+function phase8WriteStore(key, entries) {
+  localStorage.setItem(key, JSON.stringify(entries));
+}
+
+function phase8ReadEntries() {
+  return phase8ReadStore(phase8StorageKey);
+}
+
 function phase8WriteEntries(entries) {
-  localStorage.setItem(phase8StorageKey, JSON.stringify(entries));
+  phase8WriteStore(phase8StorageKey, entries);
+}
+
+function phase8ReadResults() {
+  return phase8ReadStore(phase8ResultStorageKey);
+}
+
+function phase8WriteResults(entries) {
+  phase8WriteStore(phase8ResultStorageKey, entries);
 }
 
 function phase8EntryCourseLabel(courseId) {
   const course = phase8Racecourses.find((item) => item.id === courseId);
   return course ? `${course.label} / ${course.name}` : courseId;
+}
+
+function phase8SelectedCourse() {
+  return phase8Racecourses.find((course) => course.id === phase8SelectedCourseId) || phase8Racecourses[0];
 }
 
 function phase8RenderEntrySections() {
@@ -124,6 +146,46 @@ function phase8RenderSavedEntries() {
   `).join("");
 }
 
+function phase8RenderResultEntries() {
+  const target = document.getElementById("phase8-result-entries");
+  if (!target) return;
+
+  const entries = phase8ReadResults()
+    .filter((entry) => entry.racecourse === phase8SelectedCourseId)
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+
+  phase8SetText("phase8-result-entry-count", `${entries.length.toLocaleString("ja-JP")} results`);
+  const selectedCourse = phase8SelectedCourse();
+  const resultPath = phase8CoursePath(selectedCourse, phase8ResultsSection);
+  const resultLink = document.getElementById("phase8-result-database-link");
+  if (resultLink) resultLink.setAttribute("href", resultPath);
+
+  if (!entries.length) {
+    target.innerHTML = `<p class="empty-state">No result verification entries for ${phase8Escape(phase8EntryCourseLabel(phase8SelectedCourseId))}.</p>`;
+    return;
+  }
+
+  target.innerHTML = entries.map((entry) => `
+    <article class="entry-card result-card">
+      <div>
+        <span class="race-meta">Results / ${phase8Escape(phase8EntryCourseLabel(entry.racecourse))}</span>
+        <strong>${phase8Escape(entry.raceName || "Result entry")}</strong>
+      </div>
+      <dl>
+        <div><dt>Horse</dt><dd>${phase8Escape(entry.horseNumber)} ${phase8Escape(entry.horseName)}</dd></div>
+        <div><dt>Finish</dt><dd>${phase8Escape(entry.finishPosition)}</dd></div>
+        <div><dt>Popularity</dt><dd>${phase8Escape(entry.popularity)}</dd></div>
+        <div><dt>4th corner</dt><dd>${phase8Escape(entry.cornerPosition)}</dd></div>
+        <div><dt>Last 3F</dt><dd>${phase8Escape(entry.last3fTime)}</dd></div>
+        <div><dt>Jockey</dt><dd>${phase8Escape(entry.jockey)}</dd></div>
+        <div><dt>Trainer</dt><dd>${phase8Escape(entry.trainer)}</dd></div>
+      </dl>
+      <p><strong>Verification</strong><br>${phase8Escape(entry.verificationComment)}</p>
+      <p><strong>OS Update</strong><br>${phase8Escape(entry.osUpdateComment)}</p>
+    </article>
+  `).join("");
+}
+
 function phase8SyncEntryForm(selectedCourse) {
   const formCourse = document.getElementById("phase8-entry-racecourse");
   const formSection = document.getElementById("phase8-entry-section");
@@ -146,6 +208,19 @@ function phase8SyncEntryForm(selectedCourse) {
 
   if (formCourse) formCourse.value = selectedCourse.id;
   if (formSection) formSection.value = phase8SelectedSection;
+}
+
+function phase8SyncResultForm(selectedCourse) {
+  const formCourse = document.getElementById("phase8-result-racecourse");
+  if (!formCourse) return;
+
+  if (!formCourse.dataset.ready) {
+    formCourse.innerHTML = phase8Racecourses.map((course) => `<option value="${phase8Escape(course.id)}">${phase8Escape(course.label)} / ${phase8Escape(course.name)}</option>`).join("");
+    formCourse.addEventListener("change", () => renderPhase8RacecourseManagement(formCourse.value));
+    formCourse.dataset.ready = "true";
+  }
+
+  formCourse.value = selectedCourse.id;
 }
 
 function phase8BindEntryForm() {
@@ -186,9 +261,53 @@ function phase8BindEntryForm() {
 
   form.addEventListener("reset", () => {
     window.setTimeout(() => {
-      const selectedCourse = phase8Racecourses.find((course) => course.id === phase8SelectedCourseId) || phase8Racecourses[0];
-      phase8SyncEntryForm(selectedCourse);
+      phase8SyncEntryForm(phase8SelectedCourse());
       phase8SetText("phase8-entry-status", "Ready");
+    }, 0);
+  });
+
+  form.dataset.ready = "true";
+}
+
+function phase8BindResultForm() {
+  const form = document.getElementById("phase8-result-form");
+  if (!form || form.dataset.ready) return;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const entry = {
+      id: `phase8-result-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      section: "Results",
+      raceName: String(formData.get("raceName") || "").trim(),
+      racecourse: String(formData.get("racecourse") || phase8SelectedCourseId),
+      horseNumber: String(formData.get("horseNumber") || "").trim(),
+      horseName: String(formData.get("horseName") || "").trim(),
+      finishPosition: String(formData.get("finishPosition") || "").trim(),
+      popularity: String(formData.get("popularity") || "").trim(),
+      cornerPosition: String(formData.get("cornerPosition") || "").trim(),
+      last3fTime: String(formData.get("last3fTime") || "").trim(),
+      jockey: String(formData.get("jockey") || "").trim(),
+      trainer: String(formData.get("trainer") || "").trim(),
+      verificationComment: String(formData.get("verificationComment") || "").trim(),
+      osUpdateComment: String(formData.get("osUpdateComment") || "").trim()
+    };
+
+    const entries = phase8ReadResults();
+    entries.push(entry);
+    phase8WriteResults(entries);
+    phase8SelectedSection = "Results";
+    renderPhase8RacecourseManagement(entry.racecourse);
+    form.reset();
+    phase8SyncResultForm(phase8SelectedCourse());
+    phase8SetText("phase8-result-status", "Saved to localStorage");
+  });
+
+  form.addEventListener("reset", () => {
+    window.setTimeout(() => {
+      phase8SyncResultForm(phase8SelectedCourse());
+      phase8SetText("phase8-result-status", "Ready");
     }, 0);
   });
 
@@ -216,10 +335,11 @@ function renderPhase8RacecourseManagement(selectedId = "tokyo") {
   phase8SelectedCourseId = selectedCourse.id;
   phase8SetText("phase8-course-count", `${phase8Racecourses.length.toLocaleString("ja-JP")}場`);
   phase8SetText("phase8-race-db-count", `${phase8EntrySections.length.toLocaleString("ja-JP")} entry sections`);
-  phase8SetText("phase8-ai-analysis-count", "localStorage ready");
-  phase8SetText("phase8-next-action", "Register race");
+  phase8SetText("phase8-ai-analysis-count", "result verification ready");
+  phase8SetText("phase8-next-action", "Verify result");
   phase8SetText("phase8-selected-course", selectedCourse.name);
   phase8SetText("phase8-selected-ai", `${selectedCourse.ai} / ${selectedCourse.feature}`);
+  phase8SetText("phase8-result-course-label", selectedCourse.name);
 
   const selector = document.getElementById("phase8-racecourse-selector");
   if (selector && !selector.dataset.ready) {
@@ -231,8 +351,10 @@ function renderPhase8RacecourseManagement(selectedId = "tokyo") {
 
   renderPhase8RacecourseButtons(selectedCourse);
   phase8SyncEntryForm(selectedCourse);
+  phase8SyncResultForm(selectedCourse);
   phase8RenderEntrySections();
   phase8RenderSavedEntries();
+  phase8RenderResultEntries();
 
   const linkTarget = document.getElementById("phase8-selected-links");
   if (linkTarget) {
@@ -252,7 +374,7 @@ function renderPhase8RacecourseManagement(selectedId = "tokyo") {
         <strong>${phase8Escape(course.name)}</strong>
         <div class="chips"><span>Predictions</span><span>Results</span><span>OS Updates</span></div>
         <p>${phase8Escape(course.feature)}</p>
-        <a href="${phase8Escape(`${course.folder}/2026/Predictions/README.md`)}">Prediction database</a>
+        <a href="${phase8Escape(`${course.folder}/2026/Results/README.md`)}">Results database</a>
       </article>
     `).join("");
   }
@@ -261,6 +383,7 @@ function renderPhase8RacecourseManagement(selectedId = "tokyo") {
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
     phase8BindEntryForm();
+    phase8BindResultForm();
     renderPhase8RacecourseManagement();
   });
 }
