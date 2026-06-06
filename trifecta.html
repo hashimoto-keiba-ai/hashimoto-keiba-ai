@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phase10-1 Trifecta Auto Generation AI</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="Phase10-1 banner">
+      <span>Phase10-1 Trifecta Auto Generation AI</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Phase10-1</p>
+        <h1>Trifecta Auto Generation AI</h1>
+        <strong class="version-display">Trifecta Auto Generator</strong>
+        <div class="system-meta">
+          <span>Safe Mode</span>
+          <span>Standard Mode</span>
+          <span>High Return Mode</span>
+          <span>Monster Ticket Mode</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="Navigation">
+        <a class="button-link" href="index.html">Dashboard</a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="status-strip" aria-label="Trifecta AI summary">
+        <article>
+          <span>Today's Best Trifecta</span>
+          <strong id="phase101-widget-title">--</strong>
+          <em id="phase101-trifecta-race">--</em>
+        </article>
+        <article>
+          <span>Expected Return</span>
+          <strong id="phase101-widget-return">0 JPY</strong>
+          <em id="phase101-trifecta-expected-return">0 JPY</em>
+        </article>
+        <article>
+          <span>Hit Probability</span>
+          <strong id="phase101-widget-hit">0.0%</strong>
+          <em id="phase101-trifecta-hit-probability">0.0%</em>
+        </article>
+        <article>
+          <span>Recommended Mode</span>
+          <strong id="phase101-widget-mode">--</strong>
+          <em id="phase101-trifecta-strategy">--</em>
+        </article>
+        <article>
+          <span>Risk Score</span>
+          <strong id="phase101-trifecta-risk-score">0 / Low</strong>
+          <em>simulation engine</em>
+        </article>
+      </section>
+
+      <section class="panel" aria-label="Phase10-1 mode dashboard">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Automatic Generator</p>
+            <h2>Mode Dashboard</h2>
+          </div>
+          <span class="pill">AI Index / Danger / Kami-Ana / God Hole</span>
+        </div>
+        <p class="data-footnote" id="phase101-trifecta-connections">--</p>
+        <div class="phase2-grid">
+          <div class="race-cards" id="phase101-safe-mode"></div>
+          <div class="race-cards" id="phase101-standard-mode"></div>
+          <div class="race-cards" id="phase101-high-return-mode"></div>
+          <div class="race-cards" id="phase101-monster-ticket-mode"></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="Generated trifecta tickets">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Generated Tickets</p>
+            <h2>Trifecta 8 / 12 / 16-point</h2>
+          </div>
+          <span class="pill hot">1st / 2nd / 3rd</span>
+        </div>
+        <div class="phase2-grid">
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>Trifecta 8-point</h3>
+              <span>Safe Mode</span>
+            </div>
+            <div class="race-cards" id="phase101-trifecta-8"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>Trifecta 12-point</h3>
+              <span>Standard Mode</span>
+            </div>
+            <div class="race-cards" id="phase101-trifecta-12"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>Trifecta 16-point</h3>
+              <span>High Return Mode</span>
+            </div>
+            <div class="race-cards" id="phase101-trifecta-16"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="trifectaDatabase">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">trifectaDatabase</p>
+            <h2>Phase10-1 Database</h2>
+          </div>
+          <span class="pill">Simulation Ready</span>
+        </div>
+        <div class="table-wrap">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Racecourse</th>
+                <th>Race Name</th>
+                <th>Distance</th>
+                <th>Surface</th>
+                <th>Track Condition</th>
+                <th>AI Rank 1</th>
+                <th>AI Rank 2</th>
+                <th>AI Rank 3</th>
+                <th>AI Rank 4</th>
+                <th>AI Rank 5</th>
+                <th>God Hole Candidate</th>
+                <th>Kami-Ana Candidate</th>
+                <th>Danger Popular Horse</th>
+                <th>Race Type</th>
+                <th>Expected Pace</th>
+                <th>Expected Value</th>
+                <th>Hit Probability</th>
+                <th>Recommended Strategy</th>
+                <th>Generated Tickets</th>
+              </tr>
+            </thead>
+            <tbody id="phase101-trifecta-database"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="trifecta-phase101.js"></script>
+  </body>
+</html>
