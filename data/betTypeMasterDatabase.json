@@ -1,0 +1,13 @@
+{
+  "databaseName": "betTypeMasterDatabase",
+  "phase": "Phase14-3",
+  "records": [
+    { "betType": "単勝", "key": "win", "unit": 100, "riskLevel": "Low", "target": "1着馬を当てる", "engineRoute": "ROI Engine / Fund Management" },
+    { "betType": "複勝", "key": "place", "unit": 100, "riskLevel": "Low", "target": "3着以内を当てる", "engineRoute": "ROI Engine / Fund Management" },
+    { "betType": "馬連", "key": "quinella", "unit": 100, "riskLevel": "Medium", "target": "1着2着の馬を順不同で当てる", "engineRoute": "ROI Engine / Fund Management" },
+    { "betType": "馬単", "key": "exacta", "unit": 100, "riskLevel": "Medium", "target": "1着2着の馬を順番通り当てる", "engineRoute": "ROI Engine / Fund Management" },
+    { "betType": "三連複", "key": "trio", "unit": 100, "riskLevel": "High", "target": "1着2着3着の馬を順不同で当てる", "engineRoute": "Trifecta AI / ROI Engine" },
+    { "betType": "三連単", "key": "trifecta", "unit": 100, "riskLevel": "High", "target": "1着2着3着の馬を順番通り当てる", "engineRoute": "Trifecta AI / ROI Engine" },
+    { "betType": "WIN5", "key": "win5", "unit": 100, "riskLevel": "Monster", "target": "対象5レースの1着馬を当てる", "engineRoute": "WIN5 AI / ROI Engine" }
+  ]
+}
