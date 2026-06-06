@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Phase12-1 Auto Betting Mode</title><link rel="stylesheet" href="dashboard.css"></head>
+  <body>
+    <div class="official-banner" aria-label="Phase12-1 banner"><span>Phase12-1 Auto Betting Mode</span></div>
+    <header class="topbar"><div class="brand"><p class="eyebrow">Hashimoto Keiba AI / Phase12-1</p><h1>Auto Betting Mode</h1><strong class="version-display">Best Bet Type / Investment / ROI</strong><div class="system-meta"><span>God Race</span><span>ROI</span><span>Fund</span><span>WIN5</span><span>Trifecta</span></div></div><div class="top-actions" aria-label="Navigation"><a class="button-link" href="index.html">Dashboard</a></div></header>
+    <main class="dashboard">
+      <section class="status-strip" aria-label="Auto betting widget">
+        <article><span>Today's Best Race</span><strong id="phase121-widget-race">--</strong><em id="phase121-widget-bet-type">--</em></article>
+        <article><span>Recommended Investment</span><strong id="phase121-widget-investment">0 JPY</strong><em id="phase121-widget-bankroll">--</em></article>
+        <article><span>Expected ROI</span><strong id="phase121-widget-roi">0.0%</strong><em id="phase121-widget-profit">0 JPY</em></article>
+      </section>
+      <section class="panel" aria-label="Auto betting dashboard">
+        <div class="section-heading"><div><p class="eyebrow">Auto Betting Dashboard</p><h2>Today's Best Races / ROI / Profit</h2></div><span class="pill">God Race / ROI / Fund / WIN5 / Trifecta / Simulator</span></div>
+        <p class="data-footnote" id="phase121-connections">--</p>
+        <div class="phase2-grid">
+          <section class="audit-block"><div class="sub-heading"><h3>Today's Best Races</h3><span>Race Score</span></div><div class="race-cards" id="phase121-best-races"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>Today's Best ROI</h3><span>Expected ROI</span></div><div class="race-cards" id="phase121-best-roi"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>Today's Best Profit</h3><span>Expected Profit</span></div><div class="race-cards" id="phase121-best-profit"></div></section>
+        </div>
+      </section>
+      <section class="panel" aria-label="autoBettingDatabase">
+        <div class="section-heading"><div><p class="eyebrow">autoBettingDatabase</p><h2>Phase12-1 Database</h2></div><span class="pill hot">Auto Mode Status</span></div>
+        <div class="table-wrap"><table class="audit-table"><thead><tr><th>Date</th><th>Racecourse</th><th>Race</th><th>Race Score</th><th>Expected ROI</th><th>Expected Profit</th><th>Confidence</th><th>Recommended Bet</th><th>Bet Type</th><th>WIN5</th><th>Trifecta</th><th>Exacta</th><th>Quinella</th><th>Investment Amount</th><th>Expected Return</th><th>Auto Mode Status</th></tr></thead><tbody id="phase121-auto-betting-database"></tbody></table></div>
+      </section>
+    </main>
+    <script src="dashboard.js"></script><script src="auto-betting-phase121.js"></script>
+  </body>
+</html>
