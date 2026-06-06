@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phase10-2 AI Fund Management Engine</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="Phase10-2 banner">
+      <span>Phase10-2 AI Fund Management Engine</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Phase10-2</p>
+        <h1>AI Fund Management Engine</h1>
+        <strong class="version-display">Bankroll, Kelly, ROI, Risk</strong>
+        <div class="system-meta">
+          <span>Conservative</span>
+          <span>Balanced</span>
+          <span>Aggressive</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="Navigation">
+        <a class="button-link" href="index.html">Dashboard</a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="status-strip" aria-label="Fund management widget">
+        <article>
+          <span>Today's Best Bet</span>
+          <strong id="phase102-widget-title">--</strong>
+          <em id="phase102-widget-category">--</em>
+        </article>
+        <article>
+          <span>Recommended Budget</span>
+          <strong id="phase102-widget-budget">0 JPY</strong>
+          <em id="phase102-fund-bankroll">0 JPY</em>
+        </article>
+        <article>
+          <span>Expected ROI</span>
+          <strong id="phase102-widget-roi">0.0%</strong>
+          <em id="phase102-fund-profit">0 JPY</em>
+        </article>
+        <article>
+          <span>Confidence</span>
+          <strong id="phase102-widget-confidence">0%</strong>
+          <em id="phase102-fund-risk">--</em>
+        </article>
+        <article>
+          <span>Best Race</span>
+          <strong id="phase102-fund-best-race">--</strong>
+          <em>fundManagementDatabase</em>
+        </article>
+      </section>
+
+      <section class="panel" aria-label="Fund mode dashboard">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Capital Allocation Modes</p>
+            <h2>Fund Mode Dashboard</h2>
+          </div>
+          <span class="pill">AI Index / WIN5 / Trifecta / Danger / Kami-Ana</span>
+        </div>
+        <p class="data-footnote" id="phase102-fund-connections">--</p>
+        <div class="phase2-grid">
+          <div class="race-cards" id="phase102-conservative-mode"></div>
+          <div class="race-cards" id="phase102-balanced-mode"></div>
+          <div class="race-cards" id="phase102-aggressive-mode"></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="Race classification">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Race Classification</p>
+            <h2>A/B/C/D Fund Control</h2>
+          </div>
+          <span class="pill hot">A Strong / B Normal / C Small / D Skip</span>
+        </div>
+        <div class="phase2-kpis">
+          <article>
+            <span>A</span>
+            <strong>Strong Bet</strong>
+          </article>
+          <article>
+            <span>B</span>
+            <strong>Normal Bet</strong>
+          </article>
+          <article>
+            <span>C</span>
+            <strong>Small Bet</strong>
+          </article>
+          <article>
+            <span>D</span>
+            <strong>Skip</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="fundManagementDatabase">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">fundManagementDatabase</p>
+            <h2>Phase10-2 Database</h2>
+          </div>
+          <span class="pill">Kelly / ROI / Risk</span>
+        </div>
+        <div class="table-wrap">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Racecourse</th>
+                <th>Race Name</th>
+                <th>AI Score</th>
+                <th>Hit Probability</th>
+                <th>Expected Return</th>
+                <th>Risk Score</th>
+                <th>Race Category</th>
+                <th>Recommended Bet</th>
+                <th>Recommended Budget</th>
+                <th>Kelly Fraction</th>
+                <th>Confidence</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody id="phase102-fund-database"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="fund-management-phase102.js"></script>
+  </body>
+</html>

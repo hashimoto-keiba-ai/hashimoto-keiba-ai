@@ -1,0 +1,37 @@
+{
+  "databaseName": "fundManagementDatabase",
+  "phase": "Phase10-2",
+  "bankroll": 100000,
+  "records": [
+    {
+      "date": "2026-06-06",
+      "racecourse": "Tokyo",
+      "raceName": "Phase10-2 Capital Control Stakes",
+      "aiScore": 87,
+      "hitProbability": 32.5,
+      "expectedReturn": 1.92,
+      "riskScore": 42,
+      "raceCategory": "A",
+      "recommendedBet": "Win + Trifecta saver",
+      "recommendedBudget": 5200,
+      "kellyFraction": 0.052,
+      "confidence": 83,
+      "reason": "High AI score, positive expected return, controlled risk, and support from Trifecta/Kami-Ana signals."
+    },
+    {
+      "date": "2026-06-06",
+      "racecourse": "Kyoto",
+      "raceName": "Phase10-2 Normal Value Race",
+      "aiScore": 74,
+      "hitProbability": 24.8,
+      "expectedReturn": 1.48,
+      "riskScore": 55,
+      "raceCategory": "B",
+      "recommendedBet": "Place + Exacta",
+      "recommendedBudget": 2600,
+      "kellyFraction": 0.026,
+      "confidence": 68,
+      "reason": "Balanced value with acceptable risk and no severe danger-popular warning."
+    }
+  ]
+}
