@@ -1,0 +1,32 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const vm = require("vm");
+
+const script = fs.readFileSync(path.join(__dirname, "..", "auto-betting-phase121.js"), "utf8");
+const context = { Intl, console, window: {}, document: { addEventListener() {} } };
+vm.createContext(context);
+vm.runInContext(script, context);
+
+const engine = context.window.HashimotoPhase121AutoBettingEngine;
+assert.ok(engine, "Phase12-1 Auto Betting engine should be exported");
+const report = engine.buildDashboard(engine.fallbackDatabase);
+assert.strictEqual(report.databaseName, "autoBettingDatabase");
+assert.strictEqual(report.records.length, 4);
+assert.ok(report.summary.bestRace, "best race should be selected");
+assert.ok(report.summary.recommendedInvestment > 0, "recommended investment should be positive");
+assert.ok(report.summary.bankrollStatus.remaining > 0, "bankroll status should be calculated");
+assert.ok(report.summary.todaysBestRaces.length > 0, "best races list should be generated");
+assert.ok(report.summary.todaysBestROI.length > 0, "best ROI list should be generated");
+assert.ok(report.summary.todaysBestProfit.length > 0, "best profit list should be generated");
+const best = report.summary.bestRace;
+assert.ok(["WIN5", "Trifecta", "Exacta", "Quinella"].includes(best.bestBetType));
+assert.ok(best.investmentAmount > 0);
+assert.ok(best.expectedReturn > best.investmentAmount);
+assert.ok(["Low", "Medium", "High"].includes(best.riskLevel));
+const skip = report.records.find((record) => record.race.includes("Caution"));
+assert.strictEqual(skip.bestBetType, "Skip");
+assert.strictEqual(skip.investmentAmount, 0);
+assert.strictEqual(skip.autoModeStatus, "Skip");
+assert.strictEqual(JSON.stringify(Object.keys(report.sourceConnections)), JSON.stringify(["godRaceDatabase", "roiDatabase", "fundManagementDatabase", "win5Database", "trifectaDatabase", "raceFutureSimulatorDatabase"]));
+console.log("Phase12-1 auto betting engine test passed");
