@@ -1,0 +1,63 @@
+{
+  "databaseName": "realRacingDataLoaderDatabase",
+  "phase": "Phase13-3",
+  "records": [
+    {
+      "loadDate": "2026-06-06",
+      "source": "Tokyo migrated prediction batch",
+      "dataType": "Prediction",
+      "racecourse": "Tokyo",
+      "raceName": "Tokyo 11R Future Simulation Stakes",
+      "recordCount": 2,
+      "loadStatus": "Ready",
+      "targetDatabase": "Prediction Database",
+      "loadedRecords": [
+        {
+          "racecourse": "Tokyo",
+          "raceName": "Tokyo 11R Future Simulation Stakes",
+          "horseNumber": 1,
+          "horseName": "AI Commander",
+          "aiScore": 91,
+          "popularity": 1,
+          "prediction": "Win candidate"
+        },
+        {
+          "racecourse": "Tokyo",
+          "raceName": "Tokyo 11R Future Simulation Stakes",
+          "horseNumber": 3,
+          "horseName": "Kami Flash",
+          "aiScore": 84,
+          "popularity": 6,
+          "prediction": "Kami-Ana candidate"
+        }
+      ],
+      "normalizedRecords": 2,
+      "validationErrors": 0,
+      "notes": "Loads Phase13-2 migrated data into the prediction database."
+    },
+    {
+      "loadDate": "2026-06-06",
+      "source": "WIN5 migrated result batch",
+      "dataType": "WIN5",
+      "racecourse": "WIN5",
+      "raceName": "Kyoto 12R WIN5 Finish",
+      "recordCount": 1,
+      "loadStatus": "Ready",
+      "targetDatabase": "WIN5 Database",
+      "loadedRecords": [
+        {
+          "racecourse": "Kyoto",
+          "raceName": "Kyoto 12R WIN5 Finish",
+          "horseNumber": 3,
+          "horseName": "AI-03",
+          "aiScore": 89,
+          "popularity": 2,
+          "result": "WIN5 leg hit"
+        }
+      ],
+      "normalizedRecords": 1,
+      "validationErrors": 0,
+      "notes": "Loads WIN5 migrated result data into the WIN5 database."
+    }
+  ]
+}
