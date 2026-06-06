@@ -1,0 +1,19 @@
+{
+  "databaseName": "roiDatabase",
+  "phase": "Phase10-3",
+  "startingBankroll": 100000,
+  "records": [
+    {"date":"2026-06-01","racecourse":"Tokyo","raceName":"Tokyo Value Sprint","betType":"Win","investment":3000,"return":7200,"profit":4200,"roi":140,"hit":true,"aiScore":88,"confidence":84,"category":"A"},
+    {"date":"2026-06-01","racecourse":"Nakayama","raceName":"Nakayama Balance Mile","betType":"Place","investment":2500,"return":3600,"profit":1100,"roi":44,"hit":true,"aiScore":74,"confidence":69,"category":"B"},
+    {"date":"2026-06-02","racecourse":"Hanshin","raceName":"Hanshin Exacta Trial","betType":"Exacta","investment":3200,"return":0,"profit":-3200,"roi":-100,"hit":false,"aiScore":71,"confidence":62,"category":"B"},
+    {"date":"2026-06-02","racecourse":"Kyoto","raceName":"Kyoto Longshot Cup","betType":"Quinella","investment":2800,"return":9100,"profit":6300,"roi":225,"hit":true,"aiScore":82,"confidence":77,"category":"A"},
+    {"date":"2026-06-03","racecourse":"Chukyo","raceName":"Chukyo Trifecta Logic","betType":"Trifecta","investment":4800,"return":18800,"profit":14000,"roi":291.7,"hit":true,"aiScore":91,"confidence":81,"category":"A"},
+    {"date":"2026-06-03","racecourse":"Fukushima","raceName":"Fukushima Small Bet","betType":"Win","investment":1800,"return":0,"profit":-1800,"roi":-100,"hit":false,"aiScore":58,"confidence":49,"category":"C"},
+    {"date":"2026-06-04","racecourse":"Niigata","raceName":"Niigata Place Guard","betType":"Place","investment":2200,"return":3100,"profit":900,"roi":40.9,"hit":true,"aiScore":69,"confidence":64,"category":"B"},
+    {"date":"2026-06-04","racecourse":"Kokura","raceName":"Kokura Trifecta Risk","betType":"Trifecta","investment":3600,"return":0,"profit":-3600,"roi":-100,"hit":false,"aiScore":63,"confidence":55,"category":"C"},
+    {"date":"2026-06-05","racecourse":"Hakodate","raceName":"Hakodate Exacta Value","betType":"Exacta","investment":2600,"return":6500,"profit":3900,"roi":150,"hit":true,"aiScore":78,"confidence":71,"category":"B"},
+    {"date":"2026-06-05","racecourse":"Sapporo","raceName":"Sapporo WIN5 Anchor","betType":"WIN5","investment":5200,"return":0,"profit":-5200,"roi":-100,"hit":false,"aiScore":76,"confidence":66,"category":"B"},
+    {"date":"2026-06-06","racecourse":"Tokyo","raceName":"Tokyo Trifecta Final","betType":"Trifecta","investment":4200,"return":21400,"profit":17200,"roi":409.5,"hit":true,"aiScore":93,"confidence":86,"category":"A"},
+    {"date":"2026-06-06","racecourse":"Kyoto","raceName":"Kyoto WIN5 Finish","betType":"WIN5","investment":6000,"return":38600,"profit":32600,"roi":543.3,"hit":true,"aiScore":89,"confidence":79,"category":"A"}
+  ]
+}
