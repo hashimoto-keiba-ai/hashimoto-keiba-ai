@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phase14-2 Race Entry Auto Import</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="Phase14-2 banner">
+      <span>Phase14-2 Race Entry Auto Import</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Phase14-2</p>
+        <h1>出馬表 自動取込</h1>
+        <strong class="version-display">開催日 / 競馬場 / レース番号</strong>
+        <div class="system-meta">
+          <span>出走馬</span>
+          <span>騎手</span>
+          <span>調教師</span>
+          <span>枠順</span>
+          <span>馬番</span>
+          <span>斤量</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="Navigation">
+        <a class="button-link" href="real-data-import.html">Real Data Import</a>
+        <a class="button-link" href="index.html">Dashboard</a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="status-strip" aria-label="Race entry auto import widget">
+        <article>
+          <span>対象レース</span>
+          <strong id="phase142-widget-race">--</strong>
+          <em>開催日 / 競馬場 / R</em>
+        </article>
+        <article>
+          <span>取込頭数</span>
+          <strong id="phase142-widget-count">0</strong>
+          <em>出走馬</em>
+        </article>
+        <article>
+          <span>取込状態</span>
+          <strong id="phase142-widget-status">--</strong>
+          <em>自動取込</em>
+        </article>
+        <article>
+          <span>保存先</span>
+          <strong id="phase142-widget-target">raceEntries</strong>
+          <em>app database</em>
+        </article>
+      </section>
+
+      <section class="panel" aria-label="Auto import form">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Auto Import</p>
+            <h2>開催日・競馬場・レース番号</h2>
+          </div>
+          <span class="pill hot">自動取込</span>
+        </div>
+        <div class="phase2-kpis">
+          <article>
+            <span>開催日</span>
+            <input id="phase142-date" type="date" value="2026-06-06">
+          </article>
+          <article>
+            <span>競馬場</span>
+            <select id="phase142-racecourse">
+              <option>東京</option>
+              <option>中山</option>
+              <option>阪神</option>
+              <option>京都</option>
+              <option>中京</option>
+              <option>福島</option>
+              <option>新潟</option>
+              <option>小倉</option>
+              <option>函館</option>
+              <option>札幌</option>
+            </select>
+          </article>
+          <article>
+            <span>レース番号</span>
+            <input id="phase142-race-number" type="number" min="1" max="12" value="11">
+          </article>
+          <article>
+            <span>実行</span>
+            <button id="phase142-auto-import" type="button">自動取込</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="Import fields">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Import Fields</p>
+            <h2>入力キーと取込項目</h2>
+          </div>
+          <span class="pill">raceEntries</span>
+        </div>
+        <div class="phase2-grid">
+          <section class="audit-block">
+            <div class="sub-heading"><h3>入力キー</h3><span>検索条件</span></div>
+            <div class="race-cards" id="phase142-required-fields"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>自動取込項目</h3><span>出馬表</span></div>
+            <div class="race-cards" id="phase142-entry-fields"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="Imported entries">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Imported Entries</p>
+            <h2>出走馬一覧</h2>
+          </div>
+          <span class="pill">出走馬 / 騎手 / 調教師 / 枠順 / 馬番 / 斤量</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>枠順</th>
+                <th>馬番</th>
+                <th>出走馬</th>
+                <th>騎手</th>
+                <th>調教師</th>
+                <th>斤量</th>
+              </tr>
+            </thead>
+            <tbody id="phase142-entry-table"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="race-entry-auto-import-phase142.js"></script>
+  </body>
+</html>
