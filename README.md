@@ -1,15 +1,16 @@
 # 橋本競馬AI学習ログシステム
 
-## Official Release v1.3
+## Official Release v1.4
 
-橋本競馬AI Official Release は `Version 1.3` です。
+橋本競馬AI Official Release は `Version 1.4` です。
 
-- Release Score: `98`
-- Release Status: `Official Release v1.3`
+- Release Score: `99`
+- Release Status: `Official Release v1.4`
 - トップページ: `index.html`
 - 黒×金の公式デザインを維持
-- 各競馬場 Console に R1〜R12 のレース管理ボタンを追加
-- 各レースページに `事前予想`、`結果`、`検証`、`アップデート`、`保存` の5項目を追加
+- 各競馬場 Console の R1〜R12 からレース管理ページへ遷移
+- 各レース管理ページで `prediction`、`result`、`review`、`update` の4項目を保存
+- 保存ファイル名: `race-data.json`
 
 ## Console Pages
 
@@ -27,24 +28,25 @@
 - `sapporo-console.html`: 札幌版AI Console
 - `win5-console.html`: WIN5 AI Console
 
-競馬場別 Console は `R1` から `R12` を表示し、各ボタンから共通レース管理ページ `race-management.html` へ遷移します。
+## Race Data JSON
 
-## Race Management
+`race-management.html` は東京版、中山版、阪神版、中京版、京都版、新潟版、福島版、小倉版、函館版、札幌版に対応します。
 
-各レースページは黒×金デザインで、以下の5項目を表示します。
+各レースページは以下の4項目を JSON に保存します。
 
-- 事前予想
-- 結果
-- 検証
-- アップデート
-- 保存
+- `prediction`: 事前予想
+- `result`: 結果
+- `review`: 検証
+- `update`: アップデート
+
+保存時はブラウザ内にも保持し、`race-data.json` として出力します。
 
 ## Version Files
 
-- `VERSION`: `1.3`
-- `dashboard.js`: `OFFICIAL_RELEASE.version = "1.3"`
-- `dashboard.js`: `OFFICIAL_RELEASE.releaseScore = 98`
-- `dashboard.js`: `OFFICIAL_RELEASE.status = "Official Release v1.3"`
+- `VERSION`: `1.4`
+- `dashboard.js`: `OFFICIAL_RELEASE.version = "1.4"`
+- `dashboard.js`: `OFFICIAL_RELEASE.releaseScore = 99`
+- `dashboard.js`: `OFFICIAL_RELEASE.status = "Official Release v1.4"`
 
 ## 運用方針
 
@@ -54,4 +56,3 @@
 - 結果: レース後の着順、配当、的中可否を保存
 - 検証: 予想とのズレ、改善点を記録
 - アップデート: 予想ロジック、評価基準、買い目ルール、指数補正の変更履歴を保存
-- 保存: レース単位の管理データを保存するための入口
