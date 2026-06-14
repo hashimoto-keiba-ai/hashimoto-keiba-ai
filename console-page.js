@@ -1,6 +1,6 @@
-const RELEASE_VERSION = "1.4";
-const RELEASE_STATUS = "Official Release v1.4";
-const RELEASE_SCORE = 99;
+const RELEASE_VERSION = "1.5";
+const RELEASE_STATUS = "Official Release v1.5";
+const RELEASE_SCORE = 100;
 
 const raceConsoles = {
   tokyo: "東京版",
@@ -47,18 +47,13 @@ function bootConsolePage() {
   setConsoleText("official-banner-title", `橋本競馬AI ${RELEASE_STATUS}`);
   setConsoleText("console-title", title);
   setConsoleText("console-heading", title);
-  setConsoleText("console-subtitle", `${title} / Race Management System`);
+  setConsoleText("console-subtitle", `${title} / 自己進化データベース`);
   setConsoleText("console-version", `橋本競馬AI Version ${RELEASE_VERSION}`);
   setConsoleText("console-status", RELEASE_STATUS);
   setConsoleText("console-score", `Release Score ${RELEASE_SCORE}`);
 
-  if (isWin5) {
-    renderTiles("win5-ai-modules", win5Modules);
-  } else {
-    renderRaceButtons("race-numbers", key);
-  }
+  if (isWin5) renderTiles("win5-ai-modules", win5Modules);
+  else renderRaceButtons("race-numbers", key);
 }
 
-if (typeof document !== "undefined") {
-  document.addEventListener("DOMContentLoaded", bootConsolePage);
-}
+if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", bootConsolePage);
