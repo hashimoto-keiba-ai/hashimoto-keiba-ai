@@ -31,13 +31,13 @@ function bootConsolePage() {
   const label = isWin5 ? "WIN5 AI" : raceConsoles[key] || "東京版";
   const title = isWin5 ? "WIN5 AI Console" : `${label}AI Console`;
 
-  document.title = `橋本競馬AI Version 1.2 / ${title}`;
-  setConsoleText("official-banner-title", "橋本競馬AI Official Release v1.2");
+  document.title = `橋本競馬AI Version 1.2.1 / ${title}`;
+  setConsoleText("official-banner-title", "橋本競馬AI Official Release v1.2.1");
   setConsoleText("console-title", title);
   setConsoleText("console-heading", title);
   setConsoleText("console-subtitle", `${title} / Coming Soon`);
-  setConsoleText("console-version", "橋本競馬AI Version 1.2");
-  setConsoleText("console-status", "Official Release v1.2");
+  setConsoleText("console-version", "橋本競馬AI Version 1.2.1");
+  setConsoleText("console-status", "Official Release v1.2.1");
   setConsoleText("console-score", "Release Score 97");
 
   if (isWin5) {
