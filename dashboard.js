@@ -5,6 +5,11 @@ const OFFICIAL_RELEASE = {
   releaseScore: 97,
   status: "Official Release v1.2",
   statusJa: "Official Release v1.2",
+  version: "1.1",
+  releaseDate: "2026-06-14",
+  releaseScore: 96,
+  status: "Official Release v1.1",
+  statusJa: "Official Release v1.1",
   releaseVersionKey: "releaseVersion",
   releaseStatusKey: "releaseStatus"
 };
@@ -456,6 +461,7 @@ class HashimotoReleaseAuditEngine {
           : null;
       })
       .filter(Boolean);
+    const severityPenalty = issues.reduce((sum, issue) => sum + (issue.severity === "重大" ? 12 : issue.severity === "中" ? 6 : 2), 0);
     const releaseScore = OFFICIAL_RELEASE.releaseScore;
     const report = {
       version: "v7.4",
