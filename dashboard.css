@@ -149,6 +149,94 @@ button:hover {
   background: #2a210f;
 }
 
+.console-menu-panel {
+  border-color: rgba(242, 214, 117, 0.36);
+  background:
+    radial-gradient(circle at top left, rgba(242, 214, 117, 0.12), transparent 32%),
+    var(--panel);
+}
+
+.console-menu-lead {
+  margin: -4px 0 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.console-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.console-menu-button {
+  display: grid;
+  place-items: center;
+  min-height: 58px;
+  border: 1px solid rgba(242, 214, 117, 0.44);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(242, 214, 117, 0.18), rgba(212, 175, 55, 0.05)),
+    #17140d;
+  color: var(--gold-2);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 28px rgba(0, 0, 0, 0.18);
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.console-menu-button:hover {
+  border-color: rgba(242, 214, 117, 0.78);
+  background:
+    linear-gradient(135deg, rgba(242, 214, 117, 0.28), rgba(212, 175, 55, 0.1)),
+    #211a0d;
+  color: #fff7cb;
+  transform: translateY(-2px);
+}
+
+.console-menu-button.win5 {
+  color: #0f0a00;
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
+}
+
+.coming-soon-page {
+  min-height: 100vh;
+}
+
+.coming-soon-panel {
+  max-width: 920px;
+  margin: 36px auto;
+}
+
+.coming-soon-hero {
+  display: grid;
+  gap: 18px;
+  place-items: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.coming-soon-title {
+  margin: 0;
+  color: var(--gold-2);
+  font-size: clamp(28px, 6vw, 56px);
+  letter-spacing: 0.04em;
+}
+
+.coming-soon-message {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(20px, 4vw, 34px);
+  font-weight: 800;
+}
+
+.coming-soon-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
 .dashboard {
   display: grid;
   gap: 18px;

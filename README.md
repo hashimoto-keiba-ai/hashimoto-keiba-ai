@@ -113,11 +113,11 @@ AI研究所/
 - 競馬場ごとに学習内容を分け、馬場傾向やコース特性が混ざらないように管理する。
 - 年が変わったら各競馬場の中に新しい年フォルダを作成し、同じ4分類で運用する。
 - 予想、検証、改善、総括の流れを1セットとして残し、橋本競馬AIの学習データベースとして継続的に育てる。
-## Phase7-5 正式リリース版 v1.0
+## Phase7-5 正式リリース版 v1.1
 
-橋本競馬AIは `Version 1.0` を正式リリース版として扱います。
+橋本競馬AIは `Version 1.1` を正式リリース版として扱います。
 
-トップ画面では、画面上部に `橋本競馬AI Official Release v1.0` の本番版バナーを表示し、リリース情報パネルで以下を確認できます。
+トップ画面では、画面上部に `橋本競馬AI Official Release v1.1` の本番版バナーを表示し、リリース情報パネルで以下を確認できます。
 
 - Version
 - Release Date
@@ -127,8 +127,8 @@ AI研究所/
 
 正式版の状態は `localStorage` に保存されます。
 
-- `releaseVersion`: `1.0`
-- `releaseStatus`: `Official Release`
+- `releaseVersion`: `1.1`
+- `releaseStatus`: `Official Release v1.1`
 - `officialReleaseReports`: リリース情報とRelease Notesの履歴
 
 「正式版JSON」ボタンから、Version、Release Date、Completion Score、Health Score、Release Status、Release Notesを含むJSONを出力できます。
