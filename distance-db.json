@@ -1,0 +1,19 @@
+{
+  "version": "1.6",
+  "releaseStatus": "Official Release v1.6",
+  "theme": "全競馬場統合AI",
+  "updatedAt": null,
+  "distances": {
+    "芝1200": { "learningCount": 0, "learningData": [] },
+    "芝1400": { "learningCount": 0, "learningData": [] },
+    "芝1600": { "learningCount": 0, "learningData": [] },
+    "芝1800": { "learningCount": 0, "learningData": [] },
+    "芝2000": { "learningCount": 0, "learningData": [] },
+    "芝2400": { "learningCount": 0, "learningData": [] },
+    "ダ1200": { "learningCount": 0, "learningData": [] },
+    "ダ1400": { "learningCount": 0, "learningData": [] },
+    "ダ1700": { "learningCount": 0, "learningData": [] },
+    "ダ1800": { "learningCount": 0, "learningData": [] },
+    "ダ1900": { "learningCount": 0, "learningData": [] }
+  }
+}
