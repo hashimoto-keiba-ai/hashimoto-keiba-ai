@@ -1,6 +1,6 @@
-const RELEASE_VERSION = "1.3";
-const RELEASE_STATUS = "Official Release v1.3";
-const RELEASE_SCORE = 98;
+const RELEASE_VERSION = "1.4";
+const RELEASE_STATUS = "Official Release v1.4";
+const RELEASE_SCORE = 99;
 
 const raceConsoles = {
   tokyo: "東京版",
