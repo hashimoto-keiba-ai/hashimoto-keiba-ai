@@ -1,3 +1,7 @@
+const RELEASE_VERSION = "1.3";
+const RELEASE_STATUS = "Official Release v1.3";
+const RELEASE_SCORE = 98;
+
 const raceConsoles = {
   tokyo: "東京版",
   nakayama: "中山版",
@@ -11,7 +15,6 @@ const raceConsoles = {
   sapporo: "札幌版"
 };
 
-const raceActions = ["事前予想", "結果", "検証", "アップデート"];
 const win5Modules = ["的中率AI", "荒れ度AI", "万馬券確率AI", "資金配分AI", "買い目生成AI"];
 
 function setConsoleText(id, value) {
@@ -25,26 +28,34 @@ function renderTiles(targetId, items, className = "") {
   target.innerHTML = items.map((item) => `<div class="console-tile ${className}">${item}</div>`).join("");
 }
 
+function renderRaceButtons(targetId, courseKey) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  target.innerHTML = Array.from({ length: 12 }, (_, index) => {
+    const raceNumber = index + 1;
+    return `<a class="console-tile race-number" href="race-management.html?course=${courseKey}&race=${raceNumber}">R${raceNumber}</a>`;
+  }).join("");
+}
+
 function bootConsolePage() {
   const key = document.body.dataset.console || "tokyo";
   const isWin5 = key === "win5";
   const label = isWin5 ? "WIN5 AI" : raceConsoles[key] || "東京版";
   const title = isWin5 ? "WIN5 AI Console" : `${label}AI Console`;
 
-  document.title = `橋本競馬AI Version 1.2.1 / ${title}`;
-  setConsoleText("official-banner-title", "橋本競馬AI Official Release v1.2.1");
+  document.title = `橋本競馬AI Version ${RELEASE_VERSION} / ${title}`;
+  setConsoleText("official-banner-title", `橋本競馬AI ${RELEASE_STATUS}`);
   setConsoleText("console-title", title);
   setConsoleText("console-heading", title);
-  setConsoleText("console-subtitle", `${title} / Coming Soon`);
-  setConsoleText("console-version", "橋本競馬AI Version 1.2.1");
-  setConsoleText("console-status", "Official Release v1.2.1");
-  setConsoleText("console-score", "Release Score 97");
+  setConsoleText("console-subtitle", `${title} / Race Management System`);
+  setConsoleText("console-version", `橋本競馬AI Version ${RELEASE_VERSION}`);
+  setConsoleText("console-status", RELEASE_STATUS);
+  setConsoleText("console-score", `Release Score ${RELEASE_SCORE}`);
 
   if (isWin5) {
     renderTiles("win5-ai-modules", win5Modules);
   } else {
-    renderTiles("race-numbers", Array.from({ length: 12 }, (_, index) => `R${index + 1}`), "race-number");
-    renderTiles("race-actions", raceActions);
+    renderRaceButtons("race-numbers", key);
   }
 }
 
