@@ -1,10 +1,10 @@
 const OFFICIAL_RELEASE = {
   appName: "橋本競馬AI",
-  version: "1.3",
+  version: "1.4",
   releaseDate: "2026-06-14",
-  releaseScore: 98,
-  status: "Official Release v1.3",
-  statusJa: "Official Release v1.3",
+  releaseScore: 99,
+  status: "Official Release v1.4",
+  statusJa: "Official Release v1.4",
   releaseVersionKey: "releaseVersion",
   releaseStatusKey: "releaseStatus"
 };
@@ -45,26 +45,26 @@ const auditTargets = [
 ];
 
 const defaultBaseScores = {
-  aiRanking: 97,
-  holeRanking: 95,
-  riskRanking: 94,
-  ticketEngine: 92,
-  win5: 96,
-  simulation: 89,
-  evMonitor: 93,
-  raceDetector: 91,
-  battleRace: 94,
-  fundAllocation: 92,
-  bankroll: 93,
-  raceDatabase: 90,
-  weaknessAnalysis: 88,
-  selfLearning: 91,
-  weightTuning: 89,
-  courseEvolution: 87,
-  roiOptimization: 92,
-  integrationDashboard: 95,
-  backupRestore: 91,
-  versionManager: 98
+  aiRanking: 98,
+  holeRanking: 96,
+  riskRanking: 95,
+  ticketEngine: 93,
+  win5: 97,
+  simulation: 90,
+  evMonitor: 94,
+  raceDetector: 92,
+  battleRace: 95,
+  fundAllocation: 93,
+  bankroll: 94,
+  raceDatabase: 91,
+  weaknessAnalysis: 89,
+  selfLearning: 92,
+  weightTuning: 90,
+  courseEvolution: 88,
+  roiOptimization: 93,
+  integrationDashboard: 96,
+  backupRestore: 92,
+  versionManager: 99
 };
 
 function clamp(value, min, max) {
@@ -223,8 +223,8 @@ class HashimotoOfficialReleaseEngine {
     return [
       `${OFFICIAL_RELEASE.appName} Version ${release.version}を正式版として公開しました。`,
       `Release Score ${release.releaseScore}、Release Status ${release.releaseStatus}で固定しました。`,
-      "各競馬場ConsoleにR1〜R12のレース管理ボタンを追加しました。",
-      "各レースページに事前予想、結果、検証、アップデート、保存の5項目を追加しました。"
+      "各レース管理ページにprediction、result、review、updateのJSON保存機構を追加しました。",
+      "保存データはrace-data.json形式で出力できます。"
     ];
   }
 
