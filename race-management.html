@@ -3,57 +3,24 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>橋本競馬AI Version 1.4 / Race Management</title>
+    <title>橋本競馬AI Version 1.5 / Race Management</title>
     <link rel="stylesheet" href="dashboard.css">
     <style>
       .race-data-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 8px; }
-      .race-data-field { display: grid; gap: 8px; }
-      .race-data-field label { color: var(--gold-2); font-weight: 900; }
-      .race-data-field textarea { min-height: 132px; resize: vertical; border: 1px solid rgba(242, 214, 117, 0.36); border-radius: 8px; background: #0f0e0b; color: var(--ink); padding: 12px; font: inherit; line-height: 1.6; }
-      .race-data-field textarea:focus { outline: 2px solid rgba(242, 214, 117, 0.45); border-color: var(--gold-2); }
+      .race-data-field { display: grid; gap: 8px; color: var(--gold-2); font-weight: 900; }
+      .race-data-field textarea, .race-data-field input { border: 1px solid rgba(242, 214, 117, 0.36); border-radius: 8px; background: #0f0e0b; color: var(--ink); padding: 12px; font: inherit; }
+      .race-data-field textarea { min-height: 132px; resize: vertical; line-height: 1.6; }
+      .race-data-field input { min-height: 44px; font-weight: 800; }
+      .race-data-field textarea:focus, .race-data-field input:focus { outline: 2px solid rgba(242, 214, 117, 0.45); border-color: var(--gold-2); }
       .race-data-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 4px; }
       .race-save-status { color: var(--muted); font-weight: 800; }
       @media (max-width: 760px) { .race-data-grid { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body class="coming-soon-page race-management-page">
-    <div class="official-banner"><span id="official-banner-title">橋本競馬AI Official Release v1.4</span></div>
-    <header class="topbar">
-      <div class="brand">
-        <p class="eyebrow">Hashimoto Keiba AI / Race Management</p>
-        <h1 id="race-heading">東京版AI Console R1</h1>
-        <strong id="race-version" class="version-display">橋本競馬AI Version 1.4</strong>
-        <div class="system-meta">
-          <span id="race-score">Release Score 99</span>
-          <span id="race-status">Official Release v1.4</span>
-          <span id="race-file-name">race-data.json</span>
-        </div>
-      </div>
-      <div class="top-actions">
-        <a id="back-console-link" class="button-link" href="tokyo-console.html">東京版AI Consoleへ戻る</a>
-        <a class="button-link" href="index.html">トップへ戻る</a>
-      </div>
-    </header>
-
-    <main class="dashboard">
-      <div class="console-shell">
-        <section class="panel console-hero-panel">
-          <div class="console-hero-body">
-            <div class="console-title-row">
-              <h2 id="race-title" class="console-title">東京版AI Console R1</h2>
-              <span class="coming-soon-badge">Official Release v1.4</span>
-            </div>
-            <p id="race-subtitle" class="console-subtitle">東京版AI Console R1 / Race Data JSON Storage</p>
-            <div id="race-data-fields" class="race-data-grid"></div>
-            <div class="race-data-actions">
-              <button id="race-data-save" type="button">保存</button>
-              <span id="race-save-status" class="race-save-status">prediction / result / review / update</span>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
-
+    <div class="official-banner"><span id="official-banner-title">橋本競馬AI Official Release v1.5</span></div>
+    <header class="topbar"><div class="brand"><p class="eyebrow">Hashimoto Keiba AI / Self-Evolving History Database</p><h1 id="race-heading">東京版AI Console R1</h1><strong id="race-version" class="version-display">橋本競馬AI Version 1.5</strong><div class="system-meta"><span id="race-score">Release Score 100</span><span id="race-status">Official Release v1.5</span><span id="race-file-name">race-data.json / history-db.json</span></div></div><div class="top-actions"><a id="back-console-link" class="button-link" href="tokyo-console.html">東京版AI Consoleへ戻る</a><a class="button-link" href="index.html">トップへ戻る</a></div></header>
+    <main class="dashboard"><div class="console-shell"><section class="panel console-hero-panel race-data-panel"><div class="console-hero-body"><div class="console-title-row"><h2 id="race-title" class="console-title">東京版AI Console R1</h2><span class="coming-soon-badge">Official Release v1.5</span></div><p id="race-subtitle" class="console-subtitle">東京版AI Console R1 / race-data.json → history-db.json</p><div id="race-data-fields" class="race-data-grid"></div><div class="race-data-actions"><button id="race-data-save" type="button">race-data.jsonへ保存</button><button id="history-db-save" type="button">history-dbへ蓄積</button><span id="race-save-status" class="race-save-status">prediction / result / review / update / self-evolution</span></div></div></section></div></main>
     <script src="race-page.js"></script>
   </body>
 </html>
