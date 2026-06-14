@@ -3,5 +3,8 @@
   "releaseStatus": "Official Release v1.7",
   "theme": "回収率AI",
   "updatedAt": null,
-  "races": []
+  "annualProfit": 0,
+  "totalBetAmount": 0,
+  "totalPayout": 0,
+  "profits": []
 }

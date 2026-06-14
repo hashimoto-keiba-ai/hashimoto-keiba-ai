@@ -1,0 +1,19 @@
+{
+  "version": "1.7",
+  "releaseStatus": "Official Release v1.7",
+  "theme": "回収率AI",
+  "updatedAt": null,
+  "hitRate": "0.0%",
+  "returnRate": "0.0%",
+  "trifectaReturnRate": "0.0%",
+  "win5ReturnRate": "0.0%",
+  "favoriteZoneRate": {
+    "A": { "label": "A＝1～3人気", "hitRate": "0.0%", "returnRate": "0.0%", "count": 0 },
+    "B": { "label": "B＝4～6人気", "hitRate": "0.0%", "returnRate": "0.0%", "count": 0 },
+    "C": { "label": "C＝7～10人気", "hitRate": "0.0%", "returnRate": "0.0%", "count": 0 },
+    "D": { "label": "D＝11人気以上", "hitRate": "0.0%", "returnRate": "0.0%", "count": 0 }
+  },
+  "jockeyRate": {},
+  "trainerRate": {},
+  "learningCount": 0
+}
