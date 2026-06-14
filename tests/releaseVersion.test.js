@@ -28,7 +28,7 @@ const storage = createStorage({
     {
       version: "v7.4",
       completion: 96,
-      releaseScore: 98,
+      releaseScore: 99,
       judgment: "正式版"
     }
   ],
@@ -43,20 +43,21 @@ const storage = createStorage({
 
 const engine = new HashimotoOfficialReleaseEngine({
   storage,
-  now: () => new Date("2026-06-05T09:00:00.000Z")
+  now: () => new Date("2026-06-14T09:00:00.000Z")
 });
 const release = engine.generateRelease();
 
-assert.strictEqual(OFFICIAL_RELEASE.version, "1.3");
-assert.strictEqual(release.version, "1.3");
+assert.strictEqual(OFFICIAL_RELEASE.version, "1.4");
+assert.strictEqual(release.version, "1.4");
 assert.strictEqual(release.releaseDate, "2026-06-14");
 assert.strictEqual(release.completionScore, 96);
 assert.strictEqual(release.healthScore, 94);
-assert.strictEqual(release.releaseScore, 98);
-assert.strictEqual(release.releaseStatus, "Official Release v1.3");
-assert.strictEqual(storage.readRaw(STORAGE_KEYS.releaseVersion), "1.3");
-assert.strictEqual(storage.readRaw(STORAGE_KEYS.releaseStatus), "Official Release v1.3");
-assert.strictEqual(storage.readJson(STORAGE_KEYS.officialReleaseReports)[0].version, "1.3");
-assert.ok(release.releaseNotes.some((note) => note.includes("Version 1.3")));
+assert.strictEqual(release.releaseScore, 99);
+assert.strictEqual(release.releaseStatus, "Official Release v1.4");
+assert.strictEqual(storage.readRaw(STORAGE_KEYS.releaseVersion), "1.4");
+assert.strictEqual(storage.readRaw(STORAGE_KEYS.releaseStatus), "Official Release v1.4");
+assert.strictEqual(storage.readJson(STORAGE_KEYS.officialReleaseReports)[0].version, "1.4");
+assert.ok(release.releaseNotes.some((note) => note.includes("Version 1.4")));
+assert.ok(release.releaseNotes.some((note) => note.includes("race-data.json")));
 
 console.log("releaseVersion tests passed");
