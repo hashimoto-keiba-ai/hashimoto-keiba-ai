@@ -1,23 +1,21 @@
 # 橋本競馬AI 学習ログシステム
 
-## Official Release v1.6
+## Official Release v1.7
 
-橋本競馬AI Official Release は `Version 1.6` です。
+橋本競馬AI Official Release は `Version 1.7` です。
 
-- Theme: `全競馬場統合AI`
-- Release Score: `101`
-- Release Status: `Official Release v1.6`
-- トップページ: `index.html`
+- Theme: `回収率AI`
+- Release Score: `102`
+- Release Status: `Official Release v1.7`
 - 黒×金の公式デザインを維持
-- `history-db.json` の学習履歴を、競馬場別の `course-db.json` と距離別の `distance-db.json` へ分類
+- `profit-db.json` と `return-ai-db.json` を追加
+- `history-db.json`、`course-db.json`、`distance-db.json`、`profit-db.json`、`return-ai-db.json` を連携
 
-## Integrated Databases
+## Return Rate Databases
 
-`course-db.json` は東京、中山、阪神、中京、京都、新潟、福島、小倉、函館、札幌、WIN5 の競馬場別学習DBです。
+`profit-db.json` は年間収支DBです。保存項目は `date`、`course`、`race`、`betAmount`、`payout`、`profit`、`hit`、`odds`、`trifecta`、`win5` です。
 
-`distance-db.json` は芝1200、芝1400、芝1600、芝1800、芝2000、芝2400、ダ1200、ダ1400、ダ1700、ダ1800、ダ1900 の距離別学習DBです。
-
-`history-dbへ蓄積` は `prediction`、`result`、`review`、`update` を含むレースデータを、競馬場別と距離別に自動分類します。
+`return-ai-db.json` は回収率AIの学習DBです。保存項目は `hitRate`、`returnRate`、`trifectaReturnRate`、`win5ReturnRate`、`favoriteZoneRate`、`jockeyRate`、`trainerRate` です。
 
 ## AI Performance Cards
 
@@ -25,30 +23,47 @@
 - 総回収率
 - 年間収支
 - 三連単回収率
-- WIN5成績
-- 総学習件数
+- WIN5回収率
+- 学習件数
 
-## Ranking Intelligence
+## Favorite Zone AI
+
+- A＝1～3人気
+- B＝4～6人気
+- C＝7～10人気
+- D＝11人気以上
+
+各ゾーンで的中率、回収率、件数を表示します。
+
+## Jockey AI
 
 - 好調騎手ランキング
-- 好調調教師ランキング
-- 人気ゾーンランキング
-- コース適性ランキング
+- 回収率ランキング
+- 連対率ランキング
+- 複勝率ランキング
+
+## Trainer AI
+
+- 勝率
+- 連対率
+- 複勝率
+- 回収率
 
 ## AI Evolution History
 
-- v1.0 公式版
-- v1.1 競馬場選択
-- v1.2 Console化
-- v1.2.1 レイアウト修正
-- v1.3 R1〜R12管理
+- v1.0 基本版
+- v1.1 Console化
+- v1.2 競馬場メニュー
+- v1.2.1 レイアウト整理
+- v1.3 R1～R12管理
 - v1.4 JSON保存
 - v1.5 自己進化DB
 - v1.6 全競馬場統合AI
+- v1.7 回収率AI
 
 ## Version Files
 
-- `VERSION`: `1.6`
-- `dashboard.js`: `OFFICIAL_RELEASE.version = "1.6"`
-- `dashboard.js`: `OFFICIAL_RELEASE.releaseScore = 101`
-- `dashboard.js`: `OFFICIAL_RELEASE.status = "Official Release v1.6"`
+- `VERSION`: `1.7`
+- `dashboard.js`: `OFFICIAL_RELEASE.version = "1.7"`
+- `dashboard.js`: `OFFICIAL_RELEASE.releaseScore = 102`
+- `dashboard.js`: `OFFICIAL_RELEASE.status = "Official Release v1.7"`
