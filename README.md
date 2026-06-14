@@ -1,16 +1,16 @@
 # 橋本競馬AI学習ログシステム
 
-## Official Release v1.4
+## Official Release v1.5
 
-橋本競馬AI Official Release は `Version 1.4` です。
+橋本競馬AI Official Release は `Version 1.5` です。
 
-- Release Score: `99`
-- Release Status: `Official Release v1.4`
+- Theme: `自己進化データベース`
+- Release Score: `100`
+- Release Status: `Official Release v1.5`
 - トップページ: `index.html`
 - 黒×金の公式デザインを維持
-- 各競馬場 Console の R1〜R12 からレース管理ページへ遷移
-- 各レース管理ページで `prediction`、`result`、`review`、`update` の4項目を保存
-- 保存ファイル名: `race-data.json`
+- `race-data.json` のレース保存データを `history-db.json` へ蓄積
+- AI成績管理カードとAI進化履歴を追加
 
 ## Console Pages
 
@@ -28,31 +28,57 @@
 - `sapporo-console.html`: 札幌版AI Console
 - `win5-console.html`: WIN5 AI Console
 
-## Race Data JSON
+## History Database
 
-`race-management.html` は東京版、中山版、阪神版、中京版、京都版、新潟版、福島版、小倉版、函館版、札幌版に対応します。
+`history-db.json` は橋本競馬AIの学習履歴DBです。
 
-各レースページは以下の4項目を JSON に保存します。
+対応カテゴリ: 東京 / 中山 / 阪神 / 中京 / 京都 / 新潟 / 福島 / 小倉 / 函館 / 札幌 / WIN5
 
-- `prediction`: 事前予想
-- `result`: 結果
-- `review`: 検証
-- `update`: アップデート
+蓄積項目:
 
-保存時はブラウザ内にも保持し、`race-data.json` として出力します。
+- `course`
+- `race`
+- `date`
+- `prediction`
+- `result`
+- `review`
+- `update`
+- `hitRate`
+- `returnRate`
+- `trifectaReturnRate`
+- `win5Result`
+- `aiUpdateLog`
+
+## Race Management
+
+各レース管理画面では、`race-data.jsonへ保存` と `history-dbへ蓄積` を実行できます。
+
+`race-data.json` はレース単位の作業保存、`history-db.json` は自己進化DBとしての履歴蓄積に使います。
+
+## AI Performance Cards
+
+トップページに以下のAI成績管理カードを表示します。
+
+- 的中率
+- 回収率
+- 年間収支
+- 三連単回収率
+- WIN5成績
+- 学習件数
+
+## AI Evolution History
+
+- v1.0 公式版
+- v1.1 競馬場選択
+- v1.2 Console化
+- v1.2.1 レイアウト修正
+- v1.3 R1〜R12管理
+- v1.4 JSON保存
+- v1.5 自己進化DB
 
 ## Version Files
 
-- `VERSION`: `1.4`
-- `dashboard.js`: `OFFICIAL_RELEASE.version = "1.4"`
-- `dashboard.js`: `OFFICIAL_RELEASE.releaseScore = 99`
-- `dashboard.js`: `OFFICIAL_RELEASE.status = "Official Release v1.4"`
-
-## 運用方針
-
-競馬場ごとの学習データを年別に管理し、事前予想、結果検証、OSアップデート、保存ログを蓄積します。
-
-- 事前予想: レース前の指数、買い目、展開メモを保存
-- 結果: レース後の着順、配当、的中可否を保存
-- 検証: 予想とのズレ、改善点を記録
-- アップデート: 予想ロジック、評価基準、買い目ルール、指数補正の変更履歴を保存
+- `VERSION`: `1.5`
+- `dashboard.js`: `OFFICIAL_RELEASE.version = "1.5"`
+- `dashboard.js`: `OFFICIAL_RELEASE.releaseScore = 100`
+- `dashboard.js`: `OFFICIAL_RELEASE.status = "Official Release v1.5"`

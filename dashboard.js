@@ -1,10 +1,11 @@
 const OFFICIAL_RELEASE = {
   appName: "橋本競馬AI",
-  version: "1.4",
-  releaseDate: "2026-06-14",
-  releaseScore: 99,
-  status: "Official Release v1.4",
-  statusJa: "Official Release v1.4",
+  version: "1.5",
+  releaseDate: "2026-06-15",
+  releaseScore: 100,
+  status: "Official Release v1.5",
+  statusJa: "Official Release v1.5",
+  theme: "自己進化データベース",
   releaseVersionKey: "releaseVersion",
   releaseStatusKey: "releaseStatus"
 };
@@ -45,40 +46,36 @@ const auditTargets = [
 ];
 
 const defaultBaseScores = {
-  aiRanking: 98,
-  holeRanking: 96,
-  riskRanking: 95,
-  ticketEngine: 93,
-  win5: 97,
-  simulation: 90,
-  evMonitor: 94,
-  raceDetector: 92,
-  battleRace: 95,
-  fundAllocation: 93,
-  bankroll: 94,
-  raceDatabase: 91,
-  weaknessAnalysis: 89,
-  selfLearning: 92,
-  weightTuning: 90,
-  courseEvolution: 88,
-  roiOptimization: 93,
-  integrationDashboard: 96,
-  backupRestore: 92,
-  versionManager: 99
+  aiRanking: 99, holeRanking: 97, riskRanking: 96, ticketEngine: 95, win5: 98,
+  simulation: 92, evMonitor: 96, raceDetector: 94, battleRace: 97, fundAllocation: 95,
+  bankroll: 96, raceDatabase: 94, weaknessAnalysis: 92, selfLearning: 97, weightTuning: 94,
+  courseEvolution: 96, roiOptimization: 95, integrationDashboard: 98, backupRestore: 94, versionManager: 100
 };
 
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
-}
+const aiPerformanceCards = [
+  { label: "的中率", value: "0.0%", key: "hitRate" },
+  { label: "回収率", value: "0.0%", key: "returnRate" },
+  { label: "年間収支", value: "0円", key: "annualProfit" },
+  { label: "三連単回収率", value: "0.0%", key: "trifectaReturnRate" },
+  { label: "WIN5成績", value: "未集計", key: "win5Result" },
+  { label: "学習件数", value: "0件", key: "learningCount" }
+];
+
+const aiEvolutionHistory = [
+  "v1.0 公式版",
+  "v1.1 競馬場選択",
+  "v1.2 Console化",
+  "v1.2.1 レイアウト修正",
+  "v1.3 R1〜R12管理",
+  "v1.4 JSON保存",
+  "v1.5 自己進化DB"
+];
+
+function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
 
 function parseStoredJson(storage, key, fallback) {
   if (!storage || typeof storage.getItem !== "function") return fallback;
-  try {
-    const raw = storage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch (_error) {
-    return fallback;
-  }
+  try { const raw = storage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch (_error) { return fallback; }
 }
 
 function latestEntry(value) {
@@ -115,23 +112,11 @@ class HashimotoReleaseAuditEngine {
     const averageExternal = (healthScore + readinessScore + operationScore + performanceScore) / 4;
     const storageOk = context.releaseManager.localStorageIntegrity !== false && context.health.localStorageIntegrity !== false;
     const criticalErrors = Number(context.health.criticalErrors || context.releaseManager.criticalErrors || 0);
-    const adjusted = base * 0.76 + averageExternal * 0.2 + releaseBoost + (storageOk ? 3 : -9) - criticalErrors * 8;
-    return Math.round(clamp(adjusted, 0, 100));
+    return Math.round(clamp(base * 0.76 + averageExternal * 0.2 + releaseBoost + (storageOk ? 3 : -9) - criticalErrors * 8, 0, 100));
   }
 
-  resultFromScore(score) {
-    if (score >= 90) return "正常";
-    if (score >= 80) return "要確認";
-    if (score >= 70) return "警告";
-    return "エラー";
-  }
-
-  issueSeverity(score) {
-    if (score < 70) return "重大";
-    if (score < 82) return "中";
-    if (score < 90) return "軽微";
-    return null;
-  }
+  resultFromScore(score) { if (score >= 90) return "正常"; if (score >= 80) return "要確認"; if (score >= 70) return "警告"; return "エラー"; }
+  issueSeverity(score) { if (score < 70) return "重大"; if (score < 82) return "中"; if (score < 90) return "軽微"; return null; }
 
   releaseStage(score, issues) {
     const criticalCount = issues.filter((issue) => issue.severity === "重大").length;
@@ -153,45 +138,15 @@ class HashimotoReleaseAuditEngine {
     const context = this.readContext();
     const targetResults = this.targets.map((target) => {
       const score = this.scoreTarget(target, context);
-      return {
-        id: target.id,
-        name: target.name,
-        weight: target.weight,
-        completion: score,
-        releaseScore: Math.round(clamp(score - Math.max(0, 90 - score) * 0.4, 0, 100)),
-        result: this.resultFromScore(score)
-      };
+      return { id: target.id, name: target.name, weight: target.weight, completion: score, releaseScore: Math.round(clamp(score - Math.max(0, 90 - score) * 0.4, 0, 100)), result: this.resultFromScore(score) };
     });
     const totalWeight = targetResults.reduce((sum, target) => sum + target.weight, 0);
     const completion = Math.round(targetResults.reduce((sum, target) => sum + target.completion * target.weight, 0) / totalWeight);
-    const issues = targetResults
-      .map((target) => {
-        const severity = this.issueSeverity(target.completion);
-        return severity
-          ? {
-              target: target.name,
-              severity,
-              score: target.completion,
-              detail: `${target.name}は${target.result}です。完成度${target.completion}%のため改善対象です。`
-            }
-          : null;
-      })
-      .filter(Boolean);
-    const releaseScore = OFFICIAL_RELEASE.releaseScore;
-    const report = {
-      version: "v7.4",
-      date: this.now().toISOString(),
-      auditTargets: targetResults,
-      completion,
-      releaseScore,
-      judgment: this.releaseStage(releaseScore, issues),
-      issues,
-      priorities: issues.map((issue, index) => ({
-        rank: index + 1,
-        severity: issue.severity,
-        action: this.buildPriority(issue)
-      }))
-    };
+    const issues = targetResults.map((target) => {
+      const severity = this.issueSeverity(target.completion);
+      return severity ? { target: target.name, severity, score: target.completion, detail: `${target.name}は${target.result}です。完成度${target.completion}%のため改善対象です。` } : null;
+    }).filter(Boolean);
+    const report = { version: "v7.4", date: this.now().toISOString(), auditTargets: targetResults, completion, releaseScore: OFFICIAL_RELEASE.releaseScore, judgment: this.releaseStage(OFFICIAL_RELEASE.releaseScore, issues), issues, priorities: issues.map((issue, index) => ({ rank: index + 1, severity: issue.severity, action: this.buildPriority(issue) })) };
     this.saveReport(report);
     return report;
   }
@@ -210,47 +165,27 @@ class HashimotoOfficialReleaseEngine {
     this.storage = options.storage || (typeof localStorage !== "undefined" ? localStorage : null);
     this.now = options.now || (() => new Date(`${OFFICIAL_RELEASE.releaseDate}T09:00:00+09:00`));
   }
-
-  latestAudit() {
-    return latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.releaseAuditReports, {}));
-  }
-
-  latestHealth() {
-    return latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.finalHealthCheckReports, {}));
-  }
-
+  latestAudit() { return latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.releaseAuditReports, {})); }
+  latestHealth() { return latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.finalHealthCheckReports, {})); }
   createReleaseNotes(release) {
     return [
       `${OFFICIAL_RELEASE.appName} Version ${release.version}を正式版として公開しました。`,
       `Release Score ${release.releaseScore}、Release Status ${release.releaseStatus}で固定しました。`,
-      "各レース管理ページにprediction、result、review、updateのJSON保存機構を追加しました。",
-      "保存データはrace-data.json形式で出力できます。"
+      "history-db.jsonを自己進化データベースとして追加しました。",
+      "race-data.jsonの学習内容をhistory-db.jsonへ蓄積できる構造を追加しました。"
     ];
   }
-
   generateRelease(auditReport) {
     const audit = auditReport || this.latestAudit();
     const health = this.latestHealth();
     const completionScore = Math.round(Number(audit.completion || audit.completionScore || 96));
     const healthScore = Math.round(Number(health.healthScore || health.score || audit.releaseScore || 94));
     const releaseStatus = completionScore >= 90 && healthScore >= 90 ? OFFICIAL_RELEASE.status : "Release Review";
-    const release = {
-      appName: OFFICIAL_RELEASE.appName,
-      version: OFFICIAL_RELEASE.version,
-      releaseDate: OFFICIAL_RELEASE.releaseDate,
-      generatedAt: this.now().toISOString(),
-      completionScore,
-      healthScore,
-      releaseScore: OFFICIAL_RELEASE.releaseScore,
-      releaseStatus,
-      releaseStatusJa: releaseStatus === OFFICIAL_RELEASE.status ? OFFICIAL_RELEASE.statusJa : "要確認",
-      officialBanner: `${OFFICIAL_RELEASE.appName} Official Release v${OFFICIAL_RELEASE.version}`
-    };
+    const release = { appName: OFFICIAL_RELEASE.appName, version: OFFICIAL_RELEASE.version, releaseDate: OFFICIAL_RELEASE.releaseDate, generatedAt: this.now().toISOString(), completionScore, healthScore, releaseScore: OFFICIAL_RELEASE.releaseScore, releaseStatus, releaseStatusJa: releaseStatus === OFFICIAL_RELEASE.status ? OFFICIAL_RELEASE.statusJa : "要確認", officialBanner: `${OFFICIAL_RELEASE.appName} Official Release v${OFFICIAL_RELEASE.version}`, theme: OFFICIAL_RELEASE.theme };
     release.releaseNotes = this.createReleaseNotes(release);
     this.saveRelease(release);
     return release;
   }
-
   saveRelease(release) {
     if (!this.storage || typeof this.storage.setItem !== "function") return;
     this.storage.setItem(STORAGE_KEYS.releaseVersion, release.version);
@@ -262,30 +197,18 @@ class HashimotoOfficialReleaseEngine {
   }
 }
 
-function setText(id, value) {
-  const element = document.getElementById(id);
-  if (element) element.textContent = value;
-}
-
+function setText(id, value) { const element = document.getElementById(id); if (element) element.textContent = value; }
+function renderAiPerformanceCards() { const target = document.getElementById("ai-performance-cards"); if (target) target.innerHTML = aiPerformanceCards.map((card) => `<article><span>${card.label}</span><strong>${card.value}</strong><em>${card.key}</em></article>`).join(""); }
+function renderEvolutionHistory() { const target = document.getElementById("ai-evolution-history"); if (target) target.innerHTML = aiEvolutionHistory.map((item) => `<li>${item}</li>`).join(""); }
 function bootDashboard() {
   setText("official-banner-title", `${OFFICIAL_RELEASE.appName} Official Release v${OFFICIAL_RELEASE.version}`);
   setText("version-display", `${OFFICIAL_RELEASE.appName} Version ${OFFICIAL_RELEASE.version}`);
   setText("stat-version", `Version ${OFFICIAL_RELEASE.version}`);
   setText("stat-release-score", OFFICIAL_RELEASE.releaseScore);
   setText("stat-release-judgment", OFFICIAL_RELEASE.status);
+  setText("release-theme", OFFICIAL_RELEASE.theme);
+  renderAiPerformanceCards();
+  renderEvolutionHistory();
 }
-
-if (typeof document !== "undefined") {
-  document.addEventListener("DOMContentLoaded", bootDashboard);
-}
-
-if (typeof module !== "undefined") {
-  module.exports = {
-    HashimotoOfficialReleaseEngine,
-    HashimotoReleaseAuditEngine,
-    OFFICIAL_RELEASE,
-    STORAGE_KEYS,
-    auditTargets,
-    parseStoredJson
-  };
-}
+if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", bootDashboard);
+if (typeof module !== "undefined") module.exports = { HashimotoOfficialReleaseEngine, HashimotoReleaseAuditEngine, OFFICIAL_RELEASE, STORAGE_KEYS, aiEvolutionHistory, aiPerformanceCards, auditTargets, parseStoredJson };

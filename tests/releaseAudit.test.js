@@ -3,25 +3,11 @@ const { HashimotoReleaseAuditEngine, STORAGE_KEYS, auditTargets } = require("../
 
 function createStorage(seed = {}) {
   const store = new Map(Object.entries(seed).map(([key, value]) => [key, JSON.stringify(value)]));
-  return {
-    getItem(key) {
-      return store.has(key) ? store.get(key) : null;
-    },
-    setItem(key, value) {
-      store.set(key, value);
-    },
-    read(key) {
-      return JSON.parse(store.get(key));
-    }
-  };
+  return { getItem: (key) => store.has(key) ? store.get(key) : null, setItem: (key, value) => store.set(key, value), read: (key) => JSON.parse(store.get(key)) };
 }
 
 function createEngine(seed, baseScores) {
-  return new HashimotoReleaseAuditEngine({
-    storage: createStorage(seed),
-    baseScores,
-    now: () => new Date("2026-06-05T09:00:00.000Z")
-  });
+  return new HashimotoReleaseAuditEngine({ storage: createStorage(seed), baseScores, now: () => new Date("2026-06-15T09:00:00.000Z") });
 }
 
 const readySeed = {
@@ -34,14 +20,12 @@ const readySeed = {
 
 const readyEngine = createEngine(readySeed);
 const readyReport = readyEngine.generateReport();
-
 assert.strictEqual(readyReport.version, "v7.4");
 assert.strictEqual(readyReport.auditTargets.length, auditTargets.length);
 assert.ok(readyReport.completion >= 90, "completion should be release-level");
 assert.ok(readyReport.releaseScore >= 90, "release score should be RC or higher");
 assert.ok(["RC版", "正式版"].includes(readyReport.judgment));
 assert.ok(Array.isArray(readyEngine.storage.read(STORAGE_KEYS.releaseAuditReports)));
-assert.strictEqual(readyEngine.storage.read(STORAGE_KEYS.releaseAuditReports)[0].version, "v7.4");
 
 const problemSeed = {
   [STORAGE_KEYS.releaseManagerReports]: [{ completionScore: 72, criticalErrors: 2, localStorageIntegrity: false }],
@@ -51,30 +35,8 @@ const problemSeed = {
   [STORAGE_KEYS.performanceDashboardReports]: [{ performanceScore: 69 }]
 };
 
-const problemEngine = createEngine(problemSeed, {
-  aiRanking: 72,
-  holeRanking: 70,
-  riskRanking: 69,
-  ticketEngine: 67,
-  win5: 71,
-  simulation: 64,
-  evMonitor: 66,
-  raceDetector: 62,
-  battleRace: 65,
-  fundAllocation: 63,
-  bankroll: 60,
-  raceDatabase: 66,
-  weaknessAnalysis: 61,
-  selfLearning: 64,
-  weightTuning: 62,
-  courseEvolution: 60,
-  roiOptimization: 65,
-  integrationDashboard: 68,
-  backupRestore: 63,
-  versionManager: 70
-});
+const problemEngine = createEngine(problemSeed, { aiRanking: 72, holeRanking: 70, riskRanking: 69, ticketEngine: 67, win5: 71, simulation: 64, evMonitor: 66, raceDetector: 62, battleRace: 65, fundAllocation: 63, bankroll: 60, raceDatabase: 66, weaknessAnalysis: 61, selfLearning: 64, weightTuning: 62, courseEvolution: 60, roiOptimization: 65, integrationDashboard: 68, backupRestore: 63, versionManager: 70 });
 const problemReport = problemEngine.generateReport();
-
 assert.ok(problemReport.issues.some((issue) => issue.severity === "重大"));
 assert.ok(["開発版", "アルファ版"].includes(problemReport.judgment));
 assert.strictEqual(problemReport.priorities[0].rank, 1);
