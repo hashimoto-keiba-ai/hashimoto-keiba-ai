@@ -1,5 +1,10 @@
 const OFFICIAL_RELEASE = {
   appName: "橋本競馬AI",
+  version: "1.2",
+  releaseDate: "2026-06-14",
+  releaseScore: 97,
+  status: "Official Release v1.2",
+  statusJa: "Official Release v1.2",
   version: "1.1",
   releaseDate: "2026-06-14",
   releaseScore: 96,

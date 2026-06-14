@@ -1,5 +1,16 @@
 # 橋本競馬AI学習ログシステム
 
+## Official Release v1.2
+
+Hashimoto Keiba AI Official Release is now `Version 1.2`.
+
+- Release Score: `97`
+- Release Status: `Official Release v1.2`
+- The top page racecourse selector links to each dedicated AI Console.
+- Console pages: `tokyo-console.html`, `nakayama-console.html`, `hanshin-console.html`, `chukyo-console.html`, `kyoto-console.html`, `niigata-console.html`, `fukushima-console.html`, `kokura-console.html`, `hakodate-console.html`, `sapporo-console.html`, `win5-console.html`
+- Racecourse Console pages show `R1` through `R12`, `Pre-race Prediction`, `Result`, `Review`, `Update`, and `Coming Soon`.
+- WIN5 AI Console shows `Hit Rate AI`, `Upset Level AI`, `High Payout Probability AI`, `Fund Allocation AI`, `Ticket Generation AI`, and `Coming Soon`.
+
 競馬場ごとの学習データを年別に管理し、事前予想、結果検証、OSアップデート、保存ログを蓄積するためのデータベースです。
 
 ## ダッシュボード
