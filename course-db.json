@@ -1,4 +1,8 @@
 {
+  "databaseName": "course-db",
+  "version": "2.6",
+  "source": "automatic-learning-flow",
+  "records": []
   "version": "1.6",
   "releaseStatus": "Official Release v1.6",
   "theme": "全競馬場統合AI",

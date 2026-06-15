@@ -1,0 +1,8 @@
+{
+  "databaseName": "bet-history-db",
+  "version": "2.6",
+  "theme": "回収率管理AI",
+  "storageKey": "bet-history-db.json",
+  "requiredFields": ["date", "course", "race", "betType", "betAmount", "payout", "profit", "hit", "odds", "memo"],
+  "records": []
+}

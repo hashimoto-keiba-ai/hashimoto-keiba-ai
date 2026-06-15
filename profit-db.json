@@ -1,0 +1,23 @@
+{
+  "databaseName": "profit-db",
+  "version": "2.6",
+  "theme": "万馬券探索AI",
+  "storageKey": "profit-db.json",
+  "requiredFields": [
+    "date",
+    "course",
+    "race",
+    "distance",
+    "condition",
+    "pace",
+    "popularZone",
+    "dangerHorse",
+    "darkHorse",
+    "axisHorse",
+    "trifectaPattern",
+    "returnRate",
+    "profitScore",
+    "memo"
+  ],
+  "records": []
+}
