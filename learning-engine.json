@@ -1,0 +1,24 @@
+{
+  "databaseName": "learning-engine",
+  "version": "2.7",
+  "theme": "自動学習AI",
+  "storageKey": "learning-engine.json",
+  "requiredFields": [
+    "date",
+    "course",
+    "race",
+    "prediction",
+    "result",
+    "review",
+    "update",
+    "learnedRule",
+    "beforeScore",
+    "afterScore",
+    "hit",
+    "returnRate",
+    "trifectaPattern",
+    "win5Pattern",
+    "aiMemo"
+  ],
+  "records": []
+}
