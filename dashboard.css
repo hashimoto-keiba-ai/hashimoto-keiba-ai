@@ -237,6 +237,92 @@ button:hover {
   gap: 12px;
 }
 
+.console-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.console-hero-panel {
+  border-color: rgba(242, 214, 117, 0.38);
+  background:
+    radial-gradient(circle at top right, rgba(242, 214, 117, 0.13), transparent 34%),
+    var(--panel);
+}
+
+.console-hero-body {
+  display: grid;
+  gap: 18px;
+  padding: 24px 18px;
+}
+
+.console-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.console-title {
+  color: var(--gold-2);
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.12;
+}
+
+.console-subtitle {
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.race-button-grid,
+.console-action-grid,
+.win5-ai-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.race-button-grid {
+  grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+}
+
+.console-action-grid,
+.win5-ai-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.console-tile {
+  display: grid;
+  place-items: center;
+  min-height: 58px;
+  border: 1px solid rgba(242, 214, 117, 0.42);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(242, 214, 117, 0.16), rgba(212, 175, 55, 0.04)),
+    #17140d;
+  color: var(--gold-2);
+  font-weight: 900;
+  text-align: center;
+}
+
+.console-tile.race-number {
+  font-size: 20px;
+}
+
+.coming-soon-badge {
+  display: inline-grid;
+  place-items: center;
+  min-height: 38px;
+  border: 1px solid rgba(242, 214, 117, 0.5);
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.14);
+  color: var(--gold-2);
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
 .dashboard {
   display: grid;
   gap: 18px;
