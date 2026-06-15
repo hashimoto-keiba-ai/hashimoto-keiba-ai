@@ -1,0 +1,8 @@
+{
+  "databaseName": "win5-history-db",
+  "version": "2.7",
+  "theme": "WIN5完全自動化AI",
+  "storageKey": "win5-history-db.json",
+  "requiredFields": ["date", "selectedHorses", "result", "payout", "hit", "review", "update"],
+  "records": []
+}
