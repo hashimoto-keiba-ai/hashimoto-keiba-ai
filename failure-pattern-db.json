@@ -1,0 +1,8 @@
+{
+  "databaseName": "failure-pattern-db",
+  "version": "2.6",
+  "theme": "自己進化エンジン",
+  "storageKey": "failure-pattern-db.json",
+  "requiredFields": ["date", "course", "race", "failedPrediction", "actualResult", "failurePattern", "cause", "correctionRule", "memo"],
+  "records": []
+}

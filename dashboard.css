@@ -149,6 +149,94 @@ button:hover {
   background: #2a210f;
 }
 
+.console-menu-panel {
+  border-color: rgba(242, 214, 117, 0.36);
+  background:
+    radial-gradient(circle at top left, rgba(242, 214, 117, 0.12), transparent 32%),
+    var(--panel);
+}
+
+.console-menu-lead {
+  margin: -4px 0 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.console-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.console-menu-button {
+  display: grid;
+  place-items: center;
+  min-height: 58px;
+  border: 1px solid rgba(242, 214, 117, 0.44);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(242, 214, 117, 0.18), rgba(212, 175, 55, 0.05)),
+    #17140d;
+  color: var(--gold-2);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 28px rgba(0, 0, 0, 0.18);
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.console-menu-button:hover {
+  border-color: rgba(242, 214, 117, 0.78);
+  background:
+    linear-gradient(135deg, rgba(242, 214, 117, 0.28), rgba(212, 175, 55, 0.1)),
+    #211a0d;
+  color: #fff7cb;
+  transform: translateY(-2px);
+}
+
+.console-menu-button.win5 {
+  color: #0f0a00;
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
+}
+
+.coming-soon-page {
+  min-height: 100vh;
+}
+
+.coming-soon-panel {
+  max-width: 920px;
+  margin: 36px auto;
+}
+
+.coming-soon-hero {
+  display: grid;
+  gap: 18px;
+  place-items: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.coming-soon-title {
+  margin: 0;
+  color: var(--gold-2);
+  font-size: clamp(28px, 6vw, 56px);
+  letter-spacing: 0.04em;
+}
+
+.coming-soon-message {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(20px, 4vw, 34px);
+  font-weight: 800;
+}
+
+.coming-soon-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
 .dashboard {
   display: grid;
   gap: 18px;
@@ -668,4 +756,327 @@ tbody tr:last-child td {
   .release-notes-block {
     margin-inline: 12px;
   }
+}
+
+.automatic-learning-panel {
+  border-color: rgba(242, 214, 117, 0.38);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(242, 214, 117, 0.12), transparent 30%),
+    var(--panel);
+}
+
+.learning-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.learning-status-grid article strong {
+  color: var(--gold-2);
+}
+
+.learning-detail-grid {
+  margin-top: 16px;
+}
+
+.learning-flow-list,
+.learning-chip-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--ink);
+}
+
+.learning-flow-list li,
+.learning-chip-list li {
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.16);
+  padding: 9px 11px;
+}
+
+.learning-chip-list {
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  padding-left: 0;
+  list-style: none;
+}
+
+.prediction-generation-panel {
+  border-color: rgba(242, 214, 117, 0.42);
+  background:
+    radial-gradient(circle at 80% 0%, rgba(242, 214, 117, 0.14), transparent 30%),
+    var(--panel);
+}
+
+.prediction-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.prediction-score-grid article strong {
+  color: var(--gold-2);
+}
+
+.prediction-detail-grid,
+.prediction-history-grid {
+  margin-top: 16px;
+}
+
+.prediction-flow-list,
+.prediction-chip-list,
+.prediction-history-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  color: var(--ink);
+}
+
+.prediction-flow-list {
+  padding-left: 20px;
+}
+
+.prediction-chip-list,
+.prediction-history-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.prediction-chip-list {
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+}
+
+.prediction-flow-list li,
+.prediction-chip-list li,
+.prediction-history-list li {
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.16);
+  padding: 9px 11px;
+}
+
+.integrated-os-panel {
+  border-color: rgba(242, 214, 117, 0.46);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(242, 214, 117, 0.16), transparent 34%),
+    var(--panel);
+}
+
+.integrated-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.integrated-status-grid article strong {
+  color: var(--gold-2);
+}
+
+.integrated-detail-grid,
+.integrated-ranking-grid {
+  margin-top: 16px;
+}
+
+.integrated-flow-list,
+.integrated-chip-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  color: var(--ink);
+}
+
+.integrated-flow-list {
+  padding-left: 20px;
+}
+
+.integrated-chip-list {
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  padding-left: 0;
+  list-style: none;
+}
+
+.integrated-flow-list li,
+.integrated-chip-list li {
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 9px 11px;
+}
+
+.ai-secretary-panel {
+  border-color: rgba(242, 214, 117, 0.5);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(242, 214, 117, 0.16), transparent 32%),
+    var(--panel);
+}
+
+.secretary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.secretary-status-grid article strong {
+  color: var(--gold-2);
+  font-size: 20px;
+}
+
+.secretary-conversation-card {
+  margin-top: 16px;
+  padding: 16px;
+}
+
+.secretary-question-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.secretary-question-list li {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 10px 12px;
+}
+
+.secretary-question-list strong {
+  color: var(--gold-2);
+}
+
+.secretary-question-list span {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.profit-explorer-panel {
+  border-color: rgba(242, 214, 117, 0.54);
+  background:
+    radial-gradient(circle at 86% 0%, rgba(242, 214, 117, 0.18), transparent 34%),
+    var(--panel);
+}
+
+.profit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.profit-status-grid article strong {
+  color: var(--gold-2);
+  font-size: 20px;
+}
+
+.profit-ranking-card {
+  margin-top: 16px;
+  padding: 16px;
+}
+
+.profit-ranking-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--ink);
+}
+
+.profit-ranking-list li {
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 9px 11px;
+}
+
+
+.automated-win5-panel {
+  border-color: rgba(242, 214, 117, 0.58);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(242, 214, 117, 0.20), transparent 34%),
+    radial-gradient(circle at 88% 10%, rgba(255, 231, 143, 0.10), transparent 30%),
+    var(--panel);
+}
+
+.auto-win5-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.auto-win5-status-grid article strong {
+  color: var(--gold-2);
+  font-size: 20px;
+}
+
+
+.bankroll-management-panel {
+  border-color: rgba(242, 214, 117, 0.60);
+  background:
+    radial-gradient(circle at 8% 6%, rgba(242, 214, 117, 0.18), transparent 32%),
+    radial-gradient(circle at 92% 8%, rgba(255, 231, 143, 0.12), transparent 28%),
+    var(--panel);
+}
+
+.bankroll-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.bankroll-status-grid article strong {
+  color: var(--gold-2);
+  font-size: 20px;
+}
+
+
+.research-lab-panel {
+  border-color: rgba(242, 214, 117, 0.62);
+  background:
+    radial-gradient(circle at 14% 4%, rgba(242, 214, 117, 0.20), transparent 34%),
+    radial-gradient(circle at 86% 12%, rgba(255, 231, 143, 0.12), transparent 30%),
+    var(--panel);
+}
+
+.research-lab-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.research-lab-grid article strong {
+  color: var(--gold-2);
+  font-size: 19px;
+}
+
+
+.self-evolution-panel {
+  border-color: rgba(242, 214, 117, 0.64);
+  background:
+    radial-gradient(circle at 10% 6%, rgba(242, 214, 117, 0.22), transparent 34%),
+    radial-gradient(circle at 90% 10%, rgba(255, 231, 143, 0.12), transparent 30%),
+    var(--panel);
+}
+
+.self-evolution-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.self-evolution-grid article strong {
+  color: var(--gold-2);
+  font-size: 20px;
 }
