@@ -1,0 +1,29 @@
+{
+  "databaseName": "prediction-engine",
+  "version": "2.8",
+  "theme": "予想生成AI",
+  "storageKey": "prediction-engine.json",
+  "requiredFields": [
+    "date",
+    "course",
+    "race",
+    "distance",
+    "condition",
+    "popularZone",
+    "jockeyScore",
+    "trainerScore",
+    "courseScore",
+    "distanceScore",
+    "profitScore",
+    "returnScore",
+    "dangerHorse",
+    "darkHorse",
+    "axisHorse",
+    "trifectaPattern",
+    "win5Pattern",
+    "predictionRank",
+    "confidence",
+    "memo"
+  ],
+  "records": []
+}

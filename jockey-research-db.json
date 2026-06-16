@@ -1,0 +1,8 @@
+{
+  "databaseName": "jockey-research-db",
+  "version": "2.8",
+  "theme": "AI研究所",
+  "storageKey": "jockey-research-db.json",
+  "requiredFields": ["jockey", "course", "distance", "winRate", "placeRate", "showRate", "returnRate", "strongPattern", "weakPattern", "memo"],
+  "records": []
+}

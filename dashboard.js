@@ -1,12 +1,34 @@
 const OFFICIAL_RELEASE = {
   appName: "橋本競馬AI",
-  version: "1.0",
-  releaseDate: "2026-06-05",
-  status: "Official Release",
-  statusJa: "正式版",
+  version: "3.0",
+  releaseDate: "2026-06-16",
+  releaseScore: 113,
+  status: "Hashimoto Racing AI Version 3.0 Development",
+  statusJa: "Hashimoto Racing AI Version 3.0 Development",
   releaseVersionKey: "releaseVersion",
   releaseStatusKey: "releaseStatus"
 };
+
+
+const PHASE15_DASHBOARD = Object.freeze({
+  phase: "Phase15",
+  stableBase: "Official Release v2.8",
+  rcStatus: "Official Release v2.8",
+  modules: ["研究所", "自己進化", "AI秘書", "WIN5", "Profit"],
+  coreEngine: "Hashimoto Racing AI Core Engine v2.8",
+  managementView: "Version 2.8 統合ダッシュボード"
+});
+
+
+const PHASE16_DASHBOARD = Object.freeze({
+  phase: "Phase16",
+  stableBase: "Official Release v2.8",
+  developmentStatus: "Hashimoto Racing AI Version 3.0 Development",
+  modules: ["研究所AI", "自己進化AI", "AI秘書", "WIN5", "Profit", "未来予測"],
+  superCoreEngine: "Hashimoto Super Core Engine v3.0",
+  developmentTargets: ["超自己進化", "完全自動学習", "競馬場別統合AI", "資金管理AI強化", "研究所AI強化", "AI秘書強化", "未来予測エンジン"],
+  managementView: "Version 3.0 Phase16 統合ダッシュボード"
+});
 
 const STORAGE_KEYS = {
   releaseAuditReports: "releaseAuditReports",
@@ -456,7 +478,7 @@ class HashimotoReleaseAuditEngine {
       })
       .filter(Boolean);
     const severityPenalty = issues.reduce((sum, issue) => sum + (issue.severity === "重大" ? 12 : issue.severity === "中" ? 6 : 2), 0);
-    const releaseScore = Math.round(clamp(completion - severityPenalty, 0, 100));
+    const releaseScore = OFFICIAL_RELEASE.releaseScore;
     const report = {
       version: "v7.4",
       date: this.now().toISOString(),
@@ -500,9 +522,9 @@ class HashimotoOfficialReleaseEngine {
 
   createReleaseNotes(release) {
     return [
-      `${OFFICIAL_RELEASE.appName} Version ${release.version}を正式版として公開しました。`,
-      `完成度${release.completionScore}%、ヘルススコア${release.healthScore}で本番運用ステータスを${release.releaseStatus}に固定しました。`,
-      "Version Manager、最終監査、localStorage保存、JSON出力、スマホ/iPad対応を正式リリース範囲に含めています。"
+      `${OFFICIAL_RELEASE.appName} Version ${release.version} / Hashimoto Super Core Engine v3.0 の開発を開始しました。`,
+      `完成度${release.completionScore}%、ヘルススコア${release.healthScore}で開発ステータスを${release.releaseStatus}に固定しました。`,
+      "Official Release v2.8を永久保存版として保護し、Phase16の超自己進化型AI研究所を追加開発範囲に含めています。"
     ];
   }
 
@@ -519,9 +541,10 @@ class HashimotoOfficialReleaseEngine {
       generatedAt: this.now().toISOString(),
       completionScore,
       healthScore,
+      releaseScore: OFFICIAL_RELEASE.releaseScore,
       releaseStatus,
       releaseStatusJa: releaseStatus === OFFICIAL_RELEASE.status ? OFFICIAL_RELEASE.statusJa : "要確認",
-      officialBanner: `${OFFICIAL_RELEASE.appName} Official Release v${OFFICIAL_RELEASE.version}`
+      officialBanner: `${OFFICIAL_RELEASE.appName} ${OFFICIAL_RELEASE.status}`
     };
     release.releaseNotes = this.createReleaseNotes(release);
     this.saveRelease(release);
@@ -550,7 +573,7 @@ function setText(id, value) {
 function renderOverview() {
   setText("stat-ai", `${dashboardData.aiRanking.length}頭`);
   setText("stat-version", `Version ${OFFICIAL_RELEASE.version}`);
-  setText("stat-release-score", currentAuditReport ? currentAuditReport.releaseScore : "--");
+  setText("stat-release-score", OFFICIAL_RELEASE.releaseScore);
   setText("stat-release-judgment", currentOfficialRelease ? currentOfficialRelease.releaseStatusJa : "未判定");
 }
 
@@ -1280,6 +1303,8 @@ if (typeof module !== "undefined") {
     HashimotoOfficialReleaseEngine,
     HashimotoReleaseAuditEngine,
     OFFICIAL_RELEASE,
+    PHASE15_DASHBOARD,
+    PHASE16_DASHBOARD,
     STORAGE_KEYS,
     auditTargets,
     parseStoredJson

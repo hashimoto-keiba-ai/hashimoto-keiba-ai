@@ -1,0 +1,8 @@
+{
+  "databaseName": "evolution-rule-db",
+  "version": "2.8",
+  "theme": "自己進化エンジン",
+  "storageKey": "evolution-rule-db.json",
+  "requiredFields": ["ruleId", "category", "course", "distance", "condition", "oldRule", "newRule", "trigger", "successRate", "returnRate", "confidence", "memo"],
+  "records": []
+}

@@ -1,0 +1,8 @@
+{
+  "databaseName": "auto-update-db",
+  "version": "2.8",
+  "theme": "全自動検証AI",
+  "storageKey": "auto-update-db.json",
+  "requiredFields": ["date", "updateTarget", "updateText", "learnedRule", "relatedDb", "selfEvolutionLinked", "confidenceBefore", "confidenceAfter", "scoreBefore", "scoreAfter", "memo"],
+  "records": []
+}

@@ -1,0 +1,8 @@
+{
+  "databaseName": "win5-db",
+  "version": "2.8",
+  "theme": "WIN5完全自動化AI",
+  "storageKey": "win5-db.json",
+  "requiredFields": ["date", "race1", "race2", "race3", "race4", "race5", "safeType", "balanceType", "highPayoutType", "hitRate", "expectedPayout", "budget", "ticketCount", "result", "memo"],
+  "records": []
+}

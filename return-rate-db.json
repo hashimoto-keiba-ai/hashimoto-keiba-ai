@@ -1,0 +1,8 @@
+{
+  "databaseName": "return-rate-db",
+  "version": "2.8",
+  "theme": "回収率管理AI",
+  "storageKey": "return-rate-db.json",
+  "requiredFields": ["date", "dailyReturnRate", "weeklyReturnRate", "monthlyReturnRate", "yearlyReturnRate", "trifectaReturnRate", "win5ReturnRate", "memo"],
+  "records": []
+}

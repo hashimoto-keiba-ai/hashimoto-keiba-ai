@@ -1,0 +1,8 @@
+{
+  "databaseName": "future-prediction-db",
+  "version": "3.0",
+  "theme": "Future Prediction Engine",
+  "storageKey": "future-prediction-db.json",
+  "requiredFields": ["date", "courseTrend", "distanceTrend", "hotJockey", "favoriteFailure", "returnRateForecast", "win5SuccessRate", "trifectaSuccessRate", "darkHorseCandidate", "confidence", "memo"],
+  "records": []
+}

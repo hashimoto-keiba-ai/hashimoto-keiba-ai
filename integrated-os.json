@@ -1,0 +1,28 @@
+{
+  "databaseName": "integrated-os",
+  "version": "2.8",
+  "theme": "橋本競馬AI統合OS",
+  "storageKey": "integrated-os.json",
+  "requiredFields": [
+    "date",
+    "course",
+    "distance",
+    "condition",
+    "prediction",
+    "result",
+    "review",
+    "update",
+    "learning",
+    "profit",
+    "returnRate",
+    "dangerHorse",
+    "darkHorse",
+    "axisHorse",
+    "trifectaPattern",
+    "win5Pattern",
+    "confidence",
+    "aiScore",
+    "memo"
+  ],
+  "records": []
+}

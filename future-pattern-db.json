@@ -1,0 +1,8 @@
+{
+  "databaseName": "future-pattern-db",
+  "version": "3.0",
+  "theme": "Future Pattern Forecast",
+  "storageKey": "future-pattern-db.json",
+  "requiredFields": ["pattern", "course", "distance", "popularZone", "trifectaPattern", "darkHorsePattern", "successRate", "confidence", "memo"],
+  "records": []
+}

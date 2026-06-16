@@ -1,0 +1,8 @@
+{
+  "databaseName": "future-win5-db",
+  "version": "3.0",
+  "theme": "Future WIN5 Forecast",
+  "storageKey": "future-win5-db.json",
+  "requiredFields": ["date", "win5Pattern", "safeRate", "balanceRate", "highPayoutRate", "successRate", "expectedPayout", "memo"],
+  "records": []
+}

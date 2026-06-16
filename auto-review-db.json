@@ -1,0 +1,8 @@
+{
+  "databaseName": "auto-review-db",
+  "version": "2.8",
+  "theme": "全自動検証AI",
+  "storageKey": "auto-review-db.json",
+  "requiredFields": ["date", "course", "race", "prediction", "result", "axisMatched", "marksMatched", "trifectaMatched", "win5Matched", "hit", "reviewText", "updateText", "learnedRule", "returnRateImprovement", "confidenceImprovement", "memo"],
+  "records": []
+}

@@ -1,0 +1,8 @@
+{
+  "databaseName": "darkhorse-db",
+  "version": "2.8",
+  "theme": "万馬券探索AI",
+  "storageKey": "darkhorse-db.json",
+  "requiredFields": ["date", "course", "race", "horse", "popularity", "jockey", "trainer", "runningStyle", "result", "memo"],
+  "records": []
+}

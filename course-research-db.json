@@ -1,0 +1,8 @@
+{
+  "databaseName": "course-research-db",
+  "version": "2.8",
+  "theme": "AI研究所",
+  "storageKey": "course-research-db.json",
+  "requiredFields": ["course", "bestDistance", "bestCondition", "bestPace", "bestRunningStyle", "bestPopularZone", "bestTrifectaPattern", "bestJockeyType", "bestTrainerType", "returnRate", "memo"],
+  "records": []
+}

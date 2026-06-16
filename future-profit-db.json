@@ -1,0 +1,8 @@
+{
+  "databaseName": "future-profit-db",
+  "version": "3.0",
+  "theme": "Future Profit Forecast",
+  "storageKey": "future-profit-db.json",
+  "requiredFields": ["date", "course", "distance", "returnRateForecast", "roiForecast", "profitScore", "bankrollImpact", "memo"],
+  "records": []
+}
