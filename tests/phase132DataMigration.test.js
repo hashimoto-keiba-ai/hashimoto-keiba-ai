@@ -1,0 +1,61 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const vm = require("vm");
+
+const script = fs.readFileSync(path.join(__dirname, "..", "data-migration-phase132.js"), "utf8");
+const context = {
+  console,
+  window: {},
+  document: {
+    addEventListener() {}
+  }
+};
+
+vm.createContext(context);
+vm.runInContext(script, context);
+
+const migration = context.window.HashimotoPhase132DataMigration;
+assert.ok(migration, "Phase13-2 migration engine should be exported");
+
+assert.strictEqual(migration.detectFileType("race.md"), "markdown");
+assert.strictEqual(migration.detectFileType("race.json"), "json");
+assert.strictEqual(migration.detectFileType("race.csv"), "csv");
+assert.strictEqual(migration.detectFileType("race.txt"), "unknown");
+
+const scan = migration.scanFolder({
+  tool: "Racecourse Folder Import",
+  target: "Tokyo",
+  folderPath: "Tokyo",
+  files: [
+    { name: "prediction.md", content: "race one\nrace two" },
+    { name: "result.json", content: JSON.stringify({ records: [{ id: 1 }, { id: 2 }] }) },
+    { name: "ai.csv", content: "horse,score\nA,90\nB,80" },
+    { name: "ignored.txt", content: "ignore" }
+  ]
+});
+assert.strictEqual(scan.markdownFiles, 1);
+assert.strictEqual(scan.jsonFiles, 1);
+assert.strictEqual(scan.csvFiles, 1);
+assert.strictEqual(scan.fileCount, 3);
+assert.strictEqual(scan.recordCount, 6);
+assert.ok(scan.targetDatabases.includes("Prediction Database"));
+assert.ok(scan.targetDatabases.includes("Result Database"));
+assert.ok(scan.targetDatabases.includes("AI Index Database"));
+
+const migrated = migration.migrateRecord(scan);
+assert.strictEqual(migrated.importStatus, "Migrated");
+assert.strictEqual(migrated.importedRecords, scan.recordCount);
+assert.strictEqual(migrated.remainingFiles, 0);
+
+const dashboard = migration.buildDashboard(migration.fallbackDatabase);
+assert.strictEqual(dashboard.databaseName, "dataMigrationDatabase");
+assert.strictEqual(dashboard.racecourseTargets.length, 10);
+assert.strictEqual(JSON.stringify(dashboard.migrationTools), JSON.stringify(["Racecourse Folder Import", "WIN5 Folder Import"]));
+assert.ok(dashboard.targetDatabases.includes("WIN5 Database"));
+assert.ok(dashboard.report.fileCount > 0);
+assert.ok(dashboard.report.recordCount > 0);
+assert.strictEqual(dashboard.widget.migrationStatus, "Ready");
+assert.ok(dashboard.widget.remainingFiles > 0);
+
+console.log("Phase13-2 data migration test passed");

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phase9-5 WIN5 AI System</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="WIN5 AI banner">
+      <span>Phase9-5 WIN5 AI System</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / WIN5 Console</p>
+        <h1>WIN5 AI System</h1>
+        <strong class="version-display">Probability Engine + Dashboard</strong>
+        <div class="system-meta">
+          <span>AI Index Database</span>
+          <span>Danger Popular Horse Database</span>
+          <span>Kami-Ana Database</span>
+          <span>God Hole Ranking Database</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="WIN5 navigation">
+        <a class="button-link" href="index.html">Main Dashboard</a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="status-strip" aria-label="WIN5 summary">
+        <article>
+          <span>Today's Recommended WIN5</span>
+          <strong id="phase95-widget-hit">0.0%</strong>
+          <em id="phase95-widget-return">0円</em>
+        </article>
+        <article>
+          <span>WIN5 Card</span>
+          <strong id="phase95-widget-title">--</strong>
+          <em>Recommended</em>
+        </article>
+        <article>
+          <span>Hit Probability</span>
+          <strong id="phase95-win5-hit-probability">0.0%</strong>
+          <em>Probability engine</em>
+        </article>
+        <article>
+          <span>Expected Return</span>
+          <strong id="phase95-win5-expected-return">0円</strong>
+          <em>Return model</em>
+        </article>
+        <article>
+          <span>Risk Score</span>
+          <strong id="phase95-win5-risk-score">0.0</strong>
+          <em>0-100</em>
+        </article>
+      </section>
+
+      <section class="panel win5-panel" aria-label="Phase9-5 WIN5 dashboard">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">WIN5 Dashboard</p>
+            <h2>Recommended Strategies</h2>
+          </div>
+          <span class="pill">Phase9-5</span>
+        </div>
+        <div class="phase95-win5-grid">
+          <section>
+            <h3>Recommended WIN5</h3>
+            <div class="race-cards" id="phase95-recommended-win5"></div>
+          </section>
+          <section>
+            <h3>Safe WIN5</h3>
+            <div class="race-cards" id="phase95-safe-win5"></div>
+          </section>
+          <section>
+            <h3>Balanced WIN5</h3>
+            <div class="race-cards" id="phase95-balanced-win5"></div>
+          </section>
+          <section>
+            <h3>High Return WIN5</h3>
+            <div class="race-cards" id="phase95-high-return-win5"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="win5Database">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">win5Database</p>
+            <h2>WIN5 AI Database</h2>
+          </div>
+          <span class="pill">Date / Race1-5 / Selections / Probability</span>
+        </div>
+        <div class="table-wrap">
+          <table class="audit-table phase95-win5-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Race1</th>
+                <th>Race2</th>
+                <th>Race3</th>
+                <th>Race4</th>
+                <th>Race5</th>
+                <th>Selections</th>
+                <th>AI Score</th>
+                <th>Hit Probability</th>
+                <th>Expected Return</th>
+                <th>Risk Level</th>
+                <th>A/B/C Race Type</th>
+                <th>God Hole Candidates</th>
+                <th>Danger Popular Horses</th>
+                <th>Kami-Ana Candidates</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="phase95-win5-database"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="win5-phase95.js"></script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "databaseName": "trifectaDatabase",
+  "phase": "Phase10-1",
+  "records": [
+    {
+      "date": "2026-06-06",
+      "racecourse": "Tokyo",
+      "raceName": "Phase10-1 Trifecta Sample",
+      "distance": "1600m",
+      "surface": "Turf",
+      "trackCondition": "Good",
+      "aiRank1": "AI-01",
+      "aiRank2": "AI-03",
+      "aiRank3": "KA-07",
+      "aiRank4": "GH-11",
+      "aiRank5": "AI-05",
+      "godHoleCandidate": "GH-11",
+      "kamiAnaCandidate": "KA-07",
+      "dangerPopularHorse": "AI-01",
+      "raceType": "A/B/C",
+      "expectedPace": "Medium-High",
+      "expectedValue": 188000,
+      "hitProbability": 18.6,
+      "recommendedStrategy": "Standard Mode",
+      "generatedTickets": [],
+      "notes": "Connects AI Index, Danger Popular Horse, Kami-Ana, and God Hole rankings for automatic trifecta formation."
+    }
+  ]
+}

@@ -4,6 +4,7 @@ const {
   OFFICIAL_RELEASE,
   STORAGE_KEYS
 } = require("../dashboard.js");
+const finalSystem = require("../final-system-page.js");
 
 function createStorage(seed = {}) {
   const store = new Map(Object.entries(seed).map(([key, value]) => [key, JSON.stringify(value)]));
@@ -28,7 +29,7 @@ const storage = createStorage({
     {
       version: "v7.4",
       completion: 96,
-      releaseScore: 95,
+      releaseScore: 112,
       judgment: "正式版"
     }
   ],
@@ -47,15 +48,18 @@ const engine = new HashimotoOfficialReleaseEngine({
 });
 const release = engine.generateRelease();
 
-assert.strictEqual(OFFICIAL_RELEASE.version, "1.0");
-assert.strictEqual(release.version, "1.0");
-assert.strictEqual(release.releaseDate, "2026-06-05");
+assert.strictEqual(OFFICIAL_RELEASE.version, "2.8");
+assert.strictEqual(release.version, "2.8");
+assert.strictEqual(release.releaseDate, "2026-06-18");
 assert.strictEqual(release.completionScore, 96);
 assert.strictEqual(release.healthScore, 94);
-assert.strictEqual(release.releaseStatus, "Official Release");
-assert.strictEqual(storage.readRaw(STORAGE_KEYS.releaseVersion), "1.0");
-assert.strictEqual(storage.readRaw(STORAGE_KEYS.releaseStatus), "Official Release");
-assert.strictEqual(storage.readJson(STORAGE_KEYS.officialReleaseReports)[0].version, "1.0");
-assert.ok(release.releaseNotes.some((note) => note.includes("Version 1.0")));
+assert.strictEqual(release.releaseScore, 113);
+assert.strictEqual(release.releaseStatus, "Official Release v2.8");
+assert.strictEqual(storage.readRaw(STORAGE_KEYS.releaseVersion), "2.8");
+assert.strictEqual(storage.readRaw(STORAGE_KEYS.releaseStatus), "Official Release v2.8");
+assert.strictEqual(storage.readJson(STORAGE_KEYS.officialReleaseReports)[0].version, "2.8");
+assert.ok(release.releaseNotes.some((note) => note.includes("Version 2.8")));
+assert.strictEqual(OFFICIAL_RELEASE.releaseScore, 113, "Official Release v2.8 remains protected");
+assert.strictEqual(finalSystem.OFFICIAL_RELEASE, OFFICIAL_RELEASE.version, "Final System protects the same release");
 
 console.log("releaseVersion tests passed");

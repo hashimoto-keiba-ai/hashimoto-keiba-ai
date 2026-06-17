@@ -1,0 +1,59 @@
+{
+  "databaseName": "liveOperationsDatabase",
+  "phase": "Phase14-1",
+  "operationDate": "2026-06-06",
+  "racecourses": [
+    { "name": "Tokyo", "status": "Live", "raceCount": 12, "topRace": "Tokyo 11R Future Simulation Stakes", "readiness": 94 },
+    { "name": "Nakayama", "status": "Standby", "raceCount": 0, "topRace": "Next meeting pending", "readiness": 72 },
+    { "name": "Hanshin", "status": "Watch", "raceCount": 8, "topRace": "Hanshin 9R Caution Trial", "readiness": 76 },
+    { "name": "Kyoto", "status": "Live", "raceCount": 12, "topRace": "Kyoto 12R WIN5 Finish", "readiness": 91 },
+    { "name": "Chukyo", "status": "Live", "raceCount": 10, "topRace": "Chukyo 10R Trifecta Logic", "readiness": 85 },
+    { "name": "Fukushima", "status": "Standby", "raceCount": 6, "topRace": "Fukushima Value Sprint", "readiness": 74 },
+    { "name": "Niigata", "status": "Standby", "raceCount": 5, "topRace": "Niigata Outside Bias", "readiness": 73 },
+    { "name": "Kokura", "status": "Watch", "raceCount": 7, "topRace": "Kokura 9R Trifecta Risk", "readiness": 70 },
+    { "name": "Hakodate", "status": "Live", "raceCount": 8, "topRace": "Hakodate Exacta Value", "readiness": 82 },
+    { "name": "Sapporo", "status": "Standby", "raceCount": 0, "topRace": "Next meeting pending", "readiness": 68 }
+  ],
+  "systems": [
+    { "name": "WIN5 AI", "status": "Live", "score": 95, "records": 1, "route": "win5Database" },
+    { "name": "Trifecta AI", "status": "Live", "score": 92, "records": 1, "route": "trifectaDatabase" },
+    { "name": "ROI Engine", "status": "Live", "score": 90, "records": 3, "route": "roiDatabase" },
+    { "name": "Fund Management", "status": "Live", "score": 88, "records": 1, "route": "fundManagementDatabase" },
+    { "name": "Self Learning", "status": "Live", "score": 84, "records": 2, "route": "learningDatabase" },
+    { "name": "Race Future Simulator", "status": "Live", "score": 91, "records": 2, "route": "raceSimulationDatabase" },
+    { "name": "God Race Detection", "status": "Live", "score": 93, "records": 2, "route": "godRaceDatabase" },
+    { "name": "Command Center", "status": "Live", "score": 96, "records": 12, "route": "commandCenter" }
+  ],
+  "liveRaces": [
+    {
+      "racecourse": "Tokyo",
+      "race": "Tokyo 11R Future Simulation Stakes",
+      "raceScore": 94,
+      "expectedROI": 186.4,
+      "hitProbability": 18.6,
+      "expectedProfit": 32400,
+      "recommendedSystem": "God Race Detection",
+      "recommendedAction": "Trifecta + WIN5 anchor"
+    },
+    {
+      "racecourse": "Kyoto",
+      "race": "Kyoto 12R WIN5 Finish",
+      "raceScore": 91,
+      "expectedROI": 154.8,
+      "hitProbability": 21.4,
+      "expectedProfit": 28600,
+      "recommendedSystem": "WIN5 AI",
+      "recommendedAction": "WIN5 live confirmation"
+    },
+    {
+      "racecourse": "Chukyo",
+      "race": "Chukyo 10R Trifecta Logic",
+      "raceScore": 83,
+      "expectedROI": 132.5,
+      "hitProbability": 16.8,
+      "expectedProfit": 21400,
+      "recommendedSystem": "Trifecta AI",
+      "recommendedAction": "Standard Mode ticket check"
+    }
+  ]
+}

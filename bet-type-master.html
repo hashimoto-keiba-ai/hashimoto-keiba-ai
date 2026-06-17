@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phase14-3 Bet Type Master</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="Phase14-3 banner">
+      <span>Phase14-3 Bet Type Master</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Phase14-3</p>
+        <h1>券種マスター</h1>
+        <strong class="version-display">単勝 / 複勝 / 馬連 / 馬単 / 三連複 / 三連単 / WIN5</strong>
+        <div class="system-meta">
+          <span>ROI</span>
+          <span>Fund</span>
+          <span>Auto Betting</span>
+          <span>Trifecta</span>
+          <span>WIN5</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="Navigation">
+        <a class="button-link" href="fund-management.html">Fund Management</a>
+        <a class="button-link" href="roi-dashboard.html">ROI Dashboard</a>
+        <a class="button-link" href="index.html">Dashboard</a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="status-strip" aria-label="Bet type master widget">
+        <article>
+          <span>券種数</span>
+          <strong id="phase143-widget-count">0</strong>
+          <em>canonical bet types</em>
+        </article>
+        <article>
+          <span>状態</span>
+          <strong id="phase143-widget-status">--</strong>
+          <em>validation</em>
+        </article>
+        <article>
+          <span>主軸券種</span>
+          <strong id="phase143-widget-primary">--</strong>
+          <em>balanced plan</em>
+        </article>
+        <article>
+          <span>配分合計</span>
+          <strong id="phase143-widget-total">0</strong>
+          <em>10,000円 plan</em>
+        </article>
+      </section>
+
+      <section class="panel" aria-label="Canonical bet types">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Canonical</p>
+            <h2>7券種</h2>
+          </div>
+          <span class="pill hot">単勝 / 複勝 / 馬連 / 馬単 / 三連複 / 三連単 / WIN5</span>
+        </div>
+        <div class="race-cards" id="phase143-bet-types"></div>
+      </section>
+
+      <section class="panel" aria-label="Balanced allocation">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Allocation</p>
+            <h2>Balanced 10,000円配分</h2>
+          </div>
+          <span class="pill">ROI / Fund Management</span>
+        </div>
+        <div class="race-cards" id="phase143-balanced-plan"></div>
+      </section>
+
+      <section class="panel" aria-label="Bet type database">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">betTypeMasterDatabase</p>
+            <h2>券種マスターDB</h2>
+          </div>
+          <span class="pill">Phase14-3</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>券種</th>
+                <th>Key</th>
+                <th>Unit</th>
+                <th>Risk</th>
+                <th>Target</th>
+                <th>Engine Route</th>
+              </tr>
+            </thead>
+            <tbody id="phase143-bet-type-table"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="bet-type-master-phase143.js"></script>
+  </body>
+</html>

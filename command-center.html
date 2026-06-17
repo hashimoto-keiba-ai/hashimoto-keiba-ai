@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hashimoto AI Command Center</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="Phase12-2 banner">
+      <span>Phase12-2 Hashimoto Racing AI Command Center</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Phase12-2</p>
+        <h1>Hashimoto AI Command Center</h1>
+        <strong class="version-display">Unified Racing AI Dashboard</strong>
+        <div class="system-meta">
+          <span>God Race</span>
+          <span>ROI</span>
+          <span>WIN5</span>
+          <span>Trifecta</span>
+          <span>Learning</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="Navigation">
+        <a class="button-link" href="index.html">Dashboard</a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="status-strip" aria-label="Command center widgets">
+        <article>
+          <span>God Race Widget</span>
+          <strong id="phase122-widget-god-race">--</strong>
+          <em>today</em>
+        </article>
+        <article>
+          <span>ROI Widget</span>
+          <strong id="phase122-widget-roi">0.0%</strong>
+          <em>top opportunity</em>
+        </article>
+        <article>
+          <span>Fund Widget</span>
+          <strong id="phase122-widget-bankroll">--</strong>
+          <em>bankroll status</em>
+        </article>
+        <article>
+          <span>Learning Widget</span>
+          <strong id="phase122-widget-learning">--</strong>
+          <em>self learning</em>
+        </article>
+      </section>
+
+      <section class="panel" aria-label="Unified AI dashboard">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Unified Dashboard</p>
+            <h2>Today's Command Center</h2>
+          </div>
+          <span class="pill">12 connected databases</span>
+        </div>
+        <p class="data-footnote" id="phase122-connections">--</p>
+        <div class="phase2-grid">
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Today's God Races</h3><span>God Race Widget</span></div>
+            <div class="race-cards" id="phase122-god-races"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Top ROI Opportunities</h3><span>ROI Widget</span></div>
+            <div class="race-cards" id="phase122-roi-opportunities"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Top Trifecta Opportunities</h3><span>Trifecta Widget</span></div>
+            <div class="race-cards" id="phase122-trifecta-opportunities"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Top WIN5 Opportunities</h3><span>WIN5 Widget</span></div>
+            <div class="race-cards" id="phase122-win5-opportunities"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Danger Popular Horses</h3><span>Danger Horse Widget</span></div>
+            <div class="race-cards" id="phase122-danger-horses"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Kami-Ana Horses</h3><span>Kami-Ana Widget</span></div>
+            <div class="race-cards" id="phase122-kami-ana"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Race Future Simulation Results</h3><span>Simulation Widget</span></div>
+            <div class="race-cards" id="phase122-simulation"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Fund Management Status</h3><span>Fund Widget</span></div>
+            <div class="race-cards" id="phase122-fund"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading"><h3>Learning Status</h3><span>Learning Widget</span></div>
+            <div class="race-cards" id="phase122-learning"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="ROI trend">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ROI Trend</p>
+            <h2>Bankroll and Profit Direction</h2>
+          </div>
+          <span class="pill hot">ROI Database</span>
+        </div>
+        <div class="race-cards" id="phase122-roi-trend"></div>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="command-center-phase122.js"></script>
+  </body>
+</html>

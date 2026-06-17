@@ -1,0 +1,8 @@
+{
+  "databaseName": "lap-research-db",
+  "version": "2.7",
+  "theme": "AI研究所",
+  "storageKey": "lap-research-db.json",
+  "requiredFields": ["course", "distance", "pace", "lapPattern", "winnerPosition", "trifectaPattern", "dangerPattern", "darkHorsePattern", "returnRate", "memo"],
+  "records": []
+}

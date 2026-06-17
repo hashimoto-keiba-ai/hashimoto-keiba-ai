@@ -1,0 +1,34 @@
+{
+  "databaseName": "realDataImportDatabase",
+  "phase": "Phase13-1",
+  "records": [
+    {
+      "importDate": "2026-06-06",
+      "dataType": "Prediction Logs",
+      "racecourse": "Tokyo",
+      "sourceName": "Tokyo sample prediction CSV",
+      "recordCount": 2,
+      "importStatus": "Preview Ready",
+      "importedRecords": [
+        {
+          "racecourse": "Tokyo",
+          "raceName": "Tokyo 11R Future Simulation Stakes",
+          "horseNumber": 1,
+          "horseName": "AI Commander",
+          "aiScore": 91,
+          "popularity": 1
+        },
+        {
+          "racecourse": "Tokyo",
+          "raceName": "Tokyo 11R Future Simulation Stakes",
+          "horseNumber": 3,
+          "horseName": "Kami Flash",
+          "aiScore": 84,
+          "popularity": 6
+        }
+      ],
+      "errorCount": 0,
+      "notes": "Seed import record for Phase13-1 parser, preview, and validation flow."
+    }
+  ]
+}

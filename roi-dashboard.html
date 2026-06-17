@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phase10-3 ROI Dashboard System</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="Phase10-3 banner">
+      <span>Phase10-3 ROI Dashboard System</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Phase10-3</p>
+        <h1>ROI Dashboard System</h1>
+        <strong class="version-display">ROI, Profit, Bankroll, Drawdown</strong>
+        <div class="system-meta">
+          <span>Daily ROI</span>
+          <span>Weekly ROI</span>
+          <span>Monthly ROI</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="Navigation">
+        <a class="button-link" href="index.html">Dashboard</a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="status-strip" aria-label="ROI dashboard widgets">
+        <article>
+          <span>Current Bankroll</span>
+          <strong id="phase103-widget-bankroll">0 JPY</strong>
+          <em>fund curve</em>
+        </article>
+        <article>
+          <span>Total Profit</span>
+          <strong id="phase103-widget-profit">0 JPY</strong>
+          <em>profit curve</em>
+        </article>
+        <article>
+          <span>Overall ROI</span>
+          <strong id="phase103-widget-roi">0.0%</strong>
+          <em>daily / weekly / monthly</em>
+        </article>
+        <article>
+          <span>Drawdown</span>
+          <strong id="phase103-widget-drawdown">0.0%</strong>
+          <em>peak-to-current</em>
+        </article>
+      </section>
+
+      <section class="panel" aria-label="Best and worst performance">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Performance Summary</p>
+            <h2>Racecourse and Bet Type Leaders</h2>
+          </div>
+          <span class="pill">Best / Worst</span>
+        </div>
+        <p class="data-footnote" id="phase103-connections">--</p>
+        <div class="phase2-kpis">
+          <article>
+            <span>Best Racecourse</span>
+            <strong id="phase103-best-racecourse">--</strong>
+          </article>
+          <article>
+            <span>Worst Racecourse</span>
+            <strong id="phase103-worst-racecourse">--</strong>
+          </article>
+          <article>
+            <span>Best Bet Type</span>
+            <strong id="phase103-best-bet-type">--</strong>
+          </article>
+          <article>
+            <span>Worst Bet Type</span>
+            <strong id="phase103-worst-bet-type">--</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="ROI charts">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Charts</p>
+            <h2>ROI / Profit / Bankroll Trend</h2>
+          </div>
+          <span class="pill hot">Trend Charts</span>
+        </div>
+        <div class="phase2-grid">
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>ROI Trend</h3>
+              <span>Daily ROI</span>
+            </div>
+            <div class="race-cards" id="phase103-roi-trend"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>Profit Trend</h3>
+              <span>Cumulative Profit</span>
+            </div>
+            <div class="race-cards" id="phase103-profit-trend"></div>
+          </section>
+          <section class="audit-block">
+            <div class="sub-heading">
+              <h3>Bankroll Trend</h3>
+              <span>Current Bankroll</span>
+            </div>
+            <div class="race-cards" id="phase103-bankroll-trend"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="Racecourse and bet type tables">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Breakdown</p>
+            <h2>By Racecourse and Bet Type</h2>
+          </div>
+          <span class="pill">Tokyo to Sapporo / Win to WIN5</span>
+        </div>
+        <div class="phase2-grid">
+          <div class="table-wrap">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>Racecourse</th>
+                  <th>Count</th>
+                  <th>Investment</th>
+                  <th>Return</th>
+                  <th>Profit</th>
+                  <th>ROI</th>
+                  <th>Hit Rate</th>
+                </tr>
+              </thead>
+              <tbody id="phase103-by-racecourse"></tbody>
+            </table>
+          </div>
+          <div class="table-wrap">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>Bet Type</th>
+                  <th>Count</th>
+                  <th>Investment</th>
+                  <th>Return</th>
+                  <th>Profit</th>
+                  <th>ROI</th>
+                  <th>Hit Rate</th>
+                </tr>
+              </thead>
+              <tbody id="phase103-by-bet-type"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="roiDatabase">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">roiDatabase</p>
+            <h2>Phase10-3 Database</h2>
+          </div>
+          <span class="pill">Result Verification Ready</span>
+        </div>
+        <div class="table-wrap">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Racecourse</th>
+                <th>Race Name</th>
+                <th>Bet Type</th>
+                <th>Investment</th>
+                <th>Return</th>
+                <th>Profit</th>
+                <th>ROI</th>
+                <th>Hit</th>
+                <th>AI Score</th>
+                <th>Confidence</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody id="phase103-roi-database"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="roi-dashboard-phase103.js"></script>
+  </body>
+</html>

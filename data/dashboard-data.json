@@ -1,7 +1,16 @@
 {
-  "updatedAt": "2026-06-05T08:34:30.922385+00:00",
+  "updatedAt": "2026-06-05T08:53:33.285587+00:00",
   "source": "markdown",
   "latestLogs": [
+    {
+      "title": "函館OS v1.0",
+      "course": "函館競馬場",
+      "type": "OSアップデート",
+      "race": "",
+      "date": "2026-06-05",
+      "summary": "函館競馬場の洋芝・小回り・滞在競馬を補正する初期OS",
+      "file": "函館競馬場/OSアップデート/函館OS_v1.0.md"
+    },
     {
       "title": "2026-03-15_中山総括",
       "course": "中山競馬場",
@@ -339,9 +348,9 @@
   },
   "racecourseLearningDatabase": {
     "summary": {
-      "courseCount": 9,
-      "missingCourseCount": 1,
-      "sourceFileCount": 41,
+      "courseCount": 10,
+      "missingCourseCount": 0,
+      "sourceFileCount": 43,
       "predictionCount": 8,
       "resultReviewCount": 8,
       "hitCount": 0,
@@ -349,9 +358,7 @@
       "totalPayout": 0,
       "overallRoi": 0.0
     },
-    "missingCourses": [
-      "函館競馬場"
-    ],
+    "missingCourses": [],
     "courses": [
       {
         "course": "福島競馬場",
@@ -459,8 +466,8 @@
       },
       {
         "course": "函館競馬場",
-        "exists": false,
-        "sourceFileCount": 0,
+        "exists": true,
+        "sourceFileCount": 2,
         "predictionCount": 0,
         "resultReviewCount": 0,
         "hitCount": 0,
@@ -468,7 +475,7 @@
         "payout": 0,
         "roi": 0.0,
         "hitRate": 0.0,
-        "latestUpdatedAt": ""
+        "latestUpdatedAt": "2026-06-05T08:53:16.684727+00:00"
       },
       {
         "course": "札幌競馬場",
@@ -612,6 +619,22 @@
         "title": "京都競馬場 結果検証",
         "summary": "# 京都競馬場 結果検証",
         "updatedAt": "2026-06-05T06:12:39.472503+00:00"
+      },
+      {
+        "file": "函館競馬場/OSアップデート/函館OS_v1.0.md",
+        "course": "函館競馬場",
+        "type": "OSアップデート",
+        "title": "函館OS v1.0",
+        "summary": "函館競馬場の洋芝・小回り・滞在競馬を補正する初期OS",
+        "updatedAt": "2026-06-05T08:53:16.684727+00:00"
+      },
+      {
+        "file": "函館競馬場/README.md",
+        "course": "函館競馬場",
+        "type": "メモ",
+        "title": "函館競馬場",
+        "summary": "函館競馬場の洋芝適性、小回り適性、滞在競馬、函館開催特有の馬場バイアスを整理するフォルダです。",
+        "updatedAt": "2026-06-05T08:53:16.431706+00:00"
       },
       {
         "file": "小倉競馬場/OSアップデート/README.md",
@@ -1454,6 +1477,68 @@
         "sections": {}
       },
       {
+        "file": "函館競馬場/OSアップデート/函館OS_v1.0.md",
+        "course": "函館競馬場",
+        "year": "2026",
+        "date": "2026-06-05",
+        "race": "",
+        "title": "函館OS v1.0",
+        "type": "OSアップデート",
+        "category": "OSアップデート",
+        "summary": "函館競馬場の洋芝・小回り・滞在競馬を補正する初期OS",
+        "updatedAt": "2026-06-05T08:53:16.684727+00:00",
+        "aiScore": null,
+        "horse": "",
+        "confidence": "",
+        "expectedValue": null,
+        "popularity": null,
+        "popularityZone": "未設定",
+        "hit": null,
+        "investment": 0,
+        "payout": 0,
+        "roi": 0.0,
+        "metadata": {
+          "タイトル": "函館OS v1.0",
+          "日付": "2026-06-05",
+          "競馬場": "函館競馬場",
+          "種別": "OSアップデート",
+          "概要": "函館競馬場の洋芝・小回り・滞在競馬を補正する初期OS"
+        },
+        "sections": {
+          "目的": "函館競馬場の過去データを橋本競馬AIの競馬場学習DBへ接続し、函館開催用の初期補正ルールとして利用します。",
+          "コース傾向": "- 洋芝適性を重視する\n- 小回り適性とコーナー加速を評価する\n- 滞在競馬で状態を上げる馬を加点する\n- 開催後半は馬場悪化と内外バイアスを確認する",
+          "補正ルール": "- 洋芝実績あり: 加点\n- 函館・札幌好走歴あり: 加点\n- 先行力と器用さあり: 加点\n- 時計勝負専用タイプ: 軽い減点\n- 長距離輸送後の初戦: 状態確認を優先",
+          "学習DB接続": "このMarkdownは `racecourseLearningDatabase` の `learningSignals` として読み取り、函館競馬場の初期OSデータとして扱います。",
+          "次回改善点": "- 函館開催の結果検証データを追加する\n- 洋芝適性と人気ゾーンの相関を集計する\n- 高配当パターンが出たレースの脚質と枠順を検証する"
+        }
+      },
+      {
+        "file": "函館競馬場/README.md",
+        "course": "函館競馬場",
+        "year": "2026",
+        "date": "",
+        "race": "",
+        "title": "函館競馬場",
+        "type": "メモ",
+        "category": "学習メモ",
+        "summary": "函館競馬場の洋芝適性、小回り適性、滞在競馬、函館開催特有の馬場バイアスを整理するフォルダです。",
+        "updatedAt": "2026-06-05T08:53:16.431706+00:00",
+        "aiScore": null,
+        "horse": "",
+        "confidence": "",
+        "expectedValue": null,
+        "popularity": null,
+        "popularityZone": "未設定",
+        "hit": null,
+        "investment": 0,
+        "payout": 0,
+        "roi": 0.0,
+        "metadata": {},
+        "sections": {
+          "用途": "函館競馬場の洋芝適性、小回り適性、滞在競馬、函館開催特有の馬場バイアスを整理するフォルダです。\n\n橋本競馬AIが函館開催の展開予測、人気ゾーン補正、穴馬抽出に活用します。"
+        }
+      },
+      {
         "file": "小倉競馬場/OSアップデート/README.md",
         "course": "小倉競馬場",
         "year": "2026",
@@ -1831,7 +1916,7 @@
   },
   "racecoursePatternAnalysis": {
     "summary": {
-      "analyzedCourseCount": 8,
+      "analyzedCourseCount": 9,
       "strongCourse": "福島競馬場",
       "weakCourse": "福島競馬場",
       "overallHitRate": 0.0,
@@ -1944,8 +2029,8 @@
       },
       {
         "course": "函館競馬場",
-        "exists": false,
-        "sourceFileCount": 0,
+        "exists": true,
+        "sourceFileCount": 2,
         "predictionCount": 0,
         "resultReviewCount": 0,
         "hitCount": 0,
@@ -1953,7 +2038,7 @@
         "payout": 0,
         "roi": 0.0,
         "hitRate": 0.0,
-        "latestUpdatedAt": ""
+        "latestUpdatedAt": "2026-06-05T08:53:16.684727+00:00"
       },
       {
         "course": "札幌競馬場",
@@ -1990,6 +2075,7 @@
         "小倉競馬場": 1.0,
         "京都競馬場": 1.0,
         "新潟競馬場": 1.0,
+        "函館競馬場": 1.0,
         "札幌競馬場": 1.0
       },
       "popularityZoneWeights": {
