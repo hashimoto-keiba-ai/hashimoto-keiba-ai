@@ -1316,3 +1316,29 @@ tbody tr:last-child td {
   .ai-evolution-v5-actions { align-items: stretch; }
   .ai-evolution-v5-actions button { width: 100%; }
 }
+
+.self-diagnosis-panel {
+  border: 1px solid rgba(255, 224, 118, 0.96);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 224, 118, 0.31), transparent 42%),
+    linear-gradient(145deg, #221b09, #070707 74%);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 246, 202, 0.18);
+}
+
+.self-diagnosis-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.self-diagnosis-actions span { color: var(--muted); font-size: 13px; font-weight: 800; }
+.self-diagnosis-grid article strong,
+.self-diagnosis-health-grid article strong { color: #ffe88f; font-size: 17px; }
+.self-diagnosis-health-grid { border-top: 1px solid rgba(212, 175, 55, 0.24); padding-top: 14px; }
+
+@media (max-width: 680px) {
+  .self-diagnosis-actions { align-items: stretch; }
+  .self-diagnosis-actions button { width: 100%; }
+}

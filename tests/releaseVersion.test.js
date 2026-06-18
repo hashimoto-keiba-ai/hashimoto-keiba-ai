@@ -79,3 +79,10 @@ assert.strictEqual(aiEvolution.OFFICIAL_RELEASE, OFFICIAL_RELEASE.version, "AI E
 assert.strictEqual(aiEvolution.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
 assert.ok(aiEvolution.INTEGRATED_SYSTEMS.includes("Self Expansion System"));
 assert.ok(aiEvolution.INTEGRATED_SYSTEMS.includes("Auto Development Engine"));
+
+const selfDiagnosis = require("../self-diagnosis-page.js");
+assert.strictEqual(selfDiagnosis.OFFICIAL_RELEASE, OFFICIAL_RELEASE.version, "Self Diagnosis protects Official Release v2.8");
+assert.strictEqual(selfDiagnosis.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
+assert.ok(selfDiagnosis.INTEGRATED_SYSTEMS.includes("Self Expansion System"));
+assert.ok(selfDiagnosis.INTEGRATED_SYSTEMS.includes("Auto Development Engine"));
+assert.ok(selfDiagnosis.INTEGRATED_SYSTEMS.includes("AI Evolution Engine"));

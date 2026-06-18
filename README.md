@@ -683,3 +683,16 @@ Hashimoto Super Core Engine v5.0へ自己進化エンジンを追加しました
 - 進化優先順位決定: 重要度、緊急度、回収率改善効果、競馬場別効果、WIN5効果、保守性を加重評価
 - Dashboard / private-local.html / One Tap Menu 進化監視
 - 保存DB: ai-evolution-db.json、ai-evolution-history-db.json、ai-evolution-rule-db.json、ai-evolution-priority-db.json、ai-evolution-proposal-db.json
+
+## Phase18-4 Self Diagnosis Engine
+
+Hashimoto Super Core Engine v5.0へ自己診断エンジンを追加しました。Official Release v2.8、Hashimoto Racing OS v4.0 Final、Phase16、Phase17、Phase18-1、Phase18-2、Phase18-3を保護しながらシステム全体を常時診断します。
+
+- System Health Scan: 全エンジン、全DB、Dashboard、private-local.html、One Tap Menu、README、テスト、JSON、JavaScript、競合マーカーを診断
+- Missing Feature Detection: 未接続ページ、未作成DB・テスト、画面未表示機能、保護対象欠落を検出
+- Broken Link Detection: 壊れたリンクと未接続導線を検出
+- Protection Check: Official Release v2.8とRacing OS v4.0 Final、Phase18統合状態を確認
+- Repair Proposal: 修復ファイル、追加DB・テスト、接続ページ、更新すべきDashboard・private-local.html・READMEを生成
+- Dashboard / private-local.html / One Tap Menu 診断
+- Health Score生成: System、Engine、DB、Dashboard、Menu、Test、Protection
+- 保存DB: self-diagnosis-db.json、self-diagnosis-history-db.json、self-diagnosis-rule-db.json、self-diagnosis-health-db.json、self-diagnosis-repair-db.json

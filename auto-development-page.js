@@ -54,8 +54,8 @@
     }),
     Object.freeze({
       phase: "Phase18-4",
-      title: "Autonomous Integration Engine",
-      objective: "新規エンジン・DB・Dashboard・メニュー・テストの接続状態を自動統合する"
+      title: "Self Diagnosis Engine",
+      objective: "全エンジン・DB・画面・メニュー・テスト・保護状態を常時診断する"
     }),
     Object.freeze({
       phase: "Phase18-5",

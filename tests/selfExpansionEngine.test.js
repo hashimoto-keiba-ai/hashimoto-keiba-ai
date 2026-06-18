@@ -25,8 +25,8 @@ assert.equal(engine.PHASE, "Phase18-1");
 assert.equal(engine.DEVELOPMENT_VERSION, "5.0");
 assert.equal(engine.OFFICIAL_RELEASE, "2.8");
 assert.equal(engine.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
-assert.equal(engine.ENGINE_MENU.length, 11);
-assert.equal(engine.ONE_TAP_MENU.length, 16);
+assert.equal(engine.ENGINE_MENU.length, 12);
+assert.equal(engine.ONE_TAP_MENU.length, 21);
 
 const status = engine.buildVersionStatus(storage, now);
 assert.equal(status.currentVersion, "5.0");
@@ -45,7 +45,7 @@ for (const key of Object.values(engine.DATABASES)) {
   assert.ok(storage.getItem(key), key + " is saved");
 }
 assert.equal(storage.readJson(engine.DATABASES.history).length, 1);
-assert.equal(storage.readJson(engine.DATABASES.menu).oneTapMenu.length, 16);
+assert.equal(storage.readJson(engine.DATABASES.menu).oneTapMenu.length, 21);
 
 for (const file of Object.values(engine.DATABASES)) {
   const db = JSON.parse(fs.readFileSync(path.join(__dirname, "..", file), "utf8"));

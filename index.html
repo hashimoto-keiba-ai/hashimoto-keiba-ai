@@ -866,6 +866,36 @@
           <article><span>Evolution Proposals</span><strong id="ai-evolution-proposal-count">7</strong></article>
         </div>
       </section>
+      <section id="self-diagnosis-panel" class="panel self-diagnosis-panel" aria-label="Self Diagnosis Engine">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-4 / Hashimoto Super Core Engine v5.0</p><h2>Self Diagnosis Engine</h2></div>
+          <span class="pill hot">Official Release v2.8 Protected</span>
+        </div>
+        <div class="self-diagnosis-actions">
+          <button id="run-self-diagnosis" type="button">自己診断を実行</button>
+          <span id="self-diagnosis-message">全エンジン・DB・画面・メニュー・テストを常時診断します。</span>
+        </div>
+        <div class="phase2-kpis self-diagnosis-grid">
+          <article><span>Engine</span><strong id="self-diagnosis-status">Self Diagnosis Engine ON</strong></article>
+          <article><span>Health Scan</span><strong id="self-diagnosis-scan">System Health Scan ON</strong></article>
+          <article><span>Missing Detection</span><strong id="self-diagnosis-missing">Missing Feature Detection ON</strong></article>
+          <article><span>Link Scan</span><strong id="self-diagnosis-links">Broken Link Detection ON</strong></article>
+          <article><span>Protection</span><strong id="self-diagnosis-protection">Protection Check ON</strong></article>
+          <article><span>Repair</span><strong id="self-diagnosis-repair">Repair Proposal ON</strong></article>
+          <article><span>Protected Release</span><strong id="self-diagnosis-release">Official Release v2.8 Protected</strong></article>
+          <article><span>Base OS</span><strong id="self-diagnosis-racing-os">Racing OS v4.0 Final Integrated</strong></article>
+          <article><span>Expansion</span><strong id="self-diagnosis-expansion">Self Expansion System Integrated</strong></article>
+          <article><span>Development</span><strong id="self-diagnosis-development">Auto Development Engine Integrated</strong></article>
+          <article><span>Evolution</span><strong id="self-diagnosis-evolution">AI Evolution Engine Integrated</strong></article>
+        </div>
+        <div class="phase2-kpis self-diagnosis-health-grid">
+          <article><span>System Health Score</span><strong id="self-diagnosis-system-score">100</strong></article>
+          <article><span>Engine Health Score</span><strong id="self-diagnosis-engine-score">100</strong></article>
+          <article><span>DB Health Score</span><strong id="self-diagnosis-db-score">100</strong></article>
+          <article><span>Menu Health Score</span><strong id="self-diagnosis-menu-score">100</strong></article>
+          <article><span>Anomalies</span><strong id="self-diagnosis-anomalies">0</strong></article>
+        </div>
+      </section>
       <section class="panel roi-monitor-panel" aria-label="回収率モニター">
         <div class="section-heading">
           <div>
@@ -1388,6 +1418,7 @@
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
     <script src="ai-evolution-page.js"></script>
+    <script src="self-diagnosis-page.js"></script>
   </body>
 </html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>橋本競馬AI Version 1.6</title><link rel="stylesheet" href="dashboard.css"><style>.ai-performance-grid,.ranking-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:16px 18px}.ai-performance-grid article,.ranking-grid article{display:grid;gap:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:14px}.ai-performance-grid strong,.ranking-grid h3{color:var(--gold-2)}.ai-evolution-list{display:grid;gap:10px;margin:0;padding:16px 18px 18px 42px;font-weight:800}.ai-evolution-list li::marker,.ranking-grid li::marker{color:var(--gold-2)}</style></head>
