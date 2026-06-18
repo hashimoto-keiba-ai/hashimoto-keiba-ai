@@ -18,6 +18,7 @@
     ["Self Expansion System", "index.html#self-expansion-panel"],
     ["Auto Development Engine", "index.html#auto-development-panel"],
     ["AI Evolution Engine", "index.html#ai-evolution-panel"],
+    ["Self Diagnosis Engine", "index.html#self-diagnosis-panel"],
     ["Hashimoto Racing OS v4.0 Final", "index.html#final-system-panel"],
     ["Autonomous Research Institute", "index.html#autonomous-research-panel"],
     ["Global Intelligence Network", "index.html#global-network-panel"],
@@ -42,7 +43,12 @@
     ["進化案生成", "index.html#ai-evolution-panel"],
     ["優先順位", "index.html#ai-evolution-panel"],
     ["成功失敗学習", "index.html#ai-evolution-panel"],
-    ["v5.0進化センター", "index.html#ai-evolution-panel"]
+    ["v5.0進化センター", "index.html#ai-evolution-panel"],
+    ["自己診断", "index.html#self-diagnosis-panel"],
+    ["健康診断", "index.html#self-diagnosis-panel"],
+    ["壊れた機能検出", "index.html#self-diagnosis-panel"],
+    ["修復候補", "index.html#self-diagnosis-panel"],
+    ["v5.0診断センター", "index.html#self-diagnosis-panel"]
   ].map(([label, href]) => Object.freeze({ label, href })));
   const RULES = Object.freeze([
     "Official Release v2.8を永久保存版として保護する",

@@ -38,3 +38,9 @@ assert.equal(aiEvolution.PHASE, "Phase18-3");
 assert.equal(aiEvolution.OFFICIAL_RELEASE, "2.8");
 assert.equal(aiEvolution.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
 assert.deepEqual(aiEvolution.INTEGRATED_SYSTEMS, ["Self Expansion System", "Auto Development Engine"]);
+
+const selfDiagnosis = require("../self-diagnosis-page.js");
+assert.equal(selfDiagnosis.PHASE, "Phase18-4");
+assert.equal(selfDiagnosis.OFFICIAL_RELEASE, "2.8");
+assert.equal(selfDiagnosis.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
+assert.deepEqual(selfDiagnosis.INTEGRATED_SYSTEMS, ["Self Expansion System", "Auto Development Engine", "AI Evolution Engine"]);
