@@ -26,3 +26,9 @@ const selfExpansion = require("../self-expansion-page.js");
 assert.equal(selfExpansion.DEVELOPMENT_VERSION, "5.0", "Version 5.0 development is active");
 assert.equal(selfExpansion.OFFICIAL_RELEASE, "2.8", "Official Release v2.8 remains protected in Phase18-1");
 assert.equal(selfExpansion.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
+
+const autoDevelopment = require("../auto-development-page.js");
+assert.equal(autoDevelopment.PHASE, "Phase18-2");
+assert.equal(autoDevelopment.OFFICIAL_RELEASE, "2.8");
+assert.equal(autoDevelopment.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
+assert.equal(autoDevelopment.INTEGRATED_SYSTEM, "Self Expansion System v5.0");

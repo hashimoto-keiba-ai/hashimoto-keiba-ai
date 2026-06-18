@@ -1264,3 +1264,29 @@ tbody tr:last-child td {
   .self-expansion-actions { align-items: stretch; }
   .self-expansion-actions button { width: 100%; }
 }
+
+.auto-development-panel {
+  border: 1px solid rgba(255, 224, 118, 0.92);
+  background:
+    radial-gradient(circle at 82% 0%, rgba(255, 224, 118, 0.28), transparent 38%),
+    linear-gradient(145deg, #211a09, #080807 72%);
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 245, 195, 0.16);
+}
+
+.auto-development-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.auto-development-actions span { color: var(--muted); font-size: 13px; font-weight: 800; }
+.auto-development-grid article strong,
+.auto-development-diagnosis-grid article strong { color: #ffe88f; font-size: 17px; }
+.auto-development-diagnosis-grid { border-top: 1px solid rgba(212, 175, 55, 0.24); padding-top: 14px; }
+
+@media (max-width: 680px) {
+  .auto-development-actions { align-items: stretch; }
+  .auto-development-actions button { width: 100%; }
+}
