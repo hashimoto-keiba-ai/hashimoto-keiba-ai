@@ -21,3 +21,8 @@ for (const key of Object.values(engine.DATABASE_KEYS)) {
 }
 
 console.log("racing OS engine tests passed");
+
+const selfExpansion = require("../self-expansion-page.js");
+assert.equal(selfExpansion.DEVELOPMENT_VERSION, "5.0", "Version 5.0 development is active");
+assert.equal(selfExpansion.OFFICIAL_RELEASE, "2.8", "Official Release v2.8 remains protected in Phase18-1");
+assert.equal(selfExpansion.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
