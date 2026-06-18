@@ -1238,3 +1238,29 @@ tbody tr:last-child td {
   .final-system-actions button { width: 100%; }
   .final-system-badges span { flex: 1 1 140px; text-align: center; }
 }
+
+.self-expansion-panel {
+  border: 1px solid rgba(255, 224, 118, 0.9);
+  background:
+    radial-gradient(circle at 50% -15%, rgba(255, 224, 118, 0.32), transparent 44%),
+    linear-gradient(145deg, #241d0b, #070707 70%);
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 245, 195, 0.16);
+}
+
+.self-expansion-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.self-expansion-actions span { color: var(--muted); font-size: 13px; font-weight: 800; }
+.self-expansion-grid article strong,
+.self-expansion-version-grid article strong { color: #ffe88f; font-size: 18px; }
+.self-expansion-version-grid { border-top: 1px solid rgba(212, 175, 55, 0.24); padding-top: 14px; }
+
+@media (max-width: 680px) {
+  .self-expansion-actions { align-items: stretch; }
+  .self-expansion-actions button { width: 100%; }
+}

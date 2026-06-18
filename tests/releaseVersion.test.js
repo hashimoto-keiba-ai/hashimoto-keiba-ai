@@ -63,3 +63,8 @@ assert.strictEqual(OFFICIAL_RELEASE.releaseScore, 113, "Official Release v2.8 re
 assert.strictEqual(finalSystem.OFFICIAL_RELEASE, OFFICIAL_RELEASE.version, "Final System protects the same release");
 
 console.log("releaseVersion tests passed");
+
+const selfExpansion = require("../self-expansion-page.js");
+assert.strictEqual(selfExpansion.OFFICIAL_RELEASE, OFFICIAL_RELEASE.version, "Self Expansion protects Official Release v2.8");
+assert.strictEqual(selfExpansion.DEVELOPMENT_VERSION, "5.0", "Version 5.0 is a development version");
+assert.strictEqual(selfExpansion.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");

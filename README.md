@@ -652,3 +652,14 @@ AI研究所/
 - 競馬場ごとに学習内容を分け、馬場傾向やコース特性が混ざらないように管理する。
 - 年が変わったら各競馬場の中に新しい年フォルダを作成し、同じ4分類で運用する。
 - 予想、検証、改善、総括の流れを1セットとして残し、橋本競馬AIの学習データベースとして継続的に育てる。
+
+## Phase18-1 Self Expansion System
+
+Version 5.0 開発開始。Hashimoto Racing OS v4.0 Finalを土台に、AI本体・Dashboard・private-local.html・One Tap Menuが継続的に進化する自己増殖基盤を追加しました。
+
+- Version監視: 現在Version、Release Score、Phase状態、追加エンジン一覧、保護対象Version
+- private-local.html 自動進化: Version 5.0システムメニューを生成
+- One Tap Menu 自動生成: 自己進化、自己増殖、自動研究、全競馬場統合AI、Global Intelligence、Version管理、Racing OS、v5.0開発
+- Dashboard 自動更新: Hashimoto Super Core Engine v5.0とSelf Expansion Systemの状態を表示
+- 保護: Official Release v2.8を永久保存し、Hashimoto Racing OS v4.0 Final / Phase16 / Phase17を維持
+- 保存DB: self-expansion-db.json、self-expansion-history-db.json、self-expansion-rule-db.json、self-expansion-menu-db.json、self-expansion-version-db.json
