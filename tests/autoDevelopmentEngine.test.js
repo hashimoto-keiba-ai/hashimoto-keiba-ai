@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
@@ -64,7 +64,7 @@ assert.equal(candidates.nextTest, "tests/autoDevelopmentEngine.test.js");
 assert.equal(candidates.priority, "HIGH");
 
 const nextCandidates = engine.generateDevelopmentCandidates(complete);
-assert.equal(nextCandidates.nextEngine, "Development Orchestration Engine");
+assert.equal(nextCandidates.nextEngine, "AI Evolution Engine");
 assert.equal(nextCandidates.priority, "NEXT_PHASE");
 
 const roadmap = engine.generateRoadmap();

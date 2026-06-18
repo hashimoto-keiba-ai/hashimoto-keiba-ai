@@ -32,3 +32,9 @@ assert.equal(autoDevelopment.PHASE, "Phase18-2");
 assert.equal(autoDevelopment.OFFICIAL_RELEASE, "2.8");
 assert.equal(autoDevelopment.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
 assert.equal(autoDevelopment.INTEGRATED_SYSTEM, "Self Expansion System v5.0");
+
+const aiEvolution = require("../ai-evolution-page.js");
+assert.equal(aiEvolution.PHASE, "Phase18-3");
+assert.equal(aiEvolution.OFFICIAL_RELEASE, "2.8");
+assert.equal(aiEvolution.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
+assert.deepEqual(aiEvolution.INTEGRATED_SYSTEMS, ["Self Expansion System", "Auto Development Engine"]);

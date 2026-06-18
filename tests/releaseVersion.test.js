@@ -73,3 +73,9 @@ const autoDevelopment = require("../auto-development-page.js");
 assert.strictEqual(autoDevelopment.OFFICIAL_RELEASE, OFFICIAL_RELEASE.version, "Auto Development protects Official Release v2.8");
 assert.strictEqual(autoDevelopment.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
 assert.strictEqual(autoDevelopment.INTEGRATED_SYSTEM, "Self Expansion System v5.0");
+
+const aiEvolution = require("../ai-evolution-page.js");
+assert.strictEqual(aiEvolution.OFFICIAL_RELEASE, OFFICIAL_RELEASE.version, "AI Evolution protects Official Release v2.8");
+assert.strictEqual(aiEvolution.PROTECTED_SYSTEM, "Hashimoto Racing OS v4.0 Final");
+assert.ok(aiEvolution.INTEGRATED_SYSTEMS.includes("Self Expansion System"));
+assert.ok(aiEvolution.INTEGRATED_SYSTEMS.includes("Auto Development Engine"));
