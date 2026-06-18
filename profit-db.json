@@ -1,6 +1,6 @@
 {
   "databaseName": "profit-db",
-  "version": "2.6",
+  "version": "2.7",
   "theme": "万馬券探索AI",
   "storageKey": "profit-db.json",
   "requiredFields": [

@@ -1,23 +1,6 @@
 {
   "databaseName": "course-db",
-  "version": "2.6",
+  "version": "2.7",
   "source": "automatic-learning-flow",
   "records": []
-  "version": "1.6",
-  "releaseStatus": "Official Release v1.6",
-  "theme": "全競馬場統合AI",
-  "updatedAt": null,
-  "courses": {
-    "東京": { "learningCount": 0, "learningData": [] },
-    "中山": { "learningCount": 0, "learningData": [] },
-    "阪神": { "learningCount": 0, "learningData": [] },
-    "中京": { "learningCount": 0, "learningData": [] },
-    "京都": { "learningCount": 0, "learningData": [] },
-    "新潟": { "learningCount": 0, "learningData": [] },
-    "福島": { "learningCount": 0, "learningData": [] },
-    "小倉": { "learningCount": 0, "learningData": [] },
-    "函館": { "learningCount": 0, "learningData": [] },
-    "札幌": { "learningCount": 0, "learningData": [] },
-    "WIN5": { "learningCount": 0, "learningData": [] }
-  }
 }

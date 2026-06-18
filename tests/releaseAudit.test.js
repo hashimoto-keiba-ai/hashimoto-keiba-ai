@@ -7,7 +7,7 @@ const readyReport = createEngine(readySeed).generateReport();
 assert.strictEqual(readyReport.version, "v7.4");
 assert.strictEqual(readyReport.auditTargets.length, auditTargets.length);
 assert.ok(readyReport.completion >= 90);
-assert.strictEqual(readyReport.releaseScore, 101);
+assert.strictEqual(readyReport.releaseScore, 113);
 assert.strictEqual(readyReport.judgment, "正式版");
 const problemSeed = { [STORAGE_KEYS.releaseManagerReports]: [{ completionScore: 72, criticalErrors: 2, localStorageIntegrity: false }], [STORAGE_KEYS.finalHealthCheckReports]: [{ healthScore: 64, criticalErrors: 2, localStorageIntegrity: false }], [STORAGE_KEYS.productionReadinessAuditReports]: [{ readinessScore: 68 }], [STORAGE_KEYS.productionOperationScores]: [{ operationScore: 70 }], [STORAGE_KEYS.performanceDashboardReports]: [{ performanceScore: 69 }] };
 const problemReport = createEngine(problemSeed, { aiRanking: 72, holeRanking: 70, riskRanking: 69, ticketEngine: 67, win5: 71, simulation: 64, evMonitor: 66, raceDatabase: 66, courseDatabase: 60, distanceDatabase: 60, selfLearning: 64, courseEvolution: 60, roiOptimization: 65, integrationDashboard: 68, versionManager: 70 }).generateReport();

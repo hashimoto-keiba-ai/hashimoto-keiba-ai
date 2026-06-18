@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>橋本競馬AI 事前予想</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="事前予想">
+      <span>橋本競馬AI 事前予想①-1〜①-18 / Private Local</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Private Local</p>
+        <h1>事前予想</h1>
+        <strong class="version-display" id="selected-course-label">競馬場を選択</strong>
+      </div>
+      <div class="top-actions">
+        <a class="button-link" id="course-dashboard-link" href="private-local.html">Dashboardへ戻る</a>
+        <a class="button-link" href="private-local.html">Privateホーム</a>
+      </div>
+    </header>
+
+    <main class="dashboard pre-race-page">
+      <section class="panel" aria-label="事前予想入力">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Input</p>
+            <h2>レース情報</h2>
+          </div>
+          <span class="pill">CSV自動読込 + 橋本AI指数</span>
+        </div>
+
+        <form id="pre-race-form" class="pre-race-form">
+          <div class="form-grid">
+            <label>開催日<input name="date" type="date" required></label>
+            <label>競馬場<select name="course" id="course-select" required></select></label>
+            <label>レース番号<input name="raceNumber" placeholder="11R" required></label>
+            <label>レース名<input name="raceName" placeholder="例: 宝塚記念" required></label>
+            <label>条件<input name="condition" placeholder="3歳以上 / G1 / 定量"></label>
+            <label>コース<select name="surface"><option>芝</option><option>ダート</option></select></label>
+            <label>距離<input name="distance" placeholder="2200m"></label>
+            <label>馬場<input name="going" placeholder="良 / 稍重 / 重 / 不良"></label>
+            <label>天候<input name="weather" placeholder="晴 / 曇 / 雨"></label>
+            <label>風<input name="wind" placeholder="向正面追い風 / 弱"></label>
+            <label>ペース想定<select name="pace"><option>M</option><option>S</option><option>H</option><option>M-H</option><option>S-M</option></select></label>
+          </div>
+
+          <div class="sub-heading">
+            <h3>出馬表データ入力</h3>
+            <span>CSVファイル選択、CSV貼り付け、手入力に対応</span>
+          </div>
+
+          <div class="csv-tools">
+            <label class="file-control">CSVファイル選択<input id="entry-csv-file" type="file" accept=".csv,text/csv"></label>
+            <div class="segmented-control" aria-label="入力方式">
+              <label><input type="radio" name="entryMode" value="file">ファイル</label>
+              <label><input type="radio" name="entryMode" value="paste" checked>貼り付け</label>
+              <label><input type="radio" name="entryMode" value="manual">手入力</label>
+            </div>
+          </div>
+
+          <textarea name="horseText" rows="12" placeholder="馬番,馬名,人気,オッズ,騎手,調教師,馬体重,馬体重増減,脚質,想定4角位置,前走着順,前走4角位置,上がり順位,距離実績,馬場実績,コース実績,血統,枠番&#10;7,ダイヤモンドハート,2,4.8,横山武,橋本厩舎,492,+4,先行,3,2,4,3,得意,良,東京○,キングマンボ,4&#10;3,サンプルホース,1,3.2,川田,山田厩舎,486,-12,逃げ,1,5,1,8,普通,良,コース不安,サンデー系,2"></textarea>
+
+          <label class="inline-check">
+            <input name="useSelfLearning" type="checkbox" value="1">
+            自己学習DB反映ON
+          </label>
+
+          <div class="self-learning-paths" aria-label="自己学習DB参照先">
+            <span>参照先:</span>
+            <code>data/self-learning/</code>
+            <code>data/racecourse-os/</code>
+            <code>data/distance-os/</code>
+            <code>data/pace-os/</code>
+            <code>data/corner-position-db/</code>
+            <code>data/jockey-trainer-db/</code>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit">AI事前予想生成</button>
+            <button id="full-auto-mode" type="button">Ver4.0 完全自動運転モード</button>
+            <button id="download-markdown" type="button" disabled>Markdown保存</button>
+            <button id="download-ai-csv" type="button" disabled>AI指数CSV保存</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel" aria-label="AI指数表">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">AI Index</p>
+            <h2>AI指数表</h2>
+          </div>
+          <span class="pill" id="ai-index-count-label">未計算</span>
+        </div>
+        <div id="ai-index-table-output" class="ai-index-empty">CSVまたは手入力データからAI指数を計算します。</div>
+      </section>
+
+      <section class="panel" aria-label="Ver4.0 完全自動運転モード">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Ver4.0 Auto Pilot</p>
+            <h2>完全自動運転モード</h2>
+          </div>
+          <span class="pill" id="full-auto-status-label">未実行</span>
+        </div>
+        <div class="ver4-summary" id="full-auto-summary">
+          <article><span>的中率</span><strong>--</strong></article>
+          <article><span>万馬券率</span><strong>--</strong></article>
+          <article><span>荒れ度</span><strong>--</strong></article>
+        </div>
+        <div id="full-auto-output" class="ai-index-empty">AI指数計算後、完全自動運転モードを実行します。</div>
+      </section>
+
+      <section class="panel" aria-label="生成結果">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Output</p>
+            <h2>生成結果</h2>
+          </div>
+          <span class="pill" id="trifecta-point-label">未生成</span>
+        </div>
+        <div class="pre-race-output-meta">
+          <span>保存先</span>
+          <strong id="save-path-label">生成後に表示</strong>
+        </div>
+        <pre id="prediction-output" class="markdown-output">入力後、「AI事前予想生成」を押してください。</pre>
+      </section>
+    </main>
+
+    <script src="pre-race-prediction.js"></script>
+    <script>
+      const engine = window.HashimotoPreRacePrediction;
+      const params = new URLSearchParams(location.search);
+      const initialCourse = params.get("course") || "莠ｬ驛ｽ遶ｶ鬥ｬ蝣ｴ";
+      const courseSelect = document.getElementById("course-select");
+      let latestPrediction = null;
+
+      engine.COURSES.forEach((course) => {
+        const option = document.createElement("option");
+        option.value = course;
+        option.textContent = course;
+        option.selected = course === initialCourse;
+        courseSelect.appendChild(option);
+      });
+
+      function refreshCourseLinks() {
+        const course = courseSelect.value;
+        document.getElementById("selected-course-label").textContent = course;
+        document.getElementById("course-dashboard-link").href = `${course}/index.html`;
+      }
+
+      function collectForm(form) {
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.useSelfLearning = Boolean(data.useSelfLearning);
+        data.learningRecords = data.useSelfLearning
+          ? JSON.parse(localStorage.getItem("hashimotoSelfLearningRecords") || "[]")
+          : [];
+        data.selfLearningDb = data.useSelfLearning
+          ? JSON.parse(localStorage.getItem("hashimotoAiIndexSelfLearningDb") || "{}")
+          : {};
+        return data;
+      }
+
+      function downloadText(text, filename, type) {
+        const blob = new Blob([text], { type });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function downloadMarkdown(prediction) {
+        downloadText(prediction.markdown, prediction.savePath.split("/").pop(), "text/markdown;charset=utf-8");
+      }
+
+      function downloadAiCsv(prediction) {
+        const csvPath = prediction.savePath.replace(/\.md$/, "_ai-index.csv");
+        downloadText(prediction.aiIndexCsv, csvPath.split("/").pop(), "text/csv;charset=utf-8");
+      }
+
+      function renderPrediction(prediction, autoFocus = false) {
+        document.getElementById("prediction-output").textContent = prediction.markdown;
+        document.getElementById("save-path-label").textContent = prediction.savePath;
+        document.getElementById("trifecta-point-label").textContent = `三連単 ${prediction.trifectaPointCount}点`;
+        document.getElementById("ai-index-count-label").textContent = `${prediction.horses.length}頭`;
+        document.getElementById("ai-index-table-output").innerHTML = prediction.aiIndexHtml;
+        document.getElementById("full-auto-status-label").textContent = autoFocus ? "実行済み" : "自動生成済み";
+        document.getElementById("full-auto-output").innerHTML = prediction.fullAuto.html;
+        document.getElementById("full-auto-summary").innerHTML = [
+          `<article><span>的中率</span><strong>${prediction.fullAuto.simulation.hitRate}%</strong></article>`,
+          `<article><span>万馬券率</span><strong>${prediction.fullAuto.simulation.longshotRate}%</strong></article>`,
+          `<article><span>荒れ度</span><strong>${prediction.fullAuto.simulation.roughnessRank}</strong></article>`
+        ].join("");
+        document.getElementById("download-markdown").disabled = false;
+        document.getElementById("download-ai-csv").disabled = false;
+      }
+
+      courseSelect.addEventListener("change", refreshCourseLinks);
+      refreshCourseLinks();
+
+      document.getElementById("entry-csv-file").addEventListener("change", async (event) => {
+        const file = event.currentTarget.files[0];
+        if (!file) return;
+        const text = await file.text();
+        document.querySelector("[name='horseText']").value = text;
+        document.querySelector("[name='entryMode'][value='file']").checked = true;
+      });
+
+      document.getElementById("pre-race-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        latestPrediction = engine.generatePreRacePrediction(collectForm(event.currentTarget));
+        renderPrediction(latestPrediction);
+      });
+
+      document.getElementById("full-auto-mode").addEventListener("click", () => {
+        latestPrediction = engine.generatePreRacePrediction(collectForm(document.getElementById("pre-race-form")));
+        renderPrediction(latestPrediction, true);
+      });
+
+      document.getElementById("download-markdown").addEventListener("click", () => {
+        if (latestPrediction) downloadMarkdown(latestPrediction);
+      });
+
+      document.getElementById("download-ai-csv").addEventListener("click", () => {
+        if (latestPrediction) downloadAiCsv(latestPrediction);
+      });
+    </script>
+  </body>
+</html>

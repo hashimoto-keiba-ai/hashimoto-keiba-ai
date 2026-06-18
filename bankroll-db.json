@@ -1,8 +1,19 @@
 {
   "databaseName": "bankroll-db",
-  "version": "2.6",
+  "version": "2.7",
   "theme": "回収率管理AI",
   "storageKey": "bankroll-db.json",
-  "requiredFields": ["date", "initialBankroll", "currentBankroll", "totalBetAmount", "totalPayout", "totalProfit", "returnRate", "monthlyReturnRate", "yearlyReturnRate", "memo"],
+  "requiredFields": [
+    "date",
+    "initialBankroll",
+    "currentBankroll",
+    "totalBetAmount",
+    "totalPayout",
+    "totalProfit",
+    "returnRate",
+    "monthlyReturnRate",
+    "yearlyReturnRate",
+    "memo"
+  ],
   "records": []
 }

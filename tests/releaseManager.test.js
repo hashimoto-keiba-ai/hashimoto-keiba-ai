@@ -1,6 +1,8 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
+const globalNetwork = require('../global-network-page.js');
+const finalSystem = require('../final-system-page.js');
 
 const createLocalStorageMock = () => {
   const store = new Map();
@@ -37,6 +39,9 @@ vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync('src/dashboard.js', 'utf8'), sandbox, { filename: 'src/dashboard.js' });
 
 const engine = sandbox.window.HashimotoReleaseManagerEngine;
+assert.equal(globalNetwork.OFFICIAL_RELEASE, '2.8', 'Global Networkは永久保存版v2.8を保護する');
+assert.equal(globalNetwork.OS_VERSION, '4.0', 'Hashimoto Racing OS v4.0へ統合する');
+assert.equal(finalSystem.OFFICIAL_RELEASE, '2.8', 'Final Systemも永久保存版v2.8を保護する');
 assert.ok(engine, 'Version Managerエンジンが公開されている');
 assert.equal(engine.VERSION, 'v7.3', '現在バージョンがv7.3である');
 assert.equal(engine.REPORT_STORAGE_KEY, 'releaseManagerReports', 'レポート保存キーが正しい');

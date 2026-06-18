@@ -1,8 +1,19 @@
 {
   "databaseName": "trainer-research-db",
-  "version": "2.6",
+  "version": "2.7",
   "theme": "AI研究所",
   "storageKey": "trainer-research-db.json",
-  "requiredFields": ["trainer", "course", "distance", "winRate", "placeRate", "showRate", "returnRate", "strongPattern", "weakPattern", "memo"],
+  "requiredFields": [
+    "trainer",
+    "course",
+    "distance",
+    "winRate",
+    "placeRate",
+    "showRate",
+    "returnRate",
+    "strongPattern",
+    "weakPattern",
+    "memo"
+  ],
   "records": []
 }

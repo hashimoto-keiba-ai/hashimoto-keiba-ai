@@ -1,0 +1,8 @@
+{
+  "databaseName": "result-compare-db",
+  "version": "2.7",
+  "theme": "全自動検証AI",
+  "storageKey": "result-compare-db.json",
+  "requiredFields": ["date", "course", "race", "axisHorse", "resultHorse", "markedHorses", "resultHorses", "trifectaPattern", "actualTrifectaPattern", "win5Pattern", "actualWin5Pattern", "hit", "memo"],
+  "records": []
+}

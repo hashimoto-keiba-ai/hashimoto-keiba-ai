@@ -1,6 +1,6 @@
 {
   "databaseName": "learning-engine",
-  "version": "2.6",
+  "version": "2.7",
   "theme": "自動学習AI",
   "storageKey": "learning-engine.json",
   "requiredFields": [

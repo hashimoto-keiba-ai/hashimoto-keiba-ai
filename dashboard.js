@@ -1,10 +1,10 @@
 const OFFICIAL_RELEASE = {
   appName: "橋本競馬AI",
-  version: "2.6",
-  releaseDate: "2026-06-14",
-  releaseScore: 111,
-  status: "Official Release v2.6",
-  statusJa: "Official Release v2.6",
+  version: "2.8",
+  releaseDate: "2026-06-18",
+  releaseScore: 113,
+  status: "Official Release v2.8",
+  statusJa: "Official Release v2.8",
   releaseVersionKey: "releaseVersion",
   releaseStatusKey: "releaseStatus"
 };
@@ -1287,7 +1287,8 @@ if (typeof module !== "undefined") {
     parseStoredJson
   };
 }
-const OFFICIAL_RELEASE = { appName: "橋本競馬AI", version: "1.6", releaseDate: "2026-06-15", releaseScore: 101, status: "Official Release v1.6", statusJa: "Official Release v1.6", theme: "全競馬場統合AI", releaseVersionKey: "releaseVersion", releaseStatusKey: "releaseStatus" };
+{
+const OFFICIAL_RELEASE = { appName: "橋本競馬AI", version: "2.8", releaseDate: "2026-06-18", releaseScore: 113, status: "Official Release v2.8", statusJa: "Official Release v2.8", theme: "全競馬場統合AI", releaseVersionKey: "releaseVersion", releaseStatusKey: "releaseStatus" };
 const STORAGE_KEYS = { releaseAuditReports: "releaseAuditReports", releaseManagerReports: "releaseManagerReports", finalHealthCheckReports: "finalHealthCheckReports", productionReadinessAuditReports: "productionReadinessAuditReports", productionOperationScores: "productionOperationScores", performanceDashboardReports: "performanceDashboardReports", releaseVersion: OFFICIAL_RELEASE.releaseVersionKey, releaseStatus: OFFICIAL_RELEASE.releaseStatusKey, officialReleaseReports: "officialReleaseReports" };
 const auditTargets = ["aiRanking", "holeRanking", "riskRanking", "ticketEngine", "win5", "simulation", "evMonitor", "raceDatabase", "courseDatabase", "distanceDatabase", "selfLearning", "courseEvolution", "roiOptimization", "integrationDashboard", "versionManager"].map((source, index) => ({ id: source, name: source, weight: index >= 8 && index <= 9 ? 6 : 5, source }));
 const defaultBaseScores = { aiRanking: 100, holeRanking: 98, riskRanking: 97, ticketEngine: 97, win5: 99, simulation: 94, evMonitor: 97, raceDatabase: 98, courseDatabase: 100, distanceDatabase: 100, selfLearning: 99, courseEvolution: 98, roiOptimization: 97, integrationDashboard: 100, versionManager: 101 };
@@ -1305,4 +1306,5 @@ function renderRankingPanels() { const target = document.getElementById("ranking
 function renderEvolutionHistory() { const target = document.getElementById("ai-evolution-history"); if (!target) return; target.innerHTML = aiEvolutionHistory.map((item) => `<li>${item}</li>`).join(""); }
 function bootDashboard() { setText("official-banner-title", `${OFFICIAL_RELEASE.appName} Official Release v${OFFICIAL_RELEASE.version}`); setText("version-display", `${OFFICIAL_RELEASE.appName} Version ${OFFICIAL_RELEASE.version}`); setText("stat-version", `Version ${OFFICIAL_RELEASE.version}`); setText("stat-release-score", OFFICIAL_RELEASE.releaseScore); setText("stat-release-judgment", OFFICIAL_RELEASE.status); setText("release-theme", OFFICIAL_RELEASE.theme); renderAiPerformanceCards(); renderRankingPanels(); renderEvolutionHistory(); }
 if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", bootDashboard);
-if (typeof module !== "undefined") module.exports = { HashimotoOfficialReleaseEngine, HashimotoReleaseAuditEngine, OFFICIAL_RELEASE, STORAGE_KEYS, aiEvolutionHistory, aiPerformanceCards, auditTargets, parseStoredJson, rankingPanels };
+if (typeof module !== "undefined") module.exports = { ...module.exports, aiEvolutionHistory, aiPerformanceCards, rankingPanels };
+}

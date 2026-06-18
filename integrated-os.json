@@ -1,6 +1,6 @@
 {
   "databaseName": "integrated-os",
-  "version": "2.6",
+  "version": "2.7",
   "theme": "橋本競馬AI統合OS",
   "storageKey": "integrated-os.json",
   "requiredFields": [

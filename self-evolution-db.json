@@ -1,8 +1,28 @@
 {
   "databaseName": "self-evolution-db",
-  "version": "2.6",
+  "version": "2.7",
   "theme": "自己進化エンジン",
   "storageKey": "self-evolution-db.json",
-  "requiredFields": ["date", "course", "race", "distance", "condition", "prediction", "result", "review", "failureReason", "successReason", "learnedRule", "oldRule", "newRule", "confidenceBefore", "confidenceAfter", "scoreBefore", "scoreAfter", "updateTarget", "memo"],
+  "requiredFields": [
+    "date",
+    "course",
+    "race",
+    "distance",
+    "condition",
+    "prediction",
+    "result",
+    "review",
+    "failureReason",
+    "successReason",
+    "learnedRule",
+    "oldRule",
+    "newRule",
+    "confidenceBefore",
+    "confidenceAfter",
+    "scoreBefore",
+    "scoreAfter",
+    "updateTarget",
+    "memo"
+  ],
   "records": []
 }

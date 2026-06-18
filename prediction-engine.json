@@ -1,6 +1,6 @@
 {
   "databaseName": "prediction-engine",
-  "version": "2.6",
+  "version": "2.7",
   "theme": "予想生成AI",
   "storageKey": "prediction-engine.json",
   "requiredFields": [

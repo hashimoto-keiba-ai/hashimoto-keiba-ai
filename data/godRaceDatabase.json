@@ -2,9 +2,65 @@
   "databaseName": "godRaceDatabase",
   "phase": "Phase11-2",
   "records": [
-    {"date":"2026-06-06","racecourse":"Tokyo","race":"Tokyo 11R Future Simulation Stakes","raceScore":0,"expectedROI":186.4,"simulationConfidence":91,"aiIndexConfidence":88,"dangerPopularRisk":22,"kamiAnaPotential":76,"win5Value":84,"trifectaValue":92,"expectedProfit":32400,"godRaceFlag":false},
-    {"date":"2026-06-06","racecourse":"Kyoto","race":"Kyoto 12R WIN5 Finish","raceScore":0,"expectedROI":154.8,"simulationConfidence":84,"aiIndexConfidence":86,"dangerPopularRisk":28,"kamiAnaPotential":68,"win5Value":95,"trifectaValue":80,"expectedProfit":28600,"godRaceFlag":false},
-    {"date":"2026-06-06","racecourse":"Chukyo","race":"Chukyo 10R Trifecta Logic","raceScore":0,"expectedROI":132.5,"simulationConfidence":79,"aiIndexConfidence":81,"dangerPopularRisk":35,"kamiAnaPotential":82,"win5Value":66,"trifectaValue":91,"expectedProfit":21400,"godRaceFlag":false},
-    {"date":"2026-06-06","racecourse":"Hanshin","race":"Hanshin 9R Caution Trial","raceScore":0,"expectedROI":74.2,"simulationConfidence":62,"aiIndexConfidence":65,"dangerPopularRisk":72,"kamiAnaPotential":44,"win5Value":48,"trifectaValue":51,"expectedProfit":4200,"godRaceFlag":false}
+    {
+      "date": "2026-06-06",
+      "racecourse": "Tokyo",
+      "race": "Tokyo 11R Future Simulation Stakes",
+      "raceScore": 0,
+      "expectedROI": 186.4,
+      "simulationConfidence": 91,
+      "aiIndexConfidence": 88,
+      "dangerPopularRisk": 22,
+      "kamiAnaPotential": 76,
+      "win5Value": 84,
+      "trifectaValue": 92,
+      "expectedProfit": 32400,
+      "godRaceFlag": false
+    },
+    {
+      "date": "2026-06-06",
+      "racecourse": "Kyoto",
+      "race": "Kyoto 12R WIN5 Finish",
+      "raceScore": 0,
+      "expectedROI": 154.8,
+      "simulationConfidence": 84,
+      "aiIndexConfidence": 86,
+      "dangerPopularRisk": 28,
+      "kamiAnaPotential": 68,
+      "win5Value": 95,
+      "trifectaValue": 80,
+      "expectedProfit": 28600,
+      "godRaceFlag": false
+    },
+    {
+      "date": "2026-06-06",
+      "racecourse": "Chukyo",
+      "race": "Chukyo 10R Trifecta Logic",
+      "raceScore": 0,
+      "expectedROI": 132.5,
+      "simulationConfidence": 79,
+      "aiIndexConfidence": 81,
+      "dangerPopularRisk": 35,
+      "kamiAnaPotential": 82,
+      "win5Value": 66,
+      "trifectaValue": 91,
+      "expectedProfit": 21400,
+      "godRaceFlag": false
+    },
+    {
+      "date": "2026-06-06",
+      "racecourse": "Hanshin",
+      "race": "Hanshin 9R Caution Trial",
+      "raceScore": 0,
+      "expectedROI": 74.2,
+      "simulationConfidence": 62,
+      "aiIndexConfidence": 65,
+      "dangerPopularRisk": 72,
+      "kamiAnaPotential": 44,
+      "win5Value": 48,
+      "trifectaValue": 51,
+      "expectedProfit": 4200,
+      "godRaceFlag": false
+    }
   ]
 }

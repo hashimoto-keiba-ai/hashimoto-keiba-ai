@@ -1,8 +1,15 @@
 {
   "databaseName": "popular-zone-db",
-  "version": "2.6",
+  "version": "2.7",
   "theme": "万馬券探索AI",
   "storageKey": "popular-zone-db.json",
-  "requiredFields": ["Azone", "Bzone", "Czone", "Dzone", "successRate", "averageReturn"],
+  "requiredFields": [
+    "Azone",
+    "Bzone",
+    "Czone",
+    "Dzone",
+    "successRate",
+    "averageReturn"
+  ],
   "records": []
 }

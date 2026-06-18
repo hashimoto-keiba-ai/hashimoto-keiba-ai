@@ -1,8 +1,8 @@
 {
   "name": "橋本競馬AI",
-  "short_name": "競馬AI",
-  "description": "橋本競馬AIをiPad・スマホのホーム画面から起動するためのPWA設定です。",
-  "start_url": "./index.html",
+  "short_name": "HKAI",
+  "description": "橋本競馬AIをPC・iPad・iPhoneの統一アイコンから起動するためのPrivate運用設定です。",
+  "start_url": "./private-local.html",
   "scope": "./",
   "display": "standalone",
   "theme_color": "#0f0a00",

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>橋本競馬AI 結果検証生成</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="official-banner" aria-label="結果検証生成">
+      <span>橋本競馬AI 結果検証❷−1〜❷−7 自動生成</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Private Local</p>
+        <h1>結果検証生成</h1>
+        <strong class="version-display" id="selected-course-label">競馬場を選択</strong>
+      </div>
+      <div class="top-actions">
+        <a class="button-link" id="course-dashboard-link" href="private-local.html">Dashboardへ戻る</a>
+        <a class="button-link" href="private-local.html">Privateホーム</a>
+      </div>
+    </header>
+
+    <main class="dashboard pre-race-page">
+      <section class="panel" aria-label="結果検証入力">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Input</p>
+            <h2>レース結果情報</h2>
+          </div>
+          <span class="pill" id="mode-label">②結果検証</span>
+        </div>
+
+        <form id="result-review-form" class="pre-race-form">
+          <input type="hidden" name="mode" id="review-mode" value="race">
+          <div class="form-grid">
+            <label>開催日<input name="date" type="date" required></label>
+            <label>競馬場<select name="course" id="course-select" required></select></label>
+            <label>レース番号<input name="raceNumber" placeholder="11R"></label>
+            <label>レース名<input name="raceName" placeholder="例: 宝塚記念"></label>
+            <label>条件<input name="condition" placeholder="3歳以上 / G1 / 定量"></label>
+            <label>芝/ダート<select name="surface"><option>芝</option><option>ダート</option></select></label>
+            <label>距離<input name="distance" placeholder="2200m"></label>
+            <label>馬場<input name="going" placeholder="良 / 稍重 / 重 / 不良"></label>
+            <label>天候<input name="weather" placeholder="晴 / 曇 / 雨"></label>
+            <label>ペース<select name="pace"><option>M</option><option>S</option><option>H</option><option>M-H</option><option>S-M</option></select></label>
+            <label>払戻金<input name="payout" placeholder="12,300円"></label>
+            <label>三連単配当<input name="trifectaPayout" placeholder="85,400円"></label>
+          </div>
+
+          <div class="sub-heading">
+            <h3>上位入線馬</h3>
+            <span>CSV未入力時の補助入力</span>
+          </div>
+          <div class="form-grid">
+            <label>1着馬<input name="firstHorseName" placeholder="⑦ダイヤモンドノット"></label>
+            <label>2着馬<input name="secondHorseName" placeholder="③サンプルホース"></label>
+            <label>3着馬<input name="thirdHorseName" placeholder="⑪アナホース"></label>
+          </div>
+
+          <div class="sub-heading">
+            <h3>事前予想Markdown</h3>
+            <span>本命◎、対抗○、単穴▲、穴☆、危険人気馬、神穴候補、🤫観測馬を比較</span>
+          </div>
+          <textarea name="predictionMarkdown" rows="7" placeholder="事前予想Markdownを貼り付け"></textarea>
+
+          <div class="sub-heading">
+            <h3 id="result-input-title">結果CSVまたは手入力</h3>
+            <span id="result-input-help">着順,馬番,馬名,人気,オッズ,騎手,調教師,4角位置,ラップ,払戻金,三連単配当</span>
+          </div>
+          <textarea name="resultText" rows="9" placeholder="着順,馬番,馬名,人気,オッズ,騎手,調教師,4角位置,ラップ,払戻金,三連単配当&#10;1,7,ダイヤモンドノット,2,4.8,横山武,橋本厩舎,3,11.8-11.4-11.9,12,300円,85,400円&#10;2,3,サンプルホース,5,13.2,川田,山田厩舎,6,11.8-11.4-11.9,,&#10;3,11,アナホース,8,28.4,坂井,佐藤厩舎,9,11.8-11.4-11.9,,"></textarea>
+
+          <div class="form-actions">
+            <button type="submit">AI結果検証生成</button>
+            <button id="run-self-learning" type="button" disabled>AI自己学習</button>
+            <button id="download-markdown" type="button" disabled>Markdown保存</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel" aria-label="生成結果">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Output</p>
+            <h2>生成結果</h2>
+          </div>
+          <span class="pill" id="structure-label">未生成</span>
+        </div>
+        <div class="pre-race-output-meta">
+          <span>保存先</span>
+          <strong id="save-path-label">生成後に表示</strong>
+        </div>
+        <pre id="review-output" class="markdown-output">入力後、「AI結果検証生成」を押してください。</pre>
+      </section>
+
+      <section class="panel" aria-label="AI自己学習結果">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Self Learning</p>
+            <h2>AI自己学習</h2>
+          </div>
+          <span class="pill" id="self-learning-status">未実行</span>
+        </div>
+        <div class="pre-race-output-meta">
+          <span>反映先一覧・更新されたOS・次回事前予想への反映内容</span>
+          <strong id="self-learning-summary">結果検証生成後に実行できます</strong>
+        </div>
+        <pre id="self-learning-output" class="markdown-output">AI自己学習を実行すると、保存対象JSONと学習ログMarkdownの一覧を表示します。</pre>
+      </section>
+    </main>
+
+    <script src="result-review.js"></script>
+    <script src="self-learning.js"></script>
+    <script>
+      const engine = window.HashimotoResultReview;
+      const learningEngine = window.HashimotoSelfLearning;
+      const params = new URLSearchParams(location.search);
+      const initialCourse = params.get("course") || "京都競馬場";
+      const forcedWin5 = params.get("mode") === "win5";
+      const courseSelect = document.getElementById("course-select");
+      let latestReview = null;
+      let latestLearning = null;
+
+      engine.COURSES.forEach((course) => {
+        const option = document.createElement("option");
+        option.value = course;
+        option.textContent = course;
+        option.selected = course === initialCourse;
+        courseSelect.appendChild(option);
+      });
+
+      function refreshMode() {
+        const course = courseSelect.value;
+        const isWin5 = forcedWin5 || course === "WIN5";
+        document.getElementById("review-mode").value = isWin5 ? "win5" : "race";
+        document.getElementById("mode-label").textContent = isWin5 ? "WIN5結果検証" : "②結果検証";
+        document.getElementById("selected-course-label").textContent = course;
+        document.getElementById("course-dashboard-link").href = isWin5 ? "WIN5/index.html" : `${course}/index.html`;
+        document.getElementById("result-input-title").textContent = isWin5 ? "WIN5結果CSVまたは手入力" : "結果CSVまたは手入力";
+        document.getElementById("result-input-help").textContent = isWin5
+          ? "レース,勝ち馬,人気,オッズ,騎手,調教師,事前選定馬,荒れ度"
+          : "着順,馬番,馬名,人気,オッズ,騎手,調教師,4角位置,ラップ,払戻金,三連単配当";
+      }
+
+      function collectForm(form) {
+        const data = Object.fromEntries(new FormData(form).entries());
+        if (!data.resultText.trim()) {
+          data.results = [data.firstHorseName, data.secondHorseName, data.thirdHorseName]
+            .filter(Boolean)
+            .map((name, index) => ({
+              finish: index + 1,
+              number: String(index + 1),
+              name,
+              popularity: 99,
+              odds: 0,
+              jockey: "--",
+              trainer: "--",
+              cornerPosition: 99,
+              lap: "--",
+              payout: data.payout,
+              trifectaPayout: data.trifectaPayout
+            }));
+        }
+        return data;
+      }
+
+      function downloadMarkdown(review) {
+        const blob = new Blob([review.markdown], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = review.savePath.split("/").pop();
+        anchor.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function saveLearningToBrowser(pkg) {
+        const key = "hashimotoSelfLearningRecords";
+        const current = JSON.parse(localStorage.getItem(key) || "[]");
+        current.push(pkg.record);
+        localStorage.setItem(key, JSON.stringify(current));
+      }
+
+      function renderLearning(pkg) {
+        document.getElementById("self-learning-status").textContent = pkg.status;
+        document.getElementById("self-learning-summary").textContent = `${pkg.files.length}件へ反映 / ${pkg.updatedOs.join(", ")}`;
+        document.getElementById("self-learning-output").textContent = [
+          `学習完了`,
+          ``,
+          `反映先一覧`,
+          ...pkg.files.map((file) => `- ${file.path}`),
+          ``,
+          `更新されたOS`,
+          ...pkg.updatedOs.map((os) => `- ${os}`),
+          ``,
+          `次回事前予想への反映内容`,
+          `- ${pkg.nextPredictionReflection}`,
+          ``,
+          `エラー`,
+          pkg.errors.length ? pkg.errors.map((error) => `- ${error}`).join("\n") : "- なし"
+        ].join("\n");
+      }
+
+      courseSelect.addEventListener("change", refreshMode);
+      refreshMode();
+
+      document.getElementById("result-review-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        latestReview = engine.generateResultReview(collectForm(event.currentTarget));
+        document.getElementById("review-output").textContent = latestReview.markdown;
+        document.getElementById("save-path-label").textContent = latestReview.savePath;
+        document.getElementById("structure-label").textContent = latestReview.trifectaStructure || latestReview.win5Structure || "生成済み";
+        document.getElementById("download-markdown").disabled = false;
+        document.getElementById("run-self-learning").disabled = false;
+      });
+
+      document.getElementById("download-markdown").addEventListener("click", () => {
+        if (latestReview) downloadMarkdown(latestReview);
+      });
+
+      document.getElementById("run-self-learning").addEventListener("click", () => {
+        if (!latestReview) return;
+        latestLearning = learningEngine.createSelfLearningPackage(latestReview.markdown);
+        saveLearningToBrowser(latestLearning);
+        renderLearning(latestLearning);
+      });
+    </script>
+  </body>
+</html>

@@ -461,3 +461,194 @@ AI進化履歴には `v2.6 自己進化エンジン` を追加しました。
 - `dashboard.js`: `OFFICIAL_RELEASE.version = "1.6"`
 - `dashboard.js`: `OFFICIAL_RELEASE.releaseScore = 101`
 - `dashboard.js`: `OFFICIAL_RELEASE.status = "Official Release v1.6"`
+
+## Phase17-4 Global Intelligence Network
+
+Hashimoto Racing OS v4.0に、世界知能ネットワークを追加しました。Official Release v2.8は永久保存版として固定し、既存機能を残したまま、全エンジン・全研究所・全DB・全競馬場AI・全回収率AIの知能を共有します。
+
+共有フロー:
+
+1. 知識共有
+2. 学習共有
+3. 研究共有
+4. 成功パターン共有
+5. 失敗パターン共有
+6. 未来予測共有
+7. 自己進化共有
+
+Dashboardの「Global Intelligence Network」で接続状態、共有知識数、成功/失敗パターン数、未来予測数、進化ルール数を確認できます。「世界知能ネットワーク同期」を押すと、次のDBへ統合結果と履歴を保存します。
+
+- `global-network-db.json`
+- `global-learning-db.json`
+- `global-pattern-db.json`
+- `global-future-db.json`
+- `global-evolution-db.json`
+- `global-history-db.json`
+
+ネットワーク処理は `global-network-page.js` が担当します。保存済みソースがない場合はSTANDBY、1件以上接続できる場合はONLINEとして表示します。
+
+## Phase17-5 Hashimoto Racing OS v4.0 Final
+
+Phase16のSuper Core Engine、Super Self Evolution Engine、Full Auto Learning Engine、Future Prediction Engine、God AI Engine、Universal Racing Intelligence Engineと、Phase17のRacing OS v4.0、Autonomous Research Institute、Self Optimization Center、Global Intelligence Networkを最終統合しました。Official Release v2.8は永久保存版として保護されます。
+
+最終システム機能:
+
+- 全エンジン監視
+- 全研究所監視
+- 全DB監視
+- Version管理
+- Health Score管理
+- 完全自律制御
+- 最終履歴保存
+- Production Ready判定
+
+Dashboardの「Hashimoto Racing OS v4.0 Final」で、システム状態、リリース判定、Health Score、必須機能接続率、DB正常率、保護バージョンを確認できます。「完全自律制御を実行」を押すと、監視結果を次のDBへ保存します。
+
+- `final-system-db.json`
+- `final-status-db.json`
+- `final-history-db.json`
+- `final-release-db.json`
+
+Production Readyには、Health Score 90以上、必須機能接続率80%以上、監視DB正常率80%以上、重大エラー0件、Official Release v2.8保護の全条件が必要です。
+
+## Private運用
+
+このリポジトリは、自分専用のPrivate運用を前提にします。GitHub Pagesで公開せず、リポジトリもPublic化しません。
+
+- Windows: `start-local.bat` をダブルクリックして、Private起動ページを開きます。
+- メイン画面: `index.html` はローカルファイルとして直接開いても表示できます。
+- Private起動ページ: `private-local.html` から各AIページ、競馬場フォルダ、運用ガイドへ移動できます。
+- 詳細手順: `docs/private-operation-guide.md` を確認します。
+- 統一アイコン: `icon.svg` をPC、iPad、iPhoneの橋本競馬AIアイコンとして使います。
+- 起動ガイド: `docs/private-app-launch-guide.md` にPC、iPad、iPhoneの起動方法をまとめています。
+
+GitHub Pagesは使用しません。公開URLを作る運用は非推奨です。
+
+## Windowsショートカット
+
+1. `start-local.bat` を右クリックします。
+2. `送る` → `デスクトップ（ショートカットを作成）` を選びます。
+3. デスクトップのショートカット名を `橋本競馬AI` に変更します。
+4. アイコンを付ける場合は、ショートカットを右クリックして `プロパティ` → `アイコンの変更` を開き、リポジトリ直下の `icon.svg` を目印に橋本競馬AI用アイコンとして管理します。
+
+Windowsで専用アイコン形式が必要な場合は、`icon.svg` を任意のアイコン変換ツールで `.ico` に変換し、同じ画面から指定します。GitHub Pagesや公開URLは不要です。
+
+## iPad閲覧
+
+iPadでは、GitHubアプリでPrivateリポジトリへログインしてから、このリポジトリを開きます。`private-local.html`、`docs/private-operation-guide.md`、各競馬場フォルダへのリンクを入口にすると、東京・中山・阪神・京都・中京・福島・新潟・小倉・函館・札幌、WIN5、結果検証へ移動しやすくなります。
+
+HTML画面をiPadのSafariで見る場合は、GitHub Pagesではなく、Privateリポジトリ内のファイル確認、または自分のPC/同期フォルダ上のローカルファイルとして開きます。
+
+iPhoneも同じ方針です。GitHubアプリでPrivateリポジトリを開き、必要に応じてSafariでローカル/Private内の入口ページを開いてホーム画面に追加します。公開URLは使いません。
+
+## ダッシュボード
+
+トップ画面は `index.html` です。ブラウザで開くと、橋本競馬AIの学習状況を実データ形式の管理画面として確認できます。
+
+表示項目:
+
+- 本日の重点レース: 競馬場、レース、距離、馬場、展開、軸候補、AI優位差、信頼度
+- 馬場・展開メモ: 競馬場別の補正メモ、バイアス、次回反映ポイント
+- AI指数ランキング: 順位、印、馬名、レース、指数、想定人気、単勝、期待値、状態
+- 神穴ランキング: 順位、馬名、レース、神穴指数、人気、買い目
+- 危険人気馬ランキング: 順位、馬名、レース、危険度、人気、危険理由
+- 最新保存ログ: 事前予想、結果検証、OSアップデート、保存ログの保存先
+- WIN5コーナー: 想定投資、回収目標、信頼度、各レースの候補馬とゾーン分類
+
+画面用のサンプルデータは `dashboard.js` にあります。実運用時は、各競馬場フォルダへ保存した予想、検証、OSアップデート、総括ログをもとに、このデータを更新してください。
+
+## フォルダ構造
+
+```text
+AI研究所/
+中山競馬場/
+  2026/
+    事前予想/
+    結果検証/
+    OSアップデート/
+    保存ログ/
+東京競馬場/
+  2026/
+    事前予想/
+    結果検証/
+    OSアップデート/
+    保存ログ/
+京都競馬場/
+  2026/
+    事前予想/
+    結果検証/
+    OSアップデート/
+    保存ログ/
+阪神競馬場/
+  2026/
+    事前予想/
+    結果検証/
+    OSアップデート/
+    保存ログ/
+中京競馬場/
+  2026/
+    事前予想/
+    結果検証/
+    OSアップデート/
+    保存ログ/
+新潟競馬場/
+  2026/
+    事前予想/
+    結果検証/
+    OSアップデート/
+    保存ログ/
+福島競馬場/
+  2026/
+    事前予想/
+    結果検証/
+    OSアップデート/
+    保存ログ/
+小倉競馬場/
+  2026/
+    事前予想/
+    結果検証/
+    OSアップデート/
+    保存ログ/
+```
+
+## 事前予想保存ルール
+
+- 保存場所: `競馬場名/2026/事前予想/`
+- レース前に作成した予想、指数、買い目、展開メモを保存する。
+- 後から結果に合わせて内容を書き換えず、修正が必要な場合は追記として残す。
+- ファイル名は `YYYYMMDD_競馬場名_R番号_事前予想.md` を基本形にする。
+
+例: `20260607_東京競馬場_11R_事前予想.md`
+
+## 結果検証保存ルール
+
+- 保存場所: `競馬場名/2026/結果検証/`
+- レース後に、着順、配当、的中可否、予想とのズレ、改善点を記録する。
+- 事前予想ファイルと同じ日付、競馬場、レース番号を使い、照合しやすくする。
+- ファイル名は `YYYYMMDD_競馬場名_R番号_結果検証.md` を基本形にする。
+
+例: `20260607_東京競馬場_11R_結果検証.md`
+
+## OSアップデート保存ルール
+
+- 保存場所: `競馬場名/2026/OSアップデート/`
+- 予想ロジック、評価基準、買い目ルール、指数補正、除外条件などの変更履歴を保存する。
+- 変更理由、変更内容、期待する効果、次回確認ポイントを必ず記録する。
+- ファイル名は `YYYYMMDD_競馬場名_OSアップデート_内容.md` を基本形にする。
+
+例: `20260607_東京競馬場_OSアップデート_差し馬評価補正.md`
+
+## 総括保存ルール
+
+- 保存場所: `競馬場名/2026/保存ログ/`
+- 週次、月次、開催終了後などの総括を保存する。
+- 収支、的中傾向、競馬場ごとの得意条件、苦手条件、次回改善テーマをまとめる。
+- ファイル名は `YYYYMMDD_競馬場名_総括.md` または `YYYYMM_競馬場名_月次総括.md` を基本形にする。
+
+例: `202606_東京競馬場_月次総括.md`
+
+## 運用方針
+
+- 競馬場ごとに学習内容を分け、馬場傾向やコース特性が混ざらないように管理する。
+- 年が変わったら各競馬場の中に新しい年フォルダを作成し、同じ4分類で運用する。
+- 予想、検証、改善、総括の流れを1セットとして残し、橋本競馬AIの学習データベースとして継続的に育てる。

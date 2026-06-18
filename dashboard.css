@@ -1166,3 +1166,75 @@ tbody tr:last-child td {
   color: var(--gold-2);
   font-size: 20px;
 }
+
+.global-network-panel {
+  border-color: rgba(242, 214, 117, 0.72);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(242, 214, 117, 0.24), transparent 38%),
+    linear-gradient(145deg, rgba(25, 22, 12, 0.98), rgba(8, 8, 7, 0.98));
+}
+
+.global-network-actions,
+.global-network-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.global-network-actions span { color: var(--muted); font-size: 13px; font-weight: 800; }
+.global-network-grid article strong { color: var(--gold-2); font-size: 20px; }
+
+.global-network-flow {
+  padding: 16px 18px;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.global-network-flow span {
+  border: 1px solid rgba(242, 214, 117, 0.38);
+  border-radius: 999px;
+  color: var(--gold-2);
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.global-network-flow b { color: var(--gold); }
+
+@media (max-width: 680px) {
+  .global-network-actions { align-items: stretch; }
+  .global-network-actions button { width: 100%; }
+  .global-network-flow b { display: none; }
+  .global-network-flow span { flex: 1 1 140px; text-align: center; }
+}
+
+.final-system-panel {
+  border: 1px solid rgba(255, 224, 118, 0.82);
+  background:
+    radial-gradient(circle at 50% -10%, rgba(255, 224, 118, 0.3), transparent 42%),
+    linear-gradient(150deg, #211b0c, #090908 68%);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 244, 190, 0.15);
+}
+
+.final-system-actions,
+.final-system-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.final-system-actions span { color: var(--muted); font-size: 13px; font-weight: 800; }
+.final-system-grid article strong { color: #ffe88f; font-size: 20px; }
+.final-system-badges { padding: 14px 18px; border-top: 1px solid rgba(212, 175, 55, 0.24); }
+.final-system-badges span { border-radius: 8px; background: rgba(212, 175, 55, 0.14); color: var(--gold-2); padding: 8px 10px; font-size: 12px; font-weight: 900; }
+
+@media (max-width: 680px) {
+  .final-system-actions { align-items: stretch; }
+  .final-system-actions button { width: 100%; }
+  .final-system-badges span { flex: 1 1 140px; text-align: center; }
+}
