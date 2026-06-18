@@ -1,4 +1,4 @@
-﻿(function (global) {
+(function (global) {
   "use strict";
 
   const DEVELOPMENT_VERSION = "5.0";
@@ -49,8 +49,8 @@
   const ROADMAP = Object.freeze([
     Object.freeze({
       phase: "Phase18-3",
-      title: "Development Orchestration Engine",
-      objective: "診断候補を優先順位付きの実装計画へ変換し、開発順序を自動調整する"
+      title: "AI Evolution Engine",
+      objective: "診断・研究・成功失敗パターンから自己進化案と改善優先順位を生成する"
     }),
     Object.freeze({
       phase: "Phase18-4",
@@ -121,7 +121,7 @@
   function generateDevelopmentCandidates(diagnosis) {
     const categories = diagnosis.categories;
     return {
-      nextEngine: firstOrFallback(categories.unconnectedPages, "Development Orchestration Engine"),
+      nextEngine: firstOrFallback(categories.unconnectedPages, "AI Evolution Engine"),
       nextDatabase: firstOrFallback(categories.missingDatabases, "development-orchestration-db.json"),
       nextDashboardPanel: firstOrFallback(categories.dashboardHiddenFeatures, "Phase18-3 Development Orchestration"),
       nextPrivateLocalMenu: firstOrFallback(categories.privateLocalHiddenFeatures, "Development Orchestration Center"),

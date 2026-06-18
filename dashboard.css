@@ -1290,3 +1290,29 @@ tbody tr:last-child td {
   .auto-development-actions { align-items: stretch; }
   .auto-development-actions button { width: 100%; }
 }
+
+.ai-evolution-v5-panel {
+  border: 1px solid rgba(255, 224, 118, 0.94);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 224, 118, 0.3), transparent 40%),
+    linear-gradient(145deg, #241c09, #080807 72%);
+  box-shadow: 0 20px 58px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 246, 200, 0.17);
+}
+
+.ai-evolution-v5-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ai-evolution-v5-actions span { color: var(--muted); font-size: 13px; font-weight: 800; }
+.ai-evolution-v5-grid article strong,
+.ai-evolution-v5-priority-grid article strong { color: #ffe88f; font-size: 17px; }
+.ai-evolution-v5-priority-grid { border-top: 1px solid rgba(212, 175, 55, 0.24); padding-top: 14px; }
+
+@media (max-width: 680px) {
+  .ai-evolution-v5-actions { align-items: stretch; }
+  .ai-evolution-v5-actions button { width: 100%; }
+}
