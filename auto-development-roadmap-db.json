@@ -1,0 +1,14 @@
+{
+    "databaseName":  "Auto Development Roadmap Database",
+    "phase":  "Phase18-2",
+    "developmentVersion":  "5.0",
+    "officialRelease":  "2.8",
+    "protectedSystems":  [
+                             "Hashimoto Racing OS v4.0 Final",
+                             "Self Expansion System v5.0"
+                         ],
+    "storageKey":  "auto-development-roadmap-db.json",
+    "records":  [
+
+                ]
+}

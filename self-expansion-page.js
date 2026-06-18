@@ -16,6 +16,7 @@
   const ENGINE_MENU = Object.freeze([
     ["Hashimoto Super Core Engine v5.0", "index.html#self-expansion-panel"],
     ["Self Expansion System", "index.html#self-expansion-panel"],
+    ["Auto Development Engine", "index.html#auto-development-panel"],
     ["Hashimoto Racing OS v4.0 Final", "index.html#final-system-panel"],
     ["Autonomous Research Institute", "index.html#autonomous-research-panel"],
     ["Global Intelligence Network", "index.html#global-network-panel"],
@@ -32,7 +33,11 @@
     ["Global Intelligence", "index.html#global-network-panel"],
     ["Version管理", "index.html#release-manager-panel"],
     ["Racing OS", "index.html#final-system-panel"],
-    ["v5.0開発", "index.html#self-expansion-panel"]
+    ["v5.0開発", "index.html#self-expansion-panel"],
+    ["自己開発", "index.html#auto-development-panel"],
+    ["未接続検出", "index.html#auto-development-panel"],
+    ["自動ロードマップ", "index.html#auto-development-panel"],
+    ["v5.0開発センター", "index.html#auto-development-panel"]
   ].map(([label, href]) => Object.freeze({ label, href })));
   const RULES = Object.freeze([
     "Official Release v2.8を永久保存版として保護する",
