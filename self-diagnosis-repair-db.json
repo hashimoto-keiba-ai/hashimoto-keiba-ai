@@ -1,0 +1,7 @@
+{
+  "phase": "Phase18-4",
+  "database": "Self Diagnosis Repair DB",
+  "version": "5.0",
+  "proposalTypes": ["file", "database", "test", "page", "dashboard", "private-local", "readme"],
+  "records": []
+}

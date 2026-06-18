@@ -1,0 +1,272 @@
+﻿<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>橋本競馬AI Private Local Launcher</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+      .private-layout {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .private-hero {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.7fr);
+        align-items: stretch;
+      }
+
+      .private-actions,
+      .private-grid,
+      .folder-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .private-actions {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      }
+
+      .private-grid {
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      }
+
+      .folder-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+
+      .home-menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+        gap: 10px;
+      }
+
+      .local-card,
+      .folder-link,
+      .home-menu-card {
+        display: block;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        color: var(--text);
+        text-decoration: none;
+      }
+
+      .home-menu-card strong,
+      .folder-link strong,
+      .local-card strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .home-menu-card span,
+      .folder-link span,
+      .local-card span {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .home-menu-card {
+        min-height: 76px;
+        background: linear-gradient(180deg, rgba(245, 210, 116, 0.08), rgba(15, 10, 0, 0.04)), var(--panel);
+      }
+
+      .home-menu-card strong {
+        font-size: 1.12rem;
+      }
+
+      .local-status {
+        display: grid;
+        gap: 10px;
+      }
+
+      .local-status article {
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel-soft);
+      }
+
+      .private-section {
+        margin-top: 22px;
+      }
+
+      .app-brand-row {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .app-brand-row img {
+        width: 68px;
+        height: 68px;
+        border-radius: 16px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+      }
+
+      @media (max-width: 760px) {
+        .private-layout {
+          padding: 16px;
+        }
+
+        .private-hero {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="official-banner" aria-label="Private運用バナー">
+      <span>橋本競馬AI Private Local Operation</span>
+    </div>
+
+    <main class="private-layout">
+      <section class="panel private-hero" aria-label="Privateローカル起動">
+        <div>
+          <div class="app-brand-row">
+            <img src="icon.svg" alt="橋本競馬AI アプリアイコン">
+            <div>
+              <p class="eyebrow">Private Repository / Local Only</p>
+              <h1>🏇 橋本競馬AI</h1>
+            </div>
+          </div>
+          <p>会社PC、自宅PC、iPadで自分だけが使うための入口です。GitHub Pagesは使わず、Privateリポジトリのまま運用します。</p>
+          <div class="private-actions" aria-label="主要画面">
+            <a class="button-link" href="index.html">メインダッシュボード</a>
+            <a class="button-link" href="live-operations.html">Live Operations</a>
+            <a class="button-link" href="command-center.html">Command Center</a>
+            <a class="button-link" href="docs/private-operation-guide.md">Private運用ガイド</a>
+          </div>
+        </div>
+        <div class="local-status" aria-label="Private運用状態">
+          <article>
+            <span>Repository</span>
+            <strong>Private固定</strong>
+          </article>
+          <article>
+            <span>GitHub Pages</span>
+            <strong>OFF</strong>
+          </article>
+          <article>
+            <span>Windows</span>
+            <strong>start-local.bat</strong>
+          </article>
+          <article>
+            <span>iPad</span>
+            <strong>GitHubアプリで閲覧</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="private-section panel" aria-label="橋本競馬AIホームメニュー">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Hashimoto Keiba AI Home</p>
+            <h2>ホーム画面メニュー</h2>
+          </div>
+          <span class="pill">One Tap</span>
+        </div>
+        <div class="home-menu-grid">
+          <a class="home-menu-card" href="京都競馬場/index.html"><strong>京都</strong><span>京都競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="阪神競馬場/index.html"><strong>阪神</strong><span>阪神競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="東京競馬場/index.html"><strong>東京</strong><span>東京競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="中山競馬場/index.html"><strong>中山</strong><span>中山競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="中京競馬場/index.html"><strong>中京</strong><span>中京競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="福島競馬場/index.html"><strong>福島</strong><span>福島競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="新潟競馬場/index.html"><strong>新潟</strong><span>新潟競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="小倉競馬場/index.html"><strong>小倉</strong><span>小倉競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="函館競馬場/index.html"><strong>函館</strong><span>函館競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="札幌競馬場/index.html"><strong>札幌</strong><span>札幌競馬AI Dashboard</span></a>
+          <a class="home-menu-card" href="WIN5/index.html"><strong>WIN5</strong><span>WIN5 AI Dashboard</span></a>
+          <a class="home-menu-card" href="結果検証/index.html"><strong>結果検証</strong><span>結果検証 Dashboard</span></a>
+          <a class="home-menu-card" href="学習ログ/index.html"><strong>学習ログ</strong><span>学習ログ Dashboard</span></a>
+        </div>
+      </section>
+
+      <section class="private-section panel" aria-label="クイックメニュー">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">One Tap Menu</p>
+            <h2>一発起動メニュー</h2>
+          </div>
+          <span class="pill">PC / iPad / iPhone</span>
+        </div>
+        <div class="private-grid">
+          <a class="local-card" href="index.html#self-diagnosis-engine"><strong>自己診断</strong><span>Self Diagnosis Engine / 自己診断エンジン</span></a>
+          <a class="local-card" href="index.html#self-diagnosis-engine"><strong>健康診断</strong><span>System Health Scan</span></a>
+          <a class="local-card" href="index.html#self-diagnosis-engine"><strong>壊れた機能検出</strong><span>Broken Link Detection</span></a>
+          <a class="local-card" href="index.html#self-diagnosis-engine"><strong>未接続検出</strong><span>Missing Feature Detection</span></a>
+          <a class="local-card" href="index.html#self-diagnosis-engine"><strong>修復候補</strong><span>Repair Proposal</span></a>
+          <a class="local-card" href="index.html#self-diagnosis-engine"><strong>v5.0診断センター</strong><span>v5.0 Diagnosis Center</span></a>
+          <a class="local-card" href="東京競馬場/2026/事前予想/"><strong>事前予想</strong><span>競馬場別の事前予想フォルダへ</span></a>
+          <a class="local-card" href="AI研究所/AI指数/"><strong>AI指数</strong><span>指数ルール・評価ログ</span></a>
+          <a class="local-card" href="trifecta.html"><strong>三連単生成</strong><span>Trifecta AIを起動</span></a>
+          <a class="local-card" href="win5.html"><strong>WIN5</strong><span>WIN5 AIを起動</span></a>
+          <a class="local-card" href="結果検証/index.html"><strong>結果検証</strong><span>検証ログへ移動</span></a>
+          <a class="local-card" href="self-learning.html"><strong>自己学習</strong><span>Self Learningを起動</span></a>
+          <a class="local-card" href="学習ログ/index.html"><strong>学習ログ</strong><span>学習記録フォルダへ移動</span></a>
+          <a class="local-card" href="docs/private-app-launch-guide.md"><strong>設定</strong><span>起動・同期・ホーム画面設定</span></a>
+        </div>
+      </section>
+
+      <section class="private-section panel" aria-label="AI機能リンク">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">AI Systems</p>
+            <h2>AIシステムリンク</h2>
+          </div>
+          <span class="pill">Local</span>
+        </div>
+        <div class="private-grid">
+          <a class="local-card" href="win5.html"><strong>WIN5 AI</strong><span>WIN5推奨・安全/バランス/高回収</span></a>
+          <a class="local-card" href="trifecta.html"><strong>Trifecta AI</strong><span>三連単自動生成</span></a>
+          <a class="local-card" href="fund-management.html"><strong>Fund Management</strong><span>資金管理・推奨予算</span></a>
+          <a class="local-card" href="roi-dashboard.html"><strong>ROI Dashboard</strong><span>回収率・利益曲線</span></a>
+          <a class="local-card" href="self-learning.html"><strong>Self Learning</strong><span>結果検証から自己学習</span></a>
+          <a class="local-card" href="race-simulator.html"><strong>Race Simulator</strong><span>未来シミュレーション</span></a>
+          <a class="local-card" href="god-race.html"><strong>God Race Detection</strong><span>神レース検出</span></a>
+          <a class="local-card" href="auto-betting.html"><strong>Auto Betting Mode</strong><span>自動投資判断</span></a>
+          <a class="local-card" href="real-data-import.html"><strong>Real Data Import</strong><span>実データ取込</span></a>
+          <a class="local-card" href="data-migration.html"><strong>Data Migration</strong><span>フォルダ移行</span></a>
+          <a class="local-card" href="real-racing-data-loader.html"><strong>Real Racing Data Loader</strong><span>開催/出走/結果データ</span></a>
+          <a class="local-card" href="result-learning-pipeline.html"><strong>Result Learning Pipeline</strong><span>結果からAI補正へ</span></a>
+        </div>
+      </section>
+
+      <section class="private-section panel" aria-label="GitHubアプリ用フォルダリンク">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">GitHub App Folder Links</p>
+            <h2>競馬場フォルダリンク</h2>
+          </div>
+          <span class="pill">Private</span>
+        </div>
+        <div class="folder-grid">
+          <a class="folder-link" href="東京競馬場/index.html"><strong>東京</strong><span>東京競馬AI Dashboard</span></a>
+          <a class="folder-link" href="中山競馬場/index.html"><strong>中山</strong><span>中山競馬AI Dashboard</span></a>
+          <a class="folder-link" href="阪神競馬場/index.html"><strong>阪神</strong><span>阪神競馬AI Dashboard</span></a>
+          <a class="folder-link" href="京都競馬場/index.html"><strong>京都</strong><span>京都競馬AI Dashboard</span></a>
+          <a class="folder-link" href="中京競馬場/index.html"><strong>中京</strong><span>中京競馬AI Dashboard</span></a>
+          <a class="folder-link" href="福島競馬場/index.html"><strong>福島</strong><span>福島競馬AI Dashboard</span></a>
+          <a class="folder-link" href="新潟競馬場/index.html"><strong>新潟</strong><span>新潟競馬AI Dashboard</span></a>
+          <a class="folder-link" href="小倉競馬場/index.html"><strong>小倉</strong><span>小倉競馬AI Dashboard</span></a>
+          <a class="folder-link" href="函館競馬場/index.html"><strong>函館</strong><span>函館競馬AI Dashboard</span></a>
+          <a class="folder-link" href="札幌競馬場/index.html"><strong>札幌</strong><span>札幌競馬AI Dashboard</span></a>
+          <a class="folder-link" href="WIN5/index.html"><strong>WIN5</strong><span>WIN5 AI Dashboard</span></a>
+          <a class="folder-link" href="競馬場OS/"><strong>競馬場OS</strong><span>OS更新</span></a>
+          <a class="folder-link" href="AI研究所/"><strong>AI研究所</strong><span>研究ログ</span></a>
+          <a class="folder-link" href="結果検証/index.html"><strong>結果検証</strong><span>結果検証 Dashboard</span></a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+

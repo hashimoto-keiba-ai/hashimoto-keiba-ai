@@ -1,0 +1,7 @@
+{
+  "phase": "Phase18-4",
+  "database": "Self Diagnosis Rule DB",
+  "version": "5.0",
+  "rules": ["engine-state", "database-state", "dashboard-panel", "private-local-menu", "one-tap-connection", "readme-description", "test-existence", "json-integrity", "javascript-syntax", "conflict-marker", "official-release-protection"],
+  "records": []
+}
