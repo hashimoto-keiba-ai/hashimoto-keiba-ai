@@ -4,14 +4,7 @@ const path = require("path");
 const vm = require("vm");
 
 const script = fs.readFileSync(path.join(__dirname, "..", "race-simulator-phase111.js"), "utf8");
-const context = {
-  console,
-  window: {},
-  document: {
-    addEventListener() {}
-  }
-};
-
+const context = { console, window: {}, document: { addEventListener() {} } };
 vm.createContext(context);
 vm.runInContext(script, context);
 
@@ -42,17 +35,5 @@ assert.ok(report.summary.expectedTrifecta.includes("-"));
 assert.ok(Number.isFinite(report.summary.expectedWIN5Value));
 assert.ok(Number.isFinite(report.summary.expectedROI));
 assert.ok(report.summary.bestHorse.horseName);
-
-assert.strictEqual(
-  JSON.stringify(Object.keys(report.sourceConnections)),
-  JSON.stringify([
-    "predictionDatabase",
-    "aiIndexDatabase",
-    "dangerPopularDatabase",
-    "kamiAnaDatabase",
-    "win5Database",
-    "roiDatabase"
-  ])
-);
-
+assert.strictEqual(JSON.stringify(Object.keys(report.sourceConnections)), JSON.stringify(["predictionDatabase", "aiIndexDatabase", "dangerPopularDatabase", "kamiAnaDatabase", "win5Database", "roiDatabase"]));
 console.log("Phase11-1 race future simulator test passed");

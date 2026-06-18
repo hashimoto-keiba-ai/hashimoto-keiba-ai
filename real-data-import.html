@@ -1,130 +1,16 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Phase13-1 Real Data Import</title>
-    <link rel="stylesheet" href="dashboard.css">
-  </head>
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Phase13-1 Real Data Import</title><link rel="stylesheet" href="dashboard.css"></head>
   <body>
-    <div class="official-banner" aria-label="Phase13-1 banner">
-      <span>Phase13-1 Real Data Import System</span>
-    </div>
-
-    <header class="topbar">
-      <div class="brand">
-        <p class="eyebrow">Hashimoto Keiba AI / Phase13-1</p>
-        <h1>Real Data Import</h1>
-        <strong class="version-display">CSV / JSON / Markdown text</strong>
-        <div class="system-meta">
-          <span>Preview</span>
-          <span>Validation</span>
-          <span>Import Report</span>
-        </div>
-      </div>
-      <div class="top-actions" aria-label="Navigation">
-        <a class="button-link" href="index.html">Dashboard</a>
-      </div>
-    </header>
-
+    <div class="official-banner" aria-label="Phase13-1 banner"><span>Phase13-1 Real Data Import System</span></div>
+    <header class="topbar"><div class="brand"><p class="eyebrow">Hashimoto Keiba AI / Phase13-1</p><h1>Real Data Import</h1><strong class="version-display">CSV / JSON / Markdown text</strong><div class="system-meta"><span>Preview</span><span>Validation</span><span>Import Report</span></div></div><div class="top-actions" aria-label="Navigation"><a class="button-link" href="index.html">Dashboard</a></div></header>
     <main class="dashboard">
-      <section class="status-strip" aria-label="Import dashboard widget">
-        <article>
-          <span>Latest Imports</span>
-          <strong id="phase131-widget-latest">--</strong>
-          <em>realDataImportDatabase</em>
-        </article>
-        <article>
-          <span>Import Success Count</span>
-          <strong id="phase131-widget-success">0</strong>
-          <em>validated records</em>
-        </article>
-        <article>
-          <span>Import Error Count</span>
-          <strong id="phase131-widget-errors">0</strong>
-          <em>validation errors</em>
-        </article>
-      </section>
-
-      <section class="panel" aria-label="Import targets and formats">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Import Setup</p>
-            <h2>Targets and Formats</h2>
-          </div>
-          <span class="pill">Racecourse / WIN5 / OS / Logs</span>
-        </div>
-        <div class="phase2-grid">
-          <section class="audit-block">
-            <div class="sub-heading"><h3>Import Targets</h3><span>14 targets</span></div>
-            <div class="race-cards" id="phase131-import-targets"></div>
-          </section>
-          <section class="audit-block">
-            <div class="sub-heading"><h3>Supported Import Formats</h3><span>parser enabled</span></div>
-            <div class="race-cards" id="phase131-import-formats"></div>
-          </section>
-        </div>
-      </section>
-
-      <section class="panel" aria-label="Preview and validation">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Preview Before Import</p>
-            <h2>Validation and Mapping</h2>
-          </div>
-          <span class="pill hot">Missing / Invalid checks</span>
-        </div>
-        <div class="phase2-kpis">
-          <article><span>Missing racecourse</span><strong>Check</strong></article>
-          <article><span>Missing race name</span><strong>Check</strong></article>
-          <article><span>Missing horse number</span><strong>Check</strong></article>
-          <article><span>Missing horse name</span><strong>Check</strong></article>
-          <article><span>Invalid AI score</span><strong>Check</strong></article>
-          <article><span>Invalid popularity</span><strong>Check</strong></article>
-        </div>
-      </section>
-
-      <section class="panel" aria-label="Latest imports">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Import Result Report</p>
-            <h2>Latest Imports</h2>
-          </div>
-          <span class="pill">Preview / Import status</span>
-        </div>
-        <div class="race-cards" id="phase131-latest-imports"></div>
-      </section>
-
-      <section class="panel" aria-label="realDataImportDatabase">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">realDataImportDatabase</p>
-            <h2>Phase13-1 Database</h2>
-          </div>
-          <span class="pill">Import history</span>
-        </div>
-        <div class="table-wrap">
-          <table class="audit-table">
-            <thead>
-              <tr>
-                <th>Import Date</th>
-                <th>Data Type</th>
-                <th>Racecourse</th>
-                <th>Source Name</th>
-                <th>Record Count</th>
-                <th>Import Status</th>
-                <th>Imported Records</th>
-                <th>Error Count</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody id="phase131-import-database"></tbody>
-          </table>
-        </div>
-      </section>
+      <section class="status-strip" aria-label="Import dashboard widget"><article><span>Latest Imports</span><strong id="phase131-widget-latest">--</strong><em>realDataImportDatabase</em></article><article><span>Import Success Count</span><strong id="phase131-widget-success">0</strong><em>validated records</em></article><article><span>Import Error Count</span><strong id="phase131-widget-errors">0</strong><em>validation errors</em></article></section>
+      <section class="panel" aria-label="Import targets and formats"><div class="section-heading"><div><p class="eyebrow">Import Setup</p><h2>Targets and Formats</h2></div><span class="pill">Racecourse / WIN5 / OS / Logs</span></div><div class="phase2-grid"><section class="audit-block"><div class="sub-heading"><h3>Import Targets</h3><span>14 targets</span></div><div class="race-cards" id="phase131-import-targets"></div></section><section class="audit-block"><div class="sub-heading"><h3>Supported Import Formats</h3><span>parser enabled</span></div><div class="race-cards" id="phase131-import-formats"></div></section></div></section>
+      <section class="panel" aria-label="Preview and validation"><div class="section-heading"><div><p class="eyebrow">Preview Before Import</p><h2>Validation and Mapping</h2></div><span class="pill hot">Missing / Invalid checks</span></div><div class="phase2-kpis"><article><span>Missing racecourse</span><strong>Check</strong></article><article><span>Missing race name</span><strong>Check</strong></article><article><span>Missing horse number</span><strong>Check</strong></article><article><span>Missing horse name</span><strong>Check</strong></article><article><span>Invalid AI score</span><strong>Check</strong></article><article><span>Invalid popularity</span><strong>Check</strong></article></div></section>
+      <section class="panel" aria-label="Latest imports"><div class="section-heading"><div><p class="eyebrow">Import Result Report</p><h2>Latest Imports</h2></div><span class="pill">Preview / Import status</span></div><div class="race-cards" id="phase131-latest-imports"></div></section>
+      <section class="panel" aria-label="realDataImportDatabase"><div class="section-heading"><div><p class="eyebrow">realDataImportDatabase</p><h2>Phase13-1 Database</h2></div><span class="pill">Import history</span></div><div class="table-wrap"><table class="audit-table"><thead><tr><th>Import Date</th><th>Data Type</th><th>Racecourse</th><th>Source Name</th><th>Record Count</th><th>Import Status</th><th>Imported Records</th><th>Error Count</th><th>Notes</th></tr></thead><tbody id="phase131-import-database"></tbody></table></div></section>
     </main>
-
-    <script src="dashboard.js"></script>
-    <script src="real-data-import-phase131.js"></script>
+    <script src="dashboard.js"></script><script src="real-data-import-phase131.js"></script>
   </body>
 </html>

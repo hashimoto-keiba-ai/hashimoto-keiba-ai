@@ -1,184 +1,25 @@
 (function () {
-  const yenFormatter = new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency: "JPY",
-    maximumFractionDigits: 0
-  });
-
-  const fallbackDatabase = {
-    databaseName: "autoBettingDatabase",
-    phase: "Phase12-1",
-    bankroll: 100000,
-    records: [
-      { date: "2026-06-06", racecourse: "Tokyo", race: "Tokyo 11R Future Simulation Stakes", raceScore: 92, expectedROI: 186.4, expectedProfit: 32400, confidence: 91, recommendedBet: "Trifecta + Win hedge", betType: "Trifecta", win5: 84, trifecta: 92, exacta: 78, quinella: 74, investmentAmount: 0, expectedReturn: 0, autoModeStatus: "Ready" },
-      { date: "2026-06-06", racecourse: "Kyoto", race: "Kyoto 12R WIN5 Finish", raceScore: 88, expectedROI: 154.8, expectedProfit: 28600, confidence: 86, recommendedBet: "WIN5 anchor", betType: "WIN5", win5: 95, trifecta: 80, exacta: 72, quinella: 68, investmentAmount: 0, expectedReturn: 0, autoModeStatus: "Ready" },
-      { date: "2026-06-06", racecourse: "Chukyo", race: "Chukyo 10R Trifecta Logic", raceScore: 81, expectedROI: 132.5, expectedProfit: 21400, confidence: 79, recommendedBet: "Trifecta value", betType: "Trifecta", win5: 66, trifecta: 91, exacta: 76, quinella: 70, investmentAmount: 0, expectedReturn: 0, autoModeStatus: "Watch" },
-      { date: "2026-06-06", racecourse: "Hanshin", race: "Hanshin 9R Caution Trial", raceScore: 64, expectedROI: 74.2, expectedProfit: 4200, confidence: 62, recommendedBet: "Skip", betType: "Skip", win5: 48, trifecta: 51, exacta: 55, quinella: 58, investmentAmount: 0, expectedReturn: 0, autoModeStatus: "Skip" }
-    ]
-  };
-
-  const sourceConnections = {
-    godRaceDatabase: "data/godRaceDatabase.json",
-    roiDatabase: "data/roiDatabase.json",
-    fundManagementDatabase: "data/fundManagementDatabase.json",
-    win5Database: "data/win5Database.json",
-    trifectaDatabase: "data/trifectaDatabase.json",
-    raceFutureSimulatorDatabase: "data/raceSimulationDatabase.json"
-  };
-
-  const betFields = [
-    ["WIN5", "win5"],
-    ["Trifecta", "trifecta"],
-    ["Exacta", "exacta"],
-    ["Quinella", "quinella"]
-  ];
-
-  function chooseBestBetType(record) {
-    if (Number(record.raceScore) < 70 || String(record.autoModeStatus).toLowerCase() === "skip") {
-      return "Skip";
-    }
-    return betFields
-      .map(([name, field]) => ({ name, value: Number(record[field]) || 0 }))
-      .sort((left, right) => right.value - left.value)[0].name;
-  }
-
-  function calculateRiskLevel(record) {
-    const score = Number(record.raceScore) || 0;
-    const confidence = Number(record.confidence) || 0;
-    if (score >= 90 && confidence >= 85) return "Low";
-    if (score >= 80 && confidence >= 75) return "Medium";
-    return "High";
-  }
-
-  function calculateInvestment(record, bankroll) {
-    if (chooseBestBetType(record) === "Skip") return 0;
-    const raceScore = Number(record.raceScore) || 0;
-    const confidence = Number(record.confidence) || 0;
-    const expectedROI = Number(record.expectedROI) || 0;
-    const baseRate = raceScore >= 90 ? 0.07 : raceScore >= 80 ? 0.045 : 0.022;
-    const confidenceScale = Math.max(0.45, Math.min(1.15, confidence / 85));
-    const roiScale = Math.max(0.5, Math.min(1.25, expectedROI / 150));
-    return Math.round(bankroll * baseRate * confidenceScale * roiScale);
-  }
-
-  function enrichRecord(record, bankroll) {
-    const bestBetType = chooseBestBetType(record);
-    const bestInvestmentAmount = calculateInvestment(record, bankroll);
-    const expectedROI = Number(record.expectedROI) || 0;
-    const expectedProfit = Math.round(bestInvestmentAmount * (expectedROI / 100));
-    const expectedReturn = bestInvestmentAmount + expectedProfit;
-    const riskLevel = calculateRiskLevel(record);
-    const autoModeStatus = bestBetType === "Skip" ? "Skip" : Number(record.raceScore) >= 80 ? "Ready" : "Watch";
-
-    return {
-      ...record,
-      bestBetType,
-      betType: bestBetType,
-      bestInvestmentAmount,
-      investmentAmount: bestInvestmentAmount,
-      expectedROI: Number(expectedROI.toFixed(1)),
-      expectedProfit,
-      expectedReturn,
-      riskLevel,
-      autoModeStatus
-    };
-  }
-
-  function buildDashboard(database) {
-    const source = database || fallbackDatabase;
-    const bankroll = Number(source.bankroll) || 100000;
-    const records = (source.records || [])
-      .map((record) => enrichRecord(record, bankroll))
-      .sort((left, right) => right.raceScore - left.raceScore || right.expectedProfit - left.expectedProfit);
-    const actionable = records.filter((record) => record.autoModeStatus !== "Skip");
-    const bestRace = actionable[0] || records[0];
-    const recommendedInvestment = actionable.reduce((total, record) => total + record.investmentAmount, 0);
-
-    return {
-      databaseName: source.databaseName || "autoBettingDatabase",
-      phase: source.phase || "Phase12-1",
-      bankroll,
-      sourceConnections,
-      records,
-      summary: {
-        todaysBestRaces: actionable.slice(0, 5),
-        todaysBestROI: actionable.slice().sort((left, right) => right.expectedROI - left.expectedROI).slice(0, 5),
-        todaysBestProfit: actionable.slice().sort((left, right) => right.expectedProfit - left.expectedProfit).slice(0, 5),
-        recommendedInvestment,
-        bankrollStatus: {
-          bankroll,
-          allocated: recommendedInvestment,
-          remaining: bankroll - recommendedInvestment,
-          allocationRate: Number(((recommendedInvestment / bankroll) * 100).toFixed(1))
-        },
-        bestRace
-      }
-    };
-  }
-
-  function setText(id, value) {
-    const element = document.getElementById(id);
-    if (element) element.textContent = value;
-  }
-
-  function renderCards(id, records, metricField, formatter) {
-    const element = document.getElementById(id);
-    if (!element) return;
-    element.innerHTML = records.map((record) => `<article><span>${record.racecourse} ${record.race}</span><strong>${formatter(record[metricField])}</strong><em>${record.bestBetType} / ${record.riskLevel}</em><small>${yenFormatter.format(record.investmentAmount)} investment</small></article>`).join("");
-  }
-
-  function renderTable(records) {
-    const table = document.getElementById("phase121-auto-betting-database");
-    if (!table) return;
-    table.innerHTML = records.map((record) => `<tr><td>${record.date}</td><td>${record.racecourse}</td><td>${record.race}</td><td>${record.raceScore}</td><td>${record.expectedROI}%</td><td>${yenFormatter.format(record.expectedProfit)}</td><td>${record.confidence}</td><td>${record.recommendedBet}</td><td>${record.bestBetType}</td><td>${record.win5}</td><td>${record.trifecta}</td><td>${record.exacta}</td><td>${record.quinella}</td><td>${yenFormatter.format(record.investmentAmount)}</td><td>${yenFormatter.format(record.expectedReturn)}</td><td>${record.autoModeStatus}</td></tr>`).join("");
-  }
-
-  function renderDashboard(report) {
-    const best = report.summary.bestRace;
-    const bankroll = report.summary.bankrollStatus;
-    setText("phase121-widget-race", `${best.racecourse} ${best.race}`);
-    setText("phase121-widget-bet-type", best.bestBetType);
-    setText("phase121-widget-investment", yenFormatter.format(best.investmentAmount));
-    setText("phase121-widget-roi", `${best.expectedROI}%`);
-    setText("phase121-widget-profit", yenFormatter.format(best.expectedProfit));
-    setText("phase121-widget-bankroll", `${yenFormatter.format(bankroll.remaining)} / ${bankroll.allocationRate}% allocated`);
-    setText("phase121-connections", Object.keys(sourceConnections).join(" / "));
-  }
-
-  function renderPage(report) {
-    renderDashboard(report);
-    renderCards("phase121-best-races", report.summary.todaysBestRaces, "raceScore", (value) => `${value}`);
-    renderCards("phase121-best-roi", report.summary.todaysBestROI, "expectedROI", (value) => `${value}%`);
-    renderCards("phase121-best-profit", report.summary.todaysBestProfit, "expectedProfit", (value) => yenFormatter.format(value));
-    renderTable(report.records);
-  }
-
-  async function loadDatabase() {
-    if (typeof fetch !== "function") return fallbackDatabase;
-    try {
-      const response = await fetch("data/autoBettingDatabase.json", { cache: "no-store" });
-      if (!response.ok) throw new Error("autoBettingDatabase fetch failed");
-      return await response.json();
-    } catch (error) {
-      return fallbackDatabase;
-    }
-  }
-
-  async function bootstrap() {
-    const database = await loadDatabase();
-    const report = buildDashboard(database);
-    renderPage(report);
-    window.HashimotoPhase121AutoBettingReport = report;
-  }
-
-  window.HashimotoPhase121AutoBettingEngine = {
-    buildDashboard,
-    calculateInvestment,
-    calculateRiskLevel,
-    chooseBestBetType,
-    fallbackDatabase,
-    sourceConnections
-  };
-
+  const yenFormatter = new Intl.NumberFormat("ja-JP", { style: "currency", currency: "JPY", maximumFractionDigits: 0 });
+  const fallbackDatabase = { databaseName: "autoBettingDatabase", phase: "Phase12-1", bankroll: 100000, records: [
+    { date: "2026-06-06", racecourse: "Tokyo", race: "Tokyo 11R Future Simulation Stakes", raceScore: 92, expectedROI: 186.4, expectedProfit: 32400, confidence: 91, recommendedBet: "Trifecta + Win hedge", betType: "Trifecta", win5: 84, trifecta: 92, exacta: 78, quinella: 74, investmentAmount: 0, expectedReturn: 0, autoModeStatus: "Ready" },
+    { date: "2026-06-06", racecourse: "Kyoto", race: "Kyoto 12R WIN5 Finish", raceScore: 88, expectedROI: 154.8, expectedProfit: 28600, confidence: 86, recommendedBet: "WIN5 anchor", betType: "WIN5", win5: 95, trifecta: 80, exacta: 72, quinella: 68, investmentAmount: 0, expectedReturn: 0, autoModeStatus: "Ready" },
+    { date: "2026-06-06", racecourse: "Chukyo", race: "Chukyo 10R Trifecta Logic", raceScore: 81, expectedROI: 132.5, expectedProfit: 21400, confidence: 79, recommendedBet: "Trifecta value", betType: "Trifecta", win5: 66, trifecta: 91, exacta: 76, quinella: 70, investmentAmount: 0, expectedReturn: 0, autoModeStatus: "Watch" },
+    { date: "2026-06-06", racecourse: "Hanshin", race: "Hanshin 9R Caution Trial", raceScore: 64, expectedROI: 74.2, expectedProfit: 4200, confidence: 62, recommendedBet: "Skip", betType: "Skip", win5: 48, trifecta: 51, exacta: 55, quinella: 58, investmentAmount: 0, expectedReturn: 0, autoModeStatus: "Skip" }
+  ] };
+  const sourceConnections = { godRaceDatabase: "data/godRaceDatabase.json", roiDatabase: "data/roiDatabase.json", fundManagementDatabase: "data/fundManagementDatabase.json", win5Database: "data/win5Database.json", trifectaDatabase: "data/trifectaDatabase.json", raceFutureSimulatorDatabase: "data/raceSimulationDatabase.json" };
+  const betFields = [["WIN5", "win5"], ["Trifecta", "trifecta"], ["Exacta", "exacta"], ["Quinella", "quinella"]];
+  function chooseBestBetType(record) { if (Number(record.raceScore) < 70 || String(record.autoModeStatus).toLowerCase() === "skip") return "Skip"; return betFields.map(([name, field]) => ({ name, value: Number(record[field]) || 0 })).sort((left, right) => right.value - left.value)[0].name; }
+  function calculateRiskLevel(record) { const score = Number(record.raceScore) || 0; const confidence = Number(record.confidence) || 0; if (score >= 90 && confidence >= 85) return "Low"; if (score >= 80 && confidence >= 75) return "Medium"; return "High"; }
+  function calculateInvestment(record, bankroll) { if (chooseBestBetType(record) === "Skip") return 0; const raceScore = Number(record.raceScore) || 0; const confidence = Number(record.confidence) || 0; const expectedROI = Number(record.expectedROI) || 0; const baseRate = raceScore >= 90 ? 0.07 : raceScore >= 80 ? 0.045 : 0.022; const confidenceScale = Math.max(0.45, Math.min(1.15, confidence / 85)); const roiScale = Math.max(0.5, Math.min(1.25, expectedROI / 150)); return Math.round(bankroll * baseRate * confidenceScale * roiScale); }
+  function enrichRecord(record, bankroll) { const bestBetType = chooseBestBetType(record); const bestInvestmentAmount = calculateInvestment(record, bankroll); const expectedROI = Number(record.expectedROI) || 0; const expectedProfit = Math.round(bestInvestmentAmount * (expectedROI / 100)); const expectedReturn = bestInvestmentAmount + expectedProfit; const riskLevel = calculateRiskLevel(record); const autoModeStatus = bestBetType === "Skip" ? "Skip" : Number(record.raceScore) >= 80 ? "Ready" : "Watch"; return { ...record, bestBetType, betType: bestBetType, bestInvestmentAmount, investmentAmount: bestInvestmentAmount, expectedROI: Number(expectedROI.toFixed(1)), expectedProfit, expectedReturn, riskLevel, autoModeStatus }; }
+  function buildDashboard(database) { const source = database || fallbackDatabase; const bankroll = Number(source.bankroll) || 100000; const records = (source.records || []).map((record) => enrichRecord(record, bankroll)).sort((left, right) => right.raceScore - left.raceScore || right.expectedProfit - left.expectedProfit); const actionable = records.filter((record) => record.autoModeStatus !== "Skip"); const bestRace = actionable[0] || records[0]; const recommendedInvestment = actionable.reduce((total, record) => total + record.investmentAmount, 0); return { databaseName: source.databaseName || "autoBettingDatabase", phase: source.phase || "Phase12-1", bankroll, sourceConnections, records, summary: { todaysBestRaces: actionable.slice(0, 5), todaysBestROI: actionable.slice().sort((left, right) => right.expectedROI - left.expectedROI).slice(0, 5), todaysBestProfit: actionable.slice().sort((left, right) => right.expectedProfit - left.expectedProfit).slice(0, 5), recommendedInvestment, bankrollStatus: { bankroll, allocated: recommendedInvestment, remaining: bankroll - recommendedInvestment, allocationRate: Number(((recommendedInvestment / bankroll) * 100).toFixed(1)) }, bestRace } }; }
+  function setText(id, value) { const element = document.getElementById(id); if (element) element.textContent = value; }
+  function renderCards(id, records, metricField, formatter) { const element = document.getElementById(id); if (!element) return; element.innerHTML = records.map((record) => `<article><span>${record.racecourse} ${record.race}</span><strong>${formatter(record[metricField])}</strong><em>${record.bestBetType} / ${record.riskLevel}</em><small>${yenFormatter.format(record.investmentAmount)} investment</small></article>`).join(""); }
+  function renderTable(records) { const table = document.getElementById("phase121-auto-betting-database"); if (!table) return; table.innerHTML = records.map((record) => `<tr><td>${record.date}</td><td>${record.racecourse}</td><td>${record.race}</td><td>${record.raceScore}</td><td>${record.expectedROI}%</td><td>${yenFormatter.format(record.expectedProfit)}</td><td>${record.confidence}</td><td>${record.recommendedBet}</td><td>${record.bestBetType}</td><td>${record.win5}</td><td>${record.trifecta}</td><td>${record.exacta}</td><td>${record.quinella}</td><td>${yenFormatter.format(record.investmentAmount)}</td><td>${yenFormatter.format(record.expectedReturn)}</td><td>${record.autoModeStatus}</td></tr>`).join(""); }
+  function renderDashboard(report) { const best = report.summary.bestRace; const bankroll = report.summary.bankrollStatus; setText("phase121-widget-race", `${best.racecourse} ${best.race}`); setText("phase121-widget-bet-type", best.bestBetType); setText("phase121-widget-investment", yenFormatter.format(best.investmentAmount)); setText("phase121-widget-roi", `${best.expectedROI}%`); setText("phase121-widget-profit", yenFormatter.format(best.expectedProfit)); setText("phase121-widget-bankroll", `${yenFormatter.format(bankroll.remaining)} / ${bankroll.allocationRate}% allocated`); setText("phase121-connections", Object.keys(sourceConnections).join(" / ")); }
+  function renderPage(report) { renderDashboard(report); renderCards("phase121-best-races", report.summary.todaysBestRaces, "raceScore", (value) => `${value}`); renderCards("phase121-best-roi", report.summary.todaysBestROI, "expectedROI", (value) => `${value}%`); renderCards("phase121-best-profit", report.summary.todaysBestProfit, "expectedProfit", (value) => yenFormatter.format(value)); renderTable(report.records); }
+  async function loadDatabase() { if (typeof fetch !== "function") return fallbackDatabase; try { const response = await fetch("data/autoBettingDatabase.json", { cache: "no-store" }); if (!response.ok) throw new Error("autoBettingDatabase fetch failed"); return await response.json(); } catch (error) { return fallbackDatabase; } }
+  async function bootstrap() { const database = await loadDatabase(); const report = buildDashboard(database); renderPage(report); window.HashimotoPhase121AutoBettingReport = report; }
+  window.HashimotoPhase121AutoBettingEngine = { buildDashboard, calculateInvestment, calculateRiskLevel, chooseBestBetType, fallbackDatabase, sourceConnections };
   if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", bootstrap);
 })();

@@ -12,7 +12,7 @@ function createStorage() {
 
 const storage = createStorage();
 
-assert.equal(engine.VERSION, '2.7');
+assert.equal(engine.VERSION, '2.6');
 assert.deepEqual(engine.SOURCE_KEYS, [
   'integrated-os.json',
   'prediction-engine.json',
@@ -48,7 +48,7 @@ assert.equal(candidate.thirtyMillionLine, '監視', '3000万ラインAI');
 assert.equal(candidate.oneMillionLine, '監視', '100万ラインAI');
 
 engine.saveWin5History({ storage, candidate });
-assert.equal(storage.readJson(engine.STORAGE_KEYS.win5).version, '2.7', 'win5-dbへ保存する');
+assert.equal(storage.readJson(engine.STORAGE_KEYS.win5).version, '2.6', 'win5-dbへ保存する');
 assert.equal(storage.readJson(engine.STORAGE_KEYS.pattern).records[0].pattern, 'A固定+B本線+C狙い+D爆穴', 'win5-pattern-dbへ保存する');
 assert.equal(storage.readJson(engine.STORAGE_KEYS.history).records[0].selectedHorses.length, 5, 'win5-history-dbへ保存する');
 

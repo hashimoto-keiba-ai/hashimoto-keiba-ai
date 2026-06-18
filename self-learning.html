@@ -7,158 +7,49 @@
     <link rel="stylesheet" href="dashboard.css">
   </head>
   <body>
-    <div class="official-banner" aria-label="Phase10-4 banner">
-      <span>Phase10-4 Self Learning Engine</span>
-    </div>
-
+    <div class="official-banner" aria-label="Phase10-4 banner"><span>Phase10-4 Self Learning Engine</span></div>
     <header class="topbar">
       <div class="brand">
         <p class="eyebrow">Hashimoto Keiba AI / Phase10-4</p>
         <h1>Self Learning Engine</h1>
         <strong class="version-display">Prediction vs Actual Learning Loop</strong>
-        <div class="system-meta">
-          <span>Error Classification</span>
-          <span>Weight Adjustment</span>
-          <span>Accuracy Trend</span>
-        </div>
+        <div class="system-meta"><span>Error Classification</span><span>Weight Adjustment</span><span>Accuracy Trend</span></div>
       </div>
-      <div class="top-actions" aria-label="Navigation">
-        <a class="button-link" href="index.html">Dashboard</a>
-      </div>
+      <div class="top-actions" aria-label="Navigation"><a class="button-link" href="index.html">Dashboard</a></div>
     </header>
-
     <main class="dashboard">
       <section class="status-strip" aria-label="Self learning widgets">
-        <article>
-          <span>Accuracy</span>
-          <strong id="phase104-widget-accuracy">0.0%</strong>
-          <em>Prediction vs Actual</em>
-        </article>
-        <article>
-          <span>Learning Score</span>
-          <strong id="phase104-widget-learning-score">0.0</strong>
-          <em>average</em>
-        </article>
-        <article>
-          <span>Improvement Score</span>
-          <strong id="phase104-widget-improvement-score">0.0</strong>
-          <em>priority signal</em>
-        </article>
-        <article>
-          <span>Confidence Adjustment</span>
-          <strong id="phase104-widget-confidence-adjustment">0.000</strong>
-          <em>auto tuning</em>
-        </article>
-        <article>
-          <span>ROI Impact</span>
-          <strong id="phase104-widget-roi-impact">0</strong>
-          <em>learning feedback</em>
-        </article>
+        <article><span>Accuracy</span><strong id="phase104-widget-accuracy">0.0%</strong><em>Prediction vs Actual</em></article>
+        <article><span>Learning Score</span><strong id="phase104-widget-learning-score">0.0</strong><em>average</em></article>
+        <article><span>Improvement Score</span><strong id="phase104-widget-improvement-score">0.0</strong><em>priority signal</em></article>
+        <article><span>Confidence Adjustment</span><strong id="phase104-widget-confidence-adjustment">0.000</strong><em>auto tuning</em></article>
+        <article><span>ROI Impact</span><strong id="phase104-widget-roi-impact">0</strong><em>learning feedback</em></article>
       </section>
-
       <section class="panel" aria-label="Learning summary">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Learning Dashboard</p>
-            <h2>Top Learning Items and Error Categories</h2>
-          </div>
-          <span class="pill">Prediction / Result / ROI</span>
-        </div>
+        <div class="section-heading"><div><p class="eyebrow">Learning Dashboard</p><h2>Top Learning Items and Error Categories</h2></div><span class="pill">Prediction / Result / ROI</span></div>
         <p class="data-footnote" id="phase104-connections">--</p>
         <div class="phase2-grid">
-          <section class="audit-block">
-            <div class="sub-heading">
-              <h3>Top Learning Items</h3>
-              <span>Improvement priority</span>
-            </div>
-            <div class="race-cards" id="phase104-top-learning-items"></div>
-          </section>
-          <section class="audit-block">
-            <div class="sub-heading">
-              <h3>Top Error Categories</h3>
-              <span>Pace to Track Condition</span>
-            </div>
-            <div class="race-cards" id="phase104-top-error-categories"></div>
-          </section>
+          <section class="audit-block"><div class="sub-heading"><h3>Top Learning Items</h3><span>Improvement priority</span></div><div class="race-cards" id="phase104-top-learning-items"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>Top Error Categories</h3><span>Pace to Track Condition</span></div><div class="race-cards" id="phase104-top-error-categories"></div></section>
         </div>
       </section>
-
       <section class="panel" aria-label="Learning trends">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Trends</p>
-            <h2>Improvement / Accuracy / ROI Improvement</h2>
-          </div>
-          <span class="pill hot">Learning Curves</span>
-        </div>
+        <div class="section-heading"><div><p class="eyebrow">Trends</p><h2>Improvement / Accuracy / ROI Improvement</h2></div><span class="pill hot">Learning Curves</span></div>
         <div class="phase2-grid">
-          <section class="audit-block">
-            <div class="sub-heading">
-              <h3>Improvement Trend</h3>
-              <span>moving average</span>
-            </div>
-            <div class="race-cards" id="phase104-improvement-trend"></div>
-          </section>
-          <section class="audit-block">
-            <div class="sub-heading">
-              <h3>Accuracy Trend</h3>
-              <span>hit rate</span>
-            </div>
-            <div class="race-cards" id="phase104-accuracy-trend"></div>
-          </section>
-          <section class="audit-block">
-            <div class="sub-heading">
-              <h3>ROI Improvement Trend</h3>
-              <span>cumulative impact</span>
-            </div>
-            <div class="race-cards" id="phase104-roi-improvement-trend"></div>
-          </section>
+          <section class="audit-block"><div class="sub-heading"><h3>Improvement Trend</h3><span>moving average</span></div><div class="race-cards" id="phase104-improvement-trend"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>Accuracy Trend</h3><span>hit rate</span></div><div class="race-cards" id="phase104-accuracy-trend"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>ROI Improvement Trend</h3><span>cumulative impact</span></div><div class="race-cards" id="phase104-roi-improvement-trend"></div></section>
         </div>
       </section>
-
       <section class="panel" aria-label="Weight adjustments">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Automatic Adjustment</p>
-            <h2>AI Weight Tuning</h2>
-          </div>
-          <span class="pill">AI / Danger / Kami-Ana / WIN5 / Trifecta / ROI</span>
-        </div>
+        <div class="section-heading"><div><p class="eyebrow">Automatic Adjustment</p><h2>AI Weight Tuning</h2></div><span class="pill">AI / Danger / Kami-Ana / WIN5 / Trifecta / ROI</span></div>
         <div class="race-cards" id="phase104-weight-adjustments"></div>
       </section>
-
       <section class="panel" aria-label="learningDatabase">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">learningDatabase</p>
-            <h2>Phase10-4 Database</h2>
-          </div>
-          <span class="pill">Self Learning Records</span>
-        </div>
-        <div class="table-wrap">
-          <table class="audit-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Racecourse</th>
-                <th>Race</th>
-                <th>Prediction</th>
-                <th>Actual Result</th>
-                <th>Hit/Miss</th>
-                <th>Error Type</th>
-                <th>ROI Impact</th>
-                <th>Learning Score</th>
-                <th>Improvement Score</th>
-                <th>Confidence Adjustment</th>
-                <th>Learning Notes</th>
-              </tr>
-            </thead>
-            <tbody id="phase104-learning-database"></tbody>
-          </table>
-        </div>
+        <div class="section-heading"><div><p class="eyebrow">learningDatabase</p><h2>Phase10-4 Database</h2></div><span class="pill">Self Learning Records</span></div>
+        <div class="table-wrap"><table class="audit-table"><thead><tr><th>Date</th><th>Racecourse</th><th>Race</th><th>Prediction</th><th>Actual Result</th><th>Hit/Miss</th><th>Error Type</th><th>ROI Impact</th><th>Learning Score</th><th>Improvement Score</th><th>Confidence Adjustment</th><th>Learning Notes</th></tr></thead><tbody id="phase104-learning-database"></tbody></table></div>
       </section>
     </main>
-
     <script src="dashboard.js"></script>
     <script src="self-learning-phase104.js"></script>
   </body>

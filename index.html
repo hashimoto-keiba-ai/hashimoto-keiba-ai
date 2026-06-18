@@ -3,14 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<<<<<<< ours
-    <title>橋本競馬AI Version 1.0</title>
-    <link rel="icon" href="icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="icon.svg">
-    <link rel="manifest" href="manifest.json">
-=======
-    <title>橋本競馬AI Version 2.7</title>
->>>>>>> theirs
+    <title>橋本競馬AI Version 2.8</title>
     <link rel="stylesheet" href="dashboard.css">
   </head>
   <body>
@@ -22,7 +15,7 @@
       <div class="brand">
         <p class="eyebrow">Hashimoto Keiba AI / Official Release Console</p>
         <h1>橋本競馬AI</h1>
-        <strong id="version-display" class="version-display">橋本競馬AI Version 2.7</strong>
+        <strong id="version-display" class="version-display">橋本競馬AI Version 2.8</strong>
         <div class="system-meta">
           <span>Phase7-5</span>
           <span>正式リリース版</span>
@@ -30,13 +23,13 @@
         </div>
       </div>
       <div class="top-actions" aria-label="リリース操作">
-        <a class="button-link" href="private-local.html">Private起動</a>
         <button id="run-release-audit" type="button">監査更新</button>
         <button id="export-release-audit" type="button">監査JSON</button>
         <button id="export-official-release" type="button">正式版JSON</button>
       </div>
     </header>
 
+    <a class="button-link private-home-link" href="private-local.html">Private Home</a>
     <main class="dashboard">
       <section class="status-strip" aria-label="正式版ステータス">
         <article>
@@ -46,12 +39,12 @@
         </article>
         <article>
           <span>Version</span>
-          <strong id="stat-version">Version 2.7</strong>
+          <strong id="stat-version">Version 2.8</strong>
           <em>正式リリース版</em>
         </article>
         <article>
           <span>リリーススコア</span>
-          <strong id="stat-release-score">112</strong>
+          <strong id="stat-release-score">111</strong>
           <em>0〜100</em>
         </article>
         <article>
@@ -69,23 +62,13 @@
           <strong id="phase95-widget-hit">0.0%</strong>
           <em id="phase95-widget-return">0円</em>
         </article>
-        <article>
-          <span>Today's Best Trifecta</span>
-          <strong id="phase101-widget-title">--</strong>
-          <em id="phase101-widget-mode">--</em>
-        </article>
-        <article>
-          <span>Trifecta Return / Hit</span>
-          <strong id="phase101-widget-return">0円</strong>
-          <em id="phase101-widget-hit">0.0%</em>
-        </article>
       </section>
 
 
       <section class="panel console-menu-panel" aria-label="競馬場選択メニュー">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Version 2.7 Console Selector</p>
+            <p class="eyebrow">Version 2.8 Console Selector</p>
             <h2>競馬場選択メニュー</h2>
           </div>
           <span class="pill">Official Release v2.8</span>
@@ -332,7 +315,7 @@
         <div class="release-info-grid">
           <article>
             <span>Version</span>
-            <strong id="release-version">2.7</strong>
+            <strong id="release-version">2.6</strong>
           </article>
           <article>
             <span>Release Date</span>
@@ -442,10 +425,10 @@
       <section class="panel automatic-learning-panel" aria-label="自動学習AI">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / Automatic Learning AI</p>
+            <p class="eyebrow">Official Release v2.8 / Automatic Learning AI</p>
             <h2>自動学習AI</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="learning-actions" aria-label="自動学習操作">
           <button id="run-auto-learning" type="button">自動学習実行</button>
@@ -473,7 +456,7 @@
             <ul class="learning-chip-list" id="automatic-learning-items"></ul>
           </section>
           <section class="audit-block">
-            <div class="sub-heading"><h3>AI進化履歴</h3><span>v1.0 → v2.7</span></div>
+            <div class="sub-heading"><h3>AI進化履歴</h3><span>v1.0 → v2.6</span></div>
             <ol class="learning-flow-list" id="ai-evolution-history"></ol>
           </section>
         </div>
@@ -484,10 +467,10 @@
       <section class="panel prediction-generation-panel" aria-label="予想生成AI">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / Prediction Generation AI</p>
+            <p class="eyebrow">Official Release v2.8 / Prediction Generation AI</p>
             <h2>予想生成AI</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="prediction-actions" aria-label="予想生成操作">
           <button id="generate-prediction" type="button">予想生成</button>
@@ -530,10 +513,10 @@
       <section class="panel integrated-os-panel" aria-label="橋本競馬AI統合OS">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / Hashimoto Keiba AI Integrated OS</p>
+            <p class="eyebrow">Official Release v2.8 / Hashimoto Keiba AI Integrated OS</p>
             <h2>橋本競馬AI統合OS</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="integrated-actions" aria-label="統合OS操作">
           <button id="run-integrated-os" type="button">統合OS実行</button>
@@ -553,7 +536,7 @@
           <section class="audit-block"><div class="sub-heading"><h3>全競馬場統合</h3><span>Common OS</span></div><ul class="integrated-chip-list" id="integrated-course-list"></ul></section>
           <section class="audit-block"><div class="sub-heading"><h3>統合管理画面</h3><span>Analysis</span></div><ul class="integrated-chip-list" id="integrated-management-list"></ul></section>
           <section class="audit-block"><div class="sub-heading"><h3>統合AIエンジン</h3><span>Final Prediction</span></div><ol class="integrated-flow-list" id="integrated-flow-list"></ol></section>
-          <section class="audit-block"><div class="sub-heading"><h3>自己進化履歴</h3><span>v1.0 → v2.7</span></div><ol class="integrated-flow-list" id="integrated-evolution-history"></ol></section>
+          <section class="audit-block"><div class="sub-heading"><h3>自己進化履歴</h3><span>v1.0 → v2.6</span></div><ol class="integrated-flow-list" id="integrated-evolution-history"></ol></section>
         </div>
         <div class="phase2-grid integrated-ranking-grid">
           <section class="audit-block"><div class="sub-heading"><h3>競馬場別回収率ランキング</h3><span>ROI</span></div><ol class="integrated-flow-list" id="integrated-course-ranking"></ol></section>
@@ -567,10 +550,10 @@
       <section class="panel ai-secretary-panel" aria-label="AI秘書システム">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / AI Secretary System</p>
+            <p class="eyebrow">Official Release v2.8 / AI Secretary System</p>
             <h2>AI秘書システム</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="secretary-actions" aria-label="AI秘書操作">
           <button id="run-ai-secretary" type="button">AI秘書実行</button>
@@ -600,10 +583,10 @@
       <section class="panel profit-explorer-panel" aria-label="万馬券探索AI">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / Profit Explorer AI</p>
+            <p class="eyebrow">Official Release v2.8 / Profit Explorer AI</p>
             <h2>万馬券探索AI</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="profit-actions" aria-label="万馬券探索操作">
           <button id="run-profit-explorer" type="button">万馬券探索AI実行</button>
@@ -632,10 +615,10 @@
       <section class="panel automated-win5-panel" aria-label="WIN5完全自動化AI">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / Automated WIN5 AI</p>
+            <p class="eyebrow">Official Release v2.8 / Automated WIN5 AI</p>
             <h2>WIN5完全自動化AI</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="auto-win5-actions" aria-label="WIN5完全自動化AI操作">
           <button id="generate-auto-win5" type="button">WIN5生成</button>
@@ -664,10 +647,10 @@
       <section class="panel bankroll-management-panel" aria-label="回収率管理AI">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / Bankroll & Return Management AI</p>
+            <p class="eyebrow">Official Release v2.8 / Bankroll & Return Management AI</p>
             <h2>回収率管理AI</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="bankroll-actions" aria-label="回収率管理AI操作">
           <button id="run-bankroll-ai" type="button">回収率管理AI実行</button>
@@ -696,10 +679,10 @@
       <section class="panel research-lab-panel" aria-label="AI研究所">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / AI Research Lab</p>
+            <p class="eyebrow">Official Release v2.8 / AI Research Lab</p>
             <h2>AI研究所</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="research-lab-actions" aria-label="AI研究所操作">
           <button id="run-research-lab" type="button">AI研究所実行</button>
@@ -730,10 +713,10 @@
       <section class="panel self-evolution-panel" aria-label="自己進化エンジン">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Official Release v2.7 / Self Evolution Engine</p>
+            <p class="eyebrow">Official Release v2.8 / Self Evolution Engine</p>
             <h2>自己進化エンジン</h2>
           </div>
-          <span class="pill hot">Release Score 112</span>
+          <span class="pill hot">Release Score 111</span>
         </div>
         <div class="self-evolution-actions" aria-label="自己進化エンジン操作">
           <button id="run-self-evolution" type="button">自己進化実行</button>
@@ -753,35 +736,6 @@
           <article><span>回収率改善値</span><strong id="self-evolution-return">0.0%</strong></article>
           <article><span>競馬場OS更新数</span><strong id="self-evolution-course">0</strong></article>
           <article><span>WIN5構造更新数</span><strong id="self-evolution-win5">0</strong></article>
-        </div>
-      </section>
-
-
-      <section class="panel auto-review-panel" aria-label="全自動検証AI">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Official Release v2.7 / Automatic Review AI</p>
-            <h2>全自動検証AI</h2>
-          </div>
-          <span class="pill hot">Release Score 112</span>
-        </div>
-        <div class="auto-review-actions" aria-label="全自動検証AI操作">
-          <button id="run-auto-review" type="button">全自動検証実行</button>
-          <button id="show-result-compare" type="button">結果照合を見る</button>
-          <button id="show-review-failure" type="button">失敗原因を見る</button>
-          <button id="show-review-success" type="button">成功要因を見る</button>
-          <button id="show-auto-update" type="button">自動アップデートを見る</button>
-          <button id="save-auto-review" type="button">検証履歴保存</button>
-        </div>
-        <p class="data-footnote" id="auto-review-status">予想・結果・自己進化DBを照合し、検証文とアップデート文を自動生成します。</p>
-        <div class="phase2-kpis auto-review-grid">
-          <article><span>本日の検証数</span><strong id="auto-review-today">0</strong></article>
-          <article><span>的中検証数</span><strong id="auto-review-hit">0</strong></article>
-          <article><span>不的中検証数</span><strong id="auto-review-miss">0</strong></article>
-          <article><span>自動更新数</span><strong id="auto-review-update">0</strong></article>
-          <article><span>生成ルール数</span><strong id="auto-review-rules">0</strong></article>
-          <article><span>回収率改善値</span><strong id="auto-review-return">0.0%</strong></article>
-          <article><span>AI信頼度改善値</span><strong id="auto-review-confidence">0</strong></article>
         </div>
       </section>
 
@@ -1356,10 +1310,10 @@
     <script src="bankroll-page.js"></script>
     <script src="research-lab-page.js"></script>
     <script src="self-evolution-page.js"></script>
-    <script src="auto-review-page.js"></script>
+    <script src="win5-phase95.js"></script>
     <script src="global-network-page.js"></script>
     <script src="final-system-page.js"></script>
-    <script src="win5-phase95.js"></script>
-    <script src="trifecta-phase101.js"></script>
   </body>
 </html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>橋本競馬AI Version 1.6</title><link rel="stylesheet" href="dashboard.css"><style>.ai-performance-grid,.ranking-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:16px 18px}.ai-performance-grid article,.ranking-grid article{display:grid;gap:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:14px}.ai-performance-grid strong,.ranking-grid h3{color:var(--gold-2)}.ai-evolution-list{display:grid;gap:10px;margin:0;padding:16px 18px 18px 42px;font-weight:800}.ai-evolution-list li::marker,.ranking-grid li::marker{color:var(--gold-2)}</style></head>
+<body><div class="official-banner"><span id="official-banner-title">橋本競馬AI Official Release v1.6</span></div><header class="topbar"><div class="brand"><p class="eyebrow">Hashimoto Keiba AI / Integrated Course Database</p><h1>橋本競馬AI Version 1.6</h1><strong id="version-display" class="version-display">橋本競馬AI Version 1.6</strong><div class="system-meta"><span>Official Release</span><span>Official Release v1.6</span><span id="release-theme">全競馬場統合AI</span></div></div></header><main class="dashboard official-home"><section class="status-strip"><article><span>Version</span><strong id="stat-version">Version 1.6</strong><em>Official Release</em></article><article><span>Release Score</span><strong id="stat-release-score">101</strong><em>Integrated AI</em></article><article><span>Release Status</span><strong id="stat-release-judgment">Official Release v1.6</strong><em>Official Release v1.6</em></article></section><section class="panel console-menu-panel"><div class="section-heading"><div><p class="eyebrow">Version 1.6 Console Selector</p><h2>競馬場選択メニュー</h2></div><span class="pill">Official Release v1.6</span></div><div class="console-menu-grid"><a class="console-menu-button" href="tokyo-console.html">東京版</a><a class="console-menu-button" href="nakayama-console.html">中山版</a><a class="console-menu-button" href="hanshin-console.html">阪神版</a><a class="console-menu-button" href="chukyo-console.html">中京版</a><a class="console-menu-button" href="kyoto-console.html">京都版</a><a class="console-menu-button" href="niigata-console.html">新潟版</a><a class="console-menu-button" href="fukushima-console.html">福島版</a><a class="console-menu-button" href="kokura-console.html">小倉版</a><a class="console-menu-button" href="hakodate-console.html">函館版</a><a class="console-menu-button" href="sapporo-console.html">札幌版</a><a class="console-menu-button win5" href="win5-console.html">WIN5 AI</a></div></section><section class="panel"><div class="section-heading"><div><p class="eyebrow">Integrated Performance</p><h2>AI成績管理カード</h2></div><span class="pill">course-db / distance-db</span></div><div id="ai-performance-cards" class="ai-performance-grid"></div></section><section class="panel"><div class="section-heading"><div><p class="eyebrow">Ranking Intelligence</p><h2>好調ランキング</h2></div><span class="pill">history-db連携</span></div><div id="ranking-panels" class="ranking-grid"></div></section><section class="panel"><div class="section-heading"><div><p class="eyebrow">Evolution Timeline</p><h2>AI進化履歴</h2></div><span class="pill">v1.0 - v1.6</span></div><ol id="ai-evolution-history" class="ai-evolution-list"></ol></section></main><script src="dashboard.js"></script></body></html>

@@ -25,11 +25,11 @@ storage.setItem('integrated-os.json', JSON.stringify({ records: [{
   axisHorse: '軸馬',
   trifectaPattern: 'A→B→C',
   returnRate: 360,
-  profitScore: 112,
+  profitScore: 111,
   memo: '統合OSから万馬券探索'
 }] }));
 
-assert.equal(engine.VERSION, '2.7', '万馬券探索AIのバージョンが2.7である');
+assert.equal(engine.VERSION, '2.6', '万馬券探索AIのバージョンが2.6である');
 assert.deepEqual(engine.SOURCE_KEYS, ['integrated-os.json', 'prediction-engine.json', 'learning-engine.json', 'ai-secretary-db.json', 'history-db.json', 'return-ai-db.json'], '指定DBと連携する');
 const candidate = engine.buildProfitCandidate({ storage });
 assert.equal(engine.judgeDangerFavorite(candidate), '危険1人気', '危険1人気取得');
@@ -45,7 +45,7 @@ assert.equal(trifecta.pattern, 'A→B→C', '三連単パターン分析');
 assert.equal(engine.calculateExpectedReturn(candidate), 324, '期待回収率計算');
 
 engine.saveLearningHistory({ storage, candidate });
-assert.equal(storage.readJson(engine.STORAGE_KEYS.profit).version, '2.7', 'profit-dbへ保存する');
+assert.equal(storage.readJson(engine.STORAGE_KEYS.profit).version, '2.6', 'profit-dbへ保存する');
 assert.equal(storage.readJson(engine.STORAGE_KEYS.darkhorse).records[0].horse, '神穴馬', 'darkhorse-dbへ保存する');
 assert.equal(storage.readJson(engine.STORAGE_KEYS.popularZone).records[0].Czone, 'C', 'popular-zone-dbへ保存する');
 assert.equal(storage.readJson(engine.STORAGE_KEYS.trifectaPattern).records[0].pattern, 'A→B→C', 'trifecta-pattern-dbへ保存する');

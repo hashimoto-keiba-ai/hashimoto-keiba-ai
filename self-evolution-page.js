@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = "2.7";
+  const VERSION = "2.6";
   const STORAGE_KEYS = {
     evolution: "self-evolution-db.json",
     rules: "evolution-rule-db.json",

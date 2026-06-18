@@ -1,124 +1,32 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Phase11-2 God Race Detection AI</title>
-    <link rel="stylesheet" href="dashboard.css">
-  </head>
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Phase11-2 God Race Detection AI</title><link rel="stylesheet" href="dashboard.css"></head>
   <body>
-    <div class="official-banner" aria-label="Phase11-2 banner">
-      <span>Phase11-2 God Race Detection AI</span>
-    </div>
-
-    <header class="topbar">
-      <div class="brand">
-        <p class="eyebrow">Hashimoto Keiba AI / Phase11-2</p>
-        <h1>God Race Detection AI</h1>
-        <strong class="version-display">Race Score 0-100</strong>
-        <div class="system-meta">
-          <span>God Race</span>
-          <span>Strong Race</span>
-          <span>Good Race</span>
-          <span>Skip</span>
-        </div>
-      </div>
-      <div class="top-actions" aria-label="Navigation">
-        <a class="button-link" href="index.html">Dashboard</a>
-      </div>
-    </header>
-
+    <div class="official-banner" aria-label="Phase11-2 banner"><span>Phase11-2 God Race Detection AI</span></div>
+    <header class="topbar"><div class="brand"><p class="eyebrow">Hashimoto Keiba AI / Phase11-2</p><h1>God Race Detection AI</h1><strong class="version-display">Race Score 0-100</strong><div class="system-meta"><span>God Race</span><span>Strong Race</span><span>Good Race</span><span>Skip</span></div></div><div class="top-actions" aria-label="Navigation"><a class="button-link" href="index.html">Dashboard</a></div></header>
     <main class="dashboard">
       <section class="status-strip" aria-label="God race widget">
-        <article>
-          <span>Top God Race Candidate</span>
-          <strong id="phase112-widget-race">--</strong>
-          <em id="phase112-widget-class">--</em>
-        </article>
-        <article>
-          <span>Race Score</span>
-          <strong id="phase112-widget-score">0</strong>
-          <em>0-100</em>
-        </article>
-        <article>
-          <span>Expected ROI</span>
-          <strong id="phase112-widget-roi">0.0%</strong>
-          <em id="phase112-widget-profit">0</em>
-        </article>
-        <article>
-          <span>God Race Count</span>
-          <strong id="phase112-widget-count">0</strong>
-          <em>today</em>
-        </article>
+        <article><span>Top God Race Candidate</span><strong id="phase112-widget-race">--</strong><em id="phase112-widget-class">--</em></article>
+        <article><span>Race Score</span><strong id="phase112-widget-score">0</strong><em>0-100</em></article>
+        <article><span>Expected ROI</span><strong id="phase112-widget-roi">0.0%</strong><em id="phase112-widget-profit">0</em></article>
+        <article><span>God Race Count</span><strong id="phase112-widget-count">0</strong><em>today</em></article>
       </section>
-
       <section class="panel" aria-label="God race top lists">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Detection Results</p>
-            <h2>God Race Opportunities</h2>
-          </div>
-          <span class="pill">Prediction / Result / AI / WIN5 / Trifecta / ROI / Simulator</span>
-        </div>
+        <div class="section-heading"><div><p class="eyebrow">Detection Results</p><h2>God Race Opportunities</h2></div><span class="pill">Prediction / Result / AI / WIN5 / Trifecta / ROI / Simulator</span></div>
         <p class="data-footnote" id="phase112-connections">--</p>
         <div class="phase2-grid">
-          <section class="audit-block">
-            <div class="sub-heading"><h3>Top 10 God Races</h3><span>Race Score</span></div>
-            <div class="race-cards" id="phase112-top-god-races"></div>
-          </section>
-          <section class="audit-block">
-            <div class="sub-heading"><h3>Top Expected ROI</h3><span>ROI</span></div>
-            <div class="race-cards" id="phase112-top-roi"></div>
-          </section>
-          <section class="audit-block">
-            <div class="sub-heading"><h3>Top Expected Profit</h3><span>Profit</span></div>
-            <div class="race-cards" id="phase112-top-profit"></div>
-          </section>
-          <section class="audit-block">
-            <div class="sub-heading"><h3>Top WIN5 Opportunities</h3><span>WIN5 Value</span></div>
-            <div class="race-cards" id="phase112-top-win5"></div>
-          </section>
-          <section class="audit-block">
-            <div class="sub-heading"><h3>Top Trifecta Opportunities</h3><span>Trifecta Value</span></div>
-            <div class="race-cards" id="phase112-top-trifecta"></div>
-          </section>
+          <section class="audit-block"><div class="sub-heading"><h3>Top 10 God Races</h3><span>Race Score</span></div><div class="race-cards" id="phase112-top-god-races"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>Top Expected ROI</h3><span>ROI</span></div><div class="race-cards" id="phase112-top-roi"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>Top Expected Profit</h3><span>Profit</span></div><div class="race-cards" id="phase112-top-profit"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>Top WIN5 Opportunities</h3><span>WIN5 Value</span></div><div class="race-cards" id="phase112-top-win5"></div></section>
+          <section class="audit-block"><div class="sub-heading"><h3>Top Trifecta Opportunities</h3><span>Trifecta Value</span></div><div class="race-cards" id="phase112-top-trifecta"></div></section>
         </div>
       </section>
-
       <section class="panel" aria-label="godRaceDatabase">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">godRaceDatabase</p>
-            <h2>Phase11-2 Database</h2>
-          </div>
-          <span class="pill hot">God Race Flag</span>
-        </div>
-        <div class="table-wrap">
-          <table class="audit-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Racecourse</th>
-                <th>Race</th>
-                <th>Race Score</th>
-                <th>Expected ROI</th>
-                <th>Simulation Confidence</th>
-                <th>AI Index Confidence</th>
-                <th>Danger Popular Risk</th>
-                <th>Kami-Ana Potential</th>
-                <th>WIN5 Value</th>
-                <th>Trifecta Value</th>
-                <th>Expected Profit</th>
-                <th>God Race Flag</th>
-              </tr>
-            </thead>
-            <tbody id="phase112-god-race-database"></tbody>
-          </table>
-        </div>
+        <div class="section-heading"><div><p class="eyebrow">godRaceDatabase</p><h2>Phase11-2 Database</h2></div><span class="pill hot">God Race Flag</span></div>
+        <div class="table-wrap"><table class="audit-table"><thead><tr><th>Date</th><th>Racecourse</th><th>Race</th><th>Race Score</th><th>Expected ROI</th><th>Simulation Confidence</th><th>AI Index Confidence</th><th>Danger Popular Risk</th><th>Kami-Ana Potential</th><th>WIN5 Value</th><th>Trifecta Value</th><th>Expected Profit</th><th>God Race Flag</th></tr></thead><tbody id="phase112-god-race-database"></tbody></table></div>
       </section>
     </main>
-
-    <script src="dashboard.js"></script>
-    <script src="god-race-phase112.js"></script>
+    <script src="dashboard.js"></script><script src="god-race-phase112.js"></script>
   </body>
 </html>

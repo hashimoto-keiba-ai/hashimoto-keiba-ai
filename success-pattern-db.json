@@ -3,6 +3,15 @@
   "version": "2.7",
   "theme": "自己進化エンジン",
   "storageKey": "success-pattern-db.json",
-  "requiredFields": ["date", "course", "race", "successfulPrediction", "result", "successPattern", "learnedRule", "memo"],
+  "requiredFields": [
+    "date",
+    "course",
+    "race",
+    "successfulPrediction",
+    "result",
+    "successPattern",
+    "learnedRule",
+    "memo"
+  ],
   "records": []
 }

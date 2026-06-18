@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = "2.7";
+  const VERSION = "2.6";
   const STORAGE_KEY = "integrated-os.json";
   const COURSES = ["東京", "中山", "阪神", "京都", "中京", "新潟", "福島", "小倉", "函館", "札幌", "WIN5"];
   const FLOW_STEPS = [
@@ -32,8 +32,7 @@
     "v2.3 WIN5完全自動化AI",
     "v2.4 回収率管理AI",
     "v2.5 AI研究所",
-    "v2.6 自己進化エンジン",
-    "v2.7 全自動検証AI"
+    "v2.6 自己進化エンジン"
   ];
   const DEFAULT_RECORD = Object.freeze({
     date: "2026-06-14",
@@ -53,7 +52,7 @@
     trifectaPattern: "A→B→C",
     win5Pattern: "固定A",
     confidence: 94,
-    aiScore: 112,
+    aiScore: 111,
     memo: "全競馬場共通OSで最終予想を統合管理"
   });
 

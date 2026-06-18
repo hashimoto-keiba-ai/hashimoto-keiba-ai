@@ -3,6 +3,18 @@
   "version": "2.7",
   "theme": "AI研究所",
   "storageKey": "course-research-db.json",
-  "requiredFields": ["course", "bestDistance", "bestCondition", "bestPace", "bestRunningStyle", "bestPopularZone", "bestTrifectaPattern", "bestJockeyType", "bestTrainerType", "returnRate", "memo"],
+  "requiredFields": [
+    "course",
+    "bestDistance",
+    "bestCondition",
+    "bestPace",
+    "bestRunningStyle",
+    "bestPopularZone",
+    "bestTrifectaPattern",
+    "bestJockeyType",
+    "bestTrainerType",
+    "returnRate",
+    "memo"
+  ],
   "records": []
 }

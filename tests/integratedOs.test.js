@@ -20,26 +20,26 @@ const flow = engine.buildIntegratedFlow({
   learning: '統合学習',
   returnRate: 210,
   confidence: 96,
-  aiScore: 112,
+  aiScore: 111,
   jockey: '統合騎手A',
   trainer: '統合調教師B',
 });
 
-assert.equal(engine.VERSION, '2.7', '統合OSのバージョンが2.7である');
+assert.equal(engine.VERSION, '2.6', '統合OSのバージョンが2.6である');
 assert.deepEqual(engine.COURSES, ['東京', '中山', '阪神', '京都', '中京', '新潟', '福島', '小倉', '函館', '札幌', 'WIN5'], '全競馬場とWIN5を共通OSで管理する');
 assert.deepEqual(engine.MANAGEMENT_ITEMS, ['競馬場切替', '距離別分析', 'コース別分析', '人気ゾーン分析', '騎手分析', '調教師分析', '三連単分析', 'WIN5分析'], '統合管理画面項目を保持する');
 assert.deepEqual(engine.FLOW_STEPS, ['history-db', 'learning-engine', 'prediction-engine', 'course-db', 'distance-db', 'profit-db', 'return-ai-db', 'integrated-os', '最終予想'], '統合AIエンジンフローを保持する');
-assert.ok(engine.EVOLUTION_HISTORY.includes('v2.7 全自動検証AI'), '自己進化履歴にv2.7を含める');
+assert.ok(engine.EVOLUTION_HISTORY.includes('v2.6 自己進化エンジン'), '自己進化履歴にv2.6を含める');
 
 const requiredFields = ['date', 'course', 'distance', 'condition', 'prediction', 'result', 'review', 'update', 'learning', 'profit', 'returnRate', 'dangerHorse', 'darkHorse', 'axisHorse', 'trifectaPattern', 'win5Pattern', 'confidence', 'aiScore', 'memo'];
 requiredFields.forEach((field) => assert.ok(Object.hasOwn(flow.record, field), `${field}をintegrated-os recordに保存する`));
 
 engine.saveIntegratedRecord({ storage, record: flow.record });
 const saved = storage.readJson(engine.STORAGE_KEY);
-assert.equal(saved.version, '2.7', 'integrated-os.jsonへv2.7として保存する');
+assert.equal(saved.version, '2.6', 'integrated-os.jsonへv2.6として保存する');
 assert.equal(saved.records.length, 1, 'integrated-os.jsonへ統合OS結果を保存する');
 
-storage.setItem('learning-engine.json', JSON.stringify({ records: [{ returnRate: 150, afterScore: 112, dangerHorse: '危険', darkHorse: '穴', trifectaPattern: 'A→B→C', win5Pattern: '固定A' }] }));
+storage.setItem('learning-engine.json', JSON.stringify({ records: [{ returnRate: 150, afterScore: 111, dangerHorse: '危険', darkHorse: '穴', trifectaPattern: 'A→B→C', win5Pattern: '固定A' }] }));
 storage.setItem('prediction-engine.json', JSON.stringify({ records: [{ returnRate: 180, confidence: 94, dangerHorse: '危険', darkHorse: '穴', trifectaPattern: 'B→C→A', win5Pattern: '狙いC' }] }));
 const status = engine.buildIntegratedStatus({ storage });
 assert.equal(status.totalLearning, 1, '総学習数を集計する');

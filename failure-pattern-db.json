@@ -3,6 +3,16 @@
   "version": "2.7",
   "theme": "自己進化エンジン",
   "storageKey": "failure-pattern-db.json",
-  "requiredFields": ["date", "course", "race", "failedPrediction", "actualResult", "failurePattern", "cause", "correctionRule", "memo"],
+  "requiredFields": [
+    "date",
+    "course",
+    "race",
+    "failedPrediction",
+    "actualResult",
+    "failurePattern",
+    "cause",
+    "correctionRule",
+    "memo"
+  ],
   "records": []
 }

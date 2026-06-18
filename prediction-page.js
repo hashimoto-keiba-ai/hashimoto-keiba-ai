@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = "2.7";
+  const VERSION = "2.6";
   const STORAGE_KEY = "prediction-engine.json";
   const SOURCE_KEYS = [
     "history-db.json",
@@ -38,7 +38,7 @@
     courseScore: 91,
     distanceScore: 86,
     profitScore: 93,
-    returnScore: 112,
+    returnScore: 111,
     dangerHorse: "過剰人気サンプル",
     darkHorse: "神穴サンプル",
     axisHorse: "本命サンプル"

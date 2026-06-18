@@ -3,6 +3,15 @@
   "version": "2.7",
   "theme": "WIN5完全自動化AI",
   "storageKey": "win5-pattern-db.json",
-  "requiredFields": ["pattern", "Afix", "Bmain", "Ctarget", "Dbomb", "hitCount", "returnRate", "memo"],
+  "requiredFields": [
+    "pattern",
+    "Afix",
+    "Bmain",
+    "Ctarget",
+    "Dbomb",
+    "hitCount",
+    "returnRate",
+    "memo"
+  ],
   "records": []
 }

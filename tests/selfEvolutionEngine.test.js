@@ -14,7 +14,7 @@ const storage = createStorage();
 const hit = engine.DEFAULT_CASES[0];
 const miss = engine.DEFAULT_CASES[1];
 
-assert.equal(engine.VERSION, '2.7', '自己進化エンジンのバージョンが2.7である');
+assert.equal(engine.VERSION, '2.6', '自己進化エンジンのバージョンが2.6である');
 assert.deepEqual(engine.SOURCE_KEYS, ['integrated-os.json', 'prediction-engine.json', 'learning-engine.json', 'research-lab-db.json', 'course-research-db.json', 'jockey-research-db.json', 'trainer-research-db.json', 'lap-research-db.json', 'profit-db.json', 'return-ai-db.json', 'win5-db.json', 'bankroll-db.json', 'history-db.json'], '指定DBと連携する');
 
 assert.equal(engine.learnHitPrediction(hit).successPattern, '東京芝1600成功', '当たり予想自動学習');
@@ -31,7 +31,7 @@ assert.equal(engine.selfUpdateAiScore(engine.DEFAULT_CASES), 12, 'AIスコア自
 
 const record = engine.saveSelfEvolutionRule({ storage });
 assert.equal(record.updateTarget, '三連単パターン', '自己進化ルール保存時に更新対象を保持する');
-assert.equal(storage.readJson(engine.STORAGE_KEYS.evolution).version, '2.7', 'self-evolution-dbへ保存する');
+assert.equal(storage.readJson(engine.STORAGE_KEYS.evolution).version, '2.6', 'self-evolution-dbへ保存する');
 assert.equal(storage.readJson(engine.STORAGE_KEYS.rules).records[0].category, '三連単パターン', 'evolution-rule-dbへ保存する');
 assert.equal(storage.readJson(engine.STORAGE_KEYS.successes).records[0].successPattern, '東京芝1600成功', 'success-pattern-dbへ保存する');
 assert.equal(storage.readJson(engine.STORAGE_KEYS.failures).records[0].failurePattern, '京都芝1200失敗', 'failure-pattern-dbへ保存する');

@@ -3,6 +3,17 @@
   "version": "2.7",
   "theme": "回収率管理AI",
   "storageKey": "bet-history-db.json",
-  "requiredFields": ["date", "course", "race", "betType", "betAmount", "payout", "profit", "hit", "odds", "memo"],
+  "requiredFields": [
+    "date",
+    "course",
+    "race",
+    "betType",
+    "betAmount",
+    "payout",
+    "profit",
+    "hit",
+    "odds",
+    "memo"
+  ],
   "records": []
 }

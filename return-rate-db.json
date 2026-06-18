@@ -3,6 +3,15 @@
   "version": "2.7",
   "theme": "回収率管理AI",
   "storageKey": "return-rate-db.json",
-  "requiredFields": ["date", "dailyReturnRate", "weeklyReturnRate", "monthlyReturnRate", "yearlyReturnRate", "trifectaReturnRate", "win5ReturnRate", "memo"],
+  "requiredFields": [
+    "date",
+    "dailyReturnRate",
+    "weeklyReturnRate",
+    "monthlyReturnRate",
+    "yearlyReturnRate",
+    "trifectaReturnRate",
+    "win5ReturnRate",
+    "memo"
+  ],
   "records": []
 }

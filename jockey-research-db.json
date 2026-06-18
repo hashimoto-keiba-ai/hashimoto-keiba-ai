@@ -3,6 +3,17 @@
   "version": "2.7",
   "theme": "AI研究所",
   "storageKey": "jockey-research-db.json",
-  "requiredFields": ["jockey", "course", "distance", "winRate", "placeRate", "showRate", "returnRate", "strongPattern", "weakPattern", "memo"],
+  "requiredFields": [
+    "jockey",
+    "course",
+    "distance",
+    "winRate",
+    "placeRate",
+    "showRate",
+    "returnRate",
+    "strongPattern",
+    "weakPattern",
+    "memo"
+  ],
   "records": []
 }

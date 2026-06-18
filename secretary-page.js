@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = "2.7";
+  const VERSION = "2.6";
   const STORAGE_KEY = "ai-secretary-db.json";
   const SOURCE_KEYS = ["integrated-os.json", "prediction-engine.json", "learning-engine.json", "return-ai-db.json", "history-db.json"];
   const QUESTIONS = ["東京11Rは？", "危険な1人気は？", "今日の神穴は？", "WIN5候補は？", "回収率の高い騎手は？"];

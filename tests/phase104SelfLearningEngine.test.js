@@ -4,14 +4,7 @@ const path = require("path");
 const vm = require("vm");
 
 const script = fs.readFileSync(path.join(__dirname, "..", "self-learning-phase104.js"), "utf8");
-const context = {
-  console,
-  window: {},
-  document: {
-    addEventListener() {}
-  }
-};
-
+const context = { console, window: {}, document: { addEventListener() {} } };
 vm.createContext(context);
 vm.runInContext(script, context);
 
@@ -36,32 +29,7 @@ assert.ok(errorRecord.errorCategories.includes("Pace"), "pace error should be cl
 assert.ok(errorRecord.errorCategories.includes("Position"), "position error should be classified");
 assert.ok(errorRecord.errorCategories.includes("Danger Horse"), "danger horse error should be classified");
 
-assert.strictEqual(
-  JSON.stringify(Object.keys(report.summary.weightAdjustments)),
-  JSON.stringify([
-    "aiIndexWeight",
-    "dangerPopularWeight",
-    "kamiAnaWeight",
-    "win5Weight",
-    "trifectaWeight",
-    "roiWeight"
-  ])
-);
-
-Object.values(report.summary.weightAdjustments).forEach((weight) => {
-  assert.ok(weight >= 1, "weight adjustment should not reduce below baseline in this learning batch");
-});
-
-assert.strictEqual(
-  JSON.stringify(Object.keys(report.sourceConnections)),
-  JSON.stringify([
-    "predictionDatabase",
-    "resultVerificationDatabase",
-    "aiIndexDatabase",
-    "win5Database",
-    "trifectaDatabase",
-    "roiDatabase"
-  ])
-);
-
+assert.strictEqual(JSON.stringify(Object.keys(report.summary.weightAdjustments)), JSON.stringify(["aiIndexWeight", "dangerPopularWeight", "kamiAnaWeight", "win5Weight", "trifectaWeight", "roiWeight"]));
+Object.values(report.summary.weightAdjustments).forEach((weight) => assert.ok(weight >= 1, "weight adjustment should not reduce below baseline in this learning batch"));
+assert.strictEqual(JSON.stringify(Object.keys(report.sourceConnections)), JSON.stringify(["predictionDatabase", "resultVerificationDatabase", "aiIndexDatabase", "win5Database", "trifectaDatabase", "roiDatabase"]));
 console.log("Phase10-4 self-learning engine test passed");

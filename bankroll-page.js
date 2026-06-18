@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = "2.7";
+  const VERSION = "2.6";
   const STORAGE_KEYS = {
     bankroll: "bankroll-db.json",
     betHistory: "bet-history-db.json",

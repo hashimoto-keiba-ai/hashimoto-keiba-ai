@@ -2,187 +2,23 @@
   const racecourseTargets = ["Tokyo", "Nakayama", "Hanshin", "Kyoto", "Chukyo", "Niigata", "Fukushima", "Kokura", "Hakodate", "Sapporo"];
   const migrationTools = ["Racecourse Folder Import", "WIN5 Folder Import"];
   const targetDatabases = ["Prediction Database", "Result Database", "OS Update Database", "AI Index Database", "WIN5 Database"];
-  const fallbackDatabase = {
-    databaseName: "dataMigrationDatabase",
-    phase: "Phase13-2",
-    records: [
-      { migrationDate: "2026-06-06", tool: "Racecourse Folder Import", target: "Tokyo", folderPath: "Tokyo", markdownFiles: 3, jsonFiles: 1, csvFiles: 1, fileCount: 5, recordCount: 42, importStatus: "Ready", targetDatabases: ["Prediction Database", "Result Database", "AI Index Database"], importedRecords: 0, remainingFiles: 5, notes: "Tokyo racecourse folder is ready for preview and migration." },
-      { migrationDate: "2026-06-06", tool: "WIN5 Folder Import", target: "WIN5", folderPath: "WIN5", markdownFiles: 4, jsonFiles: 2, csvFiles: 0, fileCount: 6, recordCount: 28, importStatus: "Ready", targetDatabases: ["WIN5 Database", "Prediction Database", "Result Database"], importedRecords: 0, remainingFiles: 6, notes: "WIN5 folders and tickets are ready for migration." }
-    ]
-  };
-
-  function detectFileType(fileName) {
-    const lower = String(fileName || "").toLowerCase();
-    if (lower.endsWith(".md") || lower.endsWith(".markdown")) return "markdown";
-    if (lower.endsWith(".json")) return "json";
-    if (lower.endsWith(".csv")) return "csv";
-    return "unknown";
-  }
-
-  function estimateRecordCount(file) {
-    if (Number.isFinite(Number(file.recordCount))) return Number(file.recordCount);
-    const content = String(file.content || "");
-    if (!content) return 1;
-    if (detectFileType(file.name) === "csv") return Math.max(0, content.trim().split(/\r?\n/).length - 1);
-    if (detectFileType(file.name) === "json") {
-      try {
-        const parsed = JSON.parse(content);
-        if (Array.isArray(parsed)) return parsed.length;
-        if (Array.isArray(parsed.records)) return parsed.records.length;
-      } catch (error) {
-        return 0;
-      }
-    }
-    return content.split(/\r?\n/).filter((line) => line.trim()).length;
-  }
-
-  function targetDatabaseFor(tool, target, fileType) {
-    if (target === "WIN5" || tool === "WIN5 Folder Import") return "WIN5 Database";
-    if (fileType === "markdown") return "Prediction Database";
-    if (fileType === "json") return "Result Database";
-    if (fileType === "csv") return "AI Index Database";
-    return "OS Update Database";
-  }
-
-  function scanFolder({ tool, target, folderPath, files }) {
-    const safeFiles = files || [];
-    const counts = safeFiles.reduce(
-      (summary, file) => {
-        const type = detectFileType(file.name);
-        if (type === "markdown") summary.markdownFiles += 1;
-        if (type === "json") summary.jsonFiles += 1;
-        if (type === "csv") summary.csvFiles += 1;
-        if (type !== "unknown") {
-          summary.fileCount += 1;
-          summary.recordCount += estimateRecordCount(file);
-          summary.targetDatabases.add(targetDatabaseFor(tool, target, type));
-        }
-        return summary;
-      },
-      { markdownFiles: 0, jsonFiles: 0, csvFiles: 0, fileCount: 0, recordCount: 0, targetDatabases: new Set() }
-    );
-    return {
-      migrationDate: new Date().toISOString().slice(0, 10),
-      tool,
-      target,
-      folderPath,
-      markdownFiles: counts.markdownFiles,
-      jsonFiles: counts.jsonFiles,
-      csvFiles: counts.csvFiles,
-      fileCount: counts.fileCount,
-      recordCount: counts.recordCount,
-      importStatus: counts.fileCount ? "Ready" : "No Files",
-      targetDatabases: [...counts.targetDatabases],
-      importedRecords: 0,
-      remainingFiles: counts.fileCount,
-      notes: counts.fileCount ? "Folder scan complete. Ready for migration preview." : "No supported files were detected."
-    };
-  }
-
-  function createMigrationReport(records) {
-    const migrations = records || [];
-    const fileCount = migrations.reduce((total, record) => total + Number(record.fileCount || 0), 0);
-    const recordCount = migrations.reduce((total, record) => total + Number(record.recordCount || 0), 0);
-    const importedRecords = migrations.reduce((total, record) => total + Number(record.importedRecords || 0), 0);
-    const remainingFiles = migrations.reduce((total, record) => total + Number(record.remainingFiles || 0), 0);
-    return {
-      migrationStatus: remainingFiles > 0 ? "Ready" : "Complete",
-      fileCount,
-      recordCount,
-      importedRecords,
-      remainingFiles,
-      targetDatabases: [...new Set(migrations.flatMap((record) => record.targetDatabases || []))]
-    };
-  }
-
-  function migrateRecord(record) {
-    return {
-      ...record,
-      importStatus: record.fileCount ? "Migrated" : "No Files",
-      importedRecords: Number(record.recordCount || 0),
-      remainingFiles: 0
-    };
-  }
-
-  function buildDashboard(database) {
-    const source = database || fallbackDatabase;
-    const records = source.records || [];
-    const report = createMigrationReport(records);
-    return {
-      databaseName: source.databaseName || "dataMigrationDatabase",
-      phase: source.phase || "Phase13-2",
-      migrationTools,
-      racecourseTargets,
-      targetDatabases,
-      records,
-      report,
-      widget: {
-        migrationStatus: report.migrationStatus,
-        importedRecords: report.importedRecords,
-        remainingFiles: report.remainingFiles
-      }
-    };
-  }
-
-  function setText(id, value) {
-    const element = document.getElementById(id);
-    if (element) element.textContent = value;
-  }
-
-  function renderCards(id, items, renderer) {
-    const element = document.getElementById(id);
-    if (!element) return;
-    element.innerHTML = items.map(renderer).join("");
-  }
-
-  function renderTable(records) {
-    const table = document.getElementById("phase132-migration-database");
-    if (!table) return;
-    table.innerHTML = records.map((record) => `<tr><td>${record.migrationDate}</td><td>${record.tool}</td><td>${record.target}</td><td>${record.folderPath}</td><td>${record.markdownFiles}</td><td>${record.jsonFiles}</td><td>${record.csvFiles}</td><td>${record.fileCount}</td><td>${record.recordCount}</td><td>${record.importStatus}</td><td>${record.importedRecords}</td><td>${record.remainingFiles}</td><td>${(record.targetDatabases || []).join(", ")}</td><td>${record.notes}</td></tr>`).join("");
-  }
-
-  function renderDashboard(report) {
-    setText("phase132-widget-status", report.widget.migrationStatus);
-    setText("phase132-widget-imported", `${report.widget.importedRecords}`);
-    setText("phase132-widget-remaining", `${report.widget.remainingFiles}`);
-    renderCards("phase132-racecourse-targets", report.racecourseTargets, (target) => `<article><span>${target}</span><strong>Racecourse</strong><em>folder import</em></article>`);
-    renderCards("phase132-tools", report.migrationTools, (tool) => `<article><span>${tool}</span><strong>Tool</strong><em>scan enabled</em></article>`);
-    renderCards("phase132-target-databases", report.targetDatabases, (target) => `<article><span>${target}</span><strong>Destination</strong><em>migration target</em></article>`);
-    renderCards("phase132-report", [report.report], (item) => `<article><span>${item.migrationStatus}</span><strong>${item.recordCount} records</strong><em>${item.fileCount} files / ${item.remainingFiles} remaining</em></article>`);
-    renderTable(report.records);
-  }
-
-  async function loadDatabase() {
-    if (typeof fetch !== "function") return fallbackDatabase;
-    try {
-      const response = await fetch("data/dataMigrationDatabase.json", { cache: "no-store" });
-      if (!response.ok) throw new Error("dataMigrationDatabase fetch failed");
-      return await response.json();
-    } catch (error) {
-      return fallbackDatabase;
-    }
-  }
-
-  async function bootstrap() {
-    const database = await loadDatabase();
-    const report = buildDashboard(database);
-    renderDashboard(report);
-    window.HashimotoPhase132DataMigrationReport = report;
-  }
-
-  window.HashimotoPhase132DataMigration = {
-    buildDashboard,
-    createMigrationReport,
-    detectFileType,
-    estimateRecordCount,
-    fallbackDatabase,
-    migrateRecord,
-    migrationTools,
-    racecourseTargets,
-    scanFolder,
-    targetDatabases,
-    targetDatabaseFor
-  };
-
+  const fallbackDatabase = { databaseName: "dataMigrationDatabase", phase: "Phase13-2", records: [
+    { migrationDate: "2026-06-06", tool: "Racecourse Folder Import", target: "Tokyo", folderPath: "Tokyo", markdownFiles: 3, jsonFiles: 1, csvFiles: 1, fileCount: 5, recordCount: 42, importStatus: "Ready", targetDatabases: ["Prediction Database", "Result Database", "AI Index Database"], importedRecords: 0, remainingFiles: 5, notes: "Tokyo racecourse folder is ready for preview and migration." },
+    { migrationDate: "2026-06-06", tool: "WIN5 Folder Import", target: "WIN5", folderPath: "WIN5", markdownFiles: 4, jsonFiles: 2, csvFiles: 0, fileCount: 6, recordCount: 28, importStatus: "Ready", targetDatabases: ["WIN5 Database", "Prediction Database", "Result Database"], importedRecords: 0, remainingFiles: 6, notes: "WIN5 folders and tickets are ready for migration." }
+  ] };
+  function detectFileType(fileName) { const lower = String(fileName || "").toLowerCase(); if (lower.endsWith(".md") || lower.endsWith(".markdown")) return "markdown"; if (lower.endsWith(".json")) return "json"; if (lower.endsWith(".csv")) return "csv"; return "unknown"; }
+  function estimateRecordCount(file) { if (Number.isFinite(Number(file.recordCount))) return Number(file.recordCount); const content = String(file.content || ""); if (!content) return 1; if (detectFileType(file.name) === "csv") return Math.max(0, content.trim().split(/\r?\n/).length - 1); if (detectFileType(file.name) === "json") { try { const parsed = JSON.parse(content); if (Array.isArray(parsed)) return parsed.length; if (Array.isArray(parsed.records)) return parsed.records.length; } catch (error) { return 0; } } return content.split(/\r?\n/).filter((line) => line.trim()).length; }
+  function targetDatabaseFor(tool, target, fileType) { if (target === "WIN5" || tool === "WIN5 Folder Import") return "WIN5 Database"; if (fileType === "markdown") return "Prediction Database"; if (fileType === "json") return "Result Database"; if (fileType === "csv") return "AI Index Database"; return "OS Update Database"; }
+  function scanFolder({ tool, target, folderPath, files }) { const safeFiles = files || []; const counts = safeFiles.reduce((summary, file) => { const type = detectFileType(file.name); if (type === "markdown") summary.markdownFiles += 1; if (type === "json") summary.jsonFiles += 1; if (type === "csv") summary.csvFiles += 1; if (type !== "unknown") { summary.fileCount += 1; summary.recordCount += estimateRecordCount(file); summary.targetDatabases.add(targetDatabaseFor(tool, target, type)); } return summary; }, { markdownFiles: 0, jsonFiles: 0, csvFiles: 0, fileCount: 0, recordCount: 0, targetDatabases: new Set() }); return { migrationDate: new Date().toISOString().slice(0, 10), tool, target, folderPath, markdownFiles: counts.markdownFiles, jsonFiles: counts.jsonFiles, csvFiles: counts.csvFiles, fileCount: counts.fileCount, recordCount: counts.recordCount, importStatus: counts.fileCount ? "Ready" : "No Files", targetDatabases: [...counts.targetDatabases], importedRecords: 0, remainingFiles: counts.fileCount, notes: counts.fileCount ? "Folder scan complete. Ready for migration preview." : "No supported files were detected." }; }
+  function createMigrationReport(records) { const migrations = records || []; const fileCount = migrations.reduce((total, record) => total + Number(record.fileCount || 0), 0); const recordCount = migrations.reduce((total, record) => total + Number(record.recordCount || 0), 0); const importedRecords = migrations.reduce((total, record) => total + Number(record.importedRecords || 0), 0); const remainingFiles = migrations.reduce((total, record) => total + Number(record.remainingFiles || 0), 0); return { migrationStatus: remainingFiles > 0 ? "Ready" : "Complete", fileCount, recordCount, importedRecords, remainingFiles, targetDatabases: [...new Set(migrations.flatMap((record) => record.targetDatabases || []))] }; }
+  function migrateRecord(record) { return { ...record, importStatus: record.fileCount ? "Migrated" : "No Files", importedRecords: Number(record.recordCount || 0), remainingFiles: 0 }; }
+  function buildDashboard(database) { const source = database || fallbackDatabase; const records = source.records || []; const report = createMigrationReport(records); return { databaseName: source.databaseName || "dataMigrationDatabase", phase: source.phase || "Phase13-2", migrationTools, racecourseTargets, targetDatabases, records, report, widget: { migrationStatus: report.migrationStatus, importedRecords: report.importedRecords, remainingFiles: report.remainingFiles } }; }
+  function setText(id, value) { const element = document.getElementById(id); if (element) element.textContent = value; }
+  function renderCards(id, items, renderer) { const element = document.getElementById(id); if (!element) return; element.innerHTML = items.map(renderer).join(""); }
+  function renderTable(records) { const table = document.getElementById("phase132-migration-database"); if (!table) return; table.innerHTML = records.map((record) => `<tr><td>${record.migrationDate}</td><td>${record.tool}</td><td>${record.target}</td><td>${record.folderPath}</td><td>${record.markdownFiles}</td><td>${record.jsonFiles}</td><td>${record.csvFiles}</td><td>${record.fileCount}</td><td>${record.recordCount}</td><td>${record.importStatus}</td><td>${record.importedRecords}</td><td>${record.remainingFiles}</td><td>${(record.targetDatabases || []).join(", ")}</td><td>${record.notes}</td></tr>`).join(""); }
+  function renderDashboard(report) { setText("phase132-widget-status", report.widget.migrationStatus); setText("phase132-widget-imported", `${report.widget.importedRecords}`); setText("phase132-widget-remaining", `${report.widget.remainingFiles}`); renderCards("phase132-racecourse-targets", report.racecourseTargets, (target) => `<article><span>${target}</span><strong>Racecourse</strong><em>folder import</em></article>`); renderCards("phase132-tools", report.migrationTools, (tool) => `<article><span>${tool}</span><strong>Tool</strong><em>scan enabled</em></article>`); renderCards("phase132-target-databases", report.targetDatabases, (target) => `<article><span>${target}</span><strong>Destination</strong><em>migration target</em></article>`); renderCards("phase132-report", [report.report], (item) => `<article><span>${item.migrationStatus}</span><strong>${item.recordCount} records</strong><em>${item.fileCount} files / ${item.remainingFiles} remaining</em></article>`); renderTable(report.records); }
+  async function loadDatabase() { if (typeof fetch !== "function") return fallbackDatabase; try { const response = await fetch("data/dataMigrationDatabase.json", { cache: "no-store" }); if (!response.ok) throw new Error("dataMigrationDatabase fetch failed"); return await response.json(); } catch (error) { return fallbackDatabase; } }
+  async function bootstrap() { const database = await loadDatabase(); const report = buildDashboard(database); renderDashboard(report); window.HashimotoPhase132DataMigrationReport = report; }
+  window.HashimotoPhase132DataMigration = { buildDashboard, createMigrationReport, detectFileType, estimateRecordCount, fallbackDatabase, migrateRecord, migrationTools, racecourseTargets, scanFolder, targetDatabases, targetDatabaseFor };
   if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", bootstrap);
 })();

@@ -3,6 +3,16 @@
   "version": "2.7",
   "theme": "回収率管理AI",
   "storageKey": "profit-history-db.json",
-  "requiredFields": ["date", "course", "race", "betType", "profit", "returnRate", "bestRace", "worstRace", "memo"],
+  "requiredFields": [
+    "date",
+    "course",
+    "race",
+    "betType",
+    "profit",
+    "returnRate",
+    "bestRace",
+    "worstRace",
+    "memo"
+  ],
   "records": []
 }

@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = "2.7";
+  const VERSION = "2.6";
   const STORAGE_KEYS = { win5: "win5-db.json", pattern: "win5-pattern-db.json", history: "win5-history-db.json" };
   const SOURCE_KEYS = ["integrated-os.json", "prediction-engine.json", "learning-engine.json", "profit-db.json", "return-ai-db.json", "history-db.json"];
   const DEFAULT_RACES = [

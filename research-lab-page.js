@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = "2.7";
+  const VERSION = "2.6";
   const STORAGE_KEYS = {
     lab: "research-lab-db.json",
     course: "course-research-db.json",

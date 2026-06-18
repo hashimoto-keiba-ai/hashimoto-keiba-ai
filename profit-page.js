@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = "2.7";
+  const VERSION = "2.6";
   const STORAGE_KEYS = {
     profit: "profit-db.json",
     darkhorse: "darkhorse-db.json",
@@ -22,7 +22,7 @@
     axisHorse: "本命サンプル",
     trifectaPattern: "A→B→C",
     returnRate: 320,
-    profitScore: 112,
+    profitScore: 111,
     memo: "万馬券探索AIが危険1人気と神穴を組み合わせて候補生成。"
   });
   const readRecords = (storage, key, fallback = []) => {

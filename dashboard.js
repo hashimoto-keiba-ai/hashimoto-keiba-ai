@@ -162,52 +162,6 @@ const dashboardData = {
     races: [],
     file: ""
   },
-  win5Database: {
-    records: [
-      {
-        date: "2026-06-06",
-        race1: "Tokyo 10R",
-        race2: "Hanshin 10R",
-        race3: "Tokyo 11R",
-        race4: "Hanshin 11R",
-        race5: "Hakodate 11R",
-        selections: {
-          race1: ["A-01", "B-05"],
-          race2: ["A-03"],
-          race3: ["A-08", "C-12"],
-          race4: ["A-02", "B-07"],
-          race5: ["A-04"]
-        },
-        aiScore: 86,
-        hitProbability: 12.8,
-        expectedReturn: 168000,
-        riskLevel: "Balanced",
-        raceType: "A/B/C",
-        godHoleCandidates: ["C-12"],
-        dangerPopularHorses: ["No.1 heavy favorite"],
-        kamiAnaCandidates: ["B-07", "C-12"],
-        notes: "Phase9-5 seed record. Replace with live WIN5 card after entries are loaded."
-      }
-    ]
-  },
-  phase95Win5: {
-    sourceConnections: {
-      aiIndexDatabase: "aiRanking",
-      dangerPopularHorseDatabase: "riskyFavoriteRanking",
-      kamiAnaDatabase: "longshotRanking",
-      godHoleRankingDatabase: "divineRaceRanking"
-    },
-    recommendedWin5: [],
-    safeWin5: [],
-    balancedWin5: [],
-    highReturnWin5: [],
-    todayWidget: null,
-    engine: {
-      hitProbability: 0,
-      expectedReturn: 0,
-      riskScore: 0
-    }
-  },
   win5LearningDatabase: {
     summary: {
       sourceFileCount: 0,
@@ -362,17 +316,6 @@ async function loadDashboardData() {
   }
 }
 
-async function loadWin5Database() {
-  if (typeof fetch !== "function") return null;
-  try {
-    const response = await fetch("data/win5Database.json", { cache: "no-store" });
-    if (!response.ok) return null;
-    return await response.json();
-  } catch (_error) {
-    return null;
-  }
-}
-
 function mergeDashboardData(loadedData) {
   if (!loadedData || typeof loadedData !== "object") return;
 
@@ -387,12 +330,6 @@ function mergeDashboardData(loadedData) {
   }
   if (loadedData.win5Dashboard && typeof loadedData.win5Dashboard === "object") {
     dashboardData.win5Dashboard = { ...dashboardData.win5Dashboard, ...loadedData.win5Dashboard };
-  }
-  if (loadedData.win5Database && typeof loadedData.win5Database === "object") {
-    dashboardData.win5Database = { ...dashboardData.win5Database, ...loadedData.win5Database };
-  }
-  if (loadedData.phase95Win5 && typeof loadedData.phase95Win5 === "object") {
-    dashboardData.phase95Win5 = { ...dashboardData.phase95Win5, ...loadedData.phase95Win5 };
   }
   if (loadedData.aiIndexSummary && typeof loadedData.aiIndexSummary === "object") {
     dashboardData.aiIndexSummary = { ...dashboardData.aiIndexSummary, ...loadedData.aiIndexSummary };
@@ -1028,131 +965,6 @@ function renderLongshotRanking() {
     : `<tr><td colspan="9">爆穴データはまだありません。</td></tr>`;
 }
 
-function normalizeWin5Array(value) {
-  return Array.isArray(value) ? value : [];
-}
-
-function win5SelectionCount(record) {
-  const selections = record.selections || {};
-  return ["race1", "race2", "race3", "race4", "race5"]
-    .map((key) => normalizeWin5Array(selections[key]).length || 1)
-    .reduce((total, count) => total * count, 1);
-}
-
-function calculatePhase95Win5Record(record) {
-  const aiScores = normalizeWin5Array(dashboardData.aiRanking).map((item) => Number(item.score || item.aiScore || 0)).filter(Boolean);
-  const averageAiScore = aiScores.length ? aiScores.reduce((sum, score) => sum + score, 0) / aiScores.length : Number(record.aiScore || 70);
-  const dangerCount = normalizeWin5Array(record.dangerPopularHorses).length + normalizeWin5Array(dashboardData.riskyFavoriteRanking).length;
-  const kamiAnaCount = normalizeWin5Array(record.kamiAnaCandidates).length + normalizeWin5Array(dashboardData.longshotRanking).length;
-  const godHoleCount = normalizeWin5Array(record.godHoleCandidates).length + normalizeWin5Array(dashboardData.divineRaceRanking).length;
-  const combinationCount = win5SelectionCount(record);
-  const baseHit = Number(record.hitProbability || 0) || (averageAiScore * 0.16);
-  const hitProbability = Math.max(1, Math.min(65, baseHit + godHoleCount * 1.4 - dangerCount * 0.9 - Math.max(0, combinationCount - 8) * 0.25));
-  const riskScore = Math.max(5, Math.min(100, 28 + dangerCount * 8 + kamiAnaCount * 5 + combinationCount * 1.2 - godHoleCount * 2));
-  const expectedReturn = Number(record.expectedReturn || 0) || Math.round((hitProbability / 100) * (90000 + kamiAnaCount * 45000 + godHoleCount * 28000) * Math.max(1, combinationCount / 4));
-
-  return {
-    ...record,
-    combinationCount,
-    aiScore: Math.round(Number(record.aiScore || averageAiScore) * 10) / 10,
-    hitProbability: Math.round(hitProbability * 10) / 10,
-    expectedReturn,
-    riskScore: Math.round(riskScore * 10) / 10,
-    riskLevel: record.riskLevel || (riskScore >= 70 ? "High" : riskScore >= 45 ? "Balanced" : "Safe")
-  };
-}
-
-function buildPhase95Win5Dashboard() {
-  const records = normalizeWin5Array(dashboardData.win5Database?.records).map(calculatePhase95Win5Record);
-  const sortedByHit = [...records].sort((a, b) => b.hitProbability - a.hitProbability);
-  const sortedByReturn = [...records].sort((a, b) => b.expectedReturn - a.expectedReturn);
-  const sortedBalanced = [...records].sort((a, b) => (b.hitProbability + b.expectedReturn / 10000 - b.riskScore) - (a.hitProbability + a.expectedReturn / 10000 - a.riskScore));
-  const safeWin5 = sortedByHit.filter((record) => record.riskScore < 55);
-  const highReturnWin5 = sortedByReturn.filter((record) => record.riskScore >= 45 || record.expectedReturn >= 100000);
-  const recommended = sortedBalanced[0] || sortedByHit[0] || null;
-
-  return {
-    records,
-    recommendedWin5: recommended ? [recommended] : [],
-    safeWin5: safeWin5.length ? safeWin5.slice(0, 3) : sortedByHit.slice(0, 1),
-    balancedWin5: sortedBalanced.slice(0, 3),
-    highReturnWin5: highReturnWin5.length ? highReturnWin5.slice(0, 3) : sortedByReturn.slice(0, 1),
-    todayWidget: recommended,
-    engine: {
-      hitProbability: recommended?.hitProbability || 0,
-      expectedReturn: recommended?.expectedReturn || 0,
-      riskScore: recommended?.riskScore || 0
-    }
-  };
-}
-
-function win5RecordTitle(record) {
-  return [record.race1, record.race2, record.race3, record.race4, record.race5].filter(Boolean).join(" / ") || record.date || "WIN5";
-}
-
-function renderWin5RecommendationList(targetId, records) {
-  const target = document.getElementById(targetId);
-  if (!target) return;
-  target.innerHTML = records.length
-    ? records.map((record) => `
-        <article class="race-card win5-race-card phase95-win5-card">
-          <span class="race-meta">${escapeHtml(record.date || "--")} / ${escapeHtml(record.raceType || "A/B/C")}</span>
-          <strong>${escapeHtml(win5RecordTitle(record))}</strong>
-          <div class="race-kpi">
-            <span>Hit ${formatPercent(record.hitProbability)}</span>
-            <span>Return ${formatYen(record.expectedReturn)}</span>
-            <span>Risk ${escapeHtml(record.riskScore)} / ${escapeHtml(record.riskLevel)}</span>
-            <span>Selections ${escapeHtml(record.combinationCount)}点</span>
-          </div>
-        </article>
-      `).join("")
-    : `<article class="race-card"><strong>WIN5 data pending</strong><span class="race-meta">win5Database records will appear here after entries are loaded.</span></article>`;
-}
-
-function renderPhase95Win5System() {
-  const generated = buildPhase95Win5Dashboard();
-  dashboardData.phase95Win5 = { ...dashboardData.phase95Win5, ...generated };
-  const widget = generated.todayWidget;
-
-  setText("phase95-win5-hit-probability", formatPercent(generated.engine.hitProbability));
-  setText("phase95-win5-expected-return", formatYen(generated.engine.expectedReturn));
-  setText("phase95-win5-risk-score", `${Number(generated.engine.riskScore || 0).toFixed(1)}`);
-  setText("phase95-widget-title", widget ? win5RecordTitle(widget) : "--");
-  setText("phase95-widget-hit", widget ? formatPercent(widget.hitProbability) : "0.0%");
-  setText("phase95-widget-return", widget ? formatYen(widget.expectedReturn) : "0円");
-
-  renderWin5RecommendationList("phase95-recommended-win5", generated.recommendedWin5);
-  renderWin5RecommendationList("phase95-safe-win5", generated.safeWin5);
-  renderWin5RecommendationList("phase95-balanced-win5", generated.balancedWin5);
-  renderWin5RecommendationList("phase95-high-return-win5", generated.highReturnWin5);
-
-  const databaseTarget = document.getElementById("phase95-win5-database");
-  if (databaseTarget) {
-    databaseTarget.innerHTML = generated.records.length
-      ? generated.records.map((record) => `
-          <tr>
-            <td>${escapeHtml(record.date || "--")}</td>
-            <td>${escapeHtml(record.race1 || "--")}</td>
-            <td>${escapeHtml(record.race2 || "--")}</td>
-            <td>${escapeHtml(record.race3 || "--")}</td>
-            <td>${escapeHtml(record.race4 || "--")}</td>
-            <td>${escapeHtml(record.race5 || "--")}</td>
-            <td>${escapeHtml(record.combinationCount)}点</td>
-            <td>${escapeHtml(record.aiScore)}</td>
-            <td>${formatPercent(record.hitProbability)}</td>
-            <td>${formatYen(record.expectedReturn)}</td>
-            <td>${escapeHtml(record.riskLevel)}</td>
-            <td>${escapeHtml(record.raceType || "--")}</td>
-            <td>${escapeHtml(normalizeWin5Array(record.godHoleCandidates).join(" / ") || "--")}</td>
-            <td>${escapeHtml(normalizeWin5Array(record.dangerPopularHorses).join(" / ") || "--")}</td>
-            <td>${escapeHtml(normalizeWin5Array(record.kamiAnaCandidates).join(" / ") || "--")}</td>
-            <td>${escapeHtml(record.notes || "--")}</td>
-          </tr>
-        `).join("")
-      : `<tr><td colspan="16">win5Database is ready. Add records to data/win5Database.json or dashboard-data.json.</td></tr>`;
-  }
-}
-
 function renderWin5Dashboard() {
   const data = dashboardData.win5Dashboard;
   setText("win5-date", data.date || "--");
@@ -1368,7 +1180,6 @@ function renderOperationalData() {
   renderDivineRaceRanking();
   renderAutoDivineRaces();
   renderAutoWin5Candidates();
-  renderPhase95Win5System();
   renderWin5PatternAnalysis();
   renderRacecourseLearningDatabase();
   renderRiskyFavoriteRanking();
@@ -1446,7 +1257,6 @@ async function bootDashboard() {
   const auditEngine = new HashimotoReleaseAuditEngine();
   const releaseEngine = new HashimotoOfficialReleaseEngine();
   mergeDashboardData(await loadDashboardData());
-  mergeDashboardData({ win5Database: await loadWin5Database() });
   renderOperationalData();
   renderAuditReport(auditEngine.generateReport());
   renderOfficialRelease(releaseEngine.generateRelease(currentAuditReport));
@@ -1474,8 +1284,27 @@ if (typeof module !== "undefined") {
     OFFICIAL_RELEASE,
     STORAGE_KEYS,
     auditTargets,
-    buildPhase95Win5Dashboard,
-    calculatePhase95Win5Record,
     parseStoredJson
   };
+}
+{
+const OFFICIAL_RELEASE = { appName: "橋本競馬AI", version: "2.8", releaseDate: "2026-06-18", releaseScore: 113, status: "Official Release v2.8", statusJa: "Official Release v2.8", theme: "全競馬場統合AI", releaseVersionKey: "releaseVersion", releaseStatusKey: "releaseStatus" };
+const STORAGE_KEYS = { releaseAuditReports: "releaseAuditReports", releaseManagerReports: "releaseManagerReports", finalHealthCheckReports: "finalHealthCheckReports", productionReadinessAuditReports: "productionReadinessAuditReports", productionOperationScores: "productionOperationScores", performanceDashboardReports: "performanceDashboardReports", releaseVersion: OFFICIAL_RELEASE.releaseVersionKey, releaseStatus: OFFICIAL_RELEASE.releaseStatusKey, officialReleaseReports: "officialReleaseReports" };
+const auditTargets = ["aiRanking", "holeRanking", "riskRanking", "ticketEngine", "win5", "simulation", "evMonitor", "raceDatabase", "courseDatabase", "distanceDatabase", "selfLearning", "courseEvolution", "roiOptimization", "integrationDashboard", "versionManager"].map((source, index) => ({ id: source, name: source, weight: index >= 8 && index <= 9 ? 6 : 5, source }));
+const defaultBaseScores = { aiRanking: 100, holeRanking: 98, riskRanking: 97, ticketEngine: 97, win5: 99, simulation: 94, evMonitor: 97, raceDatabase: 98, courseDatabase: 100, distanceDatabase: 100, selfLearning: 99, courseEvolution: 98, roiOptimization: 97, integrationDashboard: 100, versionManager: 101 };
+const aiPerformanceCards = [{ label: "総的中率", value: "0.0%", key: "totalHitRate" }, { label: "総回収率", value: "0.0%", key: "totalReturnRate" }, { label: "年間収支", value: "0円", key: "annualProfit" }, { label: "三連単回収率", value: "0.0%", key: "trifectaReturnRate" }, { label: "WIN5成績", value: "未集計", key: "win5Result" }, { label: "総学習件数", value: "0件", key: "totalLearningCount" }];
+const rankingPanels = [{ title: "好調騎手ランキング", items: ["Coming Soon", "history-db.json連携", "course-db.json分類"] }, { title: "好調調教師ランキング", items: ["Coming Soon", "距離別傾向分析", "回収率連動"] }, { title: "人気ゾーンランキング", items: ["Coming Soon", "人気帯別成績", "妙味ゾーン検出"] }, { title: "コース適性ランキング", items: ["Coming Soon", "競馬場別適性", "距離別適性"] }];
+const aiEvolutionHistory = ["v1.0 公式版", "v1.1 競馬場選択", "v1.2 Console化", "v1.2.1 レイアウト修正", "v1.3 R1〜R12管理", "v1.4 JSON保存", "v1.5 自己進化DB", "v1.6 全競馬場統合AI"];
+function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+function parseStoredJson(storage, key, fallback) { if (!storage || typeof storage.getItem !== "function") return fallback; try { const raw = storage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch (_error) { return fallback; } }
+function latestEntry(value) { if (Array.isArray(value)) return value[value.length - 1] || {}; if (value && Array.isArray(value.reports)) return value.reports[value.reports.length - 1] || {}; return value || {}; }
+class HashimotoReleaseAuditEngine { constructor(options = {}) { this.storage = options.storage || (typeof localStorage !== "undefined" ? localStorage : null); this.now = options.now || (() => new Date()); this.targets = options.targets || auditTargets; this.baseScores = options.baseScores || defaultBaseScores; } readContext() { return { releaseManager: latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.releaseManagerReports, {})), health: latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.finalHealthCheckReports, {})), readiness: latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.productionReadinessAuditReports, {})), operation: latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.productionOperationScores, {})), performance: latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.performanceDashboardReports, {})) }; } scoreTarget(target, context) { const base = Number(this.baseScores[target.source] || 82); const releaseBoost = Number(context.releaseManager.completionScore || context.releaseManager.completion || 96) >= 90 ? 4 : -4; const averageExternal = (Number(context.health.healthScore || context.health.score || 94) + Number(context.readiness.readinessScore || context.readiness.score || 93) + Number(context.operation.operationScore || context.operation.score || 92) + Number(context.performance.performanceScore || context.performance.score || 91)) / 4; const storageOk = context.releaseManager.localStorageIntegrity !== false && context.health.localStorageIntegrity !== false; const criticalErrors = Number(context.health.criticalErrors || context.releaseManager.criticalErrors || 0); return Math.round(clamp(base * 0.76 + averageExternal * 0.2 + releaseBoost + (storageOk ? 3 : -9) - criticalErrors * 8, 0, 101)); } resultFromScore(score) { if (score >= 90) return "正常"; if (score >= 80) return "要確認"; if (score >= 70) return "警告"; return "エラー"; } issueSeverity(score) { if (score < 70) return "重大"; if (score < 82) return "中"; if (score < 90) return "軽微"; return null; } releaseStage(score, issues) { const criticalCount = issues.filter((issue) => issue.severity === "重大").length; const mediumCount = issues.filter((issue) => issue.severity === "中").length; if (score >= 95 && criticalCount === 0 && mediumCount === 0) return "正式版"; if (score >= 90 && criticalCount === 0) return "RC版"; if (score >= 80 && criticalCount === 0) return "ベータ版"; if (score >= 65) return "アルファ版"; return "開発版"; } buildPriority(issue) { if (issue.severity === "重大") return `最優先: ${issue.target}のエラーを解消し、再監査を実行する`; if (issue.severity === "中") return `高: ${issue.target}の監査材料を確認し、スコア80以上へ改善する`; return `通常: ${issue.target}の不足項目を整理し、正式版基準へ引き上げる`; } generateReport() { const context = this.readContext(); const targetResults = this.targets.map((target) => { const score = this.scoreTarget(target, context); return { id: target.id, name: target.name, weight: target.weight, completion: score, releaseScore: Math.round(clamp(score - Math.max(0, 90 - score) * 0.4, 0, 101)), result: this.resultFromScore(score) }; }); const totalWeight = targetResults.reduce((sum, target) => sum + target.weight, 0); const completion = Math.round(targetResults.reduce((sum, target) => sum + target.completion * target.weight, 0) / totalWeight); const issues = targetResults.map((target) => { const severity = this.issueSeverity(target.completion); return severity ? { target: target.name, severity, score: target.completion, detail: `${target.name}は${target.result}です。完成度${target.completion}%のため改善対象です。` } : null; }).filter(Boolean); const report = { version: "v7.4", date: this.now().toISOString(), auditTargets: targetResults, completion, releaseScore: OFFICIAL_RELEASE.releaseScore, judgment: this.releaseStage(OFFICIAL_RELEASE.releaseScore, issues), issues, priorities: issues.map((issue, index) => ({ rank: index + 1, severity: issue.severity, action: this.buildPriority(issue) })) }; this.saveReport(report); return report; } saveReport(report) { if (!this.storage || typeof this.storage.setItem !== "function") return; const current = parseStoredJson(this.storage, STORAGE_KEYS.releaseAuditReports, []); const reports = Array.isArray(current) ? current : []; reports.push(report); this.storage.setItem(STORAGE_KEYS.releaseAuditReports, JSON.stringify(reports.slice(-20))); } }
+class HashimotoOfficialReleaseEngine { constructor(options = {}) { this.storage = options.storage || (typeof localStorage !== "undefined" ? localStorage : null); this.now = options.now || (() => new Date(`${OFFICIAL_RELEASE.releaseDate}T09:00:00+09:00`)); } latestAudit() { return latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.releaseAuditReports, {})); } latestHealth() { return latestEntry(parseStoredJson(this.storage, STORAGE_KEYS.finalHealthCheckReports, {})); } createReleaseNotes(release) { return [`${OFFICIAL_RELEASE.appName} Version ${release.version}を正式版として公開しました。`, `Release Score ${release.releaseScore}、Release Status ${release.releaseStatus}で固定しました。`, "course-db.jsonを競馬場別学習DBとして追加しました。", "distance-db.jsonを距離別学習DBとして追加しました。", "history-db.jsonのprediction/result/review/updateを競馬場別と距離別に自動分類します。"]; } generateRelease(auditReport) { const audit = auditReport || this.latestAudit(); const health = this.latestHealth(); const completionScore = Math.round(Number(audit.completion || audit.completionScore || 96)); const healthScore = Math.round(Number(health.healthScore || health.score || audit.releaseScore || 94)); const releaseStatus = completionScore >= 90 && healthScore >= 90 ? OFFICIAL_RELEASE.status : "Release Review"; const release = { appName: OFFICIAL_RELEASE.appName, version: OFFICIAL_RELEASE.version, releaseDate: OFFICIAL_RELEASE.releaseDate, generatedAt: this.now().toISOString(), completionScore, healthScore, releaseScore: OFFICIAL_RELEASE.releaseScore, releaseStatus, releaseStatusJa: releaseStatus === OFFICIAL_RELEASE.status ? OFFICIAL_RELEASE.statusJa : "要確認", officialBanner: `${OFFICIAL_RELEASE.appName} Official Release v${OFFICIAL_RELEASE.version}`, theme: OFFICIAL_RELEASE.theme }; release.releaseNotes = this.createReleaseNotes(release); this.saveRelease(release); return release; } saveRelease(release) { if (!this.storage || typeof this.storage.setItem !== "function") return; this.storage.setItem(STORAGE_KEYS.releaseVersion, release.version); this.storage.setItem(STORAGE_KEYS.releaseStatus, release.releaseStatus); const current = parseStoredJson(this.storage, STORAGE_KEYS.officialReleaseReports, []); const reports = Array.isArray(current) ? current : []; reports.push(release); this.storage.setItem(STORAGE_KEYS.officialReleaseReports, JSON.stringify(reports.slice(-20))); } }
+function setText(id, value) { const element = document.getElementById(id); if (element) element.textContent = value; }
+function renderAiPerformanceCards() { const target = document.getElementById("ai-performance-cards"); if (!target) return; target.innerHTML = aiPerformanceCards.map((card) => `<article><span>${card.label}</span><strong>${card.value}</strong><em>${card.key}</em></article>`).join(""); }
+function renderRankingPanels() { const target = document.getElementById("ranking-panels"); if (!target) return; target.innerHTML = rankingPanels.map((panel) => `<article><h3>${panel.title}</h3><ul>${panel.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join(""); }
+function renderEvolutionHistory() { const target = document.getElementById("ai-evolution-history"); if (!target) return; target.innerHTML = aiEvolutionHistory.map((item) => `<li>${item}</li>`).join(""); }
+function bootDashboard() { setText("official-banner-title", `${OFFICIAL_RELEASE.appName} Official Release v${OFFICIAL_RELEASE.version}`); setText("version-display", `${OFFICIAL_RELEASE.appName} Version ${OFFICIAL_RELEASE.version}`); setText("stat-version", `Version ${OFFICIAL_RELEASE.version}`); setText("stat-release-score", OFFICIAL_RELEASE.releaseScore); setText("stat-release-judgment", OFFICIAL_RELEASE.status); setText("release-theme", OFFICIAL_RELEASE.theme); renderAiPerformanceCards(); renderRankingPanels(); renderEvolutionHistory(); }
+if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", bootDashboard);
+if (typeof module !== "undefined") module.exports = { ...module.exports, aiEvolutionHistory, aiPerformanceCards, rankingPanels };
 }

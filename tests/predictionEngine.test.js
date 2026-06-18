@@ -23,14 +23,14 @@ const flow = engine.buildPredictionFlow({
   courseScore: 92,
   distanceScore: 86,
   profitScore: 95,
-  returnScore: 112,
+  returnScore: 111,
   hit: true,
   returnRate: 180,
   jockey: '好調騎手A',
   trainer: '好調調教師B',
 });
 
-assert.equal(engine.VERSION, '2.7', '予想生成AIのバージョンが2.7である');
+assert.equal(engine.VERSION, '2.6', '予想生成AIのバージョンが2.6である');
 assert.deepEqual(engine.SOURCE_KEYS, [
   'history-db.json',
   'learning-engine.json',
@@ -59,7 +59,7 @@ requiredFields.forEach((field) => assert.ok(Object.hasOwn(flow.record, field), `
 
 engine.savePrediction({ storage, record: flow.record });
 const saved = storage.readJson(engine.STORAGE_KEY);
-assert.equal(saved.version, '2.7', 'prediction-engine.jsonへv2.7として保存する');
+assert.equal(saved.version, '2.6', 'prediction-engine.jsonへv2.6として保存する');
 assert.equal(saved.records.length, 1, 'prediction-engine.jsonへ予想を保存する');
 
 const status = engine.buildPredictionStatus({ storage });
