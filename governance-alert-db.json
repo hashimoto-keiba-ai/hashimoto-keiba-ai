@@ -1,0 +1,11 @@
+{
+  "phase": "Phase18-9",
+  "database": "Governance Alert DB",
+  "version": "5.0",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "categories": ["info", "warning", "critical", "protected", "plan_only_notice", "mock_execution_notice"],
+  "retention": 100,
+  "records": []
+}

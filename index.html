@@ -1436,6 +1436,23 @@
         <ul class="repair-governance-phases" id="repair-governance-phases"><li>Phase18-4〜18-7の状態を集約中です。</li></ul>
         <p class="data-footnote">実修復なし / 自動上書きなし / 自動ロールバックなし / 最終更新: <span id="repair-governance-updated">--</span></p>
       </section>
+
+      <section class="panel governance-alert-panel" id="governance-alert-engine" aria-label="Governance Alert and Priority Recommendation Engine">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-9 / Alert AI</p><h2>Governance Alert & Priority Recommendation Engine</h2></div>
+          <span class="pill hot">AUTO EXECUTION OFF</span>
+        </div>
+        <div class="governance-alert-actions"><button id="run-governance-alerts" type="button">警告と優先度を更新</button><span>PLAN_ONLY / SAFE ACTIONS ONLY</span></div>
+        <div class="phase2-kpis governance-alert-grid">
+          <article><span>Total Alerts</span><strong id="governance-alert-total">0</strong></article>
+          <article><span>Critical</span><strong id="governance-alert-critical">0</strong></article>
+          <article><span>Warning</span><strong id="governance-alert-warning">0</strong></article>
+          <article><span>Protected</span><strong id="governance-alert-protected">0</strong></article>
+          <article><span>Auto Execution</span><strong id="governance-alert-execution">false</strong></article>
+        </div>
+        <ul class="governance-alert-list" id="governance-alert-list"><li>統合ガバナンス結果を確認中です。</li></ul>
+        <p class="data-footnote">Official Release v2.8 Protected / 実修復なし / 最終更新: <span id="governance-alert-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1456,6 +1473,7 @@
     <script src="repair-approval-page.js"></script>
     <script src="repair-audit-page.js"></script>
     <script src="repair-governance-dashboard.js"></script>
+    <script src="governance-alert-page.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

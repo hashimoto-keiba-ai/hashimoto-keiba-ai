@@ -646,6 +646,14 @@ Phase18-4 Self Diagnosis、Phase18-5 Self Repair、Phase18-6 Approval Gate、Pha
 
 追加ファイル: `repair-governance-dashboard.js`、`repair-governance-db.json`、`tests/repairGovernanceDashboard.test.js`
 
+## Phase18-9 Governance Alert & Priority Recommendation Engine
+
+Phase18-8の統合監視結果を読み取り、Health Score低下、blocked増加、protected_release_blocked、executed_mock、executionAllowed不整合、DB・導線・テスト不足を検出します。アラートは`info`、`warning`、`critical`、`protected`、`plan_only_notice`、`mock_execution_notice`に分類し、安全な次アクションを優先度付きで提案します。
+
+すべてのアラートと推薦は`auto_execution_allowed: false`です。Official Release v2.8関連は常に`protected`とし、PLAN_ONLYを維持して実修復、自動上書き、自動ロールバックを行いません。Phase18-1〜18-8の保護を継続します。
+
+追加ファイル: `governance-alert-page.js`、`governance-alert-db.json`、`governance-priority-recommendation-db.json`、`tests/governanceAlertPriority.test.js`
+
 ## Phase17-5 Hashimoto Racing OS v4.0 Final
 
 Phase16のSuper Core Engine、Super Self Evolution Engine、Full Auto Learning Engine、Future Prediction Engine、God AI Engine、Universal Racing Intelligence Engineと、Phase17のRacing OS v4.0、Autonomous Research Institute、Self Optimization Center、Global Intelligence Networkを最終統合しました。Official Release v2.8は永久保存版として保護されます。

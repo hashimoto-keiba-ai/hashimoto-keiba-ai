@@ -1,0 +1,9 @@
+{
+  "phase": "Phase18-9",
+  "database": "Governance Priority Recommendation DB",
+  "version": "5.0",
+  "executionPolicy": "PLAN_ONLY",
+  "autoExecutionAllowed": false,
+  "priorities": ["P0", "P1", "P2", "P3"],
+  "records": []
+}
