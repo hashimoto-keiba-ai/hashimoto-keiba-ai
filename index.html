@@ -1453,6 +1453,23 @@
         <ul class="governance-alert-list" id="governance-alert-list"><li>統合ガバナンス結果を確認中です。</li></ul>
         <p class="data-footnote">Official Release v2.8 Protected / 実修復なし / 最終更新: <span id="governance-alert-updated">--</span></p>
       </section>
+
+      <section class="panel final-safety-lock-panel" id="final-safety-lock-gate" aria-label="Final Safety Lock and Release Readiness Gate">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-10 / Final Safety Gate</p><h2>Final Safety Lock & Release Readiness Gate</h2></div>
+          <span class="pill hot">OFFICIAL RELEASE v2.8 PROTECTED</span>
+        </div>
+        <div class="final-safety-actions"><button id="run-final-safety-lock" type="button">最終安全判定を実行</button><span>PLAN_ONLY / EXECUTION BLOCKED</span></div>
+        <div class="phase2-kpis final-safety-grid">
+          <article><span>Final Status</span><strong id="final-safety-status">--</strong></article>
+          <article><span>Health Score</span><strong id="final-safety-health">--</strong></article>
+          <article><span>Passed Checks</span><strong><span id="final-safety-passed">0</span>/<span id="final-safety-total">12</span></strong></article>
+          <article><span>Unresolved Risks</span><strong id="final-safety-risks">0</strong></article>
+          <article><span>Execution Allowed</span><strong id="final-safety-execution">false</strong></article>
+        </div>
+        <ul class="final-safety-checks" id="final-safety-checks"><li>Phase18-4〜18-9の安全条件を確認中です。</li></ul>
+        <p class="data-footnote">実修復なし / 自動上書きなし / 自動ロールバックなし / 最終判定: <span id="final-safety-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1474,6 +1491,7 @@
     <script src="repair-audit-page.js"></script>
     <script src="repair-governance-dashboard.js"></script>
     <script src="governance-alert-page.js"></script>
+    <script src="final-safety-lock-page.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
