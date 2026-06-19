@@ -38,7 +38,8 @@ assert.equal(JSON.parse(storage.getItem("selfDiagnosisLatest")).status, "HEALTHY
 assert.equal(JSON.parse(storage.getItem("selfDiagnosisHistory")).length, 1);
 for (const db of engine.DATABASE_FILES) {
   const parsed = JSON.parse(fs.readFileSync(path.join(root, db), "utf8"));
-  assert.equal(parsed.phase, db.startsWith("self-repair-") ? "Phase18-5" : "Phase18-4");
+  const expectedPhase = db.startsWith("repair-approval-") ? "Phase18-6" : db.startsWith("self-repair-") ? "Phase18-5" : "Phase18-4";
+  assert.equal(parsed.phase, expectedPhase);
 }
 
 console.log("self diagnosis engine tests passed");

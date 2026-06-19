@@ -1380,3 +1380,13 @@ tbody tr:last-child td {
 .self-repair-badges span { border: 1px solid rgba(96, 165, 250, 0.28); border-radius: 999px; background: rgba(37, 99, 235, 0.12); color: #bfdbfe; padding: 7px 10px; font-size: 12px; font-weight: 900; }
 .self-repair-plan-list { display: grid; gap: 8px; margin: 0 0 14px; padding-left: 22px; color: var(--muted); font-size: 13px; font-weight: 700; }
 @media (max-width: 680px) { .self-repair-actions { align-items: stretch; } .self-repair-actions button { width: 100%; } }
+
+.repair-approval-panel { border: 1px solid rgba(251, 191, 36, 0.55); background: radial-gradient(circle at 90% 0, rgba(217, 119, 6, 0.18), transparent 44%), linear-gradient(145deg, #171006, #080b12 72%); }
+.repair-approval-grid article strong { color: #fcd34d; font-size: 20px; }
+.repair-approval-list { display: grid; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }
+.repair-approval-item { border: 1px solid rgba(251, 191, 36, 0.22); border-radius: 12px; padding: 12px; background: rgba(120, 53, 15, 0.12); }
+.repair-approval-item p { margin: 0 0 10px; color: var(--muted); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.repair-approval-item div { display: flex; flex-wrap: wrap; gap: 8px; }
+.repair-approval-item button { padding: 7px 11px; }
+.repair-approval-item.status-blocked { border-color: rgba(248, 113, 113, 0.55); }
+@media (max-width: 680px) { .repair-approval-item div button { flex: 1 1 auto; } }

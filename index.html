@@ -1384,6 +1384,21 @@
         <ul class="self-repair-plan-list" id="self-repair-plan-list"><li>診断結果を待機しています。</li></ul>
         <p class="data-footnote">即時実行なし / 承認必須 / Official Release v2.8 Protected / 最終生成: <span id="self-repair-updated">--</span></p>
       </section>
+
+      <section class="panel repair-approval-panel" id="repair-approval-gate" aria-label="Repair Plan Approval and Execution Gate">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-6 / User Approval Gate</p><h2>Repair Plan Approval & Execution Gate（修復承認ゲート）</h2></div>
+          <span class="pill hot">NO AUTO REPAIR</span>
+        </div>
+        <div class="phase2-kpis repair-approval-grid">
+          <article><span>Pending</span><strong id="repair-approval-pending">0</strong></article>
+          <article><span>Approved</span><strong id="repair-approval-approved">0</strong></article>
+          <article><span>Blocked</span><strong id="repair-approval-blocked">0</strong></article>
+          <article><span>Execution Policy</span><strong id="repair-approval-policy">PLAN_ONLY</strong></article>
+        </div>
+        <p class="data-footnote">承認後も実修復なし / executed_mockまで / Official Release v2.8 Protected / 最終更新: <span id="repair-approval-updated">--</span></p>
+        <ul class="repair-approval-list" id="repair-approval-list"><li>Phase18-5の修復プランを待機しています。</li></ul>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1401,6 +1416,7 @@
     <script src="final-system-page.js"></script>
     <script src="self-diagnosis-page.js"></script>
     <script src="self-repair-page.js"></script>
+    <script src="repair-approval-page.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
