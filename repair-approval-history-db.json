@@ -1,0 +1,16 @@
+{
+  "phase": "Phase18-6",
+  "database": "Repair Plan Approval History DB",
+  "version": "5.0",
+  "executionPolicy": "PLAN_ONLY",
+  "actualRepairEnabled": false,
+  "allowedStatuses": [
+    "pending",
+    "approved",
+    "rejected",
+    "blocked",
+    "executed_mock"
+  ],
+  "retention": 100,
+  "records": []
+}
