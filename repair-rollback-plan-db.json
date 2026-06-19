@@ -1,0 +1,10 @@
+{
+  "phase": "Phase18-7",
+  "database": "Repair Rollback Plan DB",
+  "version": "5.0",
+  "executionPolicy": "PLAN_ONLY",
+  "automaticRollback": false,
+  "actualFileRestoreEnabled": false,
+  "requiresApproval": true,
+  "records": []
+}

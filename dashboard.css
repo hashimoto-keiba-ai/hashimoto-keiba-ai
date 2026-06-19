@@ -1390,3 +1390,12 @@ tbody tr:last-child td {
 .repair-approval-item button { padding: 7px 11px; }
 .repair-approval-item.status-blocked { border-color: rgba(248, 113, 113, 0.55); }
 @media (max-width: 680px) { .repair-approval-item div button { flex: 1 1 auto; } }
+
+.repair-audit-panel { border: 1px solid rgba(192, 132, 252, 0.55); background: radial-gradient(circle at 90% 0, rgba(126, 34, 206, 0.18), transparent 44%), linear-gradient(145deg, #12091d, #080b12 72%); }
+.repair-audit-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.repair-audit-actions span { color: #d8b4fe; font-size: 13px; font-weight: 900; }
+.repair-audit-grid article strong { color: #d8b4fe; font-size: 20px; }
+.repair-audit-list { display: grid; gap: 9px; margin: 14px 0 0; padding: 0; list-style: none; }
+.repair-audit-item { border: 1px solid rgba(192, 132, 252, 0.24); border-radius: 12px; padding: 12px; background: rgba(88, 28, 135, 0.12); color: var(--muted); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.repair-audit-item.status-protected_release_blocked { border-color: rgba(248, 113, 113, 0.6); }
+@media (max-width: 680px) { .repair-audit-actions { align-items: stretch; } .repair-audit-actions button { width: 100%; } }

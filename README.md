@@ -630,6 +630,14 @@ Phase18-5の`PLAN_ONLY`修復プランを読み取り、修復項目ごとに内
 
 追加ファイル: `repair-approval-page.js`、`repair-approval-history-db.json`、`tests/repairApprovalGate.test.js`
 
+## Phase18-7 Repair Execution Audit & Rollback Plan Engine
+
+Phase18-6の承認結果から`approved`と`executed_mock`だけを読み取り、実修復前の監査ログ、予測差分要約、ロールバック計画を生成します。監査状態は`audit_pending`、`audit_passed_mock`、`audit_blocked`、`rollback_required`、`protected_release_blocked`で管理します。
+
+Phase18-7では`execution_allowed`を常に`false`とし、実ファイル修復、自動上書き、自動ロールバックは行いません。Official Release v2.8関連は`protected_release_blocked`として固定し、Phase18-1〜18-6の保護を維持します。
+
+追加ファイル: `repair-audit-page.js`、`repair-audit-history-db.json`、`repair-rollback-plan-db.json`、`tests/repairAuditRollback.test.js`
+
 ## Phase17-5 Hashimoto Racing OS v4.0 Final
 
 Phase16のSuper Core Engine、Super Self Evolution Engine、Full Auto Learning Engine、Future Prediction Engine、God AI Engine、Universal Racing Intelligence Engineと、Phase17のRacing OS v4.0、Autonomous Research Institute、Self Optimization Center、Global Intelligence Networkを最終統合しました。Official Release v2.8は永久保存版として保護されます。
