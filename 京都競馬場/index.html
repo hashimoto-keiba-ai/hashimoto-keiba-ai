@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>京都競馬AI Dashboard</title>
+    <link rel="icon" href="../icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../icon.svg">
+    <link rel="stylesheet" href="../dashboard.css">
+    <style>
+      .kyoto-layout {
+        display: grid;
+        gap: 18px;
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .kyoto-hero {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
+        align-items: stretch;
+      }
+
+      .kyoto-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .kyoto-brand img {
+        width: 68px;
+        height: 68px;
+        border-radius: 16px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+      }
+
+      .kyoto-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 12px;
+      }
+
+      .kyoto-menu-button {
+        display: grid;
+        min-height: 104px;
+        align-content: center;
+        gap: 6px;
+        padding: 16px;
+        border: 1px solid rgba(212, 175, 55, 0.34);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(245, 210, 116, 0.08), rgba(15, 10, 0, 0.04)),
+          var(--panel);
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .kyoto-menu-button:hover {
+        border-color: var(--gold-2);
+        background:
+          linear-gradient(180deg, rgba(245, 210, 116, 0.14), rgba(15, 10, 0, 0.06)),
+          #1b1811;
+      }
+
+      .kyoto-menu-button strong {
+        color: var(--gold-2);
+        font-size: 1.16rem;
+        line-height: 1.25;
+      }
+
+      .kyoto-menu-button span {
+        color: var(--muted);
+        font-size: 0.92rem;
+        font-weight: 700;
+      }
+
+      .kyoto-status {
+        display: grid;
+        gap: 10px;
+      }
+
+      .kyoto-status article {
+        display: grid;
+        gap: 5px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel-2);
+      }
+
+      .kyoto-status span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .kyoto-status strong {
+        color: var(--gold-2);
+        font-size: 17px;
+      }
+
+      @media (max-width: 760px) {
+        .kyoto-layout {
+          padding: 16px;
+        }
+
+        .kyoto-hero {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="official-banner" aria-label="京都競馬AI">
+      <span>京都競馬AI Dashboard</span>
+    </div>
+
+    <main class="kyoto-layout">
+      <section class="panel kyoto-hero" aria-label="京都競馬AIトップ">
+        <div>
+          <div class="kyoto-brand">
+            <img src="../icon.svg" alt="橋本競馬AI アイコン">
+            <div>
+              <p class="eyebrow">Hashimoto Keiba AI / Kyoto</p>
+              <h1>京都競馬AI Dashboard</h1>
+            </div>
+          </div>
+          <p>京都競馬場の予想、検証、OS更新、保存ログ、2026年データをここから開きます。</p>
+          <div class="top-actions" style="margin-top: 16px;">
+            <a class="button-link" href="../private-local.html">ホームへ戻る</a>
+          </div>
+        </div>
+
+        <div class="kyoto-status" aria-label="京都競馬AIステータス">
+          <article>
+            <span>Venue</span>
+            <strong>京都競馬場</strong>
+          </article>
+          <article>
+            <span>Mode</span>
+            <strong>Private Local</strong>
+          </article>
+          <article>
+            <span>Dashboard</span>
+            <strong>京都競馬AI</strong>
+          </article>
+          <article>
+            <span>GitHub Pages</span>
+            <strong>OFF</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="京都競馬AIメニュー">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Kyoto AI Menu</p>
+            <h2>京都競馬AIトップ画面</h2>
+          </div>
+          <span class="pill">One Tap</span>
+        </div>
+
+        <div class="kyoto-actions" style="padding: 18px;">
+          <a class="kyoto-menu-button" href="../pre-race-prediction.html?course=京都競馬場">
+            <strong>① 事前予想</strong>
+            <span>京都競馬の予想データを開く</span>
+          </a>
+          <a class="kyoto-menu-button" href="../result-review.html?course=京都競馬場">
+            <strong>② 結果検証</strong>
+            <span>結果と予想精度を確認する</span>
+          </a>
+          <a class="kyoto-menu-button" href="OSアップデート/">
+            <strong>③ OSアップデート</strong>
+            <span>京都競馬AIの更新ログを開く</span>
+          </a>
+          <a class="kyoto-menu-button" href="保存ログ/">
+            <strong>④ 保存ログ</strong>
+            <span>運用記録と保存データを確認する</span>
+          </a>
+          <a class="kyoto-menu-button" href="2026/">
+            <strong>⑤ 2026年データ</strong>
+            <span>2026年の京都競馬データを開く</span>
+          </a>
+          <a class="kyoto-menu-button" href="../private-local.html">
+            <strong>⑥ ホームへ戻る</strong>
+            <span>橋本競馬AIホームへ戻る</span>
+          </a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

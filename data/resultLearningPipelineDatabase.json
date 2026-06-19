@@ -1,0 +1,42 @@
+{
+  "databaseName": "resultLearningPipelineDatabase",
+  "phase": "Phase14-5",
+  "records": [
+    {
+      "date": "2026-06-06",
+      "racecourse": "東京",
+      "raceNumber": 11,
+      "raceName": "東京11R Future Simulation Stakes",
+      "result": {
+        "firstNumber": 1,
+        "secondNumber": 3,
+        "thirdNumber": 5,
+        "payoutAmount": 18420,
+        "last3fBest": 33.5,
+        "corner4Memo": "4角2番手と外差しが両方残った",
+        "lapSummary": "12.5-11.1-11.4-11.8-11.9-11.6-11.2-12.0"
+      },
+      "phase8ResultVerification": {
+        "status": "Verified",
+        "hit": true,
+        "roi": 153.5,
+        "verificationNotes": "三連単本線が的中。4角前残りと上がり性能の両方を評価。"
+      },
+      "osUpdate": {
+        "status": "Apply",
+        "target": "東京OS",
+        "rule": "高速ラップで4角1-3番手かつ上がり上位を強化"
+      },
+      "aiIndexCorrection": {
+        "status": "Apply",
+        "aiIndexDelta": 3,
+        "targetFactor": "positionAndLast3f"
+      },
+      "selfLearning": {
+        "status": "Learned",
+        "learningScore": 92,
+        "nextAction": "東京芝の先行持続と末脚補正を次回指数へ反映"
+      }
+    }
+  ]
+}

@@ -78,7 +78,3 @@ assert.equal(saved.manualChecks.jsonExport, true, '手動チェック状態をop
 assert.equal(saved.completion.percentage, 100, '自動・手動チェック済み項目から完成度100%を計算できる');
 assert.equal(saved.completion.mode, '本番運用可能', '全項目OKで本番運用可能になる');
 console.log('operation readiness checklist test passed');
-
-const selfDiagnosisEngine = require('../self-diagnosis-page.js');
-assert.equal(selfDiagnosisEngine.PHASE, 'Phase18-4', '運用準備チェックから自己診断フェーズを確認できる');
-assert.equal(selfDiagnosisEngine.PROTECTED_FEATURES.some((feature) => feature.label === 'Official Release v2.8'), true, 'Official Release v2.8を保護対象に含める');

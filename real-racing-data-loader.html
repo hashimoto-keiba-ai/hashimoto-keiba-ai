@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase13-3 Real Racing Data Loader</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <main class="dashboard-shell">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Phase13-3</p>
+        <h1>Real Racing Data Loader</h1>
+      </div>
+      <a class="home-link" href="index.html">Integrated Dashboard</a>
+    </header>
+
+    <section class="widget-grid">
+      <article class="metric-card">
+        <span>Load Status</span>
+        <strong id="phase133-widget-status">Loading</strong>
+      </article>
+      <article class="metric-card">
+        <span>Loaded Records</span>
+        <strong id="phase133-widget-loaded">0</strong>
+      </article>
+      <article class="metric-card">
+        <span>Validation Errors</span>
+        <strong id="phase133-widget-errors">0</strong>
+      </article>
+      <article class="metric-card">
+        <span>Target Databases</span>
+        <strong id="phase133-widget-targets">0</strong>
+      </article>
+    </section>
+
+    <section class="dashboard-panel">
+      <div class="panel-heading">
+        <h2>Supported Real Data Types</h2>
+      </div>
+      <div class="phase-grid" id="phase133-supported-types"></div>
+    </section>
+
+    <section class="dashboard-panel">
+      <div class="panel-heading">
+        <h2>Loader Routes</h2>
+      </div>
+      <div class="phase-grid" id="phase133-target-databases"></div>
+    </section>
+
+    <section class="dashboard-panel">
+      <div class="panel-heading">
+        <h2>Load Result Report</h2>
+      </div>
+      <div class="phase-grid" id="phase133-load-report"></div>
+    </section>
+
+    <section class="dashboard-panel">
+      <div class="panel-heading">
+        <h2>realRacingDataLoaderDatabase</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Load Date</th>
+              <th>Source</th>
+              <th>Data Type</th>
+              <th>Racecourse</th>
+              <th>Race Name</th>
+              <th>Record Count</th>
+              <th>Load Status</th>
+              <th>Target Database</th>
+              <th>Normalized Records</th>
+              <th>Validation Errors</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="phase133-loader-database"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="dashboard.js"></script>
+  <script src="real-racing-data-loader-phase133.js"></script>
+</body>
+</html>

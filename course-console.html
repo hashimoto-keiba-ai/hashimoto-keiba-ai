@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>橋本競馬AI Version 2.6 Console</title>
+    <title>橋本競馬AI Version 1.1 Console</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body class="coming-soon-page">
+    <div class="official-banner" aria-label="本番版バナー">
+      <span>橋本競馬AI Official Release v2.6</span>
+      <span>橋本競馬AI Official Release v1.1</span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Hashimoto Keiba AI / Version 2.6 Console</p>
+        <h1 id="console-heading">AI Console</h1>
+        <strong class="version-display">橋本競馬AI Version 2.6</strong>
+        <div class="system-meta">
+          <span>Release Score 111</span>
+          <span>Official Release v2.6</span>
+        <p class="eyebrow">Hashimoto Keiba AI / Version 1.1 Console</p>
+        <h1 id="console-heading">AI Console</h1>
+        <strong class="version-display">橋本競馬AI Version 1.1</strong>
+        <div class="system-meta">
+          <span>Release Score 96</span>
+          <span>Official Release v1.1</span>
+          <span>Coming Soon</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="Navigation">
+        <a class="button-link" href="index.html">トップへ戻る</a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="panel coming-soon-panel" aria-label="Coming Soon Console">
+        <div class="coming-soon-hero">
+          <p class="eyebrow">Official Release v2.6</p>
+          <p class="eyebrow">Official Release v1.1</p>
+          <h2 class="coming-soon-title" id="console-title">AI Console</h2>
+          <p class="coming-soon-message" id="console-message">AI Console / Coming Soon</p>
+          <div class="coming-soon-actions">
+            <a class="button-link" href="index.html">競馬場選択メニューへ戻る</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="console-page.js"></script>
+    <script>
+      const consoles = {
+        tokyo: "東京版",
+        nakayama: "中山版",
+        hanshin: "阪神版",
+        chukyo: "中京版",
+        kyoto: "京都版",
+        niigata: "新潟版",
+        fukushima: "福島版",
+        kokura: "小倉版",
+        hakodate: "函館版",
+        sapporo: "札幌版",
+        win5: "WIN5 AI"
+      };
+      const params = new URLSearchParams(window.location.search);
+      const key = params.get("console") || "tokyo";
+      const label = consoles[key] || "東京版";
+      const title = `${label} AI Console`;
+      document.title = `橋本競馬AI Version 1.1 / ${title}`;
+      document.getElementById("console-heading").textContent = title;
+      document.getElementById("console-title").textContent = title;
+      document.getElementById("console-message").textContent = `${title} / Coming Soon`;
+    </script>
+  </body>
+</html>

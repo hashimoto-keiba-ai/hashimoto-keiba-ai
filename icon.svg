@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-  <title id="title">橋本競馬AI 仮アイコン</title>
-  <desc id="desc">黒い背景に金色の円と橋の文字を配置した仮のPWAアイコン。</desc>
-  <rect width="512" height="512" rx="96" fill="#0f0a00" />
-  <circle cx="256" cy="256" r="188" fill="none" stroke="#d8a536" stroke-width="18" />
-  <circle cx="256" cy="256" r="154" fill="#1d1405" stroke="#f5d274" stroke-width="6" />
-  <path d="M116 326c44-66 91-99 141-99 48 0 95 33 139 99" fill="none" stroke="#f5d274" stroke-width="22" stroke-linecap="round" />
-  <path d="M104 360h312" stroke="#d8a536" stroke-width="20" stroke-linecap="round" />
-  <text x="256" y="248" text-anchor="middle" font-family="'Hiragino Mincho ProN', 'Yu Mincho', serif" font-size="156" font-weight="800" fill="#ffd66b">橋</text>
-  <text x="256" y="404" text-anchor="middle" font-family="Arial, sans-serif" font-size="46" font-weight="700" letter-spacing="4" fill="#f5d274">KEIBA AI</text>
+  <title id="title">橋本競馬AI 統一アプリアイコン</title>
+  <desc id="desc">黒背景に金色のHKAIと橋本競馬AIのアプリ名を配置したPrivate運用向け統一アイコン。</desc>
+  <rect width="512" height="512" rx="92" fill="#090704" />
+  <circle cx="256" cy="256" r="198" fill="#191103" stroke="#d8a536" stroke-width="14" />
+  <circle cx="256" cy="256" r="162" fill="none" stroke="#f7d36a" stroke-width="5" />
+  <path d="M126 304c28-54 63-83 106-88 24-3 43 3 58 18 15 15 26 34 34 58 19-18 40-25 63-21" fill="none" stroke="#ffdd78" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M148 333h224" stroke="#c99325" stroke-width="18" stroke-linecap="round" />
+  <text x="256" y="245" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="116" font-weight="900" letter-spacing="2" fill="#ffd76f">HKAI</text>
+  <text x="256" y="393" text-anchor="middle" font-family="'Yu Gothic', 'Hiragino Sans', sans-serif" font-size="46" font-weight="800" fill="#f5d274">橋本競馬AI</text>
 </svg>

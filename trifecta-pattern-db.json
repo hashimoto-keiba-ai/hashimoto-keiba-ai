@@ -1,0 +1,13 @@
+{
+  "databaseName": "trifecta-pattern-db",
+  "version": "2.7",
+  "theme": "万馬券探索AI",
+  "storageKey": "trifecta-pattern-db.json",
+  "requiredFields": [
+    "pattern",
+    "hitCount",
+    "returnRate",
+    "memo"
+  ],
+  "records": []
+}

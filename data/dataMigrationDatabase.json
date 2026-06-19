@@ -1,0 +1,66 @@
+{
+  "databaseName": "dataMigrationDatabase",
+  "phase": "Phase13-2",
+  "records": [
+    {
+      "migrationDate": "2026-06-06",
+      "tool": "Racecourse Folder Import",
+      "target": "Tokyo",
+      "folderPath": "Tokyo",
+      "markdownFiles": 3,
+      "jsonFiles": 1,
+      "csvFiles": 1,
+      "fileCount": 5,
+      "recordCount": 42,
+      "importStatus": "Ready",
+      "targetDatabases": [
+        "Prediction Database",
+        "Result Database",
+        "AI Index Database"
+      ],
+      "importedRecords": 0,
+      "remainingFiles": 5,
+      "notes": "Tokyo racecourse folder is ready for preview and migration."
+    },
+    {
+      "migrationDate": "2026-06-06",
+      "tool": "WIN5 Folder Import",
+      "target": "WIN5",
+      "folderPath": "WIN5",
+      "markdownFiles": 4,
+      "jsonFiles": 2,
+      "csvFiles": 0,
+      "fileCount": 6,
+      "recordCount": 28,
+      "importStatus": "Ready",
+      "targetDatabases": [
+        "WIN5 Database",
+        "Prediction Database",
+        "Result Database"
+      ],
+      "importedRecords": 0,
+      "remainingFiles": 6,
+      "notes": "WIN5 folders and tickets are ready for migration."
+    },
+    {
+      "migrationDate": "2026-06-06",
+      "tool": "Racecourse Folder Import",
+      "target": "Tokyo",
+      "folderPath": "東京競馬場",
+      "markdownFiles": 3,
+      "jsonFiles": 1,
+      "csvFiles": 1,
+      "fileCount": 5,
+      "recordCount": 42,
+      "importStatus": "Ready",
+      "targetDatabases": [
+        "Prediction Database",
+        "Result Database",
+        "AI Index Database"
+      ],
+      "importedRecords": 0,
+      "remainingFiles": 5,
+      "notes": "Tokyo racecourse folder is ready for preview and migration."
+    }
+  ]
+}

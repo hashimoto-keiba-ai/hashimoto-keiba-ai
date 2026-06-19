@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase9-2 God Hole Ranking System</title>
+  <style>
+    :root{--bg:#0d0d0c;--panel:#151410;--panel2:#1d1a13;--ink:#f7f1df;--muted:#b8ad91;--line:rgba(212,175,55,.24);--gold:#f2d675;--focus:#7dd3fc}*{box-sizing:border-box}body{margin:0;min-width:320px;background:linear-gradient(180deg,rgba(212,175,55,.08),rgba(13,13,12,0) 270px),var(--bg);color:var(--ink);font-family:"Yu Gothic","Meiryo",system-ui,sans-serif}header,main{padding-inline:clamp(16px,4vw,46px)}header{display:grid;gap:12px;padding-block:28px 18px;border-bottom:1px solid var(--line);background:rgba(10,10,9,.96)}h1,h2,p{margin:0}h1{color:var(--gold);font-size:clamp(26px,3vw,42px)}h2{font-size:18px}.eyebrow,.meta,label span,.rank-card span,.empty-state{color:var(--muted);font-size:12px;font-weight:800;line-height:1.5}main{display:grid;gap:18px;padding-block:20px 44px}.filter-panel,.ranking-section,.rank-card{border:1px solid var(--line);border-radius:8px;background:var(--panel);box-shadow:0 18px 42px rgba(0,0,0,.32)}.filter-panel{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr)) auto;gap:12px;align-items:end;padding:16px 18px}label{display:grid;gap:8px}select{width:100%;min-height:42px;border:1px solid rgba(212,175,55,.42);border-radius:6px;background:#0f0e0b;color:var(--ink);padding:0 10px;font:inherit;font-weight:800}select:focus{outline:2px solid var(--focus);outline-offset:2px}.pill{border:1px solid rgba(212,175,55,.36);border-radius:999px;background:rgba(212,175,55,.12);color:var(--gold);padding:9px 10px;font-size:12px;font-weight:900;white-space:nowrap}.ranking-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.ranking-section{overflow:hidden}.ranking-section.primary{grid-column:1/-1}.section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:60px;padding:14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(212,175,55,.12),rgba(212,175,55,0))}.section-heading h2{color:var(--gold)}.rank-stack{display:grid;gap:10px;padding:14px}.rank-card{display:grid;gap:8px;background:var(--panel2);box-shadow:none;padding:14px}.rank-card strong{color:var(--gold);font-size:18px}.rank-card p{font-size:13px;font-weight:800}.rank-card dl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}.rank-card dt{color:var(--muted);font-size:11px;font-weight:900}.rank-card dd{margin:0;color:var(--ink);font-size:13px;font-weight:800}.empty-state{padding:8px 0}@media(max-width:1100px){.filter-panel,.ranking-grid,.rank-card dl{grid-template-columns:1fr}.ranking-section.primary{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">Hashimoto Keiba AI / Phase9-2</p>
+    <h1>God Hole Ranking System</h1>
+    <p class="meta">AI index database の God Hole、Longshot、Danger Popular 指標から Top10 ランキングを表示します。</p>
+  </header>
+  <main>
+    <section class="filter-panel" aria-label="Ranking filters">
+      <label><span>Racecourse</span><select id="phase92-filter-racecourse"></select></label>
+      <label><span>Distance</span><select id="phase92-filter-distance"></select></label>
+      <label><span>Surface</span><select id="phase92-filter-surface"></select></label>
+      <label><span>Sort by</span><select id="phase92-sort"><option value="godHoleIndex">God Hole Index</option><option value="longshotIndex">Longshot Index</option><option value="dangerPopularIndex">Danger Popular Index</option></select></label>
+      <span class="pill" id="phase92-count">0 AI records</span>
+    </section>
+
+    <section class="ranking-grid" aria-label="Top10 rankings">
+      <article class="ranking-section primary"><div class="section-heading"><h2>Top10 Ranking</h2></div><div class="rank-stack" id="phase92-primary-ranking"></div></article>
+      <article class="ranking-section"><div class="section-heading"><h2>Top God Hole Horses</h2></div><div class="rank-stack" id="phase92-god-hole-ranking"></div></article>
+      <article class="ranking-section"><div class="section-heading"><h2>Top Longshot Horses</h2></div><div class="rank-stack" id="phase92-longshot-ranking"></div></article>
+      <article class="ranking-section"><div class="section-heading"><h2>Top Danger Popular Horses</h2></div><div class="rank-stack" id="phase92-danger-ranking"></div></article>
+    </section>
+  </main>
+  <script src="phase8-racecourse.js"></script>
+  <script src="phase9-god-hole-ranking.js"></script>
+</body>
+</html>

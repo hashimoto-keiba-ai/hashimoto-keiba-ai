@@ -1,0 +1,26 @@
+{
+  "databaseName": "research-lab-db",
+  "version": "2.7",
+  "theme": "AI研究所",
+  "storageKey": "research-lab-db.json",
+  "requiredFields": [
+    "date",
+    "researchType",
+    "course",
+    "distance",
+    "condition",
+    "jockey",
+    "trainer",
+    "pace",
+    "lapPattern",
+    "popularZone",
+    "trifectaPattern",
+    "darkHorsePattern",
+    "win5Pattern",
+    "finding",
+    "learnedRule",
+    "confidence",
+    "memo"
+  ],
+  "records": []
+}

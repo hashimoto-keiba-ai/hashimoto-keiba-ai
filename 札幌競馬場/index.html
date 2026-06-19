@@ -1,0 +1,183 @@
+﻿<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>札幌競馬AI Dashboard</title>
+    <link rel="icon" href="../icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../icon.svg">
+    <link rel="stylesheet" href="../dashboard.css">
+    <style>
+      .local-dashboard-layout {
+        display: grid;
+        gap: 18px;
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .local-dashboard-hero {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
+        align-items: stretch;
+      }
+
+      .dashboard-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .dashboard-brand img {
+        width: 68px;
+        height: 68px;
+        border-radius: 16px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+      }
+
+      .dashboard-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 12px;
+        padding: 18px;
+      }
+
+      .dashboard-menu-button {
+        display: grid;
+        min-height: 104px;
+        align-content: center;
+        gap: 6px;
+        padding: 16px;
+        border: 1px solid rgba(212, 175, 55, 0.34);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(245, 210, 116, 0.08), rgba(15, 10, 0, 0.04)),
+          var(--panel);
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .dashboard-menu-button:hover {
+        border-color: var(--gold-2);
+        background:
+          linear-gradient(180deg, rgba(245, 210, 116, 0.14), rgba(15, 10, 0, 0.06)),
+          #1b1811;
+      }
+
+      .dashboard-menu-button strong {
+        color: var(--gold-2);
+        font-size: 1.16rem;
+        line-height: 1.25;
+      }
+
+      .dashboard-menu-button span {
+        color: var(--muted);
+        font-size: 0.92rem;
+        font-weight: 700;
+      }
+
+      .dashboard-status {
+        display: grid;
+        gap: 10px;
+      }
+
+      .dashboard-status article {
+        display: grid;
+        gap: 5px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel-2);
+      }
+
+      .dashboard-status span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .dashboard-status strong {
+        color: var(--gold-2);
+        font-size: 17px;
+      }
+
+      @media (max-width: 760px) {
+        .local-dashboard-layout {
+          padding: 16px;
+        }
+
+        .local-dashboard-hero {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="official-banner" aria-label="札幌競馬AI Dashboard">
+      <span>札幌競馬AI Dashboard</span>
+    </div>
+
+    <main class="local-dashboard-layout">
+      <section class="panel local-dashboard-hero" aria-label="札幌競馬AI Dashboard">
+        <div>
+          <div class="dashboard-brand">
+            <img src="../icon.svg" alt="橋本競馬AI アイコン">
+            <div>
+              <p class="eyebrow">Hashimoto Keiba AI / 札幌</p>
+              <h1>札幌競馬AI Dashboard</h1>
+            </div>
+          </div>
+          <p>札幌競馬場の予想、検証、OS更新、保存ログ、2026年データをここから開きます。</p>
+        </div>
+
+        <div class="dashboard-status" aria-label="Private Localステータス">
+          <article>
+            <span>Target</span>
+            <strong>札幌競馬場</strong>
+          </article>
+          <article>
+            <span>Mode</span>
+            <strong>Private Local</strong>
+          </article>
+          <article>
+            <span>GitHub Pages</span>
+            <strong>OFF</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="札幌競馬AI Dashboard メニュー">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Dashboard Menu</p>
+            <h2>札幌競馬AI Dashboard</h2>
+          </div>
+          <span class="pill">One Tap</span>
+        </div>
+
+        <div class="dashboard-actions">
+          <a class="dashboard-menu-button" href="../pre-race-prediction.html?course=札幌競馬場">
+            <strong>① 事前予想</strong>
+            <span>札幌競馬の予想データを開く</span>
+          </a>          <a class="dashboard-menu-button" href="../result-review.html?course=札幌競馬場">
+            <strong>② 結果検証</strong>
+            <span>札幌競馬の結果と予想精度を確認する</span>
+          </a>          <a class="dashboard-menu-button" href="OSアップデート/">
+            <strong>③ OSアップデート</strong>
+            <span>札幌競馬AIの更新ログを開く</span>
+          </a>          <a class="dashboard-menu-button" href="保存ログ/">
+            <strong>④ 保存ログ</strong>
+            <span>運用記録と保存データを確認する</span>
+          </a>          <a class="dashboard-menu-button" href="2026/">
+            <strong>⑤ 2026年データ</strong>
+            <span>2026年データを開く</span>
+          </a>          <a class="dashboard-menu-button" href="../private-local.html">
+            <strong>⑥ ホームへ戻る</strong>
+            <span>橋本競馬AIホームへ戻る</span>
+          </a>        </div>
+      </section>
+    </main>
+  </body>
+</html>
