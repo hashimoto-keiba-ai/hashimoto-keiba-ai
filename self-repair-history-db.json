@@ -1,0 +1,8 @@
+{
+  "phase": "Phase18-5",
+  "database": "Self Repair History DB",
+  "version": "5.0",
+  "retention": 50,
+  "executionHistoryEnabled": false,
+  "records": []
+}

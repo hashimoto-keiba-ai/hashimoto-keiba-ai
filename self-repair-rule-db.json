@@ -1,0 +1,21 @@
+{
+  "phase": "Phase18-5",
+  "database": "Self Repair Rule DB",
+  "version": "5.0",
+  "categories": [
+    "missing_file",
+    "broken_link",
+    "dashboard_disconnect",
+    "db_inconsistency",
+    "test_missing",
+    "release_protection_risk",
+    "private_menu_issue"
+  ],
+  "rules": {
+    "executionPolicy": "PLAN_ONLY",
+    "requiresApproval": true,
+    "overwriteExisting": false,
+    "releaseProtectionAutoExecution": false
+  },
+  "records": []
+}

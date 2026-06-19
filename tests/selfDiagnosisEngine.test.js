@@ -11,6 +11,8 @@ assert.equal(engine.PHASE, "Phase18-4");
 assert.equal(engine.ENGINE_VERSION, "5.0");
 assert.equal(engine.OFFICIAL_RELEASE, "2.8");
 assert.equal(engine.OS_VERSION, "4.0 Final");
+assert.ok(engine.MONITORED_FILES.includes("self-repair-page.js"));
+assert.ok(engine.MONITORED_FILES.includes("tests/selfRepairEngine.test.js"));
 for (const score of Object.values(report.scores)) assert.equal(score, 100);
 assert.equal(report.anomalies.length, 0);
 assert.equal(report.status, "HEALTHY");
@@ -34,6 +36,9 @@ const storage = { getItem: (key) => store.get(key) || null, setItem: (key, value
 engine.persistReport(report, storage);
 assert.equal(JSON.parse(storage.getItem("selfDiagnosisLatest")).status, "HEALTHY");
 assert.equal(JSON.parse(storage.getItem("selfDiagnosisHistory")).length, 1);
-for (const db of engine.DATABASE_FILES) assert.equal(JSON.parse(fs.readFileSync(path.join(root, db), "utf8")).phase, "Phase18-4");
+for (const db of engine.DATABASE_FILES) {
+  const parsed = JSON.parse(fs.readFileSync(path.join(root, db), "utf8"));
+  assert.equal(parsed.phase, db.startsWith("self-repair-") ? "Phase18-5" : "Phase18-4");
+}
 
 console.log("self diagnosis engine tests passed");
