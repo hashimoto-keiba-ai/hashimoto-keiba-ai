@@ -9,7 +9,7 @@
   const ENGINE_VERSION = "5.0";
   const OFFICIAL_RELEASE = "2.8";
   const OS_VERSION = "4.0 Final";
-  const DATABASE_FILES = ["self-diagnosis-db.json", "self-diagnosis-history-db.json", "self-diagnosis-rule-db.json", "self-diagnosis-health-db.json", "self-diagnosis-repair-db.json", "self-repair-plan-db.json", "self-repair-rule-db.json", "self-repair-history-db.json", "repair-approval-history-db.json", "repair-audit-history-db.json", "repair-rollback-plan-db.json"];
+  const DATABASE_FILES = ["self-diagnosis-db.json", "self-diagnosis-history-db.json", "self-diagnosis-rule-db.json", "self-diagnosis-health-db.json", "self-diagnosis-repair-db.json", "self-repair-plan-db.json", "self-repair-rule-db.json", "self-repair-history-db.json", "repair-approval-history-db.json", "repair-audit-history-db.json", "repair-rollback-plan-db.json", "repair-governance-db.json"];
   const PROTECTED_FEATURES = [
     { id: "official-release", label: "Official Release v2.8", markers: ["Official Release v2.8"] },
     { id: "racing-os", label: "Hashimoto Racing OS v4.0 Final", markers: ["Hashimoto Racing OS v4.0 Final"] },
@@ -18,7 +18,8 @@
     { id: "ai-evolution", label: "Phase18-3 AI Evolution Engine", markers: ["AI Evolution Engine"] },
     { id: "self-diagnosis", label: "Phase18-4 Self Diagnosis Engine", markers: ["Self Diagnosis Engine"] },
     { id: "self-repair", label: "Phase18-5 Self Repair & Auto Improvement Engine", markers: ["Self Repair & Auto Improvement Engine"] },
-    { id: "repair-approval", label: "Phase18-6 Repair Plan Approval Gate", markers: ["Repair Plan Approval"] }
+    { id: "repair-approval", label: "Phase18-6 Repair Plan Approval Gate", markers: ["Repair Plan Approval"] },
+    { id: "repair-audit", label: "Phase18-7 Repair Execution Audit & Rollback Plan Engine", markers: ["Repair Execution Audit"] }
   ];
   const UI_MARKERS = {
     dashboard: ["Self Diagnosis Engine ON", "System Health Scan ON", "Missing Feature Detection ON", "Broken Link Detection ON", "Protection Check ON", "Repair Proposal ON"],
@@ -26,7 +27,7 @@
     oneTap: ["自己診断", "健康診断", "壊れた機能検出", "未接続検出", "修復候補", "v5.0診断センター"],
     readme: ["Phase18-4", "Self Diagnosis Engine", "自己診断エンジン", "System Health Scan", "Missing Feature Detection", "Broken Link Detection", "Protection Check", "Repair Proposal", "Health Score生成"]
   };
-  const MONITORED_FILES = ["index.html", "private-local.html", "README.md", "self-diagnosis-page.js", "self-repair-page.js", "repair-approval-page.js", "repair-audit-page.js", "tests/selfDiagnosisEngine.test.js", "tests/selfRepairEngine.test.js", "tests/repairApprovalGate.test.js", "tests/repairAuditRollback.test.js", ...DATABASE_FILES];
+  const MONITORED_FILES = ["index.html", "private-local.html", "README.md", "self-diagnosis-page.js", "self-repair-page.js", "repair-approval-page.js", "repair-audit-page.js", "repair-governance-dashboard.js", "tests/selfDiagnosisEngine.test.js", "tests/selfRepairEngine.test.js", "tests/repairApprovalGate.test.js", "tests/repairAuditRollback.test.js", "tests/repairGovernanceDashboard.test.js", ...DATABASE_FILES];
   const clamp = (value) => Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
   const scoreChecks = (checks) => checks.length ? clamp((checks.filter((item) => item.ok).length / checks.length) * 100) : 100;
   const asText = (value) => typeof value === "string" ? value : JSON.stringify(value ?? "");
@@ -79,6 +80,7 @@
       { id: "engine:self-repair", label: "Self Repair & Auto Improvement Engine", scope: "engine", ok: Object.hasOwn(files, "self-repair-page.js") },
       { id: "engine:repair-approval", label: "Repair Plan Approval Gate", scope: "engine", ok: Object.hasOwn(files, "repair-approval-page.js") },
       { id: "engine:repair-audit", label: "Repair Execution Audit & Rollback Plan Engine", scope: "engine", ok: Object.hasOwn(files, "repair-audit-page.js") },
+      { id: "engine:repair-governance", label: "Global Repair Governance Dashboard", scope: "engine", ok: Object.hasOwn(files, "repair-governance-dashboard.js") },
       ...PROTECTED_FEATURES.slice(1).map((feature) => ({ id: `engine:${feature.id}`, label: feature.label, scope: "engine", ok: feature.markers.every((marker) => allText.includes(marker)) }))
     ];
     const databaseChecks = DATABASE_FILES.map((path) => ({ id: `database:${path}`, label: path, scope: "database", ok: Object.hasOwn(files, path) }));
@@ -90,7 +92,8 @@
       { id: "test:self-diagnosis", label: "tests/selfDiagnosisEngine.test.js", scope: "test", ok: Object.hasOwn(files, "tests/selfDiagnosisEngine.test.js") },
       { id: "test:self-repair", label: "tests/selfRepairEngine.test.js", scope: "test", ok: Object.hasOwn(files, "tests/selfRepairEngine.test.js") },
       { id: "test:repair-approval", label: "tests/repairApprovalGate.test.js", scope: "test", ok: Object.hasOwn(files, "tests/repairApprovalGate.test.js") },
-      { id: "test:repair-audit", label: "tests/repairAuditRollback.test.js", scope: "test", ok: Object.hasOwn(files, "tests/repairAuditRollback.test.js") }
+      { id: "test:repair-audit", label: "tests/repairAuditRollback.test.js", scope: "test", ok: Object.hasOwn(files, "tests/repairAuditRollback.test.js") },
+      { id: "test:repair-governance", label: "tests/repairGovernanceDashboard.test.js", scope: "test", ok: Object.hasOwn(files, "tests/repairGovernanceDashboard.test.js") }
     ];
     const protectionChecks = PROTECTED_FEATURES.map((feature) => ({ id: `protection:${feature.id}`, label: feature.label, scope: "protection", ok: feature.markers.every((marker) => allText.includes(marker)) }));
     const jsonChecks = validateJsonFiles(files);

@@ -1,0 +1,12 @@
+{
+  "phase": "Phase18-8",
+  "database": "Global Repair Governance DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseStatus": "protected",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "phaseStatuses": ["healthy", "warning", "blocked", "plan_only", "mock_only", "protected"],
+  "sourcePhases": ["Phase18-4", "Phase18-5", "Phase18-6", "Phase18-7"],
+  "records": []
+}

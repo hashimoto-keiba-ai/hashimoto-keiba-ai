@@ -1415,6 +1415,27 @@
         <p class="data-footnote">PLAN_ONLY / 実差分なし / 自動上書きなし / Official Release v2.8 Protected / 最終監査: <span id="repair-audit-updated">--</span></p>
         <ul class="repair-audit-list" id="repair-audit-list"><li>承認済み修復プランを待機しています。</li></ul>
       </section>
+
+      <section class="panel repair-governance-panel" id="repair-governance-dashboard" aria-label="Global Repair Governance Dashboard">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-8 / Global Governance</p><h2>Global Repair Governance Dashboard（統合修復ガバナンス）</h2></div>
+          <span class="pill hot">OFFICIAL RELEASE v2.8 PROTECTED</span>
+        </div>
+        <div class="repair-governance-actions"><button id="run-repair-governance" type="button">統合状態を更新</button><span>PLAN_ONLY / EXECUTION ALLOWED: FALSE</span></div>
+        <div class="phase2-kpis repair-governance-grid">
+          <article><span>Health Score</span><strong id="repair-governance-health">--</strong></article>
+          <article><span>Self Diagnosis</span><strong id="repair-governance-diagnosis">--</strong></article>
+          <article><span>Repair Plans</span><strong id="repair-governance-plans">0</strong></article>
+          <article><span>Approval Gate</span><strong id="repair-governance-approval">--</strong></article>
+          <article><span>Audit Rollback</span><strong id="repair-governance-audit">--</strong></article>
+          <article><span>Blocked</span><strong id="repair-governance-blocked">0</strong></article>
+          <article><span>Protected Blocked</span><strong id="repair-governance-protected-blocked">0</strong></article>
+          <article><span>Executed Mock</span><strong id="repair-governance-mock">0</strong></article>
+          <article><span>Execution Allowed</span><strong id="repair-governance-execution">false</strong></article>
+        </div>
+        <ul class="repair-governance-phases" id="repair-governance-phases"><li>Phase18-4〜18-7の状態を集約中です。</li></ul>
+        <p class="data-footnote">実修復なし / 自動上書きなし / 自動ロールバックなし / 最終更新: <span id="repair-governance-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1434,6 +1455,7 @@
     <script src="self-repair-page.js"></script>
     <script src="repair-approval-page.js"></script>
     <script src="repair-audit-page.js"></script>
+    <script src="repair-governance-dashboard.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

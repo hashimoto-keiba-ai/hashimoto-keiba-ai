@@ -638,6 +638,14 @@ Phase18-7では`execution_allowed`を常に`false`とし、実ファイル修復
 
 追加ファイル: `repair-audit-page.js`、`repair-audit-history-db.json`、`repair-rollback-plan-db.json`、`tests/repairAuditRollback.test.js`
 
+## Phase18-8 Global Repair Governance Dashboard
+
+Phase18-4 Self Diagnosis、Phase18-5 Self Repair、Phase18-6 Approval Gate、Phase18-7 Audit RollbackのDBと保存状態を横断読み取りし、Health Score、修復件数、承認・監査状態、blocked、protected_release_blocked、executed_mockを1画面で統合監視します。
+
+各フェーズを`healthy`、`warning`、`blocked`、`plan_only`、`mock_only`、`protected`で分類します。Official Release v2.8は常に`protected`、`execution_allowed`は常に`false`です。実修復、自動上書き、自動ロールバックは行わず、Phase18-1〜18-7の保護を維持します。
+
+追加ファイル: `repair-governance-dashboard.js`、`repair-governance-db.json`、`tests/repairGovernanceDashboard.test.js`
+
 ## Phase17-5 Hashimoto Racing OS v4.0 Final
 
 Phase16のSuper Core Engine、Super Self Evolution Engine、Full Auto Learning Engine、Future Prediction Engine、God AI Engine、Universal Racing Intelligence Engineと、Phase17のRacing OS v4.0、Autonomous Research Institute、Self Optimization Center、Global Intelligence Networkを最終統合しました。Official Release v2.8は永久保存版として保護されます。
