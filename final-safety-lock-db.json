@@ -1,0 +1,12 @@
+{
+  "phase": "Phase18-10",
+  "database": "Final Safety Lock DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseStatus": "protected",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "finalStatuses": ["release_ready", "release_warning", "release_blocked", "protected_only", "plan_only_ready"],
+  "records": []
+}
