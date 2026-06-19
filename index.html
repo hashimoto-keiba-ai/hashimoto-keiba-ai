@@ -1399,6 +1399,22 @@
         <p class="data-footnote">承認後も実修復なし / executed_mockまで / Official Release v2.8 Protected / 最終更新: <span id="repair-approval-updated">--</span></p>
         <ul class="repair-approval-list" id="repair-approval-list"><li>Phase18-5の修復プランを待機しています。</li></ul>
       </section>
+
+      <section class="panel repair-audit-panel" id="repair-audit-engine" aria-label="Repair Execution Audit and Rollback Plan Engine">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-7 / Pre-Execution Audit</p><h2>Repair Execution Audit & Rollback Plan Engine</h2></div>
+          <span class="pill hot">EXECUTION DISABLED</span>
+        </div>
+        <div class="repair-audit-actions"><button id="run-repair-audit" type="button">監査・ロールバック計画を生成</button><span>approved / executed_mockのみ</span></div>
+        <div class="phase2-kpis repair-audit-grid">
+          <article><span>Audit Records</span><strong id="repair-audit-count">0</strong></article>
+          <article><span>Blocked</span><strong id="repair-audit-blocked">0</strong></article>
+          <article><span>Rollback Required</span><strong id="repair-audit-rollback">0</strong></article>
+          <article><span>Execution Allowed</span><strong id="repair-audit-execution">false</strong></article>
+        </div>
+        <p class="data-footnote">PLAN_ONLY / 実差分なし / 自動上書きなし / Official Release v2.8 Protected / 最終監査: <span id="repair-audit-updated">--</span></p>
+        <ul class="repair-audit-list" id="repair-audit-list"><li>承認済み修復プランを待機しています。</li></ul>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1417,6 +1433,7 @@
     <script src="self-diagnosis-page.js"></script>
     <script src="self-repair-page.js"></script>
     <script src="repair-approval-page.js"></script>
+    <script src="repair-audit-page.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

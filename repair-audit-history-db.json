@@ -1,0 +1,11 @@
+{
+  "phase": "Phase18-7",
+  "database": "Repair Execution Audit History DB",
+  "version": "5.0",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "eligibleApprovalStatuses": ["approved", "executed_mock"],
+  "auditStatuses": ["audit_pending", "audit_passed_mock", "audit_blocked", "rollback_required", "protected_release_blocked"],
+  "retention": 100,
+  "records": []
+}
