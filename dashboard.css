@@ -1399,3 +1399,13 @@ tbody tr:last-child td {
 .repair-audit-item { border: 1px solid rgba(192, 132, 252, 0.24); border-radius: 12px; padding: 12px; background: rgba(88, 28, 135, 0.12); color: var(--muted); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
 .repair-audit-item.status-protected_release_blocked { border-color: rgba(248, 113, 113, 0.6); }
 @media (max-width: 680px) { .repair-audit-actions { align-items: stretch; } .repair-audit-actions button { width: 100%; } }
+
+.repair-governance-panel { border: 1px solid rgba(45, 212, 191, 0.58); background: radial-gradient(circle at 90% 0, rgba(13, 148, 136, 0.2), transparent 44%), linear-gradient(145deg, #061916, #080b12 72%); }
+.repair-governance-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.repair-governance-actions span { color: #99f6e4; font-size: 13px; font-weight: 900; }
+.repair-governance-grid article strong { color: #99f6e4; font-size: 18px; overflow-wrap: anywhere; }
+.repair-governance-phases { display: flex; flex-wrap: wrap; gap: 9px; margin: 14px 0; padding: 0; list-style: none; }
+.governance-status { border: 1px solid rgba(45, 212, 191, 0.28); border-radius: 999px; padding: 7px 10px; color: #ccfbf1; font-size: 12px; font-weight: 900; }
+.governance-status.status-blocked { border-color: rgba(248, 113, 113, 0.58); color: #fecaca; }
+.governance-status.status-protected { border-color: rgba(250, 204, 21, 0.58); color: #fef08a; }
+@media (max-width: 680px) { .repair-governance-actions { align-items: stretch; } .repair-governance-actions button { width: 100%; } }
