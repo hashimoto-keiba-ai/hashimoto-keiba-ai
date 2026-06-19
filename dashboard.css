@@ -1409,3 +1409,13 @@ tbody tr:last-child td {
 .governance-status.status-blocked { border-color: rgba(248, 113, 113, 0.58); color: #fecaca; }
 .governance-status.status-protected { border-color: rgba(250, 204, 21, 0.58); color: #fef08a; }
 @media (max-width: 680px) { .repair-governance-actions { align-items: stretch; } .repair-governance-actions button { width: 100%; } }
+
+.governance-alert-panel { border: 1px solid rgba(251, 113, 133, 0.58); background: radial-gradient(circle at 90% 0, rgba(190, 24, 93, 0.18), transparent 44%), linear-gradient(145deg, #1c0810, #080b12 72%); }
+.governance-alert-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.governance-alert-actions span { color: #fda4af; font-size: 13px; font-weight: 900; }
+.governance-alert-grid article strong { color: #fda4af; font-size: 19px; }
+.governance-alert-list { display: grid; gap: 9px; margin: 14px 0; padding: 0; list-style: none; }
+.governance-alert-item { border: 1px solid rgba(251, 113, 133, 0.24); border-radius: 12px; padding: 12px; color: var(--muted); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.governance-alert-item.category-critical { border-color: rgba(248, 113, 113, 0.65); }
+.governance-alert-item.category-protected { border-color: rgba(250, 204, 21, 0.58); color: #fef08a; }
+@media (max-width: 680px) { .governance-alert-actions { align-items: stretch; } .governance-alert-actions button { width: 100%; } }
