@@ -1364,6 +1364,26 @@
         <p class="self-diagnosis-repair" id="self-diagnosis-repair">修復候補を診断中</p>
         <p class="data-footnote">最終診断: <span id="self-diagnosis-updated">--</span></p>
       </section>
+
+      <section class="panel self-repair-panel" id="self-repair-engine" aria-label="Self Repair and Auto Improvement Engine">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-5 / Safe Repair Planning</p><h2>Self Repair & Auto Improvement Engine</h2></div>
+          <span class="pill hot">PLAN ONLY</span>
+        </div>
+        <div class="self-repair-actions"><button id="run-self-repair-plan" type="button">安全な修復プランを生成</button><span id="self-repair-status">STANDBY</span></div>
+        <div class="phase2-kpis self-repair-grid">
+          <article><span>Health Score</span><strong id="self-repair-health">--</strong></article>
+          <article><span>Repair Candidates</span><strong id="self-repair-count">0</strong></article>
+          <article><span>Critical</span><strong id="self-repair-critical">0</strong></article>
+          <article><span>High</span><strong id="self-repair-high">0</strong></article>
+          <article><span>Execution Policy</span><strong id="self-repair-policy">PLAN_ONLY</strong></article>
+        </div>
+        <div class="self-repair-badges" aria-label="安全な修復分類">
+          <span>missing_file</span><span>broken_link</span><span>dashboard_disconnect</span><span>db_inconsistency</span><span>test_missing</span><span>release_protection_risk</span><span>private_menu_issue</span>
+        </div>
+        <ul class="self-repair-plan-list" id="self-repair-plan-list"><li>診断結果を待機しています。</li></ul>
+        <p class="data-footnote">即時実行なし / 承認必須 / Official Release v2.8 Protected / 最終生成: <span id="self-repair-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1380,6 +1400,7 @@
     <script src="global-network-page.js"></script>
     <script src="final-system-page.js"></script>
     <script src="self-diagnosis-page.js"></script>
+    <script src="self-repair-page.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
