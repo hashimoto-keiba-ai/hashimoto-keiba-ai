@@ -1,0 +1,15 @@
+{
+  "phase": "Phase18-12",
+  "database": "Global Network Simulation DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseProtected": true,
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "externalConnectionAllowed": false,
+  "connectionMode": "simulation_only",
+  "targetNetwork": "Global Intelligence Network",
+  "records": []
+}

@@ -1,0 +1,15 @@
+{
+  "phase": "Phase18-12",
+  "database": "Global Network Readiness DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseProtected": true,
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "externalConnectionAllowed": false,
+  "connectionMode": "readiness_only",
+  "readinessStatuses": ["network_ready_simulation", "network_warning", "network_blocked", "protected_only", "plan_only_ready"],
+  "records": []
+}
