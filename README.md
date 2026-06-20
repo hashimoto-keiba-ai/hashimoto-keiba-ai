@@ -686,6 +686,14 @@ Phase18-12の`simulation_only` / `readiness_only`状態を入力として、Glob
 
 追加ファイル: `global-intelligence-network-core.js`、`global-intelligence-network-core-db.json`、`global-intelligence-network-nodes-db.json`、`tests/globalIntelligenceNetworkCore.test.js`
 
+## Phase18-14 Global Network Node Sync Dependency Validator
+
+Phase18-13の9ノードを読み取り、ノードID、ソースPhase、ソースファイル、依存関係、保護状態、許可ステータス、実行禁止・外部接続禁止フラグを検証します。同期状態は`sync_ready`、`sync_warning`、`sync_blocked`、`dependency_missing`、`protected_only`、`skeleton_only`、依存状態は`dependency_ok`、`dependency_warning`、`dependency_blocked`、`dependency_missing`で表示します。
+
+Official Release v2.8は`protected_only`です。`executionAllowed`、`autoExecutionAllowed`、`auto_execution_allowed`、`external_connection_allowed`は常に`false`で、実接続、外部通信、自動修復、自動上書き、自動ロールバックは行いません。
+
+追加ファイル: `global-network-node-sync-validator.js`、`global-network-node-sync-db.json`、`global-network-dependency-validator-db.json`、`tests/globalNetworkNodeSyncValidator.test.js`
+
 ## Phase17-5 Hashimoto Racing OS v4.0 Final
 
 Phase16のSuper Core Engine、Super Self Evolution Engine、Full Auto Learning Engine、Future Prediction Engine、God AI Engine、Universal Racing Intelligence Engineと、Phase17のRacing OS v4.0、Autonomous Research Institute、Self Optimization Center、Global Intelligence Networkを最終統合しました。Official Release v2.8は永久保存版として保護されます。
