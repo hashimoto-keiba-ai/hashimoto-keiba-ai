@@ -1,0 +1,15 @@
+{
+  "phase": "Phase18-16",
+  "database": "Global Network Simulation Log DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseStatus": "protected_only",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false,
+  "simulationModes": ["simulation_only", "readiness_only", "skeleton_only", "blocked_simulation", "protected_only"],
+  "safetyResults": ["safe_blocked", "warning_blocked", "protected_blocked", "dependency_blocked", "preconnection_closed"],
+  "records": []
+}
