@@ -1,0 +1,15 @@
+{
+  "phase": "Phase18-15",
+  "database": "Global Network Safety Score DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseStatus": "protected_only",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false,
+  "scoreRange": { "minimum": 0, "maximum": 100 },
+  "safetyStatuses": ["safety_ready", "safety_warning", "safety_blocked", "protected_only", "preconnection_only"],
+  "records": []
+}

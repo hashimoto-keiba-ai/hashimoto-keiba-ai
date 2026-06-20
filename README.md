@@ -694,6 +694,14 @@ Official Release v2.8は`protected_only`です。`executionAllowed`、`autoExecu
 
 追加ファイル: `global-network-node-sync-validator.js`、`global-network-node-sync-db.json`、`global-network-dependency-validator-db.json`、`tests/globalNetworkNodeSyncValidator.test.js`
 
+## Phase18-15 Global Network Safety Scoring PreConnection Gate
+
+Phase18-13〜18-14のCore Skeleton、9ノード、Node Sync、Dependency Validatorを横断し、ネットワーク安全性を0〜100点で採点します。コア、同期、依存関係、Official Release保護、実行禁止、外部接続禁止、`PLAN_ONLY`、`skeleton_only`、`readiness_only`と欠落・警告・blocked件数を総合判定します。
+
+安全状態は`safety_ready`、`safety_warning`、`safety_blocked`、`protected_only`、`preconnection_only`、ゲート状態は`gate_closed_safe`、`gate_warning`、`gate_blocked`、`gate_protected_only`です。スコアが100でも接続ゲートは閉じたままで、実接続、外部通信、自動修復、自動上書き、自動ロールバックを行いません。
+
+追加ファイル: `global-network-safety-scoring.js`、`global-network-safety-score-db.json`、`global-network-preconnection-gate-db.json`、`tests/globalNetworkSafetyScoring.test.js`
+
 ## Phase17-5 Hashimoto Racing OS v4.0 Final
 
 Phase16のSuper Core Engine、Super Self Evolution Engine、Full Auto Learning Engine、Future Prediction Engine、God AI Engine、Universal Racing Intelligence Engineと、Phase17のRacing OS v4.0、Autonomous Research Institute、Self Optimization Center、Global Intelligence Networkを最終統合しました。Official Release v2.8は永久保存版として保護されます。

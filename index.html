@@ -1545,6 +1545,25 @@
         <ul class="node-sync-result-list" id="node-sync-result-list"></ul>
         <p class="data-footnote">Official Release v2.8 protected_only / 整合性確認のみ / 更新: <span id="node-sync-updated">--</span></p>
       </section>
+
+      <section class="panel network-safety-gate-panel" id="global-network-safety-gate" aria-label="Global Network Safety Scoring PreConnection Gate">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-15 / Pre-Connection Gate</p><h2>Global Network安全スコア・接続前ゲート</h2></div>
+          <span class="pill hot">GATE CLOSED</span>
+        </div>
+        <div class="network-safety-actions"><button id="run-network-safety-scoring" type="button">安全スコアを更新</button><span>NO CONNECTION / PRECONNECTION ONLY / PLAN_ONLY</span></div>
+        <div class="phase2-kpis network-safety-grid">
+          <article><span>Safety Score</span><strong id="network-safety-score">--</strong></article>
+          <article><span>Safety Status</span><strong id="network-safety-status">--</strong></article>
+          <article><span>Connection Gate</span><strong id="network-gate-status">gate_closed_safe</strong></article>
+          <article><span>External Connection</span><strong id="network-gate-external">false</strong></article>
+          <article><span>Missing Nodes</span><strong id="network-gate-missing">0</strong></article>
+          <article><span>Dependency Warnings</span><strong id="network-gate-warnings">0</strong></article>
+          <article><span>Blocked Nodes</span><strong id="network-gate-blocked">0</strong></article>
+        </div>
+        <ul class="network-safety-check-list" id="network-safety-check-list"></ul>
+        <p class="data-footnote">Official Release v2.8 protected_only / スコア100でも実接続禁止 / 更新: <span id="network-gate-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1571,6 +1590,7 @@
     <script src="global-network-readiness-simulator.js"></script>
     <script src="global-intelligence-network-core.js"></script>
     <script src="global-network-node-sync-validator.js"></script>
+    <script src="global-network-safety-scoring.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

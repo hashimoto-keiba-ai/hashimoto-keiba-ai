@@ -1,0 +1,16 @@
+{
+  "phase": "Phase18-15",
+  "database": "Global Network Pre-Connection Gate DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseStatus": "protected_only",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false,
+  "connectionAllowed": false,
+  "gateStatuses": ["gate_closed_safe", "gate_warning", "gate_blocked", "gate_protected_only"],
+  "defaultGateStatus": "gate_closed_safe",
+  "records": []
+}
