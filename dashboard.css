@@ -1435,3 +1435,13 @@ tbody tr:last-child td {
 .global-control-actions span { color: #bae6fd; font-size: 13px; font-weight: 900; }
 .global-control-grid article strong { color: #bae6fd; font-size: 17px; overflow-wrap: anywhere; }
 @media (max-width: 680px) { .global-control-actions { align-items: stretch; } .global-control-actions button { width: 100%; } }
+
+.global-network-readiness-panel { border: 1px solid rgba(129, 140, 248, 0.65); background: radial-gradient(circle at 90% 0, rgba(79, 70, 229, 0.22), transparent 44%), linear-gradient(145deg, #0d1029, #080b12 72%); }
+.global-network-readiness-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.global-network-readiness-actions span { color: #c7d2fe; font-size: 13px; font-weight: 900; }
+.global-network-readiness-grid article strong { color: #c7d2fe; font-size: 17px; overflow-wrap: anywhere; }
+.global-network-readiness-checks { display: flex; flex-wrap: wrap; gap: 9px; margin: 14px 0; padding: 0; list-style: none; }
+.global-network-readiness-checks li { border: 1px solid rgba(129, 140, 248, 0.3); border-radius: 999px; padding: 7px 10px; font-size: 12px; font-weight: 900; }
+.global-network-readiness-checks .network-check-ok { color: #bbf7d0; border-color: rgba(74, 222, 128, 0.42); }
+.global-network-readiness-checks .network-check-warning { color: #fecaca; border-color: rgba(248, 113, 113, 0.55); }
+@media (max-width: 680px) { .global-network-readiness-actions { align-items: stretch; } .global-network-readiness-actions button { width: 100%; } }

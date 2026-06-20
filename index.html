@@ -1494,6 +1494,23 @@
         </div>
         <p class="data-footnote">Official Release v2.8 Protected / 接続未実行 / 自動処理なし / 最終更新: <span id="global-control-updated">--</span></p>
       </section>
+
+      <section class="panel global-network-readiness-panel" id="global-network-readiness-simulator" aria-label="Global Intelligence Network Readiness Simulator">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-12 / Simulation Only</p><h2>Global Intelligence Network Readiness Simulator（Global Network準備シミュレーター）</h2></div>
+          <span class="pill hot">NO EXTERNAL CONNECTION</span>
+        </div>
+        <div class="global-network-readiness-actions"><button id="run-global-network-simulation" type="button">安全な疑似接続を実行</button><span>READINESS_ONLY / SIMULATION_ONLY / PLAN_ONLY</span></div>
+        <div class="phase2-kpis global-network-readiness-grid">
+          <article><span>Readiness</span><strong id="global-network-readiness-status">--</strong></article>
+          <article><span>Connection Mode</span><strong id="global-network-connection-mode">simulation_only</strong></article>
+          <article><span>External Connection</span><strong id="global-network-external-allowed">false</strong></article>
+          <article><span>Blocked Reason</span><strong id="global-network-blocked-reason">--</strong></article>
+        </div>
+        <ul class="global-network-readiness-checks" id="global-network-readiness-checks"></ul>
+        <p class="data-footnote">次の安全アクション: <span id="global-network-next-action">--</span></p>
+        <p class="data-footnote">Official Release v2.8 Protected / 実接続・外部通信なし / 更新: <span id="global-network-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1517,6 +1534,7 @@
     <script src="governance-alert-page.js"></script>
     <script src="final-safety-lock-page.js"></script>
     <script src="global-intelligence-control-center.js"></script>
+    <script src="global-network-readiness-simulator.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
