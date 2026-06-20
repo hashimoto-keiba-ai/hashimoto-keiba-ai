@@ -1580,6 +1580,25 @@
         <ul class="network-simulation-log-list" id="network-simulation-log-list"></ul>
         <p class="data-footnote">Official Release v2.8 protected_only / ローカル疑似判定のみ / 更新: <span id="network-simulation-updated">--</span></p>
       </section>
+
+      <section class="panel comprehensive-audit-panel" id="global-network-comprehensive-audit" aria-label="Global Network Comprehensive Audit Report Engine">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-17 / Comprehensive Audit</p><h2>Global Network総合監査レポート</h2></div>
+          <span class="pill hot">REPORT ONLY</span>
+        </div>
+        <div class="comprehensive-audit-actions"><button id="run-comprehensive-audit" type="button">総合監査を生成</button><span>NO CONNECTION / SAFE PROPOSAL ONLY / PLAN_ONLY</span></div>
+        <div class="phase2-kpis comprehensive-audit-grid">
+          <article><span>Network Status</span><strong id="comprehensive-audit-status">--</strong></article>
+          <article><span>Risk Level</span><strong id="comprehensive-audit-risk">--</strong></article>
+          <article><span>Safety Score</span><strong id="comprehensive-audit-score">--</strong></article>
+          <article><span>Nodes</span><strong id="comprehensive-audit-nodes">0/9</strong></article>
+          <article><span>Simulation Logs</span><strong id="comprehensive-audit-logs">0</strong></article>
+          <article><span>External Connection</span><strong id="comprehensive-audit-external">false</strong></article>
+        </div>
+        <ul class="comprehensive-audit-reasons" id="comprehensive-audit-reasons"></ul>
+        <p class="data-footnote">安全な次アクション: <span id="comprehensive-audit-action">--</span></p>
+        <p class="data-footnote">Official Release v2.8 protected / 集計・要約のみ / 更新: <span id="comprehensive-audit-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1608,6 +1627,7 @@
     <script src="global-network-node-sync-validator.js"></script>
     <script src="global-network-safety-scoring.js"></script>
     <script src="global-network-simulation-log.js"></script>
+    <script src="global-network-audit-report.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
