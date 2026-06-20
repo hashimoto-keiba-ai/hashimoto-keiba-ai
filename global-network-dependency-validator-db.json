@@ -1,0 +1,14 @@
+{
+  "phase": "Phase18-14",
+  "database": "Global Network Dependency Validator DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseStatus": "protected_only",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false,
+  "dependencyStatuses": ["dependency_ok", "dependency_warning", "dependency_blocked", "dependency_missing"],
+  "records": []
+}
