@@ -1496,3 +1496,9 @@ tbody tr:last-child td {
 .comprehensive-audit-grid article strong { color: #fbcfe8; font-size: 17px; overflow-wrap: anywhere; }
 .comprehensive-audit-reasons { display: grid; gap: 8px; margin: 14px 0; padding-left: 22px; color: var(--muted); font-size: 12px; font-weight: 800; }
 @media (max-width: 680px) { .comprehensive-audit-actions { align-items: stretch; } .comprehensive-audit-actions button { width: 100%; } }
+
+.phase18-completion-audit-panel { border: 1px solid rgba(167, 139, 250, 0.68); background: radial-gradient(circle at 90% 0, rgba(109, 40, 217, 0.22), transparent 44%), linear-gradient(145deg, #160b2b, #080b12 72%); }
+.phase18-completion-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase18-completion-actions span { color: #ddd6fe; font-size: 13px; font-weight: 900; }
+.phase18-completion-grid article strong { color: #ddd6fe; font-size: 16px; overflow-wrap: anywhere; }
+@media (max-width: 680px) { .phase18-completion-actions { align-items: stretch; } .phase18-completion-actions button { width: 100%; } }

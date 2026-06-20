@@ -1,0 +1,14 @@
+{
+  "phase": "Phase18-18",
+  "database": "Phase18 Release Audit DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseStatus": "protected_release_only",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false,
+  "releaseAuditStatuses": ["release_audit_ready", "release_audit_warning", "release_audit_blocked", "protected_release_only"],
+  "records": []
+}
