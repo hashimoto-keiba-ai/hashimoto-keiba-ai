@@ -1,0 +1,18 @@
+{
+  "phase": "Phase18-13",
+  "database": "Global Intelligence Network Nodes DB",
+  "version": "5.0",
+  "executionPolicy": "PLAN_ONLY",
+  "external_connection_allowed": false,
+  "nodes": [
+    { "node_id": "diagnosis_node", "node_name": "Self Diagnosis Node", "source_phase": "Phase18-4", "source_file": "self-diagnosis-page.js", "status": "node_ready", "protected": false, "execution_allowed": false, "external_connection_allowed": false, "dependencies": [], "safety_notes": "PLAN_ONLY / skeleton_only" },
+    { "node_id": "repair_node", "node_name": "Self Repair Node", "source_phase": "Phase18-5", "source_file": "self-repair-page.js", "status": "node_ready", "protected": false, "execution_allowed": false, "external_connection_allowed": false, "dependencies": ["diagnosis_node"], "safety_notes": "PLAN_ONLY / skeleton_only" },
+    { "node_id": "approval_node", "node_name": "Repair Approval Node", "source_phase": "Phase18-6", "source_file": "repair-approval-page.js", "status": "node_ready", "protected": false, "execution_allowed": false, "external_connection_allowed": false, "dependencies": ["repair_node"], "safety_notes": "PLAN_ONLY / skeleton_only" },
+    { "node_id": "audit_node", "node_name": "Repair Audit Node", "source_phase": "Phase18-7", "source_file": "repair-audit-page.js", "status": "node_ready", "protected": false, "execution_allowed": false, "external_connection_allowed": false, "dependencies": ["approval_node"], "safety_notes": "PLAN_ONLY / skeleton_only" },
+    { "node_id": "governance_node", "node_name": "Repair Governance Node", "source_phase": "Phase18-8", "source_file": "repair-governance-dashboard.js", "status": "node_ready", "protected": false, "execution_allowed": false, "external_connection_allowed": false, "dependencies": ["diagnosis_node", "repair_node", "approval_node", "audit_node"], "safety_notes": "PLAN_ONLY / skeleton_only" },
+    { "node_id": "alert_node", "node_name": "Governance Alert Node", "source_phase": "Phase18-9", "source_file": "governance-alert-page.js", "status": "node_ready", "protected": false, "execution_allowed": false, "external_connection_allowed": false, "dependencies": ["governance_node"], "safety_notes": "PLAN_ONLY / skeleton_only" },
+    { "node_id": "safety_lock_node", "node_name": "Official Release Safety Lock Node", "source_phase": "Phase18-10", "source_file": "final-safety-lock-page.js", "status": "protected_only", "protected": true, "execution_allowed": false, "external_connection_allowed": false, "dependencies": ["governance_node", "alert_node"], "safety_notes": "Official Release v2.8 protected_only" },
+    { "node_id": "control_center_node", "node_name": "Global Intelligence Control Center Node", "source_phase": "Phase18-11", "source_file": "global-intelligence-control-center.js", "status": "node_ready", "protected": false, "execution_allowed": false, "external_connection_allowed": false, "dependencies": ["safety_lock_node"], "safety_notes": "PLAN_ONLY / readiness_only" },
+    { "node_id": "readiness_simulator_node", "node_name": "Global Network Readiness Simulator Node", "source_phase": "Phase18-12", "source_file": "global-network-readiness-simulator.js", "status": "skeleton_only", "protected": false, "execution_allowed": false, "external_connection_allowed": false, "dependencies": ["control_center_node", "safety_lock_node"], "safety_notes": "simulation_only input / no external connection" }
+  ]
+}
