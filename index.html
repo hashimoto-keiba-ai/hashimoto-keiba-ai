@@ -1470,6 +1470,30 @@
         <ul class="final-safety-checks" id="final-safety-checks"><li>Phase18-4〜18-9の安全条件を確認中です。</li></ul>
         <p class="data-footnote">実修復なし / 自動上書きなし / 自動ロールバックなし / 最終判定: <span id="final-safety-updated">--</span></p>
       </section>
+
+      <section class="panel global-control-center-panel" id="global-intelligence-control-center" aria-label="Global Intelligence Control Center">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-11 / Central Control</p><h2>Global Intelligence Control Center（統合AIコントロールセンター）</h2></div>
+          <span class="pill hot">NETWORK READINESS ONLY</span>
+        </div>
+        <div class="global-control-actions"><button id="run-global-control-center" type="button">中央制御状態を更新</button><span>NO CONNECTION / PLAN_ONLY</span></div>
+        <div class="phase2-kpis global-control-grid">
+          <article><span>Control Center</span><strong id="global-control-status">--</strong></article>
+          <article><span>Health Score</span><strong id="global-control-health">--</strong></article>
+          <article><span>Diagnosis</span><strong id="global-control-diagnosis">--</strong></article>
+          <article><span>Repair</span><strong id="global-control-repair">--</strong></article>
+          <article><span>Approval</span><strong id="global-control-approval">--</strong></article>
+          <article><span>Audit</span><strong id="global-control-audit">--</strong></article>
+          <article><span>Governance</span><strong id="global-control-governance">--</strong></article>
+          <article><span>Alerts</span><strong id="global-control-alert">--</strong></article>
+          <article><span>Final Safety</span><strong id="global-control-final">--</strong></article>
+          <article><span>Protected Release</span><strong id="global-control-protected">protected_only</strong></article>
+          <article><span>PLAN_ONLY</span><strong id="global-control-plan">--</strong></article>
+          <article><span>Execution Gate</span><strong id="global-control-execution">blocked</strong></article>
+          <article><span>Global Network</span><strong id="global-control-network">readiness_only</strong></article>
+        </div>
+        <p class="data-footnote">Official Release v2.8 Protected / 接続未実行 / 自動処理なし / 最終更新: <span id="global-control-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1492,6 +1516,7 @@
     <script src="repair-governance-dashboard.js"></script>
     <script src="governance-alert-page.js"></script>
     <script src="final-safety-lock-page.js"></script>
+    <script src="global-intelligence-control-center.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
