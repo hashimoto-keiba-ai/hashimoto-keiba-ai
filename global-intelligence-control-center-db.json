@@ -1,0 +1,15 @@
+{
+  "phase": "Phase18-11",
+  "database": "Global Intelligence Control Center DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "protectedReleaseStatus": "protected_only",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "globalIntelligenceNetworkConnectionAllowed": false,
+  "globalIntelligenceNetworkStatus": "readiness_only",
+  "controlStatuses": ["control_ready", "control_warning", "control_blocked", "protected_only", "plan_only_ready"],
+  "records": []
+}
