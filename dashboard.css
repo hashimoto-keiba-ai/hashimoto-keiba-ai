@@ -1489,3 +1489,10 @@ tbody tr:last-child td {
 .simulation-log-item.status-protected_blocked { border-color: rgba(250, 204, 21, 0.58); }
 .simulation-log-item.status-dependency_blocked, .simulation-log-item.status-warning_blocked { border-color: rgba(248, 113, 113, 0.58); }
 @media (max-width: 680px) { .network-simulation-actions { align-items: stretch; } .network-simulation-actions button { width: 100%; } }
+
+.comprehensive-audit-panel { border: 1px solid rgba(244, 114, 182, 0.62); background: radial-gradient(circle at 90% 0, rgba(190, 24, 93, 0.2), transparent 44%), linear-gradient(145deg, #260915, #080b12 72%); }
+.comprehensive-audit-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.comprehensive-audit-actions span { color: #fbcfe8; font-size: 13px; font-weight: 900; }
+.comprehensive-audit-grid article strong { color: #fbcfe8; font-size: 17px; overflow-wrap: anywhere; }
+.comprehensive-audit-reasons { display: grid; gap: 8px; margin: 14px 0; padding-left: 22px; color: var(--muted); font-size: 12px; font-weight: 800; }
+@media (max-width: 680px) { .comprehensive-audit-actions { align-items: stretch; } .comprehensive-audit-actions button { width: 100%; } }
