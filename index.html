@@ -1564,6 +1564,22 @@
         <ul class="network-safety-check-list" id="network-safety-check-list"></ul>
         <p class="data-footnote">Official Release v2.8 protected_only / スコア100でも実接続禁止 / 更新: <span id="network-gate-updated">--</span></p>
       </section>
+
+      <section class="panel network-simulation-audit-panel" id="global-network-simulation-audit" aria-label="Global Network Simulation Log Audit Trail Engine">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase18-16 / Audit Trail</p><h2>Global Network疑似通信ログ・監査証跡</h2></div>
+          <span class="pill hot">SIMULATION ONLY</span>
+        </div>
+        <div class="network-simulation-actions"><button id="run-network-simulation-audit" type="button">疑似通信監査を記録</button><span>NO CONNECTION / AUDIT ONLY / PLAN_ONLY</span></div>
+        <div class="phase2-kpis network-simulation-grid">
+          <article><span>Simulation Logs</span><strong id="network-simulation-log-count">0</strong></article>
+          <article><span>Special Blocks</span><strong id="network-simulation-blocked-count">0</strong></article>
+          <article><span>Audit Status</span><strong id="network-simulation-audit-status">--</strong></article>
+          <article><span>External Connection</span><strong id="network-simulation-external">false</strong></article>
+        </div>
+        <ul class="network-simulation-log-list" id="network-simulation-log-list"></ul>
+        <p class="data-footnote">Official Release v2.8 protected_only / ローカル疑似判定のみ / 更新: <span id="network-simulation-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1591,6 +1607,7 @@
     <script src="global-intelligence-network-core.js"></script>
     <script src="global-network-node-sync-validator.js"></script>
     <script src="global-network-safety-scoring.js"></script>
+    <script src="global-network-simulation-log.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
