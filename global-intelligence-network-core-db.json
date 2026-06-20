@@ -1,0 +1,16 @@
+{
+  "phase": "Phase18-13",
+  "database": "Global Intelligence Network Core DB",
+  "version": "5.0",
+  "officialRelease": "2.8",
+  "officialReleaseStatus": "protected_only",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false,
+  "networkMode": "skeleton_only",
+  "readinessMode": "readiness_only",
+  "nodeStatuses": ["node_ready", "node_warning", "node_blocked", "protected_only", "skeleton_only"],
+  "records": []
+}

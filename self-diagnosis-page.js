@@ -9,7 +9,7 @@
   const ENGINE_VERSION = "5.0";
   const OFFICIAL_RELEASE = "2.8";
   const OS_VERSION = "4.0 Final";
-  const DATABASE_FILES = ["self-diagnosis-db.json", "self-diagnosis-history-db.json", "self-diagnosis-rule-db.json", "self-diagnosis-health-db.json", "self-diagnosis-repair-db.json", "self-repair-plan-db.json", "self-repair-rule-db.json", "self-repair-history-db.json", "repair-approval-history-db.json", "repair-audit-history-db.json", "repair-rollback-plan-db.json", "repair-governance-db.json", "governance-alert-db.json", "governance-priority-recommendation-db.json", "final-safety-lock-db.json", "release-readiness-db.json", "global-intelligence-control-center-db.json", "global-network-readiness-db.json", "global-network-simulation-db.json"];
+  const DATABASE_FILES = ["self-diagnosis-db.json", "self-diagnosis-history-db.json", "self-diagnosis-rule-db.json", "self-diagnosis-health-db.json", "self-diagnosis-repair-db.json", "self-repair-plan-db.json", "self-repair-rule-db.json", "self-repair-history-db.json", "repair-approval-history-db.json", "repair-audit-history-db.json", "repair-rollback-plan-db.json", "repair-governance-db.json", "governance-alert-db.json", "governance-priority-recommendation-db.json", "final-safety-lock-db.json", "release-readiness-db.json", "global-intelligence-control-center-db.json", "global-network-readiness-db.json", "global-network-simulation-db.json", "global-intelligence-network-core-db.json", "global-intelligence-network-nodes-db.json"];
   const PROTECTED_FEATURES = [
     { id: "official-release", label: "Official Release v2.8", markers: ["Official Release v2.8"] },
     { id: "racing-os", label: "Hashimoto Racing OS v4.0 Final", markers: ["Hashimoto Racing OS v4.0 Final"] },
@@ -24,7 +24,8 @@
     { id: "governance-alert", label: "Phase18-9 Governance Alert & Priority Recommendation Engine", markers: ["Governance Alert & Priority Recommendation Engine"] },
     { id: "final-safety-lock", label: "Phase18-10 Final Safety Lock & Release Readiness Gate", markers: ["Final Safety Lock & Release Readiness Gate"] },
     { id: "global-control-center", label: "Phase18-11 Global Intelligence Control Center", markers: ["Global Intelligence Control Center"] },
-    { id: "global-network-readiness", label: "Phase18-12 Global Intelligence Network Readiness Simulator", markers: ["Global Intelligence Network Readiness Simulator"] }
+    { id: "global-network-readiness", label: "Phase18-12 Global Intelligence Network Readiness Simulator", markers: ["Global Intelligence Network Readiness Simulator"] },
+    { id: "global-network-core", label: "Phase18-13 Global Intelligence Network Core Skeleton", markers: ["Global Intelligence Network Core Skeleton"] }
   ];
   const UI_MARKERS = {
     dashboard: ["Self Diagnosis Engine ON", "System Health Scan ON", "Missing Feature Detection ON", "Broken Link Detection ON", "Protection Check ON", "Repair Proposal ON"],
@@ -32,7 +33,7 @@
     oneTap: ["自己診断", "健康診断", "壊れた機能検出", "未接続検出", "修復候補", "v5.0診断センター"],
     readme: ["Phase18-4", "Self Diagnosis Engine", "自己診断エンジン", "System Health Scan", "Missing Feature Detection", "Broken Link Detection", "Protection Check", "Repair Proposal", "Health Score生成"]
   };
-  const MONITORED_FILES = ["index.html", "private-local.html", "README.md", "self-diagnosis-page.js", "self-repair-page.js", "repair-approval-page.js", "repair-audit-page.js", "repair-governance-dashboard.js", "governance-alert-page.js", "final-safety-lock-page.js", "global-intelligence-control-center.js", "global-network-readiness-simulator.js", "tests/selfDiagnosisEngine.test.js", "tests/selfRepairEngine.test.js", "tests/repairApprovalGate.test.js", "tests/repairAuditRollback.test.js", "tests/repairGovernanceDashboard.test.js", "tests/governanceAlertPriority.test.js", "tests/finalSafetyLockReleaseReadiness.test.js", "tests/globalIntelligenceControlCenter.test.js", "tests/globalNetworkReadinessSimulator.test.js", ...DATABASE_FILES];
+  const MONITORED_FILES = ["index.html", "private-local.html", "README.md", "self-diagnosis-page.js", "self-repair-page.js", "repair-approval-page.js", "repair-audit-page.js", "repair-governance-dashboard.js", "governance-alert-page.js", "final-safety-lock-page.js", "global-intelligence-control-center.js", "global-network-readiness-simulator.js", "global-intelligence-network-core.js", "tests/selfDiagnosisEngine.test.js", "tests/selfRepairEngine.test.js", "tests/repairApprovalGate.test.js", "tests/repairAuditRollback.test.js", "tests/repairGovernanceDashboard.test.js", "tests/governanceAlertPriority.test.js", "tests/finalSafetyLockReleaseReadiness.test.js", "tests/globalIntelligenceControlCenter.test.js", "tests/globalNetworkReadinessSimulator.test.js", "tests/globalIntelligenceNetworkCore.test.js", ...DATABASE_FILES];
   const clamp = (value) => Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
   const scoreChecks = (checks) => checks.length ? clamp((checks.filter((item) => item.ok).length / checks.length) * 100) : 100;
   const asText = (value) => typeof value === "string" ? value : JSON.stringify(value ?? "");
@@ -90,6 +91,7 @@
       { id: "engine:final-safety-lock", label: "Final Safety Lock & Release Readiness Gate", scope: "engine", ok: Object.hasOwn(files, "final-safety-lock-page.js") },
       { id: "engine:global-control-center", label: "Global Intelligence Control Center", scope: "engine", ok: Object.hasOwn(files, "global-intelligence-control-center.js") },
       { id: "engine:global-network-readiness", label: "Global Intelligence Network Readiness Simulator", scope: "engine", ok: Object.hasOwn(files, "global-network-readiness-simulator.js") },
+      { id: "engine:global-network-core", label: "Global Intelligence Network Core Skeleton", scope: "engine", ok: Object.hasOwn(files, "global-intelligence-network-core.js") },
       ...PROTECTED_FEATURES.slice(1).map((feature) => ({ id: `engine:${feature.id}`, label: feature.label, scope: "engine", ok: feature.markers.every((marker) => allText.includes(marker)) }))
     ];
     const databaseChecks = DATABASE_FILES.map((path) => ({ id: `database:${path}`, label: path, scope: "database", ok: Object.hasOwn(files, path) }));
@@ -106,7 +108,8 @@
       { id: "test:governance-alert", label: "tests/governanceAlertPriority.test.js", scope: "test", ok: Object.hasOwn(files, "tests/governanceAlertPriority.test.js") },
       { id: "test:final-safety-lock", label: "tests/finalSafetyLockReleaseReadiness.test.js", scope: "test", ok: Object.hasOwn(files, "tests/finalSafetyLockReleaseReadiness.test.js") },
       { id: "test:global-control-center", label: "tests/globalIntelligenceControlCenter.test.js", scope: "test", ok: Object.hasOwn(files, "tests/globalIntelligenceControlCenter.test.js") },
-      { id: "test:global-network-readiness", label: "tests/globalNetworkReadinessSimulator.test.js", scope: "test", ok: Object.hasOwn(files, "tests/globalNetworkReadinessSimulator.test.js") }
+      { id: "test:global-network-readiness", label: "tests/globalNetworkReadinessSimulator.test.js", scope: "test", ok: Object.hasOwn(files, "tests/globalNetworkReadinessSimulator.test.js") },
+      { id: "test:global-network-core", label: "tests/globalIntelligenceNetworkCore.test.js", scope: "test", ok: Object.hasOwn(files, "tests/globalIntelligenceNetworkCore.test.js") }
     ];
     const protectionChecks = PROTECTED_FEATURES.map((feature) => ({ id: `protection:${feature.id}`, label: feature.label, scope: "protection", ok: feature.markers.every((marker) => allText.includes(marker)) }));
     const jsonChecks = validateJsonFiles(files);
