@@ -1502,3 +1502,9 @@ tbody tr:last-child td {
 .phase18-completion-actions span { color: #ddd6fe; font-size: 13px; font-weight: 900; }
 .phase18-completion-grid article strong { color: #ddd6fe; font-size: 16px; overflow-wrap: anywhere; }
 @media (max-width: 680px) { .phase18-completion-actions { align-items: stretch; } .phase18-completion-actions button { width: 100%; } }
+
+.self-expansion-panel, .auto-development-panel, .ai-evolution-v5-panel { border: 1px solid rgba(255, 224, 118, 0.9); background: radial-gradient(circle at 82% 0, rgba(255, 224, 118, 0.24), transparent 40%), linear-gradient(145deg, #241d0b, #070707 72%); }
+.self-expansion-actions, .auto-development-actions, .ai-evolution-v5-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.self-expansion-actions span, .auto-development-actions span, .ai-evolution-v5-actions span { color: var(--muted); font-size: 13px; font-weight: 800; }
+.self-expansion-grid article strong, .auto-development-grid article strong, .ai-evolution-v5-grid article strong { overflow-wrap: anywhere; }
+@media (max-width: 680px) { .self-expansion-actions button, .auto-development-actions button, .ai-evolution-v5-actions button { width: 100%; } }
