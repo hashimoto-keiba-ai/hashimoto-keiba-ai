@@ -1508,3 +1508,9 @@ tbody tr:last-child td {
 .self-expansion-actions span, .auto-development-actions span, .ai-evolution-v5-actions span { color: var(--muted); font-size: 13px; font-weight: 800; }
 .self-expansion-grid article strong, .auto-development-grid article strong, .ai-evolution-v5-grid article strong { overflow-wrap: anywhere; }
 @media (max-width: 680px) { .self-expansion-actions button, .auto-development-actions button, .ai-evolution-v5-actions button { width: 100%; } }
+
+.phase19-blueprint-panel { border: 1px solid rgba(56, 189, 248, 0.7); background: radial-gradient(circle at 88% 0, rgba(14, 116, 144, 0.24), transparent 44%), linear-gradient(145deg, #061b28, #080b12 72%); }
+.phase19-blueprint-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase19-blueprint-actions span { color: #bae6fd; font-size: 13px; font-weight: 900; }
+.phase19-blueprint-grid article strong { color: #bae6fd; font-size: 16px; overflow-wrap: anywhere; }
+@media (max-width: 680px) { .phase19-blueprint-actions { align-items: stretch; } .phase19-blueprint-actions button { width: 100%; } }
