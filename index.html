@@ -1784,8 +1784,28 @@
         </div>
         <ul class="phase19-approval-list" id="phase19-approval-list"></ul>
         <p class="data-footnote">plan_only_approved is not connection approval / all execution gates remain closed</p>
-        <p class="data-footnote">Next Validation: <span id="phase19-approval-next">Phase19-6 Approval Governance Audit</span></p>
+        <p class="data-footnote">Next Validation: <span id="phase19-approval-next">Phase19-6 Global Network Final Pre-Connection Safety Review</span></p>
         <p class="data-footnote">Official Release v2.8 Protected / PLAN_ONLY / 更新: <span id="phase19-approval-updated">--</span></p>
+      </section>
+      <section class="panel phase19-final-review-panel" id="phase19-final-preconnection-safety-review" aria-label="Global Network Final Pre-Connection Safety Review">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase19-6 / Final Pre-Connection Safety Review</p><h2>Phase19 最終接続前安全レビュー</h2></div>
+          <span class="pill hot">FINAL REVIEW / GATE CLOSED</span>
+        </div>
+        <div class="phase19-final-review-actions"><button id="run-phase19-final-review" type="button">最終安全状態を再確認</button><span>RISK REVIEW ONLY / NO CONNECTION AUTHORITY</span></div>
+        <div class="phase2-kpis phase19-final-review-grid">
+          <article><span>Overall Status</span><strong id="phase19-final-review-status">final_review_warning</strong></article>
+          <article><span>Total Nodes</span><strong id="phase19-final-review-total">6</strong></article>
+          <article><span>Ready</span><strong id="phase19-final-review-ready">2</strong></article>
+          <article><span>Warning</span><strong id="phase19-final-review-warning">1</strong></article>
+          <article><span>Blocked</span><strong id="phase19-final-review-blocked">0</strong></article>
+          <article><span>Protected</span><strong id="phase19-final-review-protected">1</strong></article>
+          <article><span>Connection Authority</span><strong id="phase19-final-review-authority">false</strong></article>
+        </div>
+        <ul class="phase19-final-review-list" id="phase19-final-review-list"></ul>
+        <p class="data-footnote">final_review_ready does not authorize connection / PLAN_ONLY remains enforced</p>
+        <p class="data-footnote">Next Validation: <span id="phase19-final-review-next">Phase19-7 Final Safety Governance Audit</span></p>
+        <p class="data-footnote">Official Release v2.8 Protected / 更新: <span id="phase19-final-review-updated">--</span></p>
       </section>
     </main>
 
@@ -1825,6 +1845,7 @@
     <script src="phase19-preconnection-simulation-planner.js"></script>
     <script src="phase19-simulation-result-evaluator.js"></script>
     <script src="phase19-preconnection-approval-gate.js"></script>
+    <script src="phase19-final-preconnection-safety-review.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
