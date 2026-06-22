@@ -1,0 +1,25 @@
+{
+  "phase": "Phase19-4",
+  "database": "Global Network Simulation Evaluation Summary DB",
+  "evaluator_status": "evaluation_warning",
+  "audit_summary": {
+    "status": "audit_warning",
+    "total": 6,
+    "passed": 2,
+    "warnings": 1,
+    "blocked": 0,
+    "protected": 1,
+    "plan_only": 2,
+    "external_connection_observed": false,
+    "execution_observed": false
+  },
+  "official_release_protected": true,
+  "recommended_next_action": "Recommended: review the single warning in PLAN_ONLY mode before preparing the Phase19-5 governance review.",
+  "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"],
+  "allowed_actions": ["plan", "simulate", "validate", "audit", "report"],
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false,
+  "records": []
+}
