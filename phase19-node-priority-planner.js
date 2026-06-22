@@ -79,7 +79,7 @@
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-3 Node Simulation Contract Validator",
+      next_validation_step: "Phase19-3 Pre-Connection Simulation Planner",
       generated_at: generatedAt.toISOString(),
       executionPolicy: EXECUTION_POLICY,
       executionAllowed: false,
