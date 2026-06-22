@@ -133,7 +133,7 @@
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-5 Simulation Governance Review",
+      next_validation_step: "Phase19-5 Global Network Pre-Connection Approval Gate",
       generated_at: generatedAt.toISOString(),
       executionPolicy: EXECUTION_POLICY,
       executionAllowed: false,

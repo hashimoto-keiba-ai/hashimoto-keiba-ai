@@ -1544,3 +1544,13 @@ tbody tr:last-child td {
 .phase19-result-item.status-protected_only { border-color: rgba(250, 204, 21, 0.62); }
 .phase19-result-item.status-simulation_warning, .phase19-result-item.status-simulation_blocked { border-color: rgba(251, 146, 60, 0.62); }
 @media (max-width: 680px) { .phase19-result-actions { align-items: stretch; } .phase19-result-actions button { width: 100%; } }
+
+.phase19-approval-gate-panel { border: 1px solid rgba(251, 191, 36, 0.72); background: radial-gradient(circle at 88% 0, rgba(180, 83, 9, 0.22), transparent 44%), linear-gradient(145deg, #2b1705, #080b12 72%); }
+.phase19-approval-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase19-approval-actions span { color: #fde68a; font-size: 13px; font-weight: 900; }
+.phase19-approval-grid article strong { color: #fde68a; font-size: 16px; overflow-wrap: anywhere; }
+.phase19-approval-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase19-approval-item { border: 1px solid rgba(251, 191, 36, 0.32); border-radius: 10px; padding: 9px 11px; color: #fef3c7; font-size: 12px; font-weight: 800; }
+.phase19-approval-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
+.phase19-approval-item.status-approval_hold, .phase19-approval-item.status-approval_blocked { border-color: rgba(248, 113, 113, 0.64); }
+@media (max-width: 680px) { .phase19-approval-actions { align-items: stretch; } .phase19-approval-actions button { width: 100%; } }
