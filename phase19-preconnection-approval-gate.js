@@ -141,7 +141,7 @@
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-6 Approval Governance Audit",
+      next_validation_step: "Phase19-6 Global Network Final Pre-Connection Safety Review",
       generated_at: generatedAt.toISOString(),
       executionPolicy: EXECUTION_POLICY,
       executionAllowed: false,
