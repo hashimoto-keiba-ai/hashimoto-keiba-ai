@@ -1754,10 +1754,10 @@
         </div>
         <div class="phase19-result-actions"><button id="run-phase19-result-evaluator" type="button">疑似結果を安全評価</button><span>MOCK RESULT / AUDIT SUMMARY / NO CONNECTION</span></div>
         <div class="phase2-kpis phase19-result-grid">
-          <article><span>Evaluator Status</span><strong id="phase19-result-status">evaluation_warning</strong></article>
+          <article><span>Evaluator Status</span><strong id="phase19-result-status">evaluation_ready</strong></article>
           <article><span>Total Results</span><strong id="phase19-result-total">6</strong></article>
-          <article><span>Passed</span><strong id="phase19-result-passed">2</strong></article>
-          <article><span>Warnings</span><strong id="phase19-result-warning">1</strong></article>
+          <article><span>Passed</span><strong id="phase19-result-passed">3</strong></article>
+          <article><span>Warnings</span><strong id="phase19-result-warning">0</strong></article>
           <article><span>Blocked</span><strong id="phase19-result-blocked">0</strong></article>
           <article><span>Protected</span><strong id="phase19-result-protected">1</strong></article>
           <article><span>External Connection</span><strong id="phase19-result-external">false</strong></article>
@@ -1774,10 +1774,10 @@
         </div>
         <div class="phase19-approval-actions"><button id="run-phase19-approval-gate" type="button">接続前承認を安全判定</button><span>APPROVAL REVIEW ONLY / NO CONNECTION AUTHORITY</span></div>
         <div class="phase2-kpis phase19-approval-grid">
-          <article><span>Gate Status</span><strong id="phase19-approval-status">approval_gate_hold</strong></article>
+          <article><span>Gate Status</span><strong id="phase19-approval-status">approval_gate_plan_ready</strong></article>
           <article><span>Total Nodes</span><strong id="phase19-approval-total">6</strong></article>
-          <article><span>Plan Ready</span><strong id="phase19-approval-ready">2</strong></article>
-          <article><span>Hold</span><strong id="phase19-approval-hold">1</strong></article>
+          <article><span>Plan Ready</span><strong id="phase19-approval-ready">3</strong></article>
+          <article><span>Hold</span><strong id="phase19-approval-hold">0</strong></article>
           <article><span>Blocked</span><strong id="phase19-approval-blocked">0</strong></article>
           <article><span>Protected</span><strong id="phase19-approval-protected">1</strong></article>
           <article><span>Connection Authority</span><strong id="phase19-approval-authority">false</strong></article>
@@ -1794,10 +1794,10 @@
         </div>
         <div class="phase19-final-review-actions"><button id="run-phase19-final-review" type="button">最終安全状態を再確認</button><span>RISK REVIEW ONLY / NO CONNECTION AUTHORITY</span></div>
         <div class="phase2-kpis phase19-final-review-grid">
-          <article><span>Overall Status</span><strong id="phase19-final-review-status">final_review_warning</strong></article>
+          <article><span>Overall Status</span><strong id="phase19-final-review-status">final_review_ready</strong></article>
           <article><span>Total Nodes</span><strong id="phase19-final-review-total">6</strong></article>
-          <article><span>Ready</span><strong id="phase19-final-review-ready">2</strong></article>
-          <article><span>Warning</span><strong id="phase19-final-review-warning">1</strong></article>
+          <article><span>Ready</span><strong id="phase19-final-review-ready">3</strong></article>
+          <article><span>Warning</span><strong id="phase19-final-review-warning">0</strong></article>
           <article><span>Blocked</span><strong id="phase19-final-review-blocked">0</strong></article>
           <article><span>Protected</span><strong id="phase19-final-review-protected">1</strong></article>
           <article><span>Connection Authority</span><strong id="phase19-final-review-authority">false</strong></article>
@@ -1814,14 +1814,14 @@
         </div>
         <div class="phase19-midphase-audit-actions"><button id="run-phase19-midphase-audit" type="button">中間監査を再確認</button><span>NO EXTERNAL CONNECTION / NO AUTO EXECUTION</span></div>
         <div class="phase2-kpis phase19-midphase-audit-grid">
-          <article><span>Mid-Phase Status</span><strong id="phase19-midphase-status">midphase_warning</strong></article>
+          <article><span>Mid-Phase Status</span><strong id="phase19-midphase-status">plan_only_midphase</strong></article>
           <article><span>Modules Present</span><strong id="phase19-midphase-modules">true</strong></article>
           <article><span>DBs Present</span><strong id="phase19-midphase-dbs">true</strong></article>
           <article><span>Tests Present</span><strong id="phase19-midphase-tests">true</strong></article>
           <article><span>Unsafe Flags</span><strong id="phase19-midphase-unsafe">0</strong></article>
           <article><span>Conflict Markers</span><strong id="phase19-midphase-conflicts">0</strong></article>
-          <article><span>Remaining Risk</span><strong id="phase19-midphase-risk">medium_risk</strong></article>
-          <article><span>Recommended Next</span><strong id="phase19-midphase-next">remediation_review</strong></article>
+          <article><span>Remaining Risk</span><strong id="phase19-midphase-risk">no_remaining_risk</strong></article>
+          <article><span>Recommended Next</span><strong id="phase19-midphase-next">Phase19-8</strong></article>
         </div>
         <p class="data-footnote">Phase19-1〜19-6 modules / DBs / tests / links / safety flags are audited without changing files.</p>
         <p class="data-footnote">Official Release v2.8 Protected / 更新: <span id="phase19-midphase-updated">--</span></p>

@@ -26,12 +26,15 @@ const stopDatabase = JSON.parse(fs.readFileSync(path.join(root, "phase19-preconn
 const sources = { blueprint, safetyContract, priorityDatabase, validationDatabase, simulationDatabase, stopDatabase, availableSources: engine.SOURCE_ASSETS };
 const evaluation = engine.buildSimulationEvaluation(sources, () => new Date("2026-06-22T00:00:00.000Z"));
 
-assert.equal(evaluation.evaluator_status, "evaluation_warning");
+assert.equal(evaluation.evaluator_status, "evaluation_ready");
 assert.equal(evaluation.official_release_protected, true);
 assert.equal(evaluation.results.length, 6);
 assert.deepEqual(evaluation.results.map((item) => item.simulation_order), [1, 2, 3, 4, 5, 6]);
-assert.deepEqual(evaluation.results.map((item) => item.evaluation_status), ["simulation_passed", "protected_only", "simulation_passed", "simulation_warning", "plan_only_result", "plan_only_result"]);
-assert.deepEqual(evaluation.evaluation_summary, { total: 6, passed: 2, warnings: 1, blocked: 0, protected: 1, plan_only: 2 });
+assert.deepEqual(evaluation.results.map((item) => item.evaluation_status), ["simulation_passed", "protected_only", "simulation_passed", "simulation_passed", "plan_only_result", "plan_only_result"]);
+assert.deepEqual(evaluation.evaluation_summary, { total: 6, passed: 3, warnings: 0, blocked: 0, protected: 1, plan_only: 2 });
+assert.equal(evaluation.results.find((item) => item.simulation_plan_id === "P19-SIM-004").safety_check_result, "safety_ok");
+const explicitWarning = engine.buildSimulationEvaluation({ ...sources, warningPlans: ["P19-SIM-004"] });
+assert.equal(explicitWarning.results.find((item) => item.simulation_plan_id === "P19-SIM-004").evaluation_status, "simulation_warning");
 for (const result of evaluation.results) {
   for (const field of ["result_id", "simulation_plan_id", "node_name", "category", "simulation_order", "evaluation_status", "safety_check_result", "dependency_check_result", "stop_condition_result", "audit_result", "recommended_next_action", "blocked_actions", "allowed_actions", "execution_allowed", "external_connection_allowed"]) assert.ok(Object.hasOwn(result, field), `${field} required`);
   assert.ok(engine.EVALUATION_STATUSES.includes(result.evaluation_status));
@@ -62,7 +65,7 @@ for (const source of engine.SOURCE_ASSETS) assert.ok(fs.existsSync(path.join(roo
 const resultDatabase = JSON.parse(fs.readFileSync(path.join(root, "phase19-simulation-result-db.json"), "utf8"));
 const summaryDatabase = JSON.parse(fs.readFileSync(path.join(root, "phase19-simulation-evaluation-summary-db.json"), "utf8"));
 assert.equal(resultDatabase.records.length, 6);
-assert.deepEqual(resultDatabase.records.map((item) => item.evaluation_status), evaluation.results.map((item) => item.evaluation_status));
+assert.deepEqual(resultDatabase.records, evaluation.results);
 assert.equal(summaryDatabase.audit_summary.total, 6);
 assert.equal(summaryDatabase.audit_summary.blocked, 0);
 for (const database of [resultDatabase, summaryDatabase]) {

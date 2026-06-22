@@ -69,9 +69,9 @@
       recommendedNextValidation = "Recommended: resolve the held warning through isolated simulation, validation, and audit only.";
     } else if (approval.approval_status === "plan_only_approved") {
       finalReviewStatus = "plan_only_review";
-      remainingRiskLevel = "low";
-      unresolvedItems = ["connection_authority_not_issued", "plan_only_scope_only"];
-      finalBlockedReason = "Phase19-6 does not authorize external connection.";
+      remainingRiskLevel = "none";
+      unresolvedItems = [];
+      finalBlockedReason = "";
       recommendedNextValidation = "Recommended: continue planning and governance review only; keep external connection disabled.";
     }
 

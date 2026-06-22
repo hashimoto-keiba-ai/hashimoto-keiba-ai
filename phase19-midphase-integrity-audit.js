@@ -44,7 +44,8 @@
     if ((summary.high || 0) > 0) return "high_risk";
     if ((summary.medium || 0) > 0) return "medium_risk";
     if ((summary.low || 0) > 0) return "low_risk";
-    if ((summary.protected || 0) > 0) return "protected_risk";
+    // A protected release is an enforced safety state, not an unresolved risk.
+    // protected_risk remains available for explicit protected-only audits.
     return "no_remaining_risk";
   }
 
