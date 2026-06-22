@@ -1,0 +1,21 @@
+{
+  "phase": "Phase19-3",
+  "database": "Global Intelligence Network Pre-Connection Stop Condition DB",
+  "mode": "PLAN_ONLY",
+  "enforcement": "stop_before_connection",
+  "official_release_protected": true,
+  "stop_conditions": [
+    { "condition": "safety_contract_violation", "result": "simulation_plan_blocked" },
+    { "condition": "missing_dependency", "result": "simulation_plan_blocked" },
+    { "condition": "protected_release_risk", "result": "protected_only" },
+    { "condition": "execution_flag_enabled", "result": "simulation_plan_blocked" },
+    { "condition": "external_connection_flag_enabled", "result": "simulation_plan_blocked" }
+  ],
+  "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"],
+  "allowed_actions": ["plan", "simulate", "validate", "audit", "report"],
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false,
+  "records": []
+}
