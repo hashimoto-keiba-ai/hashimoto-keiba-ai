@@ -1514,3 +1514,13 @@ tbody tr:last-child td {
 .phase19-blueprint-actions span { color: #bae6fd; font-size: 13px; font-weight: 900; }
 .phase19-blueprint-grid article strong { color: #bae6fd; font-size: 16px; overflow-wrap: anywhere; }
 @media (max-width: 680px) { .phase19-blueprint-actions { align-items: stretch; } .phase19-blueprint-actions button { width: 100%; } }
+
+.phase19-priority-panel { border: 1px solid rgba(45, 212, 191, 0.68); background: radial-gradient(circle at 88% 0, rgba(13, 148, 136, 0.22), transparent 44%), linear-gradient(145deg, #06241f, #080b12 72%); }
+.phase19-priority-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase19-priority-actions span { color: #99f6e4; font-size: 13px; font-weight: 900; }
+.phase19-priority-grid article strong { color: #99f6e4; font-size: 16px; overflow-wrap: anywhere; }
+.phase19-priority-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase19-priority-item { border: 1px solid rgba(45, 212, 191, 0.3); border-radius: 10px; padding: 9px 11px; color: #ccfbf1; font-size: 12px; font-weight: 800; }
+.phase19-priority-item.status-protected_only { border-color: rgba(250, 204, 21, 0.6); }
+.phase19-priority-item.status-needs_validation, .phase19-priority-item.status-blocked { border-color: rgba(251, 146, 60, 0.6); }
+@media (max-width: 680px) { .phase19-priority-actions { align-items: stretch; } .phase19-priority-actions button { width: 100%; } }
