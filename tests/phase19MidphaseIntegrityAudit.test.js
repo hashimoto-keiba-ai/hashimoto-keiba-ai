@@ -27,7 +27,7 @@ const audit = engine.buildMidphaseAudit({
   validation: engine.DEFAULT_VALIDATION
 });
 
-assert.strictEqual(audit.phase19_midphase_status, "midphase_warning");
+assert.strictEqual(audit.phase19_midphase_status, "plan_only_midphase");
 assert.strictEqual(audit.phase19_modules_present, true);
 assert.strictEqual(audit.phase19_dbs_present, true);
 assert.strictEqual(audit.phase19_tests_present, true);
@@ -40,8 +40,8 @@ assert.strictEqual(audit.execution_blocked, true);
 assert.strictEqual(audit.external_connection_blocked, true);
 assert.strictEqual(audit.unsafe_flags_count, 0);
 assert.strictEqual(audit.conflict_marker_count, 0);
-assert.strictEqual(audit.remaining_risk_summary, "medium_risk");
-assert.strictEqual(audit.recommended_next_phase, "remediation_review");
+assert.strictEqual(audit.remaining_risk_summary, "no_remaining_risk");
+assert.strictEqual(audit.recommended_next_phase, "Phase19-8");
 assert.strictEqual(audit.executionAllowed, false);
 assert.strictEqual(audit.autoExecutionAllowed, false);
 assert.strictEqual(audit.auto_execution_allowed, false);
@@ -58,15 +58,16 @@ assert.strictEqual(unsafe.phase19_midphase_status, "midphase_blocked");
 assert.ok(unsafe.unsafe_flags_count > 0);
 
 const noRiskDatabases = JSON.parse(JSON.stringify(databases));
-noRiskDatabases["phase19-final-risk-summary-db.json"].remaining_risk_summary = { none: 6, low: 0, medium: 0, high: 0, protected: 0, blocked: 0 };
+noRiskDatabases["phase19-final-risk-summary-db.json"].remaining_risk_summary = { none: 5, low: 0, medium: 0, high: 0, protected: 1, blocked: 0 };
 const ready = engine.buildMidphaseAudit({ availableFiles, contents, databases: noRiskDatabases, validation: engine.DEFAULT_VALIDATION });
 assert.strictEqual(ready.phase19_midphase_status, "plan_only_midphase");
 assert.strictEqual(ready.recommended_next_phase, "Phase19-8");
 
 const auditDb = readJson("phase19-midphase-integrity-audit-db.json");
 const summaryDb = readJson("phase19-midphase-integrity-summary-db.json");
-assert.strictEqual(auditDb.phase19_midphase_status, "midphase_warning");
-assert.strictEqual(summaryDb.remaining_risk_summary, "medium_risk");
+assert.strictEqual(auditDb.phase19_midphase_status, "plan_only_midphase");
+assert.strictEqual(summaryDb.remaining_risk_summary, "no_remaining_risk");
+assert.strictEqual(auditDb.recommended_next_phase, "Phase19-8");
 assert.strictEqual(auditDb.executionAllowed, false);
 assert.strictEqual(auditDb.external_connection_allowed, false);
 

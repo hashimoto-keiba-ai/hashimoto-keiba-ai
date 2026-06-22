@@ -32,14 +32,14 @@ const sources = Object.fromEntries(Object.entries(sourceNames).map(([key, name])
 sources.availableSources = engine.SOURCE_ASSETS;
 const review = engine.buildFinalSafetyReview(sources, () => new Date("2026-06-22T00:00:00.000Z"));
 
-assert.equal(review.overall_status, "final_review_warning");
+assert.equal(review.overall_status, "final_review_ready");
 assert.equal(review.connection_authority_issued, false);
 assert.equal(review.official_release_protected, true);
 assert.equal(review.reviews.length, 6);
-assert.deepEqual(review.reviews.map((item) => item.final_review_status), ["final_review_ready", "protected_only", "final_review_ready", "final_review_warning", "plan_only_review", "plan_only_review"]);
-assert.deepEqual(review.reviews.map((item) => item.remaining_risk_level), ["none", "protected", "none", "medium", "low", "low"]);
-assert.deepEqual(review.review_summary, { total: 6, ready: 2, warning: 1, blocked: 0, protected: 1, plan_only: 2 });
-assert.deepEqual(review.remaining_risk_summary, { none: 2, low: 2, medium: 1, high: 0, protected: 1, blocked: 0 });
+assert.deepEqual(review.reviews.map((item) => item.final_review_status), ["final_review_ready", "protected_only", "final_review_ready", "final_review_ready", "plan_only_review", "plan_only_review"]);
+assert.deepEqual(review.reviews.map((item) => item.remaining_risk_level), ["none", "protected", "none", "none", "none", "none"]);
+assert.deepEqual(review.review_summary, { total: 6, ready: 3, warning: 0, blocked: 0, protected: 1, plan_only: 2 });
+assert.deepEqual(review.remaining_risk_summary, { none: 5, low: 0, medium: 0, high: 0, protected: 1, blocked: 0 });
 for (const item of review.reviews) {
   for (const field of ["review_id", "node_name", "category", "priority_id", "approval_id", "final_review_status", "safety_contract_status", "approval_gate_status", "simulation_result_status", "remaining_risk_level", "unresolved_items", "final_blocked_reason", "recommended_next_validation", "blocked_actions", "allowed_actions", "execution_allowed", "external_connection_allowed"]) assert.ok(Object.hasOwn(item, field), `${field} required`);
   assert.ok(engine.FINAL_REVIEW_STATUSES.includes(item.final_review_status));
@@ -70,7 +70,7 @@ for (const source of engine.SOURCE_ASSETS) assert.ok(fs.existsSync(path.join(roo
 const reviewDatabase = load("phase19-final-preconnection-safety-review-db.json");
 const riskDatabase = load("phase19-final-risk-summary-db.json");
 assert.equal(reviewDatabase.records.length, 6);
-assert.deepEqual(reviewDatabase.records.map((item) => item.final_review_status), review.reviews.map((item) => item.final_review_status));
+assert.deepEqual(reviewDatabase.records, review.reviews);
 assert.deepEqual(riskDatabase.review_summary, review.review_summary);
 assert.deepEqual(riskDatabase.remaining_risk_summary, review.remaining_risk_summary);
 for (const database of [reviewDatabase, riskDatabase]) {

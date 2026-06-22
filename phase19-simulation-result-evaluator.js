@@ -43,7 +43,9 @@
     const protectedPlan = plan.simulation_mode === "protected_only" || plan.category === "race_course_os";
     const dependencyMissing = (context.missingDependencies || []).includes(plan.simulation_plan_id) || (context.missingDependencies || []).includes(plan.priority_id);
     const blocked = context.evaluatorBlocked || dependencyMissing;
-    const warning = context.evaluatorWarning || plan.simulation_mode === "validation_only";
+    // validation_only is an allowed PLAN_ONLY action. It becomes a warning only
+    // when validation evidence reports an actual warning.
+    const warning = context.evaluatorWarning || (context.warningPlans || []).includes(plan.simulation_plan_id);
     let evaluationStatus = "simulation_passed";
     let safetyCheckResult = "safety_ok";
     let dependencyCheckResult = "dependency_ok";
@@ -108,7 +110,7 @@
     const records = Array.isArray(simulationDatabase.records) ? [...simulationDatabase.records].sort((a, b) => a.simulation_order - b.simulation_order) : [];
     const evaluatorBlocked = blueprint.integration_status === "blueprint_blocked" || priorityDatabase.planner_status === "priority_blocked" || simulationDatabase.planner_status === "simulation_plan_blocked" || !contractIsSafe(safetyContract) || hasUnsafeFlags(blueprint, safetyContract, priorityDatabase, validationDatabase, simulationDatabase, stopDatabase) || records.length === 0;
     const evaluatorWarning = blueprint.integration_status === "blueprint_warning" || priorityDatabase.planner_status === "priority_warning" || simulationDatabase.planner_status === "simulation_plan_warning" || missingSources.length > 0;
-    const context = { evaluatorBlocked, evaluatorWarning, missingDependencies: sources.missingDependencies || [] };
+    const context = { evaluatorBlocked, evaluatorWarning, missingDependencies: sources.missingDependencies || [], warningPlans: sources.warningPlans || [] };
     const results = records.map((record) => evaluateSimulationPlan(record, context));
     const summary = {
       total: results.length,

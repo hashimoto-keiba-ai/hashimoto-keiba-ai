@@ -30,12 +30,12 @@ const sources = {
 };
 const gate = engine.buildApprovalGate(sources, () => new Date("2026-06-22T00:00:00.000Z"));
 
-assert.equal(gate.gate_status, "approval_gate_hold");
+assert.equal(gate.gate_status, "approval_gate_plan_ready");
 assert.equal(gate.connection_authority_issued, false);
 assert.equal(gate.official_release_protected, true);
 assert.equal(gate.approvals.length, 6);
-assert.deepEqual(gate.approvals.map((item) => item.approval_status), ["approval_plan_ready", "protected_only", "approval_plan_ready", "approval_hold", "plan_only_approved", "plan_only_approved"]);
-assert.deepEqual(gate.approval_summary, { total: 6, plan_ready: 2, hold: 1, blocked: 0, protected: 1, plan_only_approved: 2 });
+assert.deepEqual(gate.approvals.map((item) => item.approval_status), ["approval_plan_ready", "protected_only", "approval_plan_ready", "approval_plan_ready", "plan_only_approved", "plan_only_approved"]);
+assert.deepEqual(gate.approval_summary, { total: 6, plan_ready: 3, hold: 0, blocked: 0, protected: 1, plan_only_approved: 2 });
 for (const approval of gate.approvals) {
   for (const field of ["approval_id", "node_name", "category", "priority_id", "simulation_result_id", "approval_status", "approval_reason", "hold_reason", "blocked_reason", "required_next_validation", "safety_contract_status", "stop_condition_status", "recommended_next_action", "blocked_actions", "allowed_actions", "execution_allowed", "external_connection_allowed"]) assert.ok(Object.hasOwn(approval, field), `${field} required`);
   assert.ok(engine.APPROVAL_STATUSES.includes(approval.approval_status));
@@ -65,7 +65,7 @@ for (const source of engine.SOURCE_ASSETS) assert.ok(fs.existsSync(path.join(roo
 const approvalDatabase = load("phase19-preconnection-approval-db.json");
 const summaryDatabase = load("phase19-preconnection-approval-summary-db.json");
 assert.equal(approvalDatabase.records.length, 6);
-assert.deepEqual(approvalDatabase.records.map((item) => item.approval_status), gate.approvals.map((item) => item.approval_status));
+assert.deepEqual(approvalDatabase.records, gate.approvals);
 assert.deepEqual(summaryDatabase.approval_summary, gate.approval_summary);
 for (const database of [approvalDatabase, summaryDatabase]) {
   assert.equal(database.phase, "Phase19-5");
