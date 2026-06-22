@@ -136,7 +136,7 @@
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-7 Final Safety Governance Audit",
+      next_validation_step: "Phase19-7 Global Network Mid-Phase Integrity Audit",
       generated_at: generatedAt.toISOString(),
       executionPolicy: EXECUTION_POLICY,
       executionAllowed: false,
