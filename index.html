@@ -1804,8 +1804,27 @@
         </div>
         <ul class="phase19-final-review-list" id="phase19-final-review-list"></ul>
         <p class="data-footnote">final_review_ready does not authorize connection / PLAN_ONLY remains enforced</p>
-        <p class="data-footnote">Next Validation: <span id="phase19-final-review-next">Phase19-7 Final Safety Governance Audit</span></p>
+        <p class="data-footnote">Next Validation: <span id="phase19-final-review-next">Phase19-7 Global Network Mid-Phase Integrity Audit</span></p>
         <p class="data-footnote">Official Release v2.8 Protected / 更新: <span id="phase19-final-review-updated">--</span></p>
+      </section>
+      <section class="panel phase19-midphase-audit-panel" id="phase19-midphase-integrity-audit" aria-label="Phase19 Global Network Mid-Phase Integrity Audit">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase19-7 / Mid-Phase Integrity Audit</p><h2>Phase19 中間整合性監査</h2></div>
+          <span class="pill hot">PLAN_ONLY / INTEGRITY AUDIT</span>
+        </div>
+        <div class="phase19-midphase-audit-actions"><button id="run-phase19-midphase-audit" type="button">中間監査を再確認</button><span>NO EXTERNAL CONNECTION / NO AUTO EXECUTION</span></div>
+        <div class="phase2-kpis phase19-midphase-audit-grid">
+          <article><span>Mid-Phase Status</span><strong id="phase19-midphase-status">midphase_warning</strong></article>
+          <article><span>Modules Present</span><strong id="phase19-midphase-modules">true</strong></article>
+          <article><span>DBs Present</span><strong id="phase19-midphase-dbs">true</strong></article>
+          <article><span>Tests Present</span><strong id="phase19-midphase-tests">true</strong></article>
+          <article><span>Unsafe Flags</span><strong id="phase19-midphase-unsafe">0</strong></article>
+          <article><span>Conflict Markers</span><strong id="phase19-midphase-conflicts">0</strong></article>
+          <article><span>Remaining Risk</span><strong id="phase19-midphase-risk">medium_risk</strong></article>
+          <article><span>Recommended Next</span><strong id="phase19-midphase-next">remediation_review</strong></article>
+        </div>
+        <p class="data-footnote">Phase19-1〜19-6 modules / DBs / tests / links / safety flags are audited without changing files.</p>
+        <p class="data-footnote">Official Release v2.8 Protected / 更新: <span id="phase19-midphase-updated">--</span></p>
       </section>
     </main>
 
@@ -1846,6 +1865,7 @@
     <script src="phase19-simulation-result-evaluator.js"></script>
     <script src="phase19-preconnection-approval-gate.js"></script>
     <script src="phase19-final-preconnection-safety-review.js"></script>
+    <script src="phase19-midphase-integrity-audit.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

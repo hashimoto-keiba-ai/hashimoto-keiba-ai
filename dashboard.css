@@ -1564,3 +1564,8 @@ tbody tr:last-child td {
 .phase19-final-review-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
 .phase19-final-review-item.status-final_review_warning, .phase19-final-review-item.status-final_review_blocked { border-color: rgba(248, 113, 113, 0.64); }
 @media (max-width: 680px) { .phase19-final-review-actions { align-items: stretch; } .phase19-final-review-actions button { width: 100%; } }
+.phase19-midphase-audit-panel { border: 1px solid rgba(34, 211, 238, 0.72); background: radial-gradient(circle at 88% 0, rgba(8, 145, 178, 0.22), transparent 44%), linear-gradient(145deg, #06232b, #080b12 72%); }
+.phase19-midphase-audit-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase19-midphase-audit-actions span { color: #a5f3fc; font-size: 13px; font-weight: 900; }
+.phase19-midphase-audit-grid article strong { color: #a5f3fc; font-size: 16px; overflow-wrap: anywhere; }
+@media (max-width: 680px) { .phase19-midphase-audit-actions { align-items: stretch; } .phase19-midphase-audit-actions button { width: 100%; } }
