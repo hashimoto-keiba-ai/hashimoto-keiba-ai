@@ -1587,3 +1587,12 @@ tbody tr:last-child td {
 .phase19-scenario-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
 .phase19-scenario-item.status-scenario_hold, .phase19-scenario-item.status-scenario_blocked, .phase19-scenario-item.status-scenario_needs_validation { border-color: rgba(248, 113, 113, 0.64); }
 @media (max-width: 680px) { .phase19-scenario-builder-actions { align-items: stretch; } .phase19-scenario-builder-actions button { width: 100%; } }
+.phase19-checklist-panel { border: 1px solid rgba(251, 146, 60, 0.72); background: radial-gradient(circle at 88% 0, rgba(194, 65, 12, 0.22), transparent 44%), linear-gradient(145deg, #35180b, #080b12 72%); }
+.phase19-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase19-checklist-actions span { color: #fed7aa; font-size: 13px; font-weight: 900; }
+.phase19-checklist-grid article strong { color: #fed7aa; font-size: 16px; overflow-wrap: anywhere; }
+.phase19-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase19-checklist-item { border: 1px solid rgba(251, 146, 60, 0.34); border-radius: 10px; padding: 9px 11px; color: #ffedd5; font-size: 12px; font-weight: 800; }
+.phase19-checklist-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
+.phase19-checklist-item.status-checklist_hold, .phase19-checklist-item.status-checklist_blocked, .phase19-checklist-item.status-checklist_needs_review { border-color: rgba(248, 113, 113, 0.64); }
+@media (max-width: 680px) { .phase19-checklist-actions { align-items: stretch; } .phase19-checklist-actions button { width: 100%; } }

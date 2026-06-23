@@ -88,6 +88,7 @@ assert.equal(scenarioDb.phase, "Phase19-9");
 assert.deepEqual(scenarioDb.records, scenarioSet.records);
 assert.deepEqual(summaryDb.scenario_summary, scenarioSet.scenario_summary);
 assert.equal(summaryDb.scenario_builder_status, "scenario_builder_plan_only");
+assert.equal(summaryDb.next_validation_step, "Phase19-10 Global Network Validation Readiness Checklist");
 for (const database of [scenarioDb, summaryDb]) {
   assert.equal(database.official_release_protected, true);
   assert.equal(database.connection_authority_issued, false);
