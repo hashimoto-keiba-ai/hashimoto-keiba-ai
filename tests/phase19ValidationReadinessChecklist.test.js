@@ -83,6 +83,7 @@ assert.equal(checklistDb.phase, "Phase19-10");
 assert.deepEqual(checklistDb.records, checklist.records);
 assert.deepEqual(summaryDb.checklist_summary, checklist.checklist_summary);
 assert.equal(summaryDb.checklist_builder_status, "checklist_builder_plan_only");
+assert.equal(summaryDb.next_validation_step, "Phase19-11 Global Network Validation Dry Run Planner");
 for (const database of [checklistDb, summaryDb]) {
   assert.equal(database.official_release_protected, true);
   assert.equal(database.connection_authority_issued, false);

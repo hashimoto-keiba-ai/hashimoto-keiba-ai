@@ -789,6 +789,14 @@ Phase19-8 Connection Readiness Matrix と Phase19-9 Validation Scenario Builder 
 
 追加ファイル: `phase19-validation-readiness-checklist.js`、`phase19-validation-readiness-checklist-db.json`、`phase19-validation-readiness-summary-db.json`、`tests/phase19ValidationReadinessChecklist.test.js`
 
+## Phase19-11 Global Network Validation Dry Run Planner
+
+Phase19-9 Validation Scenario Builder と Phase19-10 Validation Readiness Checklist を読み取り、Global Intelligence Network候補ノードごとのDry Run計画を生成します。Dry Run Planは `dry_run_ready`、`dry_run_plan_only`、`dry_run_needs_review`、`dry_run_hold`、`dry_run_blocked`、`protected_only` で分類し、検証順序、観測項目、期待ログ、停止条件、監査確認だけを整理します。
+
+Dry Runモードは `plan_only_dry_run`、`simulation_dry_run`、`validation_dry_run`、`audit_dry_run`、`report_dry_run`、`protected_only` に限定します。実接続・外部通信・自動修復・自動上書き・自動ロールバックは行わず、`executionAllowed` / `autoExecutionAllowed` / `auto_execution_allowed` / `external_connection_allowed` は常に `false`、Official Release v2.8は保護対象です。
+
+追加ファイル: `phase19-validation-dry-run-planner.js`、`phase19-validation-dry-run-db.json`、`phase19-validation-dry-run-summary-db.json`、`tests/phase19ValidationDryRunPlanner.test.js`
+
 ## Phase19-6 Global Network Final Pre-Connection Safety Review
 
 Phase19-1〜19-5の10個の主要DBを横断し、6候補ノードの承認ゲート後の安全条件、残リスク、接続禁止状態、次の検証提案を最終レビューします。
