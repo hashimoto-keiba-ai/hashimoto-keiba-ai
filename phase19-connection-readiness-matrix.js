@@ -147,7 +147,7 @@
         missing_source_count: missingSources.length
       },
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-9 Global Network Connection Contract Review",
+      next_validation_step: "Phase19-9 Global Network Validation Scenario Builder",
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       generated_at: generatedAt.toISOString(),

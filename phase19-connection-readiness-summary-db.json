@@ -19,7 +19,7 @@
     "unsafe_flags_count": 0,
     "missing_source_count": 0
   },
-  "next_validation_step": "Phase19-9 Global Network Connection Contract Review",
+  "next_validation_step": "Phase19-9 Global Network Validation Scenario Builder",
   "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"],
   "allowed_actions": ["plan", "simulate", "validate", "audit", "report"],
   "executionPolicy": "PLAN_ONLY",

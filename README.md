@@ -773,6 +773,14 @@ Phase19-1〜19-7 と MidPhase Warning Remediation 後の `plan_only_midphase` / 
 
 追加ファイル: `phase19-connection-readiness-matrix.js`、`phase19-connection-readiness-matrix-db.json`、`phase19-connection-readiness-summary-db.json`、`tests/phase19ConnectionReadinessMatrix.test.js`
 
+## Phase19-9 Global Network Validation Scenario Builder
+
+Phase19-8 Connection Readiness Matrix を読み取り、Global Intelligence Network候補ノードごとの安全検証シナリオを生成します。シナリオは `scenario_ready`、`scenario_plan_only`、`scenario_needs_validation`、`scenario_hold`、`scenario_blocked`、`protected_only` で分類し、検証手順、確認項目、停止条件、期待出力、監査観点だけを表示します。
+
+検証モードは `dry_run_only`、`simulation_only`、`validation_only`、`audit_only`、`report_only`、`protected_only` のいずれかに限定します。実接続・外部通信・自動修復・自動上書き・自動ロールバックは行わず、`executionAllowed` / `autoExecutionAllowed` / `auto_execution_allowed` / `external_connection_allowed` は常に `false`、Official Release v2.8は保護対象です。
+
+追加ファイル: `phase19-validation-scenario-builder.js`、`phase19-validation-scenario-db.json`、`phase19-validation-scenario-summary-db.json`、`tests/phase19ValidationScenarioBuilder.test.js`
+
 ## Phase19-6 Global Network Final Pre-Connection Safety Review
 
 Phase19-1〜19-5の10個の主要DBを横断し、6候補ノードの承認ゲート後の安全条件、残リスク、接続禁止状態、次の検証提案を最終レビューします。
