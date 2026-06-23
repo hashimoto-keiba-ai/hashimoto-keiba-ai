@@ -80,6 +80,7 @@ assert.equal(matrixDb.phase, "Phase19-8");
 assert.deepEqual(matrixDb.records, matrix.records);
 assert.deepEqual(summaryDb.readiness_summary, matrix.readiness_summary);
 assert.equal(summaryDb.matrix_status, "readiness_matrix_plan_only");
+assert.equal(summaryDb.next_validation_step, "Phase19-9 Global Network Validation Scenario Builder");
 for (const database of [matrixDb, summaryDb]) {
   assert.equal(database.official_release_protected, true);
   assert.equal(database.connection_authority_issued, false);
