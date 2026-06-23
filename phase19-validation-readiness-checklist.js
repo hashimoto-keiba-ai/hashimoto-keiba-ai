@@ -159,7 +159,7 @@
         missing_source_count: missingSources.length
       },
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-11 Global Network Validation Dry Run Review",
+      next_validation_step: "Phase19-11 Global Network Validation Dry Run Planner",
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       generated_at: generatedAt.toISOString(),
