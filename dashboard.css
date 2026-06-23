@@ -1605,3 +1605,12 @@ tbody tr:last-child td {
 .phase19-dry-run-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
 .phase19-dry-run-item.status-dry_run_hold, .phase19-dry-run-item.status-dry_run_blocked, .phase19-dry-run-item.status-dry_run_needs_review { border-color: rgba(248, 113, 113, 0.64); }
 @media (max-width: 680px) { .phase19-dry-run-actions { align-items: stretch; } .phase19-dry-run-actions button { width: 100%; } }
+.phase19-audit-logger-panel { border: 1px solid rgba(14, 165, 233, 0.72); background: radial-gradient(circle at 88% 0, rgba(2, 132, 199, 0.22), transparent 44%), linear-gradient(145deg, #061c2b, #080b12 72%); }
+.phase19-audit-logger-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase19-audit-logger-actions span { color: #bae6fd; font-size: 13px; font-weight: 900; }
+.phase19-audit-logger-grid article strong { color: #bae6fd; font-size: 16px; overflow-wrap: anywhere; }
+.phase19-audit-log-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase19-audit-log-item { border: 1px solid rgba(14, 165, 233, 0.34); border-radius: 10px; padding: 9px 11px; color: #e0f2fe; font-size: 12px; font-weight: 800; }
+.phase19-audit-log-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
+.phase19-audit-log-item.status-audit_warning, .phase19-audit-log-item.status-audit_hold, .phase19-audit-log-item.status-audit_blocked { border-color: rgba(248, 113, 113, 0.64); }
+@media (max-width: 680px) { .phase19-audit-logger-actions { align-items: stretch; } .phase19-audit-logger-actions button { width: 100%; } }

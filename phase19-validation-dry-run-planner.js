@@ -168,7 +168,7 @@
         missing_source_count: missingSources.length
       },
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-12 Global Network Dry Run Result Evaluator",
+      next_validation_step: "Phase19-12 Global Network Dry Run Result Audit Logger",
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       generated_at: generatedAt.toISOString(),

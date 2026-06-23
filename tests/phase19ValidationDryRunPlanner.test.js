@@ -110,5 +110,6 @@ assert.ok(index.includes('<script src="phase19-validation-dry-run-planner.js"></
 assert.ok(privateLocal.includes('href="index.html#phase19-validation-dry-run-planner"'));
 assert.ok(readme.includes("Phase19-11 Global Network Validation Dry Run Planner"));
 assert.ok(readme.includes("Phase19-10 Validation Readiness Checklist"));
+assert.equal(summaryDb.next_validation_step, "Phase19-12 Global Network Dry Run Result Audit Logger");
 
 console.log("phase19 validation dry run planner tests passed");
