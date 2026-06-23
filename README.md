@@ -781,6 +781,14 @@ Phase19-8 Connection Readiness Matrix を読み取り、Global Intelligence Netw
 
 追加ファイル: `phase19-validation-scenario-builder.js`、`phase19-validation-scenario-db.json`、`phase19-validation-scenario-summary-db.json`、`tests/phase19ValidationScenarioBuilder.test.js`
 
+## Phase19-10 Global Network Validation Readiness Checklist
+
+Phase19-8 Connection Readiness Matrix と Phase19-9 Validation Scenario Builder を読み取り、Global Intelligence Network候補ノードごとの検証前チェックリストを生成します。Checklistは `checklist_ready`、`checklist_plan_only`、`checklist_needs_review`、`checklist_hold`、`checklist_blocked`、`protected_only` で分類し、検証前確認項目、未確認事項、停止条件、安全制約、監査確認だけを整理します。
+
+実接続・外部通信・自動修復・自動上書き・自動ロールバックは行わず、`executionAllowed` / `autoExecutionAllowed` / `auto_execution_allowed` / `external_connection_allowed` は常に `false`、Official Release v2.8は保護対象です。
+
+追加ファイル: `phase19-validation-readiness-checklist.js`、`phase19-validation-readiness-checklist-db.json`、`phase19-validation-readiness-summary-db.json`、`tests/phase19ValidationReadinessChecklist.test.js`
+
 ## Phase19-6 Global Network Final Pre-Connection Safety Review
 
 Phase19-1〜19-5の10個の主要DBを横断し、6候補ノードの承認ゲート後の安全条件、残リスク、接続禁止状態、次の検証提案を最終レビューします。

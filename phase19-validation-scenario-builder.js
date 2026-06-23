@@ -159,7 +159,7 @@
         missing_source_count: missingSources.length
       },
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-10 Global Network Validation Result Review",
+      next_validation_step: "Phase19-10 Global Network Validation Readiness Checklist",
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       generated_at: generatedAt.toISOString(),
