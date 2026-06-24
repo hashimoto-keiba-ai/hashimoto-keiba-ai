@@ -129,5 +129,6 @@ assert.ok(privateLocal.includes('href="index.html#phase19-dry-run-result-audit-l
 assert.ok(readme.includes("Phase19-12 Global Network Dry Run Result Audit Logger"));
 assert.ok(readme.includes("Phase19-11 Validation Dry Run Planner"));
 assert.ok(readme.includes("Phase19 Dry Run結果監査ログ"));
+assert.equal(summaryDb.next_validation_step, "Phase19-13 Global Network PreConnection Risk Reassessment");
 
 console.log("phase19 dry run result audit logger tests passed");

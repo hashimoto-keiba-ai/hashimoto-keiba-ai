@@ -789,6 +789,16 @@ Phase19-8 Connection Readiness Matrix と Phase19-9 Validation Scenario Builder 
 
 追加ファイル: `phase19-validation-readiness-checklist.js`、`phase19-validation-readiness-checklist-db.json`、`phase19-validation-readiness-summary-db.json`、`tests/phase19ValidationReadinessChecklist.test.js`
 
+## Phase19-13 Global Network Pre-Connection Risk Reassessment
+
+Phase19-12 Dry Run Result Audit Logger の監査結果を読み取り、各候補ノードの接続前リスクを `reassessment_ready` / `reassessment_warning` / `reassessment_hold` / `reassessment_blocked` / `protected_only` / `plan_only_reassessment` として再評価します。
+
+Risk Reassessment では `risk_level`、`remaining_risks`、`hold_reasons`、`blocked_reasons`、`recommended_next_validation` を整理します。これらは実行指示ではなく、安全な検証提案と判定理由の一覧だけです。Phase19 接続前リスク再評価は `index.html#phase19-preconnection-risk-reassessment` と `private-local.html` から確認できます。
+
+Official Release v2.8 は `protected_only` / `protected` として保護し、`external_connection`、`auto_execution`、`auto_repair`、`auto_overwrite`、`auto_rollback` は引き続き禁止です。`executionAllowed`、`autoExecutionAllowed`、`auto_execution_allowed`、`external_connection_allowed`、`connection_authority_issued` はすべて `false` を維持します。
+
+追加ファイル: `phase19-preconnection-risk-reassessment.js`、`phase19-preconnection-risk-reassessment-db.json`、`phase19-preconnection-risk-reassessment-summary-db.json`、`tests/phase19PreconnectionRiskReassessment.test.js`
+
 ## Phase19-12 Global Network Dry Run Result Audit Logger
 
 Phase19-11 Validation Dry Run Planner のDry Run計画を読み取り、各候補ノードのDry Run結果監査ログを `audit_passed` / `audit_warning` / `audit_hold` / `audit_blocked` / `protected_only` / `plan_only_audit` として記録します。

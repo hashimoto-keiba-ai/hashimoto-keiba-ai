@@ -20,7 +20,7 @@
     "pseudo_observation_only": true
   },
   "missing_source_assets": [],
-  "next_validation_step": "Phase19-13 Global Network Dry Run Audit Review",
+  "next_validation_step": "Phase19-13 Global Network PreConnection Risk Reassessment",
   "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"],
   "allowed_actions": ["plan", "simulate", "validate", "audit", "report"],
   "generated_at": "2026-06-23T00:00:00.000Z",

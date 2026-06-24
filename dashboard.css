@@ -1614,3 +1614,12 @@ tbody tr:last-child td {
 .phase19-audit-log-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
 .phase19-audit-log-item.status-audit_warning, .phase19-audit-log-item.status-audit_hold, .phase19-audit-log-item.status-audit_blocked { border-color: rgba(248, 113, 113, 0.64); }
 @media (max-width: 680px) { .phase19-audit-logger-actions { align-items: stretch; } .phase19-audit-logger-actions button { width: 100%; } }
+.phase19-risk-reassessment-panel { border: 1px solid rgba(168, 85, 247, 0.72); background: radial-gradient(circle at 88% 0, rgba(126, 34, 206, 0.22), transparent 44%), linear-gradient(145deg, #1d0d31, #080b12 72%); }
+.phase19-risk-reassessment-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase19-risk-reassessment-actions span { color: #e9d5ff; font-size: 13px; font-weight: 900; }
+.phase19-risk-reassessment-grid article strong { color: #e9d5ff; font-size: 16px; overflow-wrap: anywhere; }
+.phase19-risk-reassessment-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase19-risk-reassessment-item { border: 1px solid rgba(168, 85, 247, 0.34); border-radius: 10px; padding: 9px 11px; color: #f3e8ff; font-size: 12px; font-weight: 800; }
+.phase19-risk-reassessment-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
+.phase19-risk-reassessment-item.status-reassessment_warning, .phase19-risk-reassessment-item.status-reassessment_hold, .phase19-risk-reassessment-item.status-reassessment_blocked { border-color: rgba(248, 113, 113, 0.64); }
+@media (max-width: 680px) { .phase19-risk-reassessment-actions { align-items: stretch; } .phase19-risk-reassessment-actions button { width: 100%; } }
