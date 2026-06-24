@@ -165,7 +165,7 @@
         pseudo_observation_only: true
       },
       missing_source_assets: missingSources,
-      next_validation_step: "Phase19-13 Global Network Dry Run Audit Review",
+      next_validation_step: "Phase19-13 Global Network PreConnection Risk Reassessment",
       blocked_actions: [...BLOCKED_ACTIONS],
       allowed_actions: [...ALLOWED_ACTIONS],
       generated_at: generatedAt.toISOString(),

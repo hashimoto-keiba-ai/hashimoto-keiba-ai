@@ -1,0 +1,41 @@
+{
+  "phase": "Phase19-13",
+  "database": "Global Network Pre-Connection Risk Reassessment DB",
+  "reassessment_id": "P19-PRECONNECTION-RISK-REASSESSMENT-1782259200000",
+  "reassessment_engine_status": "risk_reassessment_plan_only",
+  "source_audit_logger_status": "audit_logger_plan_only",
+  "source_dry_run_planner_status": "dry_run_planner_plan_only",
+  "source_checklist_status": "checklist_builder_plan_only",
+  "source_scenario_status": "scenario_builder_plan_only",
+  "source_matrix_status": "readiness_matrix_plan_only",
+  "official_release_protected": true,
+  "plan_only_enforced": true,
+  "connection_authority_issued": false,
+  "records": [
+    { "reassessment_id": "P19-RISK-REASSESS-001", "audit_log_id": "P19-DRY-AUDIT-001", "dry_run_id": "P19-DRY-RUN-001", "node_name": "Self Diagnosis Planning Node", "category": "local_ai_modules", "priority_id": "P19-PRI-001", "reassessment_status": "reassessment_ready", "risk_level": "none", "audit_result_status": "audit_passed", "safety_result": "safety_ok", "stop_condition_result": "no_stop_condition", "remaining_risks": ["no_unresolved_dry_run_audit_risk", "connection_authority_still_not_granted"], "hold_reasons": [], "blocked_reasons": [], "recommended_next_validation": "Recommended: proceed only to the next safe pre-connection validation planning step.", "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"], "allowed_actions": ["plan", "simulate", "validate", "audit", "report"], "execution_allowed": false, "external_connection_allowed": false },
+    { "reassessment_id": "P19-RISK-REASSESS-002", "audit_log_id": "P19-DRY-AUDIT-002", "dry_run_id": "P19-DRY-RUN-002", "node_name": "Racing OS Protected Node", "category": "race_course_os", "priority_id": "P19-PRI-002", "reassessment_status": "protected_only", "risk_level": "protected", "audit_result_status": "protected_only", "safety_result": "protected_only", "stop_condition_result": "protected_stop", "remaining_risks": ["official_release_v2_8_protected", "protected_node_must_remain_read_only"], "hold_reasons": ["official_release_v2_8_protection_hold"], "blocked_reasons": ["protected_release_risk_blocks_connection_authority"], "recommended_next_validation": "Recommended: continue protected-only read-only audit review and do not request connection authority.", "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"], "allowed_actions": ["plan", "simulate", "validate", "audit", "report"], "execution_allowed": false, "external_connection_allowed": false },
+    { "reassessment_id": "P19-RISK-REASSESS-003", "audit_log_id": "P19-DRY-AUDIT-003", "dry_run_id": "P19-DRY-RUN-003", "node_name": "Prediction Engine Simulation Node", "category": "prediction_engines", "priority_id": "P19-PRI-003", "reassessment_status": "reassessment_ready", "risk_level": "none", "audit_result_status": "audit_passed", "safety_result": "safety_ok", "stop_condition_result": "no_stop_condition", "remaining_risks": ["no_unresolved_dry_run_audit_risk", "connection_authority_still_not_granted"], "hold_reasons": [], "blocked_reasons": [], "recommended_next_validation": "Recommended: proceed only to the next safe pre-connection validation planning step.", "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"], "allowed_actions": ["plan", "simulate", "validate", "audit", "report"], "execution_allowed": false, "external_connection_allowed": false },
+    { "reassessment_id": "P19-RISK-REASSESS-004", "audit_log_id": "P19-DRY-AUDIT-004", "dry_run_id": "P19-DRY-RUN-004", "node_name": "Result Learning Validation Node", "category": "result_learning_engines", "priority_id": "P19-PRI-004", "reassessment_status": "reassessment_ready", "risk_level": "none", "audit_result_status": "audit_passed", "safety_result": "safety_ok", "stop_condition_result": "no_stop_condition", "remaining_risks": ["no_unresolved_dry_run_audit_risk", "connection_authority_still_not_granted"], "hold_reasons": [], "blocked_reasons": [], "recommended_next_validation": "Recommended: proceed only to the next safe pre-connection validation planning step.", "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"], "allowed_actions": ["plan", "simulate", "validate", "audit", "report"], "execution_allowed": false, "external_connection_allowed": false },
+    { "reassessment_id": "P19-RISK-REASSESS-005", "audit_log_id": "P19-DRY-AUDIT-005", "dry_run_id": "P19-DRY-RUN-005", "node_name": "Governance Safety Node", "category": "governance_engines", "priority_id": "P19-PRI-005", "reassessment_status": "plan_only_reassessment", "risk_level": "low", "audit_result_status": "plan_only_audit", "safety_result": "safety_ok", "stop_condition_result": "no_stop_condition", "remaining_risks": ["real_connection_not_performed", "external_connection_authority_false", "plan_only_audit_requires_future_validation_review"], "hold_reasons": ["plan_only_audit_retains_connection_hold"], "blocked_reasons": [], "recommended_next_validation": "Recommended: keep the node in PLAN_ONLY reassessment and prepare a safe audit review checklist.", "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"], "allowed_actions": ["plan", "simulate", "validate", "audit", "report"], "execution_allowed": false, "external_connection_allowed": false },
+    { "reassessment_id": "P19-RISK-REASSESS-006", "audit_log_id": "P19-DRY-AUDIT-006", "dry_run_id": "P19-DRY-RUN-006", "node_name": "Dashboard Observation Node", "category": "dashboard_engines", "priority_id": "P19-PRI-006", "reassessment_status": "plan_only_reassessment", "risk_level": "low", "audit_result_status": "plan_only_audit", "safety_result": "safety_ok", "stop_condition_result": "no_stop_condition", "remaining_risks": ["real_connection_not_performed", "external_connection_authority_false", "plan_only_audit_requires_future_validation_review"], "hold_reasons": ["plan_only_audit_retains_connection_hold"], "blocked_reasons": [], "recommended_next_validation": "Recommended: keep the node in PLAN_ONLY reassessment and prepare a safe audit review checklist.", "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"], "allowed_actions": ["plan", "simulate", "validate", "audit", "report"], "execution_allowed": false, "external_connection_allowed": false }
+  ],
+  "risk_reassessment_summary": {
+    "total": 6,
+    "reassessment_statuses": { "reassessment_ready": 3, "reassessment_warning": 0, "reassessment_hold": 0, "reassessment_blocked": 0, "protected_only": 1, "plan_only_reassessment": 2 },
+    "risk_levels": { "none": 3, "low": 2, "medium": 0, "high": 0, "protected": 1, "blocked": 0 },
+    "unsafe_flags_count": 0,
+    "missing_source_count": 0,
+    "external_connection_blocked": true,
+    "auto_execution_blocked": true
+  },
+  "missing_source_assets": [],
+  "next_validation_step": "Phase19-14 Global Network PreConnection Risk Review Gate",
+  "blocked_actions": ["external_connection", "auto_execution", "auto_repair", "auto_overwrite", "auto_rollback"],
+  "allowed_actions": ["plan", "simulate", "validate", "audit", "report"],
+  "generated_at": "2026-06-24T00:00:00.000Z",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "external_connection_allowed": false
+}
