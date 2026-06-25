@@ -1940,6 +1940,25 @@
         <p class="data-footnote">Next Validation: <span id="phase19-risk-next">Phase19-14 Global Network PreConnection Risk Review Gate</span></p>
         <p class="data-footnote">Official Release v2.8 Protected / PLAN_ONLY / 更新: <span id="phase19-risk-updated">--</span></p>
       </section>
+      <section class="panel phase19-final-validation-queue-panel" id="phase19-final-validation-queue-builder" aria-label="Global Network Final Validation Queue Builder">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase19-14 / Final Validation Queue</p><h2>Phase19 最終検証キュー</h2></div>
+          <span class="pill hot">QUEUE BUILDER / PLAN ONLY</span>
+        </div>
+        <div class="phase19-final-validation-queue-actions"><button id="run-phase19-final-validation-queue" type="button">最終検証キューを確認</button><span>ORDER / PRIORITY / HOLD REASONS / SAFE AUDIT ONLY</span></div>
+        <div class="phase2-kpis phase19-final-validation-queue-grid">
+          <article><span>Queue Status</span><strong id="phase19-final-queue-status">final_validation_queue_plan_only</strong></article>
+          <article><span>Total Nodes</span><strong id="phase19-final-queue-total">6</strong></article>
+          <article><span>Ready</span><strong id="phase19-final-queue-ready">3</strong></article>
+          <article><span>Plan Only</span><strong id="phase19-final-queue-plan-only">2</strong></article>
+          <article><span>Hold</span><strong id="phase19-final-queue-hold">0</strong></article>
+          <article><span>Protected</span><strong id="phase19-final-queue-protected">1</strong></article>
+          <article><span>Unsafe Flags</span><strong id="phase19-final-queue-unsafe">0</strong></article>
+        </div>
+        <ul class="phase19-final-validation-queue-list" id="phase19-final-validation-queue-list"></ul>
+        <p class="data-footnote">Next Audit: <span id="phase19-final-queue-next">Phase19-15 Global Network Final Validation Audit Review</span></p>
+        <p class="data-footnote">Official Release v2.8 Protected / PLAN_ONLY / 更新: <span id="phase19-final-queue-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -1986,6 +2005,7 @@
     <script src="phase19-validation-dry-run-planner.js"></script>
     <script src="phase19-dry-run-result-audit-logger.js"></script>
     <script src="phase19-preconnection-risk-reassessment.js"></script>
+    <script src="phase19-final-validation-queue-builder.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
