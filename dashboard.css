@@ -1632,3 +1632,12 @@ tbody tr:last-child td {
 .phase19-final-validation-queue-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
 .phase19-final-validation-queue-item.status-queue_hold, .phase19-final-validation-queue-item.status-queue_blocked { border-color: rgba(248, 113, 113, 0.64); }
 @media (max-width: 680px) { .phase19-final-validation-queue-actions { align-items: stretch; } .phase19-final-validation-queue-actions button { width: 100%; } }
+.phase19-final-validation-audit-review-panel { border: 1px solid rgba(45, 212, 191, 0.72); background: radial-gradient(circle at 88% 0, rgba(13, 148, 136, 0.2), transparent 44%), linear-gradient(145deg, #062823, #080b12 72%); }
+.phase19-final-validation-audit-review-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase19-final-validation-audit-review-actions span { color: #99f6e4; font-size: 13px; font-weight: 900; }
+.phase19-final-validation-audit-review-grid article strong { color: #99f6e4; font-size: 16px; overflow-wrap: anywhere; }
+.phase19-final-validation-audit-review-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase19-final-validation-audit-review-item { border: 1px solid rgba(45, 212, 191, 0.34); border-radius: 10px; padding: 9px 11px; color: #ccfbf1; font-size: 12px; font-weight: 800; }
+.phase19-final-validation-audit-review-item.status-protected_only { border-color: rgba(250, 204, 21, 0.68); }
+.phase19-final-validation-audit-review-item.status-audit_review_hold, .phase19-final-validation-audit-review-item.status-audit_review_blocked { border-color: rgba(248, 113, 113, 0.64); }
+@media (max-width: 680px) { .phase19-final-validation-audit-review-actions { align-items: stretch; } .phase19-final-validation-audit-review-actions button { width: 100%; } }
