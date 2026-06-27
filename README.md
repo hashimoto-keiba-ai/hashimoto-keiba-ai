@@ -807,6 +807,14 @@ Final Validation Queue Builder は Phase19-8〜19-12 の主要DBと Phase19-13 R
 
 追加ファイル: `phase19-final-validation-queue-builder.js`、`phase19-final-validation-queue-db.json`、`phase19-final-validation-queue-summary-db.json`、`tests/phase19FinalValidationQueueBuilder.test.js`
 
+## Phase19-16 Global Network Final Validation Closure Report
+
+Phase19-14 Final Validation Queue DB / Summary DB と Phase19-15 Final Validation Audit Review DB / Summary DB を読み取り、Phase19-8〜Phase19-15 の関連DB、summary、README/UI導線を集約して最終完了報告を生成します。Closure Report は `final_validation_closed`、`closure_ready`、`queue_ready_count`、`audit_passed_count`、`unresolved_issue_count`、`unsafe_flags_count`、`protected_item_count`、`plan_only_item_count`、`summary_alignment_ok`、`ipad_validation_status`、`next_recommended_step` を記録します。
+
+Phase19-15 audit summary の異常系カウントがすべて 0 のため、`closure_ready` は `true`、`final_validation_closed` は `true` とします。`protected_only` と `plan_only` は異常ではなく保護・計画分類として扱い、`unsafe_flags_count` は 0 を最重要確認項目として保持します。iPad 確認は現時点では `ipad_validation_status: deferred` として後続の端末確認タスクに回し、Closure Ready 判定は false にしません。Phase19 最終検証完了報告は `index.html#phase19-final-validation-closure-report-builder` と `private-local.html` から確認できます。
+
+追加ファイル: `phase19-final-validation-closure-report-builder.js`、`phase19-final-validation-closure-report-db.json`、`phase19-final-validation-closure-report-summary-db.json`、`tests/phase19FinalValidationClosureReportBuilder.test.js`
+
 ## Phase19-15 Global Network Final Validation Audit Review
 
 Phase19-14 Global Network Final Validation Queue Builder の Queue DB / Summary DB を読み取り、各キュー項目の整合性、重複、必須項目欠損、優先度、検証ステータス、安全フラグを監査します。監査状態は `audit_review_passed` / `audit_review_plan_only` / `audit_review_hold` / `audit_review_blocked` / `protected_only` に分類し、結果は監査レビューとサマリーだけとして保存します。
