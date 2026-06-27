@@ -1,0 +1,380 @@
+{
+  "database": "Global Network Post-Closure Device Validation and Release Planning DB",
+  "phase": "Phase20",
+  "planning_id": "P20-POST-CLOSURE-DEVICE-VALIDATION-1782525600000",
+  "phase20_status": "post_closure_device_validation_release_planning_plan_only",
+  "source_closure_report_status": "final_validation_closed",
+  "source_final_validation_closed": true,
+  "source_closure_ready": true,
+  "source_ipad_validation_status": "deferred",
+  "official_release_protected": true,
+  "protected_mode": true,
+  "plan_only": true,
+  "plan_only_enforced": true,
+  "connection_authority_issued": false,
+  "records": [
+    {
+      "device_plan_id": "P20-DEVICE-001",
+      "node_name": "PC Local Validation Node",
+      "device_target": "pc",
+      "validation_status": "confirmed_or_ready",
+      "plan_status": "device_validation_ready",
+      "validation_scope": [
+        "index_html_local_display",
+        "phase19_16_closure_panel",
+        "phase20_panel_visibility",
+        "local_json_reference"
+      ],
+      "release_scope": [
+        "local_readiness_evidence",
+        "release_note_candidate"
+      ],
+      "source_closure_report_id": "P19-FINAL-VALIDATION-CLOSURE-1782518400000",
+      "source_closure_ready": true,
+      "device_validation_ready": true,
+      "release_planning_status": "plan_only",
+      "deferred_reason": "",
+      "blocked_reason": "",
+      "validation_policy": "plan_only_device_validation",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_connection",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: record device validation evidence in the Phase20-1 checklist.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "device_plan_id": "P20-DEVICE-002",
+      "node_name": "iPad Deferred Validation Node",
+      "device_target": "ipad",
+      "validation_status": "deferred",
+      "plan_status": "device_validation_deferred",
+      "validation_scope": [
+        "ipad_viewport_check_deferred",
+        "touch_navigation_check_deferred",
+        "phase20_panel_future_check"
+      ],
+      "release_scope": [
+        "post_closure_device_task"
+      ],
+      "source_closure_report_id": "P19-FINAL-VALIDATION-CLOSURE-1782518400000",
+      "source_closure_ready": true,
+      "device_validation_ready": true,
+      "release_planning_status": "plan_only",
+      "deferred_reason": "device_not_available_ipad_validation_deferred",
+      "blocked_reason": "",
+      "validation_policy": "deferred_device_validation_does_not_block_release_planning",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_connection",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: keep iPad validation deferred and include it in the Phase20-1 checklist.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "device_plan_id": "P20-DEVICE-003",
+      "node_name": "iPhone Pending Validation Node",
+      "device_target": "iphone",
+      "validation_status": "pending",
+      "plan_status": "device_validation_pending",
+      "validation_scope": [
+        "iphone_viewport_check_pending",
+        "one_tap_menu_mobile_check_pending",
+        "responsive_text_check_pending"
+      ],
+      "release_scope": [
+        "mobile_validation_queue"
+      ],
+      "source_closure_report_id": "P19-FINAL-VALIDATION-CLOSURE-1782518400000",
+      "source_closure_ready": true,
+      "device_validation_ready": true,
+      "release_planning_status": "plan_only",
+      "deferred_reason": "",
+      "blocked_reason": "",
+      "validation_policy": "plan_only_device_validation",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_connection",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: record device validation evidence in the Phase20-1 checklist.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "device_plan_id": "P20-DEVICE-004",
+      "node_name": "GitHub Pages Validation Node",
+      "device_target": "github_pages",
+      "validation_status": "pending",
+      "plan_status": "device_validation_pending",
+      "validation_scope": [
+        "github_pages_static_asset_check_pending",
+        "json_fetch_path_check_pending",
+        "console_error_check_pending"
+      ],
+      "release_scope": [
+        "public_static_review_plan"
+      ],
+      "source_closure_report_id": "P19-FINAL-VALIDATION-CLOSURE-1782518400000",
+      "source_closure_ready": true,
+      "device_validation_ready": true,
+      "release_planning_status": "plan_only",
+      "deferred_reason": "",
+      "blocked_reason": "",
+      "validation_policy": "plan_only_device_validation",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_connection",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: record device validation evidence in the Phase20-1 checklist.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "device_plan_id": "P20-DEVICE-005",
+      "node_name": "private-local One Tap Menu Validation Node",
+      "device_target": "private_local",
+      "validation_status": "confirmed_or_ready",
+      "plan_status": "device_validation_ready",
+      "validation_scope": [
+        "private_local_menu_route",
+        "phase20_card_visibility",
+        "phase19_routes_retained"
+      ],
+      "release_scope": [
+        "local_operator_launch_path"
+      ],
+      "source_closure_report_id": "P19-FINAL-VALIDATION-CLOSURE-1782518400000",
+      "source_closure_ready": true,
+      "device_validation_ready": true,
+      "release_planning_status": "plan_only",
+      "deferred_reason": "",
+      "blocked_reason": "",
+      "validation_policy": "plan_only_device_validation",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_connection",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: record device validation evidence in the Phase20-1 checklist.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "device_plan_id": "P20-DEVICE-006",
+      "node_name": "Release Planning Governance Node",
+      "device_target": "release_planning",
+      "validation_status": "plan_only",
+      "plan_status": "release_planning_plan_only",
+      "validation_scope": [
+        "closure_ready_confirmed",
+        "unsafe_flags_zero_confirmed",
+        "protected_mode_confirmed",
+        "plan_only_release_steps"
+      ],
+      "release_scope": [
+        "phase20_1_checklist_preparation",
+        "no_release_execution_authority"
+      ],
+      "source_closure_report_id": "P19-FINAL-VALIDATION-CLOSURE-1782518400000",
+      "source_closure_ready": true,
+      "device_validation_ready": true,
+      "release_planning_status": "plan_only",
+      "deferred_reason": "",
+      "blocked_reason": "",
+      "validation_policy": "plan_only_device_validation",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_connection",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: record device validation evidence in the Phase20-1 checklist.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    }
+  ],
+  "phase20_summary": {
+    "total": 6,
+    "device_validation_ready": true,
+    "pc_validation_status": "confirmed_or_ready",
+    "ipad_validation_status": "deferred",
+    "iphone_validation_status": "pending",
+    "github_pages_validation_status": "pending",
+    "private_local_validation_status": "confirmed_or_ready",
+    "release_planning_status": "plan_only",
+    "unsafe_flags_count": 0,
+    "external_connection_allowed": false,
+    "auto_execution_allowed": false,
+    "execution_allowed": false,
+    "protected_mode": true,
+    "plan_only": true,
+    "ipad_deferred_blocks_release_planning": false,
+    "closure_ready_source_ok": true,
+    "ui_readme_checks": {
+      "index_phase20_panel": true,
+      "private_local_phase20_card": true,
+      "readme_phase20_section": true,
+      "phase19_16_link_retained": true
+    },
+    "next_recommended_step": "Phase20-1 Post-Closure Device Validation Checklist"
+  },
+  "next_recommended_step": "Phase20-1 Post-Closure Device Validation Checklist",
+  "blocked_actions": [
+    "external_connection",
+    "auto_execution",
+    "auto_repair",
+    "auto_overwrite",
+    "auto_rollback"
+  ],
+  "allowed_actions": [
+    "plan",
+    "simulate",
+    "validate",
+    "audit",
+    "report"
+  ],
+  "generated_at": "2026-06-27T02:00:00.000Z",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "execution_allowed": false,
+  "external_connection_allowed": false
+}
