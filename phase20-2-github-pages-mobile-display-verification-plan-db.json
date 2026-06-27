@@ -1,0 +1,367 @@
+{
+  "database": "GitHub Pages and Mobile Display Verification Plan DB",
+  "phase": "Phase20-2",
+  "verification_plan_id": "P20-2-DISPLAY-VERIFICATION-1782532800000",
+  "verification_plan_status": "github_pages_mobile_display_verification_plan_only",
+  "source_checklist_status": "post_closure_device_validation_checklist_plan_only",
+  "source_checklist_ready": true,
+  "protected_mode": true,
+  "plan_only": true,
+  "plan_only_enforced": true,
+  "connection_authority_issued": false,
+  "records": [
+    {
+      "id": "P20-2-VERIFY-001",
+      "target_name": "GitHub Pages display verification",
+      "device_type": "github_pages",
+      "verification_status": "pending",
+      "verification_scope": [
+        "pages_url_display_check_plan",
+        "static_js_css_load_check_plan",
+        "json_fetch_path_check_plan",
+        "console_error_check_plan"
+      ],
+      "manual_check_required": true,
+      "expected_result": "GitHub Pages display can be verified manually without automated external access.",
+      "pending_reason": "github_pages_display_verification_pending_manual_review",
+      "next_action": "Prepare manual GitHub Pages display verification steps for Phase20-3.",
+      "source_checklist_id": "P20-1-POST-CLOSURE-DEVICE-CHECKLIST-1782529200000",
+      "source_checklist_ready": true,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false,
+      "protected_mode": true,
+      "plan_only": true,
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_github_pages_connection",
+        "no_device_auto_check",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false
+    },
+    {
+      "id": "P20-2-VERIFY-002",
+      "target_name": "iPhone display verification",
+      "device_type": "iphone",
+      "verification_status": "pending",
+      "verification_scope": [
+        "iphone_viewport_plan",
+        "one_tap_menu_mobile_layout_plan",
+        "text_wrapping_plan",
+        "button_tap_area_plan"
+      ],
+      "manual_check_required": true,
+      "expected_result": "iPhone display verification remains pending until a device or approved manual capture is available.",
+      "pending_reason": "iphone_display_verification_pending_manual_review",
+      "next_action": "Carry iPhone viewport and tap-area checks into Phase20-3 capture planning.",
+      "source_checklist_id": "P20-1-POST-CLOSURE-DEVICE-CHECKLIST-1782529200000",
+      "source_checklist_ready": true,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false,
+      "protected_mode": true,
+      "plan_only": true,
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_github_pages_connection",
+        "no_device_auto_check",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false
+    },
+    {
+      "id": "P20-2-VERIFY-003",
+      "target_name": "iPad display verification",
+      "device_type": "ipad",
+      "verification_status": "deferred",
+      "verification_scope": [
+        "ipad_viewport_plan_deferred",
+        "touch_navigation_plan_deferred",
+        "phase20_2_panel_future_check",
+        "private_local_card_future_check"
+      ],
+      "manual_check_required": true,
+      "expected_result": "iPad verification stays deferred and does not block the verification plan.",
+      "deferred_reason": "ipad_device_not_currently_available",
+      "next_action": "Keep iPad verification deferred and list it in Phase20-3 capture tasks.",
+      "source_checklist_id": "P20-1-POST-CLOSURE-DEVICE-CHECKLIST-1782529200000",
+      "source_checklist_ready": true,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false,
+      "protected_mode": true,
+      "plan_only": true,
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_github_pages_connection",
+        "no_device_auto_check",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false
+    },
+    {
+      "id": "P20-2-VERIFY-004",
+      "target_name": "PC browser display verification",
+      "device_type": "pc_browser",
+      "verification_status": "confirmed_or_pending_plan",
+      "verification_scope": [
+        "index_phase20_2_panel_plan",
+        "local_json_reference_plan",
+        "desktop_layout_review_plan",
+        "console_error_manual_review_plan"
+      ],
+      "manual_check_required": true,
+      "expected_result": "PC browser display verification is ready for manual confirmation in the next capture phase.",
+      "pending_reason": "pc_browser_confirmation_capture_pending",
+      "next_action": "Record PC browser confirmation evidence during Phase20-3.",
+      "source_checklist_id": "P20-1-POST-CLOSURE-DEVICE-CHECKLIST-1782529200000",
+      "source_checklist_ready": true,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false,
+      "protected_mode": true,
+      "plan_only": true,
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_github_pages_connection",
+        "no_device_auto_check",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false
+    },
+    {
+      "id": "P20-2-VERIFY-005",
+      "target_name": "private-local display verification",
+      "device_type": "private_local",
+      "verification_status": "confirmed_or_pending_plan",
+      "verification_scope": [
+        "private_local_phase20_2_card_plan",
+        "one_tap_menu_route_plan",
+        "previous_phase_links_retained_plan",
+        "local_operator_launch_path_plan"
+      ],
+      "manual_check_required": true,
+      "expected_result": "private-local display route remains ready for manual confirmation.",
+      "pending_reason": "private_local_confirmation_capture_pending",
+      "next_action": "Record private-local display confirmation in Phase20-3.",
+      "source_checklist_id": "P20-1-POST-CLOSURE-DEVICE-CHECKLIST-1782529200000",
+      "source_checklist_ready": true,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false,
+      "protected_mode": true,
+      "plan_only": true,
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_github_pages_connection",
+        "no_device_auto_check",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false
+    },
+    {
+      "id": "P20-2-VERIFY-006",
+      "target_name": "Release Planning Governance verification",
+      "device_type": "governance",
+      "verification_status": "plan_only_confirmed",
+      "verification_scope": [
+        "no_release_execution_authority",
+        "no_external_connection_authority",
+        "no_auto_execution_authority",
+        "next_phase_capture_only"
+      ],
+      "manual_check_required": false,
+      "expected_result": "Governance remains PLAN_ONLY and protected with no execution authority.",
+      "pending_reason": "",
+      "next_action": "Continue to Phase20-3 result capture planning without enabling execution.",
+      "source_checklist_id": "P20-1-POST-CLOSURE-DEVICE-CHECKLIST-1782529200000",
+      "source_checklist_ready": true,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false,
+      "protected_mode": true,
+      "plan_only": true,
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_real_github_pages_connection",
+        "no_device_auto_check",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false
+    }
+  ],
+  "phase20_2_summary": {
+    "total_verification_targets": 6,
+    "github_pages_status": "pending",
+    "iphone_status": "pending",
+    "ipad_status": "deferred",
+    "pc_browser_status": "confirmed_or_pending_plan",
+    "private_local_status": "confirmed_or_pending_plan",
+    "governance_status": "plan_only_confirmed",
+    "pending_items_count": 2,
+    "deferred_items_count": 1,
+    "confirmed_or_pending_plan_count": 2,
+    "plan_only_confirmed_count": 1,
+    "blocked_items_count": 0,
+    "unsafe_flags_count": 0,
+    "checklist_ready": true,
+    "protected_mode": true,
+    "plan_only": true,
+    "execution_allowed": false,
+    "auto_execution_allowed": false,
+    "external_connection_allowed": false,
+    "summary_alignment_ok": true,
+    "ui_readme_checks": {
+      "index_phase20_2_panel": true,
+      "private_local_phase20_2_card": true,
+      "readme_phase20_2_section": true,
+      "phase19_16_link_retained": true,
+      "phase20_link_retained": true,
+      "phase20_1_link_retained": true
+    },
+    "next_recommended_step": "Phase20-3 Mobile Verification Result Capture and Closure Plan"
+  },
+  "next_recommended_step": "Phase20-3 Mobile Verification Result Capture and Closure Plan",
+  "blocked_actions": [
+    "external_connection",
+    "auto_execution",
+    "auto_repair",
+    "auto_overwrite",
+    "auto_rollback"
+  ],
+  "allowed_actions": [
+    "plan",
+    "simulate",
+    "validate",
+    "audit",
+    "report"
+  ],
+  "generated_at": "2026-06-27T04:00:00.000Z",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "execution_allowed": false,
+  "external_connection_allowed": false
+}
