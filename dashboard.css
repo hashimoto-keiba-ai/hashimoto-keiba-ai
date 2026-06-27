@@ -1683,3 +1683,33 @@ tbody tr:last-child td {
 .phase20-2-github-pages-mobile-display-verification-plan-item.status-confirmed_or_pending_plan { border-color: rgba(34, 197, 94, 0.58); }
 .phase20-2-github-pages-mobile-display-verification-plan-item.status-plan_only_confirmed { border-color: rgba(45, 212, 191, 0.56); }
 @media (max-width: 680px) { .phase20-2-github-pages-mobile-display-verification-plan-actions { align-items: stretch; } .phase20-2-github-pages-mobile-display-verification-plan-actions button { width: 100%; } }
+.phase20-3-mobile-verification-result-capture-closure-plan-panel { border: 1px solid rgba(99, 102, 241, 0.72); background: radial-gradient(circle at 88% 0, rgba(79, 70, 229, 0.2), transparent 44%), linear-gradient(145deg, #11133a, #080b12 72%); }
+.phase20-3-mobile-verification-result-capture-closure-plan-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase20-3-mobile-verification-result-capture-closure-plan-actions span { color: #c7d2fe; font-size: 13px; font-weight: 900; }
+.phase20-3-mobile-verification-result-capture-closure-plan-grid article strong { color: #c7d2fe; font-size: 16px; overflow-wrap: anywhere; }
+.phase20-3-mobile-verification-result-capture-closure-plan-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase20-3-mobile-verification-result-capture-closure-plan-item { border: 1px solid rgba(99, 102, 241, 0.34); border-radius: 10px; padding: 9px 11px; color: #e0e7ff; font-size: 12px; font-weight: 800; }
+.phase20-3-mobile-verification-result-capture-closure-plan-item.status-pending_result_capture, .phase20-3-mobile-verification-result-capture-closure-plan-item.status-pending_or_confirmed_result_capture { border-color: rgba(56, 189, 248, 0.56); }
+.phase20-3-mobile-verification-result-capture-closure-plan-item.status-deferred_result_capture { border-color: rgba(250, 204, 21, 0.68); }
+.phase20-3-mobile-verification-result-capture-closure-plan-item.status-plan_only_closure_confirmed { border-color: rgba(45, 212, 191, 0.56); }
+@media (max-width: 680px) { .phase20-3-mobile-verification-result-capture-closure-plan-actions { align-items: stretch; } .phase20-3-mobile-verification-result-capture-closure-plan-actions button { width: 100%; } }
+.phase20-4-final-release-readiness-closure-summary-panel { border: 1px solid rgba(244, 114, 182, 0.72); background: radial-gradient(circle at 88% 0, rgba(219, 39, 119, 0.2), transparent 44%), linear-gradient(145deg, #2b1025, #080b12 72%); }
+.phase20-4-final-release-readiness-closure-summary-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase20-4-final-release-readiness-closure-summary-actions span { color: #fbcfe8; font-size: 13px; font-weight: 900; }
+.phase20-4-final-release-readiness-closure-summary-grid article strong { color: #fbcfe8; font-size: 16px; overflow-wrap: anywhere; }
+.phase20-4-final-release-readiness-closure-summary-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase20-4-final-release-readiness-closure-summary-item { border: 1px solid rgba(244, 114, 182, 0.34); border-radius: 10px; padding: 9px 11px; color: #fce7f3; font-size: 12px; font-weight: 800; }
+.phase20-4-final-release-readiness-closure-summary-item.status-pending_release_evidence { border-color: rgba(56, 189, 248, 0.56); }
+.phase20-4-final-release-readiness-closure-summary-item.status-deferred_release_evidence { border-color: rgba(250, 204, 21, 0.68); }
+.phase20-4-final-release-readiness-closure-summary-item.status-plan_only_governance_confirmed { border-color: rgba(45, 212, 191, 0.56); }
+@media (max-width: 680px) { .phase20-4-final-release-readiness-closure-summary-actions { align-items: stretch; } .phase20-4-final-release-readiness-closure-summary-actions button { width: 100%; } }
+.phase20-5-manual-mobile-verification-evidence-collection-panel { border: 1px solid rgba(251, 146, 60, 0.72); background: radial-gradient(circle at 88% 0, rgba(234, 88, 12, 0.2), transparent 44%), linear-gradient(145deg, #2b1708, #080b12 72%); }
+.phase20-5-manual-mobile-verification-evidence-collection-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase20-5-manual-mobile-verification-evidence-collection-actions span { color: #fed7aa; font-size: 13px; font-weight: 900; }
+.phase20-5-manual-mobile-verification-evidence-collection-grid article strong { color: #fed7aa; font-size: 16px; overflow-wrap: anywhere; }
+.phase20-5-manual-mobile-verification-evidence-collection-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase20-5-manual-mobile-verification-evidence-collection-item { border: 1px solid rgba(251, 146, 60, 0.34); border-radius: 10px; padding: 9px 11px; color: #ffedd5; font-size: 12px; font-weight: 800; }
+.phase20-5-manual-mobile-verification-evidence-collection-item.status-manual_evidence_pending { border-color: rgba(56, 189, 248, 0.56); }
+.phase20-5-manual-mobile-verification-evidence-collection-item.status-deferred_evidence { border-color: rgba(250, 204, 21, 0.68); }
+.phase20-5-manual-mobile-verification-evidence-collection-item.status-plan_only_governance_evidence { border-color: rgba(45, 212, 191, 0.56); }
+@media (max-width: 680px) { .phase20-5-manual-mobile-verification-evidence-collection-actions { align-items: stretch; } .phase20-5-manual-mobile-verification-evidence-collection-actions button { width: 100%; } }
