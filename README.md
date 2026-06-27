@@ -807,6 +807,14 @@ Final Validation Queue Builder は Phase19-8〜19-12 の主要DBと Phase19-13 R
 
 追加ファイル: `phase19-final-validation-queue-builder.js`、`phase19-final-validation-queue-db.json`、`phase19-final-validation-queue-summary-db.json`、`tests/phase19FinalValidationQueueBuilder.test.js`
 
+## Phase20-2 GitHub Pages and Mobile Display Verification Plan
+
+Phase20-1 Post-Closure Device Validation Checklist で `pending` / `deferred` として残した GitHub Pages、iPhone、iPad、PC browser、private-local、Release Planning Governance の表示検証を、安全な PLAN_ONLY 検証計画として整理します。実際の GitHub Pages 接続、iPhone / iPad の自動確認、外部通信、自動修復、自動上書き、自動ロールバックは行わず、手順、端末別チェック項目、pending / deferred 管理、次工程判定だけを記録します。
+
+GitHub Pages と iPhone は `pending`、iPad は端末未所持時の `deferred`、PC browser と private-local は `confirmed_or_pending_plan`、Governance は `plan_only_confirmed` として扱います。`protected_mode` と `plan_only` は `true`、`execution_allowed` / `auto_execution_allowed` / `external_connection_allowed` は `false`、`unsafe_flags_count` と `blocked_items_count` は 0 を維持します。次工程は `Phase20-3 Mobile Verification Result Capture and Closure Plan` です。Phase20-2 表示検証計画は `index.html#phase20-2-github-pages-mobile-display-verification-plan-builder` と `private-local.html` から確認できます。
+
+追加ファイル: `phase20-2-github-pages-mobile-display-verification-plan-builder.js`、`phase20-2-github-pages-mobile-display-verification-plan-db.json`、`phase20-2-github-pages-mobile-display-verification-plan-summary-db.json`、`tests/phase20GithubPagesMobileDisplayVerificationPlanBuilder.test.js`
+
 ## Phase20-1 Post-Closure Device Validation Checklist
 
 Phase20 Global Network Post-Closure Device Validation and Release Planning の結果を読み取り、PC / iPad / iPhone / GitHub Pages / private-local / Release Planning Governance の端末別・導線別チェックリストを作成します。Phase20-1 は実機確認や公開操作を行わず、確認項目、deferred / pending 理由、PLAN_ONLY の次工程だけを整理します。
