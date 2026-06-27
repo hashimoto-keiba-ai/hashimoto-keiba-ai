@@ -807,6 +807,14 @@ Final Validation Queue Builder は Phase19-8〜19-12 の主要DBと Phase19-13 R
 
 追加ファイル: `phase19-final-validation-queue-builder.js`、`phase19-final-validation-queue-db.json`、`phase19-final-validation-queue-summary-db.json`、`tests/phase19FinalValidationQueueBuilder.test.js`
 
+## Phase20-7 Final Manual Device Confirmation Checklist
+
+Phase20-7 は、iPhone / iPad / PC browser / GitHub Pages / private-local / Governance を対象にした最終手動確認チェックリストです。実機確認と証跡入力は人間が行う前提で、ここでは PLAN_ONLY / protected mode の確認項目、初期ステータス、Release Gate 依存関係だけを整理します。
+
+このフェーズでは GitHub Pages への自動アクセス、iPhone / iPad / PC の自動確認、スクリーンショット自動取得、自動検証、自動修復、自動リリース、ロールバックを行いません。`evidence_present_count` と `confirmed_count` は 0、`release_gate_open` / `closure_ready` / `final_release_ready` は `false` のままです。`protected_mode` と `plan_only` は `true`、`execution_allowed` / `auto_execution_allowed` / `external_connection_allowed` / `auto_verification_allowed` / `auto_fix_allowed` / `auto_release_allowed` / `rollback_allowed` は `false` を維持します。次工程は `Phase20-8 Manual Confirmation Result Review and Final Closure Decision` です。
+
+追加ファイル: `phase20-7-final-manual-device-confirmation-checklist-builder.js`、`phase20-7-final-manual-device-confirmation-checklist-db.json`、`phase20-7-final-manual-device-confirmation-checklist-summary-db.json`、`tests/phase20FinalManualDeviceConfirmationChecklistBuilder.test.js`
+
 ## Phase20-6 Manual Evidence Review and Release Gate Decision
 
 Phase20-3 / Phase20-4 / Phase20-5 を入力として、GitHub Pages / iPhone / iPad / PC browser / private-local / Governance の手動確認証跡レビューと Release Gate 判定を PLAN_ONLY / protected mode で整理します。GitHub Pages、PC browser、private-local は `manual_review_pending_or_observed`、iPhone は `manual_review_pending`、iPad は `deferred_review`、Governance は `plan_only_gate_control_confirmed` として保持します。
