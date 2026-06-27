@@ -1683,3 +1683,13 @@ tbody tr:last-child td {
 .phase20-2-github-pages-mobile-display-verification-plan-item.status-confirmed_or_pending_plan { border-color: rgba(34, 197, 94, 0.58); }
 .phase20-2-github-pages-mobile-display-verification-plan-item.status-plan_only_confirmed { border-color: rgba(45, 212, 191, 0.56); }
 @media (max-width: 680px) { .phase20-2-github-pages-mobile-display-verification-plan-actions { align-items: stretch; } .phase20-2-github-pages-mobile-display-verification-plan-actions button { width: 100%; } }
+.phase20-3-mobile-verification-result-capture-closure-plan-panel { border: 1px solid rgba(99, 102, 241, 0.72); background: radial-gradient(circle at 88% 0, rgba(79, 70, 229, 0.2), transparent 44%), linear-gradient(145deg, #11133a, #080b12 72%); }
+.phase20-3-mobile-verification-result-capture-closure-plan-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase20-3-mobile-verification-result-capture-closure-plan-actions span { color: #c7d2fe; font-size: 13px; font-weight: 900; }
+.phase20-3-mobile-verification-result-capture-closure-plan-grid article strong { color: #c7d2fe; font-size: 16px; overflow-wrap: anywhere; }
+.phase20-3-mobile-verification-result-capture-closure-plan-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase20-3-mobile-verification-result-capture-closure-plan-item { border: 1px solid rgba(99, 102, 241, 0.34); border-radius: 10px; padding: 9px 11px; color: #e0e7ff; font-size: 12px; font-weight: 800; }
+.phase20-3-mobile-verification-result-capture-closure-plan-item.status-pending_result_capture, .phase20-3-mobile-verification-result-capture-closure-plan-item.status-pending_or_confirmed_result_capture { border-color: rgba(56, 189, 248, 0.56); }
+.phase20-3-mobile-verification-result-capture-closure-plan-item.status-deferred_result_capture { border-color: rgba(250, 204, 21, 0.68); }
+.phase20-3-mobile-verification-result-capture-closure-plan-item.status-plan_only_closure_confirmed { border-color: rgba(45, 212, 191, 0.56); }
+@media (max-width: 680px) { .phase20-3-mobile-verification-result-capture-closure-plan-actions { align-items: stretch; } .phase20-3-mobile-verification-result-capture-closure-plan-actions button { width: 100%; } }

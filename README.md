@@ -807,6 +807,14 @@ Final Validation Queue Builder は Phase19-8〜19-12 の主要DBと Phase19-13 R
 
 追加ファイル: `phase19-final-validation-queue-builder.js`、`phase19-final-validation-queue-db.json`、`phase19-final-validation-queue-summary-db.json`、`tests/phase19FinalValidationQueueBuilder.test.js`
 
+## Phase20-3 Mobile Verification Result Capture and Closure Plan
+
+Phase20-2 GitHub Pages and Mobile Display Verification Plan で整理した GitHub Pages / iPhone / iPad / PC browser / private-local / Governance の表示検証計画について、手動確認結果の記録欄、証跡欄、pending / deferred / confirmed / closure 判定を安全な PLAN_ONLY 形式で整理します。実際の GitHub Pages 接続、iPhone / iPad / PC の自動確認、外部通信、自動実行、自動修復、自動上書き、自動ロールバックは行わず、結果取得計画と closure 判定だけを記録します。
+
+GitHub Pages と iPhone は `pending_result_capture`、iPad は端末未所持時の `deferred_result_capture`、PC browser と private-local は `pending_or_confirmed_result_capture`、Governance は `plan_only_closure_confirmed` とします。手動確認結果と証跡が未取得のため `closure_ready` と `final_release_ready` は `false` のまま維持し、pending を自動で confirmed に変更しません。`protected_mode` と `plan_only` は `true`、`execution_allowed` / `auto_execution_allowed` / `external_connection_allowed` は `false`、`unsafe_flags_count` と `blocked_items_count` は 0 を維持します。次工程は `Phase20-4 Final Release Readiness Closure Summary` です。
+
+追加ファイル: `phase20-3-mobile-verification-result-capture-closure-plan-builder.js`、`phase20-3-mobile-verification-result-capture-closure-plan-db.json`、`phase20-3-mobile-verification-result-capture-closure-plan-summary-db.json`、`tests/phase20MobileVerificationResultCaptureClosurePlanBuilder.test.js`
+
 ## Phase20-2 GitHub Pages and Mobile Display Verification Plan
 
 Phase20-1 Post-Closure Device Validation Checklist で `pending` / `deferred` として残した GitHub Pages、iPhone、iPad、PC browser、private-local、Release Planning Governance の表示検証を、安全な PLAN_ONLY 検証計画として整理します。実際の GitHub Pages 接続、iPhone / iPad の自動確認、外部通信、自動修復、自動上書き、自動ロールバックは行わず、手順、端末別チェック項目、pending / deferred 管理、次工程判定だけを記録します。
