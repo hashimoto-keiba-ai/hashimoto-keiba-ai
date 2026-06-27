@@ -807,6 +807,14 @@ Final Validation Queue Builder は Phase19-8〜19-12 の主要DBと Phase19-13 R
 
 追加ファイル: `phase19-final-validation-queue-builder.js`、`phase19-final-validation-queue-db.json`、`phase19-final-validation-queue-summary-db.json`、`tests/phase19FinalValidationQueueBuilder.test.js`
 
+## Phase20-1 Post-Closure Device Validation Checklist
+
+Phase20 Global Network Post-Closure Device Validation and Release Planning の結果を読み取り、PC / iPad / iPhone / GitHub Pages / private-local / Release Planning Governance の端末別・導線別チェックリストを作成します。Phase20-1 は実機確認や公開操作を行わず、確認項目、deferred / pending 理由、PLAN_ONLY の次工程だけを整理します。
+
+チェックリストは PC と private-local を `confirmed_or_ready`、iPad を `deferred`、iPhone と GitHub Pages を `pending`、Release Planning Governance を `plan_only` として記録します。iPad deferred は `checklist_ready` を false にせず、後続の Phase20-2 GitHub Pages and Mobile Display Verification Plan に引き継ぎます。`unsafe_flags_count` と `blocked_items_count` は 0、`protected_mode` と `plan_only` は `true`、`execution_allowed` / `auto_execution_allowed` / `external_connection_allowed` は `false` を維持します。Phase20-1 端末別検証チェックリストは `index.html#phase20-1-post-closure-device-validation-checklist-builder` と `private-local.html` から確認できます。
+
+追加ファイル: `phase20-1-post-closure-device-validation-checklist-builder.js`、`phase20-1-post-closure-device-validation-checklist-db.json`、`phase20-1-post-closure-device-validation-checklist-summary-db.json`、`tests/phase20PostClosureDeviceValidationChecklistBuilder.test.js`
+
 ## Phase20 Global Network Post-Closure Device Validation and Release Planning
 
 Phase19-16 Global Network Final Validation Closure Report の `final_validation_closed: true` / `closure_ready: true` / `ipad_validation_status: deferred` を受けて、PC / iPad / iPhone / GitHub Pages / private-local の端末別確認計画とリリース準備計画を作成します。Phase20 は実接続や公開リリース実行ではなく、端末別の確認状態、保留理由、リリース準備ステータス、次のチェックリスト提案だけを記録します。

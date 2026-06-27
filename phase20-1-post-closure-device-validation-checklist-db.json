@@ -1,0 +1,365 @@
+{
+  "database": "Post-Closure Device Validation Checklist DB",
+  "phase": "Phase20-1",
+  "checklist_id": "P20-1-POST-CLOSURE-DEVICE-CHECKLIST-1782529200000",
+  "checklist_status": "post_closure_device_validation_checklist_plan_only",
+  "source_phase20_status": "post_closure_device_validation_release_planning_plan_only",
+  "source_device_validation_ready": true,
+  "source_ipad_validation_status": "deferred",
+  "protected_mode": true,
+  "plan_only": true,
+  "plan_only_enforced": true,
+  "connection_authority_issued": false,
+  "records": [
+    {
+      "checklist_id": "P20-1-CHECKLIST-001",
+      "checklist_name": "PC Local Display Checklist",
+      "device_target": "pc",
+      "status": "confirmed_or_ready",
+      "check_items": [
+        "index.html Phase20 panel visible",
+        "private-local.html Phase20 card visible",
+        "local HTTP display works",
+        "unsafe flags remain zero"
+      ],
+      "source_phase20_planning_id": "P20-POST-CLOSURE-DEVICE-VALIDATION-1782525600000",
+      "source_device_validation_ready": true,
+      "blocked_reasons": [],
+      "deferred_reasons": [],
+      "pending_reasons": [],
+      "checklist_policy": "plan_only_checklist_item",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_external_connection",
+        "no_auto_execution",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: keep this checklist item in verification planning only.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "checklist_id": "P20-1-CHECKLIST-002",
+      "checklist_name": "iPad Deferred Checklist",
+      "device_target": "ipad",
+      "status": "deferred",
+      "check_items": [
+        "iPad device not currently available",
+        "keep deferred without blocking checklist_ready",
+        "future viewport check required",
+        "future touch navigation check required"
+      ],
+      "source_phase20_planning_id": "P20-POST-CLOSURE-DEVICE-VALIDATION-1782525600000",
+      "source_device_validation_ready": true,
+      "blocked_reasons": [],
+      "deferred_reasons": [
+        "device_not_available_kept_as_follow_up"
+      ],
+      "pending_reasons": [],
+      "checklist_policy": "deferred_does_not_block_checklist_ready",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_external_connection",
+        "no_auto_execution",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: keep the iPad checklist deferred and carry it to Phase20-2 planning.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "checklist_id": "P20-1-CHECKLIST-003",
+      "checklist_name": "iPhone Pending Checklist",
+      "device_target": "iphone",
+      "status": "pending",
+      "check_items": [
+        "iPhone viewport check pending",
+        "One Tap Menu mobile layout pending",
+        "text wrapping check pending",
+        "button tap area check pending"
+      ],
+      "source_phase20_planning_id": "P20-POST-CLOSURE-DEVICE-VALIDATION-1782525600000",
+      "source_device_validation_ready": true,
+      "blocked_reasons": [],
+      "deferred_reasons": [],
+      "pending_reasons": [
+        "verification_pending_kept_as_plan_only_item"
+      ],
+      "checklist_policy": "pending_verification_planned_without_execution",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_external_connection",
+        "no_auto_execution",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: keep this checklist item in verification planning only.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "checklist_id": "P20-1-CHECKLIST-004",
+      "checklist_name": "GitHub Pages Pending Checklist",
+      "device_target": "github_pages",
+      "status": "pending",
+      "check_items": [
+        "Pages URL display check pending",
+        "static JS/CSS load check pending",
+        "JSON fetch path check pending",
+        "console error check pending"
+      ],
+      "source_phase20_planning_id": "P20-POST-CLOSURE-DEVICE-VALIDATION-1782525600000",
+      "source_device_validation_ready": true,
+      "blocked_reasons": [],
+      "deferred_reasons": [],
+      "pending_reasons": [
+        "verification_pending_kept_as_plan_only_item"
+      ],
+      "checklist_policy": "pending_verification_planned_without_execution",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_external_connection",
+        "no_auto_execution",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: keep this checklist item in verification planning only.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "checklist_id": "P20-1-CHECKLIST-005",
+      "checklist_name": "private-local One Tap Menu Checklist",
+      "device_target": "private_local",
+      "status": "confirmed_or_ready",
+      "check_items": [
+        "Phase20 card visible",
+        "Phase20-1 card visible",
+        "previous Phase19 links retained",
+        "local operator launch path retained"
+      ],
+      "source_phase20_planning_id": "P20-POST-CLOSURE-DEVICE-VALIDATION-1782525600000",
+      "source_device_validation_ready": true,
+      "blocked_reasons": [],
+      "deferred_reasons": [],
+      "pending_reasons": [],
+      "checklist_policy": "plan_only_checklist_item",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_external_connection",
+        "no_auto_execution",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: keep this checklist item in verification planning only.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    },
+    {
+      "checklist_id": "P20-1-CHECKLIST-006",
+      "checklist_name": "Release Planning Governance Checklist",
+      "device_target": "release_planning_governance",
+      "status": "plan_only",
+      "check_items": [
+        "no release execution authority",
+        "no external connection authority",
+        "no auto execution authority",
+        "next phase remains verification planning only"
+      ],
+      "source_phase20_planning_id": "P20-POST-CLOSURE-DEVICE-VALIDATION-1782525600000",
+      "source_device_validation_ready": true,
+      "blocked_reasons": [],
+      "deferred_reasons": [],
+      "pending_reasons": [],
+      "checklist_policy": "plan_only_checklist_item",
+      "safety_constraints": [
+        "PLAN_ONLY",
+        "Official Release v2.8 protected",
+        "protected_mode=true",
+        "execution_allowed=false",
+        "auto_execution_allowed=false",
+        "external_connection_allowed=false",
+        "no_external_connection",
+        "no_auto_execution",
+        "no_auto_repair",
+        "no_auto_overwrite",
+        "no_auto_rollback"
+      ],
+      "recommended_next_step": "Recommended: keep this checklist item in verification planning only.",
+      "blocked_actions": [
+        "external_connection",
+        "auto_execution",
+        "auto_repair",
+        "auto_overwrite",
+        "auto_rollback"
+      ],
+      "allowed_actions": [
+        "plan",
+        "simulate",
+        "validate",
+        "audit",
+        "report"
+      ],
+      "execution_allowed": false,
+      "auto_execution_allowed": false,
+      "external_connection_allowed": false
+    }
+  ],
+  "phase20_1_summary": {
+    "total_checklist_items": 6,
+    "confirmed_items_count": 2,
+    "deferred_items_count": 1,
+    "pending_items_count": 2,
+    "plan_only_items_count": 1,
+    "blocked_items_count": 0,
+    "unsafe_flags_count": 0,
+    "checklist_ready": true,
+    "checklist_status": "post_closure_device_validation_checklist_plan_only",
+    "protected_mode": true,
+    "plan_only": true,
+    "execution_allowed": false,
+    "auto_execution_allowed": false,
+    "external_connection_allowed": false,
+    "ipad_validation_status": "deferred",
+    "iphone_validation_status": "pending",
+    "github_pages_validation_status": "pending",
+    "ipad_deferred_blocks_checklist_ready": false,
+    "summary_alignment_ok": true,
+    "ui_readme_checks": {
+      "index_phase20_1_panel": true,
+      "private_local_phase20_1_card": true,
+      "readme_phase20_1_section": true,
+      "phase20_link_retained": true
+    },
+    "next_recommended_step": "Phase20-2 GitHub Pages and Mobile Display Verification Plan"
+  },
+  "next_recommended_step": "Phase20-2 GitHub Pages and Mobile Display Verification Plan",
+  "blocked_actions": [
+    "external_connection",
+    "auto_execution",
+    "auto_repair",
+    "auto_overwrite",
+    "auto_rollback"
+  ],
+  "allowed_actions": [
+    "plan",
+    "simulate",
+    "validate",
+    "audit",
+    "report"
+  ],
+  "generated_at": "2026-06-27T03:00:00.000Z",
+  "executionPolicy": "PLAN_ONLY",
+  "executionAllowed": false,
+  "autoExecutionAllowed": false,
+  "auto_execution_allowed": false,
+  "execution_allowed": false,
+  "external_connection_allowed": false
+}
