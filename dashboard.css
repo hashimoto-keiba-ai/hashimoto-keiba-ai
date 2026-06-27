@@ -1661,3 +1661,14 @@ tbody tr:last-child td {
 .phase20-post-closure-device-validation-release-planning-item.status-device_validation_pending { border-color: rgba(56, 189, 248, 0.56); }
 .phase20-post-closure-device-validation-release-planning-item.status-release_planning_plan_only { border-color: rgba(45, 212, 191, 0.56); }
 @media (max-width: 680px) { .phase20-post-closure-device-validation-release-planning-actions { align-items: stretch; } .phase20-post-closure-device-validation-release-planning-actions button { width: 100%; } }
+.phase20-1-post-closure-device-validation-checklist-panel { border: 1px solid rgba(132, 204, 22, 0.72); background: radial-gradient(circle at 88% 0, rgba(101, 163, 13, 0.2), transparent 44%), linear-gradient(145deg, #172606, #080b12 72%); }
+.phase20-1-post-closure-device-validation-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase20-1-post-closure-device-validation-checklist-actions span { color: #d9f99d; font-size: 13px; font-weight: 900; }
+.phase20-1-post-closure-device-validation-checklist-grid article strong { color: #d9f99d; font-size: 16px; overflow-wrap: anywhere; }
+.phase20-1-post-closure-device-validation-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase20-1-post-closure-device-validation-checklist-item { border: 1px solid rgba(132, 204, 22, 0.34); border-radius: 10px; padding: 9px 11px; color: #ecfccb; font-size: 12px; font-weight: 800; }
+.phase20-1-post-closure-device-validation-checklist-item.status-deferred { border-color: rgba(250, 204, 21, 0.68); }
+.phase20-1-post-closure-device-validation-checklist-item.status-pending { border-color: rgba(56, 189, 248, 0.56); }
+.phase20-1-post-closure-device-validation-checklist-item.status-plan_only { border-color: rgba(45, 212, 191, 0.56); }
+.phase20-1-post-closure-device-validation-checklist-item.status-blocked { border-color: rgba(248, 113, 113, 0.64); }
+@media (max-width: 680px) { .phase20-1-post-closure-device-validation-checklist-actions { align-items: stretch; } .phase20-1-post-closure-device-validation-checklist-actions button { width: 100%; } }
