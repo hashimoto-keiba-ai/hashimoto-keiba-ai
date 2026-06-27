@@ -807,6 +807,14 @@ Final Validation Queue Builder は Phase19-8〜19-12 の主要DBと Phase19-13 R
 
 追加ファイル: `phase19-final-validation-queue-builder.js`、`phase19-final-validation-queue-db.json`、`phase19-final-validation-queue-summary-db.json`、`tests/phase19FinalValidationQueueBuilder.test.js`
 
+## Phase20-5 Manual Mobile Verification Evidence Collection
+
+Phase20-4 Final Release Readiness Closure Summary を入力にして、GitHub Pages / iPhone / PC browser / private-local / iPad の手動確認証跡を PLAN_ONLY で収集・記録するための枠を作成します。実際の GitHub Pages 接続、自動端末確認、外部通信、自動実行、自動修復、自動上書き、自動ロールバックは行わず、証跡入力欄だけを用意します。
+
+GitHub Pages / iPhone / PC browser / private-local は `manual_evidence_pending`、iPad は端末未所持の `deferred_evidence` として保持します。証跡欄には確認日時、確認端末、画面URLまたはローカルパス、表示確認結果、スクリーンショット有無、操作メモ、確認者メモを記録できます。証跡未入力の間は `closure_ready` と `final_release_ready` は `false`、`protected_mode` と `plan_only` は `true`、`execution_allowed` / `auto_execution_allowed` / `external_connection_allowed` は `false`、`unsafe_flags_count` と `blocked_items_count` は 0 を維持します。次工程は `Phase20-6 Manual Evidence Review and Release Gate Decision` です。
+
+追加ファイル: `phase20-5-manual-mobile-verification-evidence-collection-builder.js`、`phase20-5-manual-mobile-verification-evidence-collection-db.json`、`phase20-5-manual-mobile-verification-evidence-collection-summary-db.json`、`tests/phase20ManualMobileVerificationEvidenceCollectionBuilder.test.js`
+
 ## Phase20-4 Final Release Readiness Closure Summary
 
 Phase20-3 Mobile Verification Result Capture and Closure Plan を入力にして、最終リリース準備の終了概要を PLAN_ONLY で作成します。GitHub Pages / iPhone / PC browser / private-local の手動証跡が未取得であり、iPad も deferred のまま残るため、`closure_ready` と `final_release_ready` は `false` を維持します。
