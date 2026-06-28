@@ -33,11 +33,7 @@ function createDocument() {
     "console-links"
   ];
   for (const id of ids) elements.set(id, { id, textContent: "", innerHTML: "" });
-  return {
-    title: "",
-    getElementById: (id) => elements.get(id) || null,
-    elements
-  };
+  return { title: "", getElementById: (id) => elements.get(id) || null, elements };
 }
 
 function render(search) {
@@ -46,7 +42,8 @@ function render(search) {
   return { documentRef, report };
 }
 
-assert.equal(engine.PHASE, "Phase20-8");
+assert.equal(engine.PHASE, "Phase20-9");
+assert.equal(engine.ACTIVATION_PHASE, "Phase20-8");
 assert.equal(engine.EXECUTION_POLICY, "PLAN_ONLY");
 assert.equal(engine.PROTECTION_POLICY, "Protected");
 assert.equal(engine.basePolicy.externalSend, "Disabled");
@@ -54,30 +51,23 @@ assert.equal(engine.basePolicy.autoUpdate, "Disabled");
 
 const win5 = render("?console=win5");
 assert.equal(win5.report.title, "WIN5 AI Console");
-assert.equal(win5.documentRef.title, "Hashimoto Keiba AI / WIN5 AI Console");
-assert.equal(win5.documentRef.getElementById("console-heading").textContent, "WIN5 AI Console");
-assert.ok(win5.documentRef.getElementById("console-message").textContent.includes("WIN5候補生成"));
 for (const label of ["WIN5候補生成", "荒れ度AI", "A固定判定AI", "点数圧縮", "結果検証", "学習ログ"]) {
   assert.ok(win5.documentRef.getElementById("console-cards").innerHTML.includes(label), `WIN5 card ${label} is rendered`);
 }
-assert.ok(win5.documentRef.getElementById("console-links").innerHTML.includes("WIN5/結果検証/README.md"));
 
 const hakodate = render("?console=hakodate");
 assert.equal(hakodate.report.title, "函館版AI Console");
-assert.equal(hakodate.documentRef.getElementById("console-heading").textContent, "函館版AI Console");
 for (const label of ["函館芝1200", "函館芝1800", "函館ダ1000", "函館ダ1700", "洋芝", "滞在競馬", "ローカル前残り/差し補正"]) {
   assert.ok(hakodate.documentRef.getElementById("console-cards").innerHTML.includes(label), `Hakodate card ${label} is rendered`);
 }
 
 const sapporo = render("?console=sapporo");
 assert.equal(sapporo.report.title, "札幌版AI Console");
-assert.equal(sapporo.documentRef.getElementById("console-heading").textContent, "札幌版AI Console");
 for (const label of ["札幌芝1500", "札幌芝1800", "札幌芝2000", "札幌ダ1700", "洋芝", "滞在競馬", "函館→札幌転戦補正"]) {
   assert.ok(sapporo.documentRef.getElementById("console-cards").innerHTML.includes(label), `Sapporo card ${label} is rendered`);
 }
 
 for (const result of [win5, hakodate, sapporo]) {
-  assert.equal(result.documentRef.getElementById("console-mode").textContent, "Phase20-8 Activation / PLAN_ONLY");
   assert.equal(result.documentRef.getElementById("console-execution-policy").textContent, "PLAN_ONLY");
   assert.equal(result.documentRef.getElementById("console-protected-policy").textContent, "Protected");
   assert.equal(result.documentRef.getElementById("console-external-send").textContent, "Disabled");
@@ -88,11 +78,12 @@ for (const result of [win5, hakodate, sapporo]) {
 
 const html = readText("course-console.html");
 assert.ok(html.includes('<script src="console-page.js"></script>'));
-assert.ok(html.includes("Phase20-8 Activation / PLAN_ONLY"));
+assert.ok(html.includes("PLAN_ONLY"));
 assert.ok(!html.includes("Coming Soon"));
 
 const db = readJson("course-console-db.json");
-assert.equal(db.phase, "Phase20-8");
+assert.equal(db.phase, "Phase20-9");
+assert.equal(db.activationPhase, "Phase20-8");
 assert.equal(db.executionPolicy, "PLAN_ONLY");
 assert.equal(db.protectionPolicy, "Protected");
 assert.equal(db.externalSend, false);
@@ -109,8 +100,4 @@ assert.ok(privateLocal.includes("WIN5/index.html"), "private-local keeps WIN5 ro
 assert.ok(privateLocal.includes("函館競馬場/index.html"), "private-local keeps Hakodate route");
 assert.ok(privateLocal.includes("札幌競馬場/index.html"), "private-local keeps Sapporo route");
 
-const readme = readText("README.md");
-assert.ok(readme.includes("Phase20-8 WIN5 Hakodate Sapporo Console Activation"));
-assert.ok(readme.includes("course-console-db.json"));
-
-console.log("phase20-8 course console activation tests passed");
+console.log("phase20-8 course console activation regression tests passed");

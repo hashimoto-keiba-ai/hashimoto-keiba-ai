@@ -1,0 +1,26 @@
+{
+  "databaseName": "course-console-link-integrity-db",
+  "phase": "Phase20-9",
+  "activationPhase": "Phase20-8",
+  "executionPolicy": "PLAN_ONLY",
+  "protectionPolicy": "Protected",
+  "externalSend": false,
+  "autoUpdate": false,
+  "githubPagesSettingChange": false,
+  "repositoryPolicy": "Private repository premise",
+  "safeFallbackHref": "index.html",
+  "links": [
+    { "consoleKey": "win5", "title": "WIN5 Dashboard", "href": "win5.html", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "win5", "title": "WIN5 Folder", "href": "WIN5/index.html", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "win5", "title": "結果検証", "href": "WIN5/結果検証/README.md", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "win5", "title": "学習ログ", "href": "学習ログ/index.html", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "hakodate", "title": "函館 Dashboard", "href": "函館競馬場/index.html", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "hakodate", "title": "事前予想", "href": "函館競馬場/2026/事前予想/README.md", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "hakodate", "title": "結果検証", "href": "函館競馬場/2026/結果検証/README.md", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "hakodate", "title": "OS Updates", "href": "函館競馬場/2026/OS Updates/README.md", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "sapporo", "title": "札幌 Dashboard", "href": "札幌競馬場/index.html", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "sapporo", "title": "事前予想", "href": "札幌競馬場/2026/事前予想/README.md", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "sapporo", "title": "結果検証", "href": "札幌競馬場/2026/結果検証/README.md", "fallbackHref": "index.html", "required": true },
+    { "consoleKey": "sapporo", "title": "OS Updates", "href": "札幌競馬場/2026/OS Updates/README.md", "fallbackHref": "index.html", "required": true }
+  ]
+}
