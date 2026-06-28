@@ -1,0 +1,56 @@
+{
+  "databaseName": "phase20-12-private-operation-safety-gate-db",
+  "phase": "Phase20-12",
+  "gateStatus": "private_operation_safety_gate_plan_only",
+  "executionPolicy": "PLAN_ONLY",
+  "protectionPolicy": "Protected",
+  "repositoryVisibilityCheck": "public/private awareness",
+  "githubPagesPolicy": "OFF or not required for private local operation",
+  "localLauncherPolicy": "start-local.bat / private-local.html",
+  "safeOperationRule": "Do not expose public URL unless explicitly approved",
+  "protectedMode": true,
+  "externalConnection": false,
+  "autoPublish": false,
+  "manualConfirmationRequiredBeforePublicRelease": true,
+  "githubPagesSettingChangeAllowed": false,
+  "repositoryVisibilityChangeAllowed": false,
+  "publicReleaseAllowed": false,
+  "devicePolicies": [
+    { "deviceType": "company_pc", "policy": "local browser only after company policy confirmation", "manualConfirmationRequired": true },
+    { "deviceType": "home_pc", "policy": "start-local.bat and private-local.html local operation", "manualConfirmationRequired": false },
+    { "deviceType": "ipad", "policy": "manual local network check only; no public URL exposure", "manualConfirmationRequired": true },
+    { "deviceType": "mobile_phone", "policy": "manual local network check only; no public URL exposure", "manualConfirmationRequired": true }
+  ],
+  "records": [
+    { "id": "P20-12-REPOSITORY-VISIBILITY", "checkName": "Repository visibility awareness", "category": "repository_visibility", "expectedState": "public/private awareness confirmed before operation", "checkStatus": "manual_confirmation_required" },
+    { "id": "P20-12-GITHUB-PAGES", "checkName": "GitHub Pages private-local policy", "category": "github_pages_policy", "expectedState": "OFF or not required for private local operation", "checkStatus": "manual_confirmation_required" },
+    { "id": "P20-12-LOCAL-LAUNCHER", "checkName": "Local launcher policy", "category": "local_launcher_policy", "expectedState": "start-local.bat / private-local.html", "checkStatus": "manual_confirmation_required" },
+    { "id": "P20-12-COMPANY-PC", "checkName": "Company PC device policy", "category": "device_policy", "deviceType": "company_pc", "expectedState": "local browser only after company policy confirmation", "checkStatus": "manual_confirmation_required" },
+    { "id": "P20-12-HOME-PC", "checkName": "Home PC device policy", "category": "device_policy", "deviceType": "home_pc", "expectedState": "start-local.bat and private-local.html local operation", "checkStatus": "manual_confirmation_required" },
+    { "id": "P20-12-IPAD", "checkName": "iPad device policy", "category": "device_policy", "deviceType": "ipad", "expectedState": "manual local network check only; no public URL exposure", "checkStatus": "manual_confirmation_required" },
+    { "id": "P20-12-MOBILE-PHONE", "checkName": "Mobile phone device policy", "category": "device_policy", "deviceType": "mobile_phone", "expectedState": "manual local network check only; no public URL exposure", "checkStatus": "manual_confirmation_required" },
+    { "id": "P20-12-SAFE-OPERATION", "checkName": "Safe operation rule", "category": "safe_operation_rule", "expectedState": "Do not expose public URL unless explicitly approved", "checkStatus": "manual_confirmation_required" },
+    { "id": "P20-12-MANUAL-CONFIRMATION", "checkName": "Manual public release confirmation", "category": "release_confirmation", "expectedState": "manual confirmation required before any public release", "checkStatus": "manual_confirmation_required" }
+  ],
+  "requiredPolicyLabels": [
+    "PLAN_ONLY",
+    "Protected",
+    "Private/local-only readiness",
+    "GitHub Pages OFF or not required",
+    "Local launcher required",
+    "External connection disabled",
+    "Auto publish disabled",
+    "Manual confirmation required before public release"
+  ],
+  "blockedActions": [
+    "public_url_exposure",
+    "external_connection",
+    "auto_publish",
+    "auto_execution",
+    "github_pages_setting_change",
+    "repository_visibility_change",
+    "public_release_without_manual_confirmation"
+  ],
+  "allowedActions": ["plan", "review", "validate", "audit", "report", "local_launch"],
+  "nextRecommendedStep": "Keep private/local-only operation and require manual confirmation before any public release"
+}
