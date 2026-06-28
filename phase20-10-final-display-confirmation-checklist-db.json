@@ -1,0 +1,112 @@
+{
+  "databaseName": "phase20-10-final-display-confirmation-checklist-db",
+  "phase": "Phase20-10",
+  "activationPhase": "Phase20-8",
+  "linkIntegrityPhase": "Phase20-9",
+  "checklistStatus": "final_display_confirmation_checklist_plan_only",
+  "executionPolicy": "PLAN_ONLY",
+  "protectionPolicy": "Protected",
+  "externalSend": false,
+  "autoUpdate": false,
+  "githubPagesSettingChange": false,
+  "repositoryPolicy": "Private repository premise",
+  "safeFallbackHref": "index.html",
+  "checklistItems": [
+    {
+      "id": "P20-10-PC-COURSE-CONSOLE",
+      "scope": "pc_browser",
+      "route": "course-console.html?console=win5",
+      "consoleScope": "win5_hakodate_sapporo",
+      "expectedResult": "WIN5 / Hakodate / Sapporo console titles and Phase20-8/Phase20-9 policy labels are visible without Tokyo template bleed.",
+      "status": "manual_pending"
+    },
+    {
+      "id": "P20-10-PRIVATE-LOCAL-ROUTES",
+      "scope": "private_local",
+      "route": "private-local.html",
+      "consoleScope": "win5_hakodate_sapporo",
+      "expectedResult": "Private local cards keep the WIN5 / Hakodate / Sapporo routes and expose the Phase20-10 checklist route.",
+      "status": "manual_pending"
+    },
+    {
+      "id": "P20-10-IPAD-COURSE-CONSOLE",
+      "scope": "ipad",
+      "route": "course-console.html?console=hakodate",
+      "consoleScope": "hakodate",
+      "expectedResult": "Hakodate cards remain readable on iPad with PLAN_ONLY / Protected labels visible.",
+      "status": "manual_pending"
+    },
+    {
+      "id": "P20-10-IPHONE-COURSE-CONSOLE",
+      "scope": "iphone",
+      "route": "course-console.html?console=sapporo",
+      "consoleScope": "sapporo",
+      "expectedResult": "Sapporo cards remain readable on iPhone with PLAN_ONLY / Protected labels visible.",
+      "status": "manual_pending"
+    },
+    {
+      "id": "P20-10-GITHUB-PAGES-DISPLAY",
+      "scope": "github_pages",
+      "route": "course-console.html?console=win5",
+      "consoleScope": "win5_hakodate_sapporo",
+      "expectedResult": "Manual display confirmation only; GitHub Pages settings are not changed.",
+      "status": "manual_pending"
+    },
+    {
+      "id": "P20-10-WIN5-LINKS",
+      "scope": "win5_links",
+      "route": "course-console.html?console=win5",
+      "consoleScope": "win5",
+      "expectedResult": "WIN5 candidate generation, volatility AI, A-fixed AI, point compression, result verification, and learning log links remain visible and safe.",
+      "status": "manual_pending"
+    },
+    {
+      "id": "P20-10-HAKODATE-LINKS",
+      "scope": "hakodate_links",
+      "route": "course-console.html?console=hakodate",
+      "consoleScope": "hakodate",
+      "expectedResult": "Hakodate turf 1200, turf 1800, dirt 1000, dirt 1700, local turf, stay-racing, and local pace correction cards remain visible.",
+      "status": "manual_pending"
+    },
+    {
+      "id": "P20-10-SAPPORO-LINKS",
+      "scope": "sapporo_links",
+      "route": "course-console.html?console=sapporo",
+      "consoleScope": "sapporo",
+      "expectedResult": "Sapporo turf 1500, turf 1800, turf 2000, dirt 1700, local turf, stay-racing, and Hakodate-to-Sapporo transfer correction cards remain visible.",
+      "status": "manual_pending"
+    },
+    {
+      "id": "P20-10-FALLBACK-INDEX",
+      "scope": "fallback",
+      "route": "index.html",
+      "consoleScope": "win5_hakodate_sapporo",
+      "expectedResult": "Missing repository-local links safely return to index.html without generation, external send, or automatic update.",
+      "status": "manual_pending"
+    }
+  ],
+  "linkTargets": [
+    { "consoleKey": "win5", "href": "win5.html", "fallbackHref": "index.html" },
+    { "consoleKey": "win5", "href": "WIN5/index.html", "fallbackHref": "index.html" },
+    { "consoleKey": "win5", "href": "WIN5/結果検証/README.md", "fallbackHref": "index.html" },
+    { "consoleKey": "win5", "href": "学習ログ/index.html", "fallbackHref": "index.html" },
+    { "consoleKey": "hakodate", "href": "函館競馬場/index.html", "fallbackHref": "index.html" },
+    { "consoleKey": "hakodate", "href": "函館競馬場/2026/事前予想/README.md", "fallbackHref": "index.html" },
+    { "consoleKey": "hakodate", "href": "函館競馬場/2026/結果検証/README.md", "fallbackHref": "index.html" },
+    { "consoleKey": "hakodate", "href": "函館競馬場/2026/OS Updates/README.md", "fallbackHref": "index.html" },
+    { "consoleKey": "sapporo", "href": "札幌競馬場/index.html", "fallbackHref": "index.html" },
+    { "consoleKey": "sapporo", "href": "札幌競馬場/2026/事前予想/README.md", "fallbackHref": "index.html" },
+    { "consoleKey": "sapporo", "href": "札幌競馬場/2026/結果検証/README.md", "fallbackHref": "index.html" },
+    { "consoleKey": "sapporo", "href": "札幌競馬場/2026/OS Updates/README.md", "fallbackHref": "index.html" }
+  ],
+  "blockedActions": [
+    "external_connection",
+    "auto_execution",
+    "auto_update",
+    "auto_repair",
+    "auto_overwrite",
+    "github_pages_setting_change",
+    "repository_visibility_change"
+  ],
+  "allowedActions": ["plan", "validate", "audit", "report", "manual_display_confirmation"]
+}

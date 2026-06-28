@@ -1,0 +1,49 @@
+{
+  "databaseName": "phase20-10-final-display-confirmation-checklist-summary-db",
+  "phase": "Phase20-10",
+  "activationPhase": "Phase20-8",
+  "linkIntegrityPhase": "Phase20-9",
+  "checklistStatus": "final_display_confirmation_checklist_plan_only",
+  "phase20_10_summary": {
+    "totalCheckItems": 9,
+    "pcBrowserItems": 1,
+    "privateLocalItems": 1,
+    "ipadItems": 1,
+    "iphoneItems": 1,
+    "githubPagesItems": 1,
+    "win5LinkItems": 1,
+    "hakodateLinkItems": 1,
+    "sapporoLinkItems": 1,
+    "fallbackItems": 1,
+    "manualPendingCount": 9,
+    "protectedMode": true,
+    "planOnly": true,
+    "executionAllowed": false,
+    "autoExecutionAllowed": false,
+    "externalConnectionAllowed": false,
+    "autoUpdateAllowed": false,
+    "githubPagesSettingChangeAllowed": false,
+    "repositoryVisibilityChangeAllowed": false,
+    "unsafeFlagsCount": 0,
+    "safeFallbackHref": "index.html",
+    "nextRecommendedStep": "Manual display evidence capture for Course Console / WIN5 / Hakodate / Sapporo"
+  },
+  "requiredPolicyLabels": [
+    "PLAN_ONLY",
+    "Protected",
+    "External Send Disabled",
+    "Auto Update Disabled",
+    "No GitHub Pages setting changes",
+    "Private repository premise"
+  ],
+  "blockedActions": [
+    "external_connection",
+    "auto_execution",
+    "auto_update",
+    "auto_repair",
+    "auto_overwrite",
+    "github_pages_setting_change",
+    "repository_visibility_change"
+  ],
+  "allowedActions": ["plan", "validate", "audit", "report", "manual_display_confirmation"]
+}
