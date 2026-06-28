@@ -3,75 +3,132 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>橋本競馬AI Version 2.6 Console</title>
-    <title>橋本競馬AI Version 1.1 Console</title>
+    <title>Hashimoto Keiba AI / Course Console</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.svg">
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+      .console-activation-grid,
+      .console-link-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 12px;
+      }
+
+      .console-activation-card,
+      .console-link-card {
+        min-height: 110px;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel-soft);
+      }
+
+      .console-activation-card strong,
+      .console-link-card strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .console-activation-card span,
+      .console-link-card span {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .console-link-card {
+        color: var(--text);
+        text-decoration: none;
+      }
+
+      .console-policy-note {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+    </style>
   </head>
-  <body class="coming-soon-page">
-    <div class="official-banner" aria-label="本番版バナー">
-      <span>橋本競馬AI Official Release v2.6</span>
-      <span>橋本競馬AI Official Release v1.1</span>
+  <body class="course-console-page">
+    <div class="official-banner" aria-label="Private local policy banner">
+      <span id="official-banner-title">Hashimoto Keiba AI / Phase20-9 Console Link Integrity</span>
     </div>
 
     <header class="topbar">
       <div class="brand">
-        <p class="eyebrow">Hashimoto Keiba AI / Version 2.6 Console</p>
-        <h1 id="console-heading">AI Console</h1>
-        <strong class="version-display">橋本競馬AI Version 2.6</strong>
+        <p class="eyebrow" id="console-eyebrow">Phase20-9 / PLAN_ONLY</p>
+        <h1 id="console-heading">Course AI Console</h1>
+        <strong class="version-display" id="console-version">Official Release v2.8 Protected</strong>
         <div class="system-meta">
-          <span>Release Score 111</span>
-          <span>Official Release v2.6</span>
-        <p class="eyebrow">Hashimoto Keiba AI / Version 1.1 Console</p>
-        <h1 id="console-heading">AI Console</h1>
-        <strong class="version-display">橋本競馬AI Version 1.1</strong>
-        <div class="system-meta">
-          <span>Release Score 96</span>
-          <span>Official Release v1.1</span>
-          <span>Coming Soon</span>
+          <span id="console-phase">Phase20-9 Link Integrity</span>
+          <span id="console-policy">PLAN_ONLY</span>
+          <span id="console-protection">Protected</span>
         </div>
       </div>
       <div class="top-actions" aria-label="Navigation">
-        <a class="button-link" href="index.html">トップへ戻る</a>
+        <a class="button-link" href="private-local.html">Private Home</a>
+        <a class="button-link" href="index.html">Main Dashboard</a>
       </div>
     </header>
 
     <main class="dashboard">
-      <section class="panel coming-soon-panel" aria-label="Coming Soon Console">
-        <div class="coming-soon-hero">
-          <p class="eyebrow">Official Release v2.6</p>
-          <p class="eyebrow">Official Release v1.1</p>
-          <h2 class="coming-soon-title" id="console-title">AI Console</h2>
-          <p class="coming-soon-message" id="console-message">AI Console / Coming Soon</p>
-          <div class="coming-soon-actions">
-            <a class="button-link" href="index.html">競馬場選択メニューへ戻る</a>
+      <section class="panel" aria-label="Console activation summary">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" id="console-mode">Phase20-9 Link Integrity / PLAN_ONLY</p>
+            <h2 id="console-title">Course AI Console</h2>
           </div>
+          <span class="pill hot" id="console-status">Protected</span>
         </div>
+        <p id="console-message">External send disabled. Auto update disabled.</p>
+        <div class="status-strip" aria-label="Console safety status">
+          <article>
+            <span>Execution Policy</span>
+            <strong id="console-execution-policy">PLAN_ONLY</strong>
+            <em>No automatic execution</em>
+          </article>
+          <article>
+            <span>Protection</span>
+            <strong id="console-protected-policy">Protected</strong>
+            <em>Repository private premise</em>
+          </article>
+          <article>
+            <span>External Send</span>
+            <strong id="console-external-send">Disabled</strong>
+            <em>No network action</em>
+          </article>
+          <article>
+            <span>Auto Update</span>
+            <strong id="console-auto-update">Disabled</strong>
+            <em>Manual review only</em>
+          </article>
+        </div>
+        <div class="console-policy-note" id="console-policy-tags"></div>
+      </section>
+
+      <section class="panel" aria-label="Console cards">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" id="console-card-eyebrow">Activation Cards</p>
+            <h2 id="console-card-title">AI Console Modules</h2>
+          </div>
+          <span class="pill" id="console-card-count">0 cards</span>
+        </div>
+        <div class="console-activation-grid" id="console-cards"></div>
+      </section>
+
+      <section class="panel" aria-label="Console links">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Local Navigation</p>
+            <h2>Related Console Routes</h2>
+          </div>
+          <span class="pill">Local Only</span>
+        </div>
+        <div class="console-link-grid" id="console-links"></div>
       </section>
     </main>
 
     <script src="console-page.js"></script>
-    <script>
-      const consoles = {
-        tokyo: "東京版",
-        nakayama: "中山版",
-        hanshin: "阪神版",
-        chukyo: "中京版",
-        kyoto: "京都版",
-        niigata: "新潟版",
-        fukushima: "福島版",
-        kokura: "小倉版",
-        hakodate: "函館版",
-        sapporo: "札幌版",
-        win5: "WIN5 AI"
-      };
-      const params = new URLSearchParams(window.location.search);
-      const key = params.get("console") || "tokyo";
-      const label = consoles[key] || "東京版";
-      const title = `${label} AI Console`;
-      document.title = `橋本競馬AI Version 1.1 / ${title}`;
-      document.getElementById("console-heading").textContent = title;
-      document.getElementById("console-title").textContent = title;
-      document.getElementById("console-message").textContent = `${title} / Coming Soon`;
-    </script>
   </body>
 </html>

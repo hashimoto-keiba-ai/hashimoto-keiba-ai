@@ -1,0 +1,29 @@
+{
+  "databaseName": "course-console-db",
+  "phase": "Phase20-9",
+  "activationPhase": "Phase20-8",
+  "executionPolicy": "PLAN_ONLY",
+  "protectionPolicy": "Protected",
+  "externalSend": false,
+  "autoUpdate": false,
+  "githubPagesSettingChange": false,
+  "repositoryPolicy": "Private repository premise",
+  "linkIntegrityPolicy": "missing repository paths must fall back to local PLAN_ONLY routes",
+  "consoles": [
+    {
+      "key": "win5",
+      "title": "WIN5 AI Console",
+      "cards": ["WIN5候補生成", "荒れ度AI", "A固定判定AI", "点数圧縮", "結果検証", "学習ログ"]
+    },
+    {
+      "key": "hakodate",
+      "title": "函館版AI Console",
+      "cards": ["函館芝1200", "函館芝1800", "函館ダ1000", "函館ダ1700", "洋芝", "滞在競馬", "ローカル前残り/差し補正"]
+    },
+    {
+      "key": "sapporo",
+      "title": "札幌版AI Console",
+      "cards": ["札幌芝1500", "札幌芝1800", "札幌芝2000", "札幌ダ1700", "洋芝", "滞在競馬", "函館→札幌転戦補正"]
+    }
+  ]
+}
