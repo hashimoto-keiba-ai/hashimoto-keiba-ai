@@ -1,0 +1,51 @@
+{
+  "databaseName": "phase20-11-final-integration-safety-review-summary-db",
+  "phase": "Phase20-11",
+  "reviewStatus": "final_integration_safety_review_plan_only",
+  "conflictResolution": "rebased_on_current_main_preserving_phase20_8_9_10",
+  "phase20_11_summary": {
+    "totalReviewTargets": 7,
+    "draftPrsTracked": 3,
+    "pr175DraftRequired": true,
+    "pr176DraftRequired": true,
+    "pr176BaseBranch": "codex/phase20-9-course-console-link-integrity",
+    "manualConfirmationRequiredBeforeMerge": true,
+    "mergeAllowed": false,
+    "protectedMode": true,
+    "planOnly": true,
+    "executionAllowed": false,
+    "autoExecutionAllowed": false,
+    "externalConnectionAllowed": false,
+    "autoUpdateAllowed": false,
+    "githubPagesSettingChangeAllowed": false,
+    "repositoryVisibilityChangeAllowed": false,
+    "unsafeFlagsCount": 0,
+    "safeFallbackHref": "index.html",
+    "recommendedMergeOrder": [
+      "PR #174 Phase20-8",
+      "PR #175 Phase20-9",
+      "PR #176 Phase20-10",
+      "Phase20-11 review PR after manual confirmation"
+    ],
+    "mergeSequenceWarning": "#176 is based on the #175 branch, so #175 must be handled before #176. Keep both Draft until manual confirmation is complete.",
+    "nextRecommendedStep": "Manual display confirmation before any merge"
+  },
+  "requiredPolicyLabels": [
+    "PLAN_ONLY",
+    "Protected",
+    "External Send Disabled",
+    "Auto Update Disabled",
+    "No GitHub Pages setting changes",
+    "Private repository premise",
+    "Manual confirmation required before merge"
+  ],
+  "blockedActions": [
+    "merge",
+    "external_connection",
+    "auto_execution",
+    "auto_update",
+    "github_pages_setting_change",
+    "repository_visibility_change"
+  ],
+  "allowedActions": ["plan", "review", "validate", "audit", "report"]
+}
