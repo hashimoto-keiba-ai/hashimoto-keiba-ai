@@ -2,6 +2,7 @@
   "databaseName": "phase20-11-final-integration-safety-review-summary-db",
   "phase": "Phase20-11",
   "reviewStatus": "final_integration_safety_review_plan_only",
+  "conflictResolution": "rebased_on_current_main_preserving_phase20_8_9_10",
   "phase20_11_summary": {
     "totalReviewTargets": 7,
     "draftPrsTracked": 3,
