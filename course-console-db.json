@@ -1,12 +1,14 @@
 {
   "databaseName": "course-console-db",
-  "phase": "Phase20-8",
+  "phase": "Phase20-9",
+  "activationPhase": "Phase20-8",
   "executionPolicy": "PLAN_ONLY",
   "protectionPolicy": "Protected",
   "externalSend": false,
   "autoUpdate": false,
   "githubPagesSettingChange": false,
   "repositoryPolicy": "Private repository premise",
+  "linkIntegrityPolicy": "missing repository paths must fall back to local PLAN_ONLY routes",
   "consoles": [
     {
       "key": "win5",
