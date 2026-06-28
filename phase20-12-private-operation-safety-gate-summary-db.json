@@ -1,0 +1,45 @@
+{
+  "databaseName": "phase20-12-private-operation-safety-gate-summary-db",
+  "phase": "Phase20-12",
+  "gateStatus": "private_operation_safety_gate_plan_only",
+  "phase20_12_summary": {
+    "totalCheckItems": 9,
+    "repositoryVisibilityAwarenessRequired": true,
+    "githubPagesPolicy": "OFF or not required for private local operation",
+    "localLauncherPolicy": "start-local.bat / private-local.html",
+    "devicePolicyTargets": 4,
+    "safeOperationRule": "Do not expose public URL unless explicitly approved",
+    "protectedMode": true,
+    "planOnly": true,
+    "externalConnection": false,
+    "externalConnectionAllowed": false,
+    "autoPublish": false,
+    "autoPublishAllowed": false,
+    "manualConfirmationRequiredBeforePublicRelease": true,
+    "githubPagesSettingChangeAllowed": false,
+    "repositoryVisibilityChangeAllowed": false,
+    "publicReleaseAllowed": false,
+    "unsafeFlagsCount": 0,
+    "nextRecommendedStep": "Keep private/local-only operation and require manual confirmation before any public release"
+  },
+  "requiredPolicyLabels": [
+    "PLAN_ONLY",
+    "Protected",
+    "Private/local-only readiness",
+    "GitHub Pages OFF or not required",
+    "Local launcher required",
+    "External connection disabled",
+    "Auto publish disabled",
+    "Manual confirmation required before public release"
+  ],
+  "blockedActions": [
+    "public_url_exposure",
+    "external_connection",
+    "auto_publish",
+    "auto_execution",
+    "github_pages_setting_change",
+    "repository_visibility_change",
+    "public_release_without_manual_confirmation"
+  ],
+  "allowedActions": ["plan", "review", "validate", "audit", "report", "local_launch"]
+}
