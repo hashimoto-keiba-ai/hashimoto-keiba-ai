@@ -1,0 +1,69 @@
+{
+  "databaseName": "phase20-11-final-integration-safety-review-db",
+  "phase": "Phase20-11",
+  "reviewStatus": "final_integration_safety_review_plan_only",
+  "executionPolicy": "PLAN_ONLY",
+  "protectionPolicy": "Protected",
+  "externalSend": false,
+  "autoUpdate": false,
+  "githubPagesSettingChange": false,
+  "repositoryPolicy": "Private repository premise",
+  "mergeAllowed": false,
+  "manualConfirmationRequiredBeforeMerge": true,
+  "safeFallbackHref": "index.html",
+  "prDependencies": [
+    {
+      "prNumber": 174,
+      "phase": "Phase20-8",
+      "branch": "codex/phase20-8-win5-hakodate-sapporo-console-activation",
+      "role": "Course Console activation for WIN5 / Hakodate / Sapporo",
+      "dependsOn": [],
+      "draftRequired": true,
+      "mergeBeforeManualConfirmationAllowed": false
+    },
+    {
+      "prNumber": 175,
+      "phase": "Phase20-9",
+      "branch": "codex/phase20-9-course-console-link-integrity",
+      "role": "Course Console link integrity and index.html fallback protection",
+      "dependsOn": ["Phase20-8 console activation"],
+      "draftRequired": true,
+      "mergeBeforeManualConfirmationAllowed": false
+    },
+    {
+      "prNumber": 176,
+      "phase": "Phase20-10",
+      "branch": "codex/phase20-10-final-display-confirmation-checklist",
+      "baseBranch": "codex/phase20-9-course-console-link-integrity",
+      "role": "Final display confirmation checklist before merge",
+      "dependsOn": ["PR #175 branch because #176 is based on codex/phase20-9-course-console-link-integrity"],
+      "draftRequired": true,
+      "mergeBeforeManualConfirmationAllowed": false
+    }
+  ],
+  "reviewTargets": [
+    { "id": "P20-11-COURSE-CONSOLE", "targetName": "Course Console routes", "route": "course-console.html?console=win5 / hakodate / sapporo", "status": "manual_review_pending" },
+    { "id": "P20-11-WIN5", "targetName": "WIN5 Console", "route": "course-console.html?console=win5", "status": "manual_review_pending" },
+    { "id": "P20-11-HAKODATE", "targetName": "Hakodate Console", "route": "course-console.html?console=hakodate", "status": "manual_review_pending" },
+    { "id": "P20-11-SAPPORO", "targetName": "Sapporo Console", "route": "course-console.html?console=sapporo", "status": "manual_review_pending" },
+    { "id": "P20-11-FALLBACK", "targetName": "Missing link fallback", "route": "index.html", "status": "manual_review_pending" },
+    { "id": "P20-11-PRIVATE-LOCAL", "targetName": "private-local route", "route": "private-local.html", "status": "manual_review_pending" },
+    { "id": "P20-11-INDEX", "targetName": "index.html route", "route": "index.html", "status": "manual_review_pending" }
+  ],
+  "recommendedMergeOrder": [
+    "PR #174 Phase20-8",
+    "PR #175 Phase20-9",
+    "PR #176 Phase20-10",
+    "Phase20-11 review PR after manual confirmation"
+  ],
+  "mergeSequenceWarning": "#176 is based on the #175 branch, so #175 must be handled before #176. Keep both Draft until manual confirmation is complete.",
+  "blockedActions": [
+    "merge",
+    "external_connection",
+    "auto_execution",
+    "auto_update",
+    "github_pages_setting_change",
+    "repository_visibility_change"
+  ],
+  "allowedActions": ["plan", "review", "validate", "audit", "report"]
+}
