@@ -79,5 +79,53 @@
     return buildFinalIntegrationSafetyReview(options.sources || {}, options.now);
   }
 
-  return { PHASE, EXECUTION_POLICY, PROTECTION_POLICY, REVIEW_STATUS, NEXT_RECOMMENDED_STEP, BLOCKED_ACTIONS, ALLOWED_ACTIONS, REQUIRED_POLICY_LABELS, SAFE_FALLBACK_HREF, RECOMMENDED_MERGE_ORDER, PR_DEPENDENCIES, REVIEW_TARGETS, buildFinalIntegrationSafetyReview, runFinalIntegrationSafetyReview };
+  function renderFinalIntegrationSafetyReview(review, doc = document) {
+    const summary = review.phase20_11_summary;
+    const set = (selector, value) => { const node = doc.querySelector(selector); if (node) node.textContent = String(value); };
+    set("#phase20-11-review-status", review.review_status);
+    set("#phase20-11-total-review-targets", summary.total_review_targets);
+    set("#phase20-11-draft-prs-tracked", summary.draft_prs_tracked);
+    set("#phase20-11-manual-confirmation-required", summary.manual_confirmation_required_before_merge);
+    set("#phase20-11-merge-allowed", summary.merge_allowed);
+    set("#phase20-11-external-connection-allowed", summary.external_connection_allowed);
+    set("#phase20-11-github-pages-setting-change-allowed", summary.github_pages_setting_change_allowed);
+    set("#phase20-11-safe-fallback", summary.safe_fallback_href);
+    set("#phase20-11-unsafe-flags", summary.unsafe_flags_count);
+    set("#phase20-11-protected-mode", summary.protected_mode);
+    set("#phase20-11-next-step", summary.next_recommended_step);
+    set("#phase20-11-updated", review.generated_at);
+    const list = doc.querySelector("#phase20-11-final-integration-safety-review-list");
+    if (list) {
+      list.textContent = "";
+      review.pr_dependencies.forEach((dependency) => {
+        const row = doc.createElement("li");
+        row.className = "phase20-11-final-integration-safety-review-item";
+        row.textContent = `PR #${dependency.pr_number} ${dependency.phase} / ${dependency.role} / draft:${dependency.draft_required} / merge:${dependency.merge_before_manual_confirmation_allowed}`;
+        list.appendChild(row);
+      });
+    }
+    return review;
+  }
+
+  function persistFinalIntegrationSafetyReview(review, storage) {
+    if (storage) storage.setItem("phase2011FinalIntegrationSafetyReviewLatest", JSON.stringify(review));
+    return review;
+  }
+
+  function runAndRenderFinalIntegrationSafetyReview(options = {}) {
+    const review = runFinalIntegrationSafetyReview(options);
+    persistFinalIntegrationSafetyReview(review, options.storage || (typeof window !== "undefined" ? window.localStorage : null));
+    return renderFinalIntegrationSafetyReview(review, options.document || document);
+  }
+
+  if (typeof window !== "undefined" && typeof document !== "undefined") {
+    const boot = () => {
+      const button = document.querySelector("#run-phase20-11-final-integration-safety-review");
+      if (button) button.addEventListener("click", () => runAndRenderFinalIntegrationSafetyReview());
+      if (document.querySelector("#phase20-11-final-integration-safety-review-builder")) runAndRenderFinalIntegrationSafetyReview();
+    };
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+  }
+
+  return { PHASE, EXECUTION_POLICY, PROTECTION_POLICY, REVIEW_STATUS, NEXT_RECOMMENDED_STEP, BLOCKED_ACTIONS, ALLOWED_ACTIONS, REQUIRED_POLICY_LABELS, SAFE_FALLBACK_HREF, RECOMMENDED_MERGE_ORDER, PR_DEPENDENCIES, REVIEW_TARGETS, buildFinalIntegrationSafetyReview, runFinalIntegrationSafetyReview, renderFinalIntegrationSafetyReview, persistFinalIntegrationSafetyReview, runAndRenderFinalIntegrationSafetyReview };
 });

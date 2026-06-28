@@ -10,6 +10,8 @@ const readJson = (file) => JSON.parse(readText(file));
 const db = readJson("phase20-11-final-integration-safety-review-db.json");
 const summaryDb = readJson("phase20-11-final-integration-safety-review-summary-db.json");
 const phase2010Summary = readJson("phase20-10-final-display-confirmation-checklist-summary-db.json");
+const index = readText("index.html");
+const privateLocal = readText("private-local.html");
 
 assert.equal(engine.PHASE, "Phase20-11");
 assert.equal(engine.EXECUTION_POLICY, "PLAN_ONLY");
@@ -92,6 +94,10 @@ assert.equal(summaryDb.phase20_11_summary.unsafeFlagsCount, 0);
 assert.deepEqual(summaryDb.phase20_11_summary.recommendedMergeOrder, engine.RECOMMENDED_MERGE_ORDER);
 assert.equal(phase2010Summary.phase20_10_summary.manualPendingCount, 9);
 assert.equal(phase2010Summary.phase20_10_summary.githubPagesSettingChangeAllowed, false);
+assert.ok(index.includes('id="phase20-11-final-integration-safety-review-builder"'));
+assert.ok(index.includes('<script src="phase20-11-final-integration-safety-review-builder.js"></script>'));
+assert.ok(privateLocal.includes('href="index.html#phase20-11-final-integration-safety-review-builder"'));
+assert.ok(privateLocal.includes("Phase20-11 Final Integration Safety Review"));
 
 const builderSource = readText("phase20-11-final-integration-safety-review-builder.js");
 for (const forbidden of ["XMLHttpRequest", "sendBeacon", "WebSocket", "EventSource", "github_pages_setting_change_allowed: true", "external_connection_allowed: true", "auto_update_allowed: true", "merge_allowed: true"]) {
