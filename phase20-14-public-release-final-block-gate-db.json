@@ -1,0 +1,41 @@
+{
+  "databaseName": "phase20-14-public-release-final-block-gate-db",
+  "phase": "Phase20-14",
+  "gateStatus": "public_release_final_block_plan_only",
+  "executionPolicy": "PLAN_ONLY",
+  "protectionPolicy": "Protected",
+  "privateLocalPolicyUnchanged": true,
+  "protectedMode": true,
+  "publicReleaseBlocked": true,
+  "externalConnection": false,
+  "autoPublish": false,
+  "githubPagesChangeAllowed": false,
+  "githubPagesSettingChangeAllowed": false,
+  "repositoryVisibilityChangeAllowed": false,
+  "publicReleaseAllowed": false,
+  "manualConfirmationRequiredBeforePublicRelease": true,
+  "manualOwnerConfirmationRequired": true,
+  "allDeviceConfirmationsApproved": false,
+  "publicReleaseReady": false,
+  "finalPublicReleaseBlock": true,
+  "unsafeFlagsCount": 0,
+  "finalBlockConditions": [
+    { "id": "P20-14-COMPANY-PC", "deviceType": "company_pc", "confirmationRequired": true, "confirmationApproved": false, "publicReleaseReady": false },
+    { "id": "P20-14-HOME-PC", "deviceType": "home_pc", "confirmationRequired": true, "confirmationApproved": false, "publicReleaseReady": false },
+    { "id": "P20-14-IPAD", "deviceType": "ipad", "confirmationRequired": true, "confirmationApproved": false, "publicReleaseReady": false },
+    { "id": "P20-14-MOBILE-PHONE", "deviceType": "mobile_phone", "confirmationRequired": true, "confirmationApproved": false, "publicReleaseReady": false }
+  ],
+  "allowedActions": ["plan", "review", "validate", "audit", "report", "local_launch", "manual_confirm_future_phase"],
+  "blockedActions": [
+    "public_url_exposure",
+    "external_connection",
+    "auto_publish",
+    "auto_execution",
+    "github_pages_setting_change",
+    "repository_visibility_change",
+    "public_release_without_all_device_confirmations",
+    "public_release_without_manual_owner_confirmation"
+  ],
+  "finalBlockRule": "Public release remains blocked until all device confirmations and manual owner confirmation are approved in a future protected phase",
+  "nextRecommendedStep": "Keep public release blocked and collect manual owner/device confirmations in a future protected phase"
+}
