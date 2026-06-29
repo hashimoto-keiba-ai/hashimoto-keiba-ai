@@ -1,0 +1,47 @@
+{
+  "databaseName": "phase20-13-manual-device-confirmation-gate-db",
+  "phase": "Phase20-13",
+  "gateStatus": "manual_device_confirmation_gate_plan_only",
+  "executionPolicy": "PLAN_ONLY",
+  "protectionPolicy": "Protected",
+  "privateLocalPolicyUnchanged": true,
+  "protectedMode": true,
+  "externalConnection": false,
+  "autoPublish": false,
+  "githubPagesChangeAllowed": false,
+  "githubPagesSettingChangeAllowed": false,
+  "repositoryVisibilityChangeAllowed": false,
+  "publicReleaseAllowed": false,
+  "manualConfirmationRequiredBeforePublicRelease": true,
+  "futureProtectedPhaseRequired": true,
+  "releaseRule": "Public release allowed only after all device confirmations are manually approved in a future protected phase",
+  "deviceConfirmationTargets": [
+    { "id": "P20-13-COMPANY-PC", "deviceType": "company_pc", "targetName": "Company PC manual confirmation", "confirmationStatus": "manual_confirmation_required", "manuallyApproved": false, "publicReleaseReady": false },
+    { "id": "P20-13-HOME-PC", "deviceType": "home_pc", "targetName": "Home PC manual confirmation", "confirmationStatus": "manual_confirmation_required", "manuallyApproved": false, "publicReleaseReady": false },
+    { "id": "P20-13-IPAD", "deviceType": "ipad", "targetName": "iPad manual confirmation", "confirmationStatus": "manual_confirmation_required", "manuallyApproved": false, "publicReleaseReady": false },
+    { "id": "P20-13-MOBILE-PHONE", "deviceType": "mobile_phone", "targetName": "Mobile phone manual confirmation", "confirmationStatus": "manual_confirmation_required", "manuallyApproved": false, "publicReleaseReady": false }
+  ],
+  "requiredPolicyLabels": [
+    "PLAN_ONLY",
+    "Protected",
+    "Private/local-only operation unchanged",
+    "Manual device confirmation required",
+    "External connection disabled",
+    "Auto publish disabled",
+    "GitHub Pages changes disabled",
+    "Repository visibility changes disabled",
+    "Public release blocked"
+  ],
+  "blockedActions": [
+    "public_release",
+    "public_url_exposure",
+    "external_connection",
+    "auto_publish",
+    "auto_execution",
+    "github_pages_setting_change",
+    "repository_visibility_change",
+    "release_without_all_manual_device_confirmations"
+  ],
+  "allowedActions": ["plan", "review", "validate", "audit", "report", "manual_confirm_future_phase"],
+  "nextRecommendedStep": "Collect protected manual device confirmations in a future phase before any public release"
+}
