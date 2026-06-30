@@ -1076,3 +1076,11 @@ Phase21-1 Start Gate 後に、Phase21 の作業範囲が private / local only / 
 GitHub Pages 設定変更、public URL 追加、外部 API 接続、外部送信、自動実行、自動公開、自動起動、billing integration、repository visibility 変更、main 直接 push、merge はすべて blocked のままです。Continuity status は `CONTINUITY_CONFIRMED_PLAN_ONLY`、unsafe flags は 0、draft PR required は true です。
 
 追加ファイル: `phase21-2-private-local-operation-continuity-checklist-builder.js`、`phase21-2-private-local-operation-continuity-checklist-db.json`、`phase21-2-private-local-operation-continuity-checklist-summary-db.json`、`tests/phase21PrivateLocalOperationContinuityChecklistBuilder.test.js`
+
+## Phase21-3 Private Local Device Sync Operation Checklist
+
+Phase21-2 の継続チェックリスト後に、Private Local 運用を続けるための運用確認・端末同期・表示導線・安全運用をまとめる PLAN_ONLY / Protected パネルです。Phase20 Completion Final Closure、Phase21-1 Start Gate、Phase21-2 Continuity Checklist の表示・導線を維持し、iPad / 自宅PC / 会社PC の運用確認は手動ローカルレビュー項目として扱います。
+
+Web公開、GitHub Pages公開、public URL、外部 API 接続、外部送信、自動実行、自動公開、自動起動、billing integration、repository visibility 変更、main 直接 push、merge はすべて blocked のままです。Device sync status は `DEVICE_SYNC_OPERATION_REVIEW_READY`、unsafe flags は 0、draft PR required は true です。
+
+追加ファイル: `phase21-3-private-local-device-sync-operation-checklist-builder.js`、`phase21-3-private-local-device-sync-operation-checklist-db.json`、`phase21-3-private-local-device-sync-operation-checklist-summary-db.json`、`tests/phase21PrivateLocalDeviceSyncOperationChecklistBuilder.test.js`
