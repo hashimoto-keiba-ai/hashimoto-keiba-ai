@@ -1028,3 +1028,11 @@ Phase20-23 完了後の final guard として、private / local only、PLAN_ONLY
 GitHub Pages launch / Public URL launch / Public release allowed / external connection / auto execution / auto publish / auto launch / direct push to main allowed / merge without PR review allowed / repository visibility change allowed / GitHub Pages setting change allowed は false、unsafe flags は 0 です。Phase20-12 から Phase20-23 までの locks を保持し、`.github`、repository visibility、Pages settings は変更せず、push / PR / merge を自動実行しません。
 
 追加ファイル: `phase20-24-safe-operation-final-guard-builder.js`、`phase20-24-safe-operation-final-guard-db.json`、`phase20-24-safe-operation-final-guard-summary-db.json`、`tests/phase20SafeOperationFinalGuardBuilder.test.js`
+
+## Phase20-25 Final Private Release Freeze Check
+
+Phase20-24 までで追加した安全運用、最終ガード、Private 運用前提の導線を、最終リリース凍結前チェックとしてまとめる PLAN_ONLY / Protected パネルです。新機能は増やさず、repository private 前提、local launcher 前提、GitHub Pages 非依存、external sharing 禁止、secrets / token / credential 非保存、manual device confirmation 必須、rollback / revert 方針、merge 前の最終確認 checklist を明文化します。
+
+Freeze Status は `PASS` / `HOLD` / `BLOCKED` の判定を持ち、現在の private release freeze check は `PASS` です。Public 公開、GitHub Pages 公開、外部共有、課金連携、実馬券自動購入、外部 API 送信はすべて対象外です。PLAN_ONLY / Protected / Unsafe guard を維持し、push / PR 作成 / merge を自動実行しません。
+
+追加ファイル: `phase20-25-final-private-release-freeze-check-builder.js`、`phase20-25-final-private-release-freeze-check-db.json`、`phase20-25-final-private-release-freeze-check-summary-db.json`、`tests/phase20FinalPrivateReleaseFreezeCheckBuilder.test.js`
