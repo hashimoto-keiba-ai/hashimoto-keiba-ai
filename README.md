@@ -1052,3 +1052,11 @@ Phase20 完了前に、今後の運用者が安全に確認・引き継ぎでき
 GitHub Pages 公開前提の変更、main 直接 push、merge、危険な外部公開、公開 URL 誘導、不要な自動実行は追加しません。Draft PR のまま作成し、PLAN_ONLY / Protected policy を維持します。iPad / 自宅 PC / 会社 PC の確認状態記録欄は未確認のため `Pending` として扱い、Phase20 完了前の next_recommended_step は `Complete iPad, home PC, and company PC manual confirmation before Phase20 completion` です。
 
 追加ファイル: `phase20-27-final-handoff-checklist-builder.js`、`phase20-27-final-handoff-checklist-db.json`、`phase20-27-final-handoff-checklist-summary-db.json`、`tests/phase20FinalHandoffChecklistBuilder.test.js`
+
+## Phase20 Completion Final Closure
+
+Phase20-1 から Phase20-27 までの完了状態をまとめ、Phase20 全体の completion final closure として固定する PLAN_ONLY / Protected パネルです。Repository Private 前提、local only、`start-local.bat` / `private-local.html` / `index.html` 経由のみ、既存 Phase20 導線維持、JSON / JavaScript / test 確認、関連 Phase20 テスト確認、draft PR 必須、merge 禁止を明文化します。
+
+GitHub Pages 設定変更、外部公開 URL 追加、repository visibility 変更、外部公開、外部 API 送信、課金連携、自動実行、自動公開、自動起動、main 直接 push、merge はすべて禁止のままです。Phase20-7 は既存の手動チェックポイント記録として集約し、Phase20-10 は summary record として保持します。Phase20 completion status は `COMPLETE_LOCAL_ONLY_PROTECTED`、unsafe flags は 0 です。
+
+追加ファイル: `phase20-completion-final-closure-builder.js`、`phase20-completion-final-closure-db.json`、`phase20-completion-final-closure-summary-db.json`、`tests/phase20CompletionFinalClosureBuilder.test.js`
