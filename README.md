@@ -1068,3 +1068,11 @@ Phase20 Completion Final Closure 完了後に、Phase21 を private / local only
 GitHub Pages 設定変更、public URL 追加、外部 API 接続、外部送信、自動実行、自動公開、自動起動、repository visibility 変更、main 直接 push、merge はすべて禁止のままです。Phase21-1 start gate status は `READY_FOR_PRIVATE_LOCAL_PLANNING`、Phase20 prerequisite は `COMPLETE_LOCAL_ONLY_PROTECTED`、unsafe flags は 0、draft PR required は true です。
 
 追加ファイル: `phase21-1-post-phase20-private-local-operation-start-gate-builder.js`、`phase21-1-post-phase20-private-local-operation-start-gate-db.json`、`phase21-1-post-phase20-private-local-operation-start-gate-summary-db.json`、`tests/phase21PostPhase20PrivateLocalOperationStartGateBuilder.test.js`
+
+## Phase21-2 Private Local Operation Continuity Checklist
+
+Phase21-1 Start Gate 後に、Phase21 の作業範囲が private / local only / PLAN_ONLY / Protected から逸脱していないことを継続確認するチェックリスト・監査・表示専用パネルです。Phase20 Completion Final Closure と Phase21-1 Post Phase20 Private Local Operation Start Gate の表示・導線を維持し、Phase21-2 は実行・公開・外部接続を伴わない確認だけを扱います。
+
+GitHub Pages 設定変更、public URL 追加、外部 API 接続、外部送信、自動実行、自動公開、自動起動、billing integration、repository visibility 変更、main 直接 push、merge はすべて blocked のままです。Continuity status は `CONTINUITY_CONFIRMED_PLAN_ONLY`、unsafe flags は 0、draft PR required は true です。
+
+追加ファイル: `phase21-2-private-local-operation-continuity-checklist-builder.js`、`phase21-2-private-local-operation-continuity-checklist-db.json`、`phase21-2-private-local-operation-continuity-checklist-summary-db.json`、`tests/phase21PrivateLocalOperationContinuityChecklistBuilder.test.js`
