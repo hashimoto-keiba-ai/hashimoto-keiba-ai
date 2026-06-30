@@ -1727,3 +1727,12 @@ tbody tr:last-child td {
 .phase20-27-final-handoff-checklist { border: 1px solid rgba(250, 204, 21, 0.72); }
 .phase20-27-final-handoff-checklist-grid article strong { overflow-wrap: anywhere; }
 .phase20-27-final-handoff-checklist-list .pending-note { border-color: rgba(250, 204, 21, 0.76); color: #fef3c7; }
+.phase20-completion-final-closure { border: 1px solid rgba(45, 212, 191, 0.72); background: radial-gradient(circle at 88% 0, rgba(13, 148, 136, 0.18), transparent 44%), linear-gradient(145deg, #062823, #080b12 72%); }
+.phase20-completion-final-closure-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase20-completion-final-closure-actions span { color: #99f6e4; font-size: 13px; font-weight: 900; }
+.phase20-completion-final-closure-grid article strong { color: #99f6e4; font-size: 16px; overflow-wrap: anywhere; }
+.phase20-completion-final-closure-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase20-completion-final-closure-item { border: 1px solid rgba(45, 212, 191, 0.34); border-radius: 10px; padding: 9px 11px; color: #ccfbf1; font-size: 12px; font-weight: 800; }
+.phase20-completion-final-closure-item.status-recorded_without_new_route,
+.phase20-completion-final-closure-item.status-summary_record_preserved { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase20-completion-final-closure-actions { align-items: stretch; } .phase20-completion-final-closure-actions button { width: 100%; } }
