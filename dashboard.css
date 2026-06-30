@@ -1760,3 +1760,12 @@ tbody tr:last-child td {
 .phase21-3-private-local-device-sync-operation-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
 .phase21-3-private-local-device-sync-operation-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
 @media (max-width: 680px) { .phase21-3-private-local-device-sync-operation-checklist-actions { align-items: stretch; } .phase21-3-private-local-device-sync-operation-checklist-actions button { width: 100%; } }
+.phase21-4-private-local-display-recovery-checklist { border: 1px solid rgba(45, 212, 191, 0.72); background: radial-gradient(circle at 88% 0, rgba(20, 184, 166, 0.18), transparent 44%), linear-gradient(145deg, #062421, #080b12 72%); }
+.phase21-4-private-local-display-recovery-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-4-private-local-display-recovery-checklist-actions span { color: #99f6e4; font-size: 13px; font-weight: 900; }
+.phase21-4-private-local-display-recovery-checklist-grid article strong { color: #99f6e4; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-4-private-local-display-recovery-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-4-private-local-display-recovery-checklist-item { border: 1px solid rgba(45, 212, 191, 0.34); border-radius: 10px; padding: 9px 11px; color: #ccfbf1; font-size: 12px; font-weight: 800; }
+.phase21-4-private-local-display-recovery-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
+.phase21-4-private-local-display-recovery-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase21-4-private-local-display-recovery-checklist-actions { align-items: stretch; } .phase21-4-private-local-display-recovery-checklist-actions button { width: 100%; } }
