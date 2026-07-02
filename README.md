@@ -1100,3 +1100,11 @@ Phase21-5 adds a PLAN_ONLY / Protected checklist for the period after Phase21-4 
 Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. Review feedback is handled only through explicit local edits and tests. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required.
 
 Added files: `phase21-5-private-local-post-pr-review-stability-checklist-builder.js`, `phase21-5-private-local-post-pr-review-stability-checklist-db.json`, `phase21-5-private-local-post-pr-review-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPrReviewStabilityChecklistBuilder.test.js`
+
+## Phase21-6 Private Local Draft PR Chain Readiness Checklist
+
+Phase21-6 adds a PLAN_ONLY / Protected checklist for the draft PR chain after Phase21-4 Draft PR #198 and Phase21-5 Draft PR #199 exist but remain unmerged. It records the intended chain order, base/compare awareness, local display checks, post-pull checks, recovery holds, and merge-before checks without assuming any merge into main.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-6-private-local-draft-pr-chain-readiness-checklist-builder.js`, `phase21-6-private-local-draft-pr-chain-readiness-checklist-db.json`, `phase21-6-private-local-draft-pr-chain-readiness-checklist-summary-db.json`, `tests/phase21PrivateLocalDraftPrChainReadinessChecklistBuilder.test.js`
