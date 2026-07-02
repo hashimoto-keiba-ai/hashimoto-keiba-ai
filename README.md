@@ -1132,3 +1132,11 @@ Phase21-9 adds a PLAN_ONLY / Protected checklist for the state after Phase21-8 D
 Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
 
 Added files: `phase21-9-private-local-post-pr202-chain-stability-checklist-builder.js`, `phase21-9-private-local-post-pr202-chain-stability-checklist-db.json`, `phase21-9-private-local-post-pr202-chain-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr202ChainStabilityChecklistBuilder.test.js`
+
+## Phase21-10 Private Local Post PR203 Operation Checklist
+
+Phase21-10 adds a PLAN_ONLY / Protected checklist for private local operation after Phase21-9 Draft PR #203 has been created and remains unmerged. It preserves the Phase21-4 through Phase21-9 Draft PR chain (#198 / #199 / #200 / #201 / #202 / #203), treats the company PC clean `main` state as a manual local premise, and keeps Phase21-10 as local commit work until explicit push and PR creation instructions are given.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. Public URL guidance, GitHub Pages publishing or setting changes, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-10-private-local-post-pr203-operation-checklist-builder.js`, `phase21-10-private-local-post-pr203-operation-checklist-db.json`, `phase21-10-private-local-post-pr203-operation-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr203OperationChecklistBuilder.test.js`
