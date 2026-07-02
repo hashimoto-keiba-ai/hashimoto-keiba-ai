@@ -1850,3 +1850,12 @@ tbody tr:last-child td {
 .phase21-13-private-local-post-pr206-operation-continuation-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
 .phase21-13-private-local-post-pr206-operation-continuation-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
 @media (max-width: 680px) { .phase21-13-private-local-post-pr206-operation-continuation-checklist-actions { align-items: stretch; } .phase21-13-private-local-post-pr206-operation-continuation-checklist-actions button { width: 100%; } }
+.phase21-14-private-local-post-pr207-operation-stability-continuation-checklist { border: 1px solid rgba(96, 165, 250, 0.72); background: radial-gradient(circle at 82% 0, rgba(96, 165, 250, 0.15), transparent 42%), linear-gradient(145deg, #0b2135, #07121a 74%); }
+.phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-actions span { color: #dbeafe; font-size: 13px; font-weight: 900; }
+.phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-grid article strong { color: #eff6ff; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-item { border: 1px solid rgba(96, 165, 250, 0.34); border-radius: 10px; padding: 9px 11px; color: #eff6ff; font-size: 12px; font-weight: 800; }
+.phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-item.status-manualreviewrequired { border-color: rgba(45, 212, 191, 0.62); color: #ccfbf1; }
+.phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-actions { align-items: stretch; } .phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-actions button { width: 100%; } }
