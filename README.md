@@ -1108,3 +1108,11 @@ Phase21-6 adds a PLAN_ONLY / Protected checklist for the draft PR chain after Ph
 Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
 
 Added files: `phase21-6-private-local-draft-pr-chain-readiness-checklist-builder.js`, `phase21-6-private-local-draft-pr-chain-readiness-checklist-db.json`, `phase21-6-private-local-draft-pr-chain-readiness-checklist-summary-db.json`, `tests/phase21PrivateLocalDraftPrChainReadinessChecklistBuilder.test.js`
+
+## Phase21-7 Private Local Post Draft PR Creation Stability Checklist
+
+Phase21-7 adds a PLAN_ONLY / Protected checklist for the state after Phase21-6 Draft PR #200 has been created and remains unmerged. It preserves the Phase21-5 and Phase21-6 routes, records the PR #198 / #199 / #200 draft chain, treats the company PC clean `main` state as a manual local premise, and keeps Phase21-7 as local commit work until explicit push and PR creation instructions are given.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-7-private-local-post-draft-pr-creation-stability-checklist-builder.js`, `phase21-7-private-local-post-draft-pr-creation-stability-checklist-db.json`, `phase21-7-private-local-post-draft-pr-creation-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostDraftPrCreationStabilityChecklistBuilder.test.js`
