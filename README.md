@@ -1116,3 +1116,11 @@ Phase21-7 adds a PLAN_ONLY / Protected checklist for the state after Phase21-6 D
 Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
 
 Added files: `phase21-7-private-local-post-draft-pr-creation-stability-checklist-builder.js`, `phase21-7-private-local-post-draft-pr-creation-stability-checklist-db.json`, `phase21-7-private-local-post-draft-pr-creation-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostDraftPrCreationStabilityChecklistBuilder.test.js`
+
+## Phase21-8 Private Local Post PR201 Chain Stability Checklist
+
+Phase21-8 adds a PLAN_ONLY / Protected checklist for the state after Phase21-7 Draft PR #201 has been created and remains unmerged. It preserves the Phase21-6 and Phase21-7 routes, records the PR #198 / #199 / #200 / #201 draft chain, treats the company PC clean `main` state as a manual local premise, and keeps Phase21-8 as local commit work until explicit push and PR creation instructions are given.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-8-private-local-post-pr201-chain-stability-checklist-builder.js`, `phase21-8-private-local-post-pr201-chain-stability-checklist-db.json`, `phase21-8-private-local-post-pr201-chain-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr201ChainStabilityChecklistBuilder.test.js`
