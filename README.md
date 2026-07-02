@@ -1155,3 +1155,11 @@ Phase21-12 adds a PLAN_ONLY / Protected checklist for private local operation co
 Public URLs, GitHub Pages publishing or setting changes, external API submission, public release, auto execution, auto push, auto PR creation, auto merge, direct `main` push, and Ready for review transitions remain out of scope. Private local launch remains limited to `start-local.bat`, `private-local.html`, and `index.html`.
 
 Added files: `phase21-12-private-local-post-pr205-operation-continuity-checklist-builder.js`, `phase21-12-private-local-post-pr205-operation-continuity-checklist-db.json`, `phase21-12-private-local-post-pr205-operation-continuity-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr205OperationContinuityChecklistBuilder.test.js`
+
+## Phase21-13 Private Local Post PR206 Operation Continuation Checklist
+
+Phase21-13 adds a PLAN_ONLY / Protected checklist for private local operation continuation after PR #206 has been merged into `main`. It confirms that `main` is current after the PR #206 merge, local `main` / `origin/main` / `origin/HEAD` are aligned, the working tree is clean, Phase21-12 artifacts are reflected on `main`, and Phase21-10 through Phase21-12 continuity remains intact.
+
+The checklist stays private-local only and does not assume GitHub Pages publication. Validation results must be saved before any draft PR creation, while Ready for review and merge remain human-confirmed only. Public URLs, GitHub Pages publishing or setting changes, external API submission, public release, auto execution, auto push, auto PR creation, auto merge, direct `main` push, unsafe true flags, and conflict markers remain blocked or explicitly checked.
+
+Added files: `phase21-13-private-local-post-pr206-operation-continuation-checklist-builder.js`, `phase21-13-private-local-post-pr206-operation-continuation-checklist-db.json`, `phase21-13-private-local-post-pr206-operation-continuation-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr206OperationContinuationChecklistBuilder.test.js`
