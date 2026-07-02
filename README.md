@@ -1084,3 +1084,74 @@ Phase21-2 の継続チェックリスト後に、Private Local 運用を続け�
 Web公開、GitHub Pages公開、public URL、外部 API 接続、外部送信、自動実行、自動公開、自動起動、billing integration、repository visibility 変更、main 直接 push、merge はすべて blocked のままです。Device sync status は `DEVICE_SYNC_OPERATION_REVIEW_READY`、unsafe flags は 0、draft PR required は true です。
 
 追加ファイル: `phase21-3-private-local-device-sync-operation-checklist-builder.js`、`phase21-3-private-local-device-sync-operation-checklist-db.json`、`phase21-3-private-local-device-sync-operation-checklist-summary-db.json`、`tests/phase21PrivateLocalDeviceSyncOperationChecklistBuilder.test.js`
+
+## Phase21-4 Private Local Display Recovery Checklist
+
+Phase21-4 adds a PLAN_ONLY / Protected checklist for private local display confirmation, post-pull checks, recovery steps, and merge-before review. It keeps the operating premise private and local-first: `private-local.html`, `index.html`, and dashboard routes are checked locally on home PC, company PC, and iPad, without requiring Web publication or GitHub Pages publication.
+
+The checklist records manual confirmation items for home PC / company PC / iPad launch, `private-local.html` startup, `index.html` display, dashboard route review, GitHub pull after-update verification, failure recovery, and merge-before checks. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required.
+
+Added files: `phase21-4-private-local-display-recovery-checklist-builder.js`, `phase21-4-private-local-display-recovery-checklist-db.json`, `phase21-4-private-local-display-recovery-checklist-summary-db.json`, `tests/phase21PrivateLocalDisplayRecoveryChecklistBuilder.test.js`
+
+## Phase21-5 Private Local Post PR Review Stability Checklist
+
+Phase21-5 adds a PLAN_ONLY / Protected checklist for the period after Phase21-4 Draft PR #198 is created and before any merge decision. It keeps Phase21-4 unmerged, preserves private/local-first operation, and records how review feedback, local display checks, post-pull checks, recovery holds, and merge-before checks should be handled.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. Review feedback is handled only through explicit local edits and tests. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required.
+
+Added files: `phase21-5-private-local-post-pr-review-stability-checklist-builder.js`, `phase21-5-private-local-post-pr-review-stability-checklist-db.json`, `phase21-5-private-local-post-pr-review-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPrReviewStabilityChecklistBuilder.test.js`
+
+## Phase21-6 Private Local Draft PR Chain Readiness Checklist
+
+Phase21-6 adds a PLAN_ONLY / Protected checklist for the draft PR chain after Phase21-4 Draft PR #198 and Phase21-5 Draft PR #199 exist but remain unmerged. It records the intended chain order, base/compare awareness, local display checks, post-pull checks, recovery holds, and merge-before checks without assuming any merge into main.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-6-private-local-draft-pr-chain-readiness-checklist-builder.js`, `phase21-6-private-local-draft-pr-chain-readiness-checklist-db.json`, `phase21-6-private-local-draft-pr-chain-readiness-checklist-summary-db.json`, `tests/phase21PrivateLocalDraftPrChainReadinessChecklistBuilder.test.js`
+
+## Phase21-7 Private Local Post Draft PR Creation Stability Checklist
+
+Phase21-7 adds a PLAN_ONLY / Protected checklist for the state after Phase21-6 Draft PR #200 has been created and remains unmerged. It preserves the Phase21-5 and Phase21-6 routes, records the PR #198 / #199 / #200 draft chain, treats the company PC clean `main` state as a manual local premise, and keeps Phase21-7 as local commit work until explicit push and PR creation instructions are given.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-7-private-local-post-draft-pr-creation-stability-checklist-builder.js`, `phase21-7-private-local-post-draft-pr-creation-stability-checklist-db.json`, `phase21-7-private-local-post-draft-pr-creation-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostDraftPrCreationStabilityChecklistBuilder.test.js`
+
+## Phase21-8 Private Local Post PR201 Chain Stability Checklist
+
+Phase21-8 adds a PLAN_ONLY / Protected checklist for the state after Phase21-7 Draft PR #201 has been created and remains unmerged. It preserves the Phase21-6 and Phase21-7 routes, records the PR #198 / #199 / #200 / #201 draft chain, treats the company PC clean `main` state as a manual local premise, and keeps Phase21-8 as local commit work until explicit push and PR creation instructions are given.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-8-private-local-post-pr201-chain-stability-checklist-builder.js`, `phase21-8-private-local-post-pr201-chain-stability-checklist-db.json`, `phase21-8-private-local-post-pr201-chain-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr201ChainStabilityChecklistBuilder.test.js`
+
+## Phase21-9 Private Local Post PR202 Chain Stability Checklist
+
+Phase21-9 adds a PLAN_ONLY / Protected checklist for the state after Phase21-8 Draft PR #202 has been created and remains unmerged. It preserves the Phase21-7 and Phase21-8 routes, records the PR #198 / #199 / #200 / #201 / #202 draft chain, treats the company PC clean `main` state as a manual local premise, and keeps Phase21-9 as local commit work until explicit push and PR creation instructions are given.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-9-private-local-post-pr202-chain-stability-checklist-builder.js`, `phase21-9-private-local-post-pr202-chain-stability-checklist-db.json`, `phase21-9-private-local-post-pr202-chain-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr202ChainStabilityChecklistBuilder.test.js`
+
+## Phase21-10 Private Local Post PR203 Operation Checklist
+
+Phase21-10 adds a PLAN_ONLY / Protected checklist for private local operation after Phase21-9 Draft PR #203 has been created and remains unmerged. It preserves the Phase21-4 through Phase21-9 Draft PR chain (#198 / #199 / #200 / #201 / #202 / #203), treats the company PC clean `main` state as a manual local premise, and keeps Phase21-10 as local commit work until explicit push and PR creation instructions are given.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. Public URL guidance, GitHub Pages publishing or setting changes, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-10-private-local-post-pr203-operation-checklist-builder.js`, `phase21-10-private-local-post-pr203-operation-checklist-db.json`, `phase21-10-private-local-post-pr203-operation-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr203OperationChecklistBuilder.test.js`
+
+## Phase21-11 Private Local Post PR204 Operation Stability Checklist
+
+Phase21-11 adds a PLAN_ONLY / Protected checklist for private local operation stability after Phase21-10 Draft PR #204 has been created and remains unmerged. It preserves the Phase21-4 through Phase21-10 Draft PR chain (#198 / #199 / #200 / #201 / #202 / #203 / #204), treats the company PC clean `main` state as a manual local premise, and keeps Phase21-11 as local commit work until explicit push and PR creation instructions are given.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. Public URL guidance, GitHub Pages publishing or setting changes, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
+
+Added files: `phase21-11-private-local-post-pr204-operation-stability-checklist-builder.js`, `phase21-11-private-local-post-pr204-operation-stability-checklist-db.json`, `phase21-11-private-local-post-pr204-operation-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr204OperationStabilityChecklistBuilder.test.js`
+## Phase21-12 Private Local Post PR205 Operation Continuity Checklist
+
+Phase21-12 adds a PLAN_ONLY / Protected checklist for private local operation continuity after Phase21-11 Draft PR #205 has been created and remains unmerged. It preserves the Phase21-4 through Phase21-11 Draft PR chain (#198 / #199 / #200 / #201 / #202 / #203 / #204 / #205), treats the company PC clean `main` state as a manual local premise, and keeps PR creation / merge / Ready for review blocked unless explicit instructions are given.
+
+Public URLs, GitHub Pages publishing or setting changes, external API submission, public release, auto execution, auto push, auto PR creation, auto merge, direct `main` push, and Ready for review transitions remain out of scope. Private local launch remains limited to `start-local.bat`, `private-local.html`, and `index.html`.
+
+Added files: `phase21-12-private-local-post-pr205-operation-continuity-checklist-builder.js`, `phase21-12-private-local-post-pr205-operation-continuity-checklist-db.json`, `phase21-12-private-local-post-pr205-operation-continuity-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr205OperationContinuityChecklistBuilder.test.js`
