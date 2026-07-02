@@ -1832,3 +1832,12 @@ tbody tr:last-child td {
 .phase21-11-private-local-post-pr204-operation-stability-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
 .phase21-11-private-local-post-pr204-operation-stability-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
 @media (max-width: 680px) { .phase21-11-private-local-post-pr204-operation-stability-checklist-actions { align-items: stretch; } .phase21-11-private-local-post-pr204-operation-stability-checklist-actions button { width: 100%; } }
+.phase21-12-private-local-post-pr205-operation-continuity-checklist { border: 1px solid rgba(52, 211, 153, 0.72); background: radial-gradient(circle at 82% 0, rgba(52, 211, 153, 0.15), transparent 42%), linear-gradient(145deg, #092b23, #07120f 74%); }
+.phase21-12-private-local-post-pr205-operation-continuity-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-12-private-local-post-pr205-operation-continuity-checklist-actions span { color: #bbf7d0; font-size: 13px; font-weight: 900; }
+.phase21-12-private-local-post-pr205-operation-continuity-checklist-grid article strong { color: #dcfce7; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-12-private-local-post-pr205-operation-continuity-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-12-private-local-post-pr205-operation-continuity-checklist-item { border: 1px solid rgba(52, 211, 153, 0.34); border-radius: 10px; padding: 9px 11px; color: #dcfce7; font-size: 12px; font-weight: 800; }
+.phase21-12-private-local-post-pr205-operation-continuity-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
+.phase21-12-private-local-post-pr205-operation-continuity-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase21-12-private-local-post-pr205-operation-continuity-checklist-actions { align-items: stretch; } .phase21-12-private-local-post-pr205-operation-continuity-checklist-actions button { width: 100%; } }

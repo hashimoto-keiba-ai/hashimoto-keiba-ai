@@ -1148,3 +1148,10 @@ Phase21-11 adds a PLAN_ONLY / Protected checklist for private local operation st
 Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. Public URL guidance, GitHub Pages publishing or setting changes, external API connection/submission, auto execution, automatic ready-for-review transition, auto push, auto PR creation, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required for every chain step.
 
 Added files: `phase21-11-private-local-post-pr204-operation-stability-checklist-builder.js`, `phase21-11-private-local-post-pr204-operation-stability-checklist-db.json`, `phase21-11-private-local-post-pr204-operation-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr204OperationStabilityChecklistBuilder.test.js`
+## Phase21-12 Private Local Post PR205 Operation Continuity Checklist
+
+Phase21-12 adds a PLAN_ONLY / Protected checklist for private local operation continuity after Phase21-11 Draft PR #205 has been created and remains unmerged. It preserves the Phase21-4 through Phase21-11 Draft PR chain (#198 / #199 / #200 / #201 / #202 / #203 / #204 / #205), treats the company PC clean `main` state as a manual local premise, and keeps PR creation / merge / Ready for review blocked unless explicit instructions are given.
+
+Public URLs, GitHub Pages publishing or setting changes, external API submission, public release, auto execution, auto push, auto PR creation, auto merge, direct `main` push, and Ready for review transitions remain out of scope. Private local launch remains limited to `start-local.bat`, `private-local.html`, and `index.html`.
+
+Added files: `phase21-12-private-local-post-pr205-operation-continuity-checklist-builder.js`, `phase21-12-private-local-post-pr205-operation-continuity-checklist-db.json`, `phase21-12-private-local-post-pr205-operation-continuity-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr205OperationContinuityChecklistBuilder.test.js`
