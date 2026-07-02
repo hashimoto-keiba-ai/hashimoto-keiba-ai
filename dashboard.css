@@ -1823,3 +1823,12 @@ tbody tr:last-child td {
 .phase21-10-private-local-post-pr203-operation-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
 .phase21-10-private-local-post-pr203-operation-checklist-item.status-blocked { border-color: rgba(251, 191, 36, 0.68); color: #fef3c7; }
 @media (max-width: 680px) { .phase21-10-private-local-post-pr203-operation-checklist-actions { align-items: stretch; } .phase21-10-private-local-post-pr203-operation-checklist-actions button { width: 100%; } }
+.phase21-11-private-local-post-pr204-operation-stability-checklist { border: 1px solid rgba(251, 146, 60, 0.72); background: radial-gradient(circle at 82% 0, rgba(251, 146, 60, 0.15), transparent 42%), linear-gradient(145deg, #2f1908, #100b07 74%); }
+.phase21-11-private-local-post-pr204-operation-stability-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-11-private-local-post-pr204-operation-stability-checklist-actions span { color: #fed7aa; font-size: 13px; font-weight: 900; }
+.phase21-11-private-local-post-pr204-operation-stability-checklist-grid article strong { color: #ffedd5; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-11-private-local-post-pr204-operation-stability-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-11-private-local-post-pr204-operation-stability-checklist-item { border: 1px solid rgba(251, 146, 60, 0.34); border-radius: 10px; padding: 9px 11px; color: #ffedd5; font-size: 12px; font-weight: 800; }
+.phase21-11-private-local-post-pr204-operation-stability-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
+.phase21-11-private-local-post-pr204-operation-stability-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase21-11-private-local-post-pr204-operation-stability-checklist-actions { align-items: stretch; } .phase21-11-private-local-post-pr204-operation-stability-checklist-actions button { width: 100%; } }
