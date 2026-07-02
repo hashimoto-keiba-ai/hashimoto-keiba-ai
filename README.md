@@ -1092,3 +1092,11 @@ Phase21-4 adds a PLAN_ONLY / Protected checklist for private local display confi
 The checklist records manual confirmation items for home PC / company PC / iPad launch, `private-local.html` startup, `index.html` display, dashboard route review, GitHub pull after-update verification, failure recovery, and merge-before checks. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required.
 
 Added files: `phase21-4-private-local-display-recovery-checklist-builder.js`, `phase21-4-private-local-display-recovery-checklist-db.json`, `phase21-4-private-local-display-recovery-checklist-summary-db.json`, `tests/phase21PrivateLocalDisplayRecoveryChecklistBuilder.test.js`
+
+## Phase21-5 Private Local Post PR Review Stability Checklist
+
+Phase21-5 adds a PLAN_ONLY / Protected checklist for the period after Phase21-4 Draft PR #198 is created and before any merge decision. It keeps Phase21-4 unmerged, preserves private/local-first operation, and records how review feedback, local display checks, post-pull checks, recovery holds, and merge-before checks should be handled.
+
+Home PC, company PC, and iPad confirmations remain manual review items. `private-local.html`, `index.html`, and dashboard routes remain the only display routes. Review feedback is handled only through explicit local edits and tests. GitHub Pages publishing, public URL guidance, external API connection/submission, auto execution, automatic ready-for-review transition, direct main push, and merge remain blocked. PLAN_ONLY / Protected policy remains true, unsafe flags remain 0, and draft PR review is required.
+
+Added files: `phase21-5-private-local-post-pr-review-stability-checklist-builder.js`, `phase21-5-private-local-post-pr-review-stability-checklist-db.json`, `phase21-5-private-local-post-pr-review-stability-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPrReviewStabilityChecklistBuilder.test.js`
