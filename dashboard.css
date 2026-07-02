@@ -1778,3 +1778,12 @@ tbody tr:last-child td {
 .phase21-5-private-local-post-pr-review-stability-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
 .phase21-5-private-local-post-pr-review-stability-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
 @media (max-width: 680px) { .phase21-5-private-local-post-pr-review-stability-checklist-actions { align-items: stretch; } .phase21-5-private-local-post-pr-review-stability-checklist-actions button { width: 100%; } }
+.phase21-6-private-local-draft-pr-chain-readiness-checklist { border: 1px solid rgba(167, 139, 250, 0.72); background: radial-gradient(circle at 88% 0, rgba(124, 58, 237, 0.16), transparent 44%), linear-gradient(145deg, #1d1233, #080b12 72%); }
+.phase21-6-private-local-draft-pr-chain-readiness-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-6-private-local-draft-pr-chain-readiness-checklist-actions span { color: #ddd6fe; font-size: 13px; font-weight: 900; }
+.phase21-6-private-local-draft-pr-chain-readiness-checklist-grid article strong { color: #ddd6fe; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-6-private-local-draft-pr-chain-readiness-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-6-private-local-draft-pr-chain-readiness-checklist-item { border: 1px solid rgba(167, 139, 250, 0.34); border-radius: 10px; padding: 9px 11px; color: #ede9fe; font-size: 12px; font-weight: 800; }
+.phase21-6-private-local-draft-pr-chain-readiness-checklist-item.status-manualreviewrequired { border-color: rgba(56, 189, 248, 0.62); color: #e0f2fe; }
+.phase21-6-private-local-draft-pr-chain-readiness-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase21-6-private-local-draft-pr-chain-readiness-checklist-actions { align-items: stretch; } .phase21-6-private-local-draft-pr-chain-readiness-checklist-actions button { width: 100%; } }
