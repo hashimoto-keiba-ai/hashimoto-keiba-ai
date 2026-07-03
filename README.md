@@ -1171,3 +1171,11 @@ Phase21-14 adds a PLAN_ONLY / Protected checklist for private local operation st
 The checklist stays private-local only and does not assume GitHub Pages publication, public delivery, distribution, or external exposure changes. Validation results must be saved before any draft PR creation, while Ready for review and merge remain human-confirmed only. Unsafe true flags and conflict markers remain explicitly checked.
 
 Added files: `phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-builder.js`, `phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-db.json`, `phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr207OperationStabilityContinuationChecklistBuilder.test.js`
+
+## Phase21-15 Private Local Post PR208 Operation Continuity Stabilization Checklist
+
+Phase21-15 adds a PLAN_ONLY / Protected checklist for private local operation continuity stabilization after PR #208 has been merged into `main`. It confirms that `main` is current after the PR #208 merge, local `main` / `origin/main` / `origin/HEAD` are aligned, the working tree is clean, Phase21-14 artifacts are reflected on `main`, and Phase21-11 through Phase21-14 continuity remains intact.
+
+The checklist stays private-local only and does not assume GitHub Pages publication, public delivery, distribution, or external exposure changes. Validation results must be saved before any draft PR creation, while Ready for review and merge remain human-confirmed only. Unsafe true flags and conflict markers remain explicitly checked, and completion reports must identify the working folder path when multiple work folders exist.
+
+Added files: `phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-builder.js`, `phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-db.json`, `phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr208OperationContinuityStabilizationChecklistBuilder.test.js`
