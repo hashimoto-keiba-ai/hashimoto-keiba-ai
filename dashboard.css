@@ -1859,3 +1859,12 @@ tbody tr:last-child td {
 .phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-item.status-manualreviewrequired { border-color: rgba(45, 212, 191, 0.62); color: #ccfbf1; }
 .phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
 @media (max-width: 680px) { .phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-actions { align-items: stretch; } .phase21-14-private-local-post-pr207-operation-stability-continuation-checklist-actions button { width: 100%; } }
+.phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist { border: 1px solid rgba(129, 140, 248, 0.72); background: radial-gradient(circle at 82% 0, rgba(129, 140, 248, 0.15), transparent 42%), linear-gradient(145deg, #172033, #0b111d 74%); }
+.phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-actions span { color: #e0e7ff; font-size: 13px; font-weight: 900; }
+.phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-grid article strong { color: #eef2ff; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-item { border: 1px solid rgba(129, 140, 248, 0.34); border-radius: 10px; padding: 9px 11px; color: #eef2ff; font-size: 12px; font-weight: 800; }
+.phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-item.status-manualreviewrequired { border-color: rgba(96, 165, 250, 0.62); color: #dbeafe; }
+.phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-actions { align-items: stretch; } .phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-actions button { width: 100%; } }
