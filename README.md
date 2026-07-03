@@ -1195,3 +1195,20 @@ Phase21-17 adds a PLAN_ONLY / Protected checklist for private local operation co
 The checklist stays private-local only and does not assume GitHub Pages publication, public delivery, distribution, or external exposure changes. Validation results must be saved before any draft PR creation, while Ready for review and merge remain human-confirmed only. Unsafe true flags and conflict markers remain explicitly checked.
 
 Added files: `phase21-17-private-local-post-pr210-operation-continuity-verification-continuation-checklist-builder.js`, `phase21-17-private-local-post-pr210-operation-continuity-verification-continuation-checklist-db.json`, `phase21-17-private-local-post-pr210-operation-continuity-verification-continuation-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr210OperationContinuityVerificationContinuationChecklistBuilder.test.js`
+
+## Phase21-18 Private Local Post PR211 Operation Continuity Verification Extension Checklist
+
+Phase21-18 adds a PLAN_ONLY / Protected checklist for private local operation continuity verification extension after PR #211 has been merged into `main`. It confirms that `main` is current after the PR #211 merge, local `main` / `origin/main` / `origin/HEAD` are aligned, the working tree is clean, Phase21-17 artifacts are reflected on `main`, and Phase21-14 through Phase21-17 continuity remains intact.
+
+The checklist stays private-local only and does not assume GitHub Pages publication, public delivery, distribution, or external exposure changes. Validation results must be saved before any draft PR creation, while Ready for review and merge remain human-confirmed only. Unsafe true flags and conflict markers remain explicitly checked.
+
+Validation results:
+- `node --check phase21-18-private-local-post-pr211-operation-continuity-verification-extension-checklist-builder.js`
+- `node tests/phase21PrivateLocalPostPr211OperationContinuityVerificationExtensionChecklistBuilder.test.js`
+- Phase21-15 / Phase21-16 / Phase21-17 regression tests
+- Phase21 series tests
+- `git diff --check`
+- conflict marker search
+- unsafe true flag search
+
+Added files: `phase21-18-private-local-post-pr211-operation-continuity-verification-extension-checklist-builder.js`, `phase21-18-private-local-post-pr211-operation-continuity-verification-extension-checklist-db.json`, `phase21-18-private-local-post-pr211-operation-continuity-verification-extension-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr211OperationContinuityVerificationExtensionChecklistBuilder.test.js`
