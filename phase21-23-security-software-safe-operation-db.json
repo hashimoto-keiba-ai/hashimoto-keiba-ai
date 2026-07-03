@@ -1,0 +1,77 @@
+{
+  "phase": "Phase21-23",
+  "checklistName": "Security Software Safe Operation Checklist",
+  "status": "PHASE21_23_SECURITY_SOFTWARE_SAFE_OPERATION_READY",
+  "operationMode": "private_local_only",
+  "protectedMode": true,
+  "planOnly": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "readyForReviewAllowed": false,
+  "mergeAllowed": false,
+  "blockedFilePolicy": {
+    "doNotForceAllow": true,
+    "doNotRestoreQuarantinedFiles": true,
+    "doNotRecreateDeletedDetectedFiles": true,
+    "doNotAddBatPs1CmdExe": true,
+    "manualGitPullPreferred": true,
+    "privateLocalHtmlManualOpenPreferred": true
+  },
+  "securitySoftwareTargets": [
+    "Norton",
+    "Windows Defender",
+    "company endpoint security",
+    "other security software"
+  ],
+  "safeOperationChecks": [
+    {
+      "id": "P21-23-NORTON-IDP-GENERIC",
+      "label": "If Norton reports IDP.Generic, do not force allow the detected file.",
+      "status": "BlockedFilePolicy"
+    },
+    {
+      "id": "P21-23-DEFENDER-BLOCK",
+      "label": "If Windows Defender blocks a file, stop and review before continuing private local operation.",
+      "status": "ManualReviewRequired"
+    },
+    {
+      "id": "P21-23-NO-RESTORE",
+      "label": "Do not restore or reuse files that security software quarantined or deleted.",
+      "status": "BlockedFilePolicy"
+    },
+    {
+      "id": "P21-23-NO-SCRIPT-LAUNCHERS",
+      "label": "Do not create, modify, or rely on .bat, .ps1, .cmd, or .exe launch/update files.",
+      "status": "BlockedFilePolicy"
+    },
+    {
+      "id": "P21-23-MANUAL-GIT-PULL",
+      "label": "Prefer a manual git pull from the private repository when updating.",
+      "status": "Recommended"
+    },
+    {
+      "id": "P21-23-MANUAL-PRIVATE-LOCAL",
+      "label": "Prefer manually opening private-local.html for local launch.",
+      "status": "Recommended"
+    },
+    {
+      "id": "P21-23-NO-PUBLIC-PUBLISH",
+      "label": "Do not switch to GitHub Pages or public URL operation as a workaround.",
+      "status": "BlockedFilePolicy"
+    },
+    {
+      "id": "P21-23-COMPANY-PC",
+      "label": "On company PC, follow company security policy and avoid bypassing endpoint protection.",
+      "status": "ManualReviewRequired"
+    },
+    {
+      "id": "P21-23-HOME-PC",
+      "label": "On home PC, keep private/local operation and avoid allowing unknown executable files.",
+      "status": "ManualReviewRequired"
+    }
+  ],
+  "nextRecommendedStep": "If security software blocks a file, stop, do not force allow it, use manual git pull from the private repository, and open private-local.html manually."
+}
