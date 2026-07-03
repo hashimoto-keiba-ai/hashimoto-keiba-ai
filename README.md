@@ -1247,3 +1247,11 @@ Validation results:
 - unsafe/public exposure flag search
 
 Added files: `phase21-22-private-local-post-pr215-operation-safety-verification-checklist-builder.js`, `phase21-22-private-local-post-pr215-operation-safety-verification-checklist-db.json`, `phase21-22-private-local-post-pr215-operation-safety-verification-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr215OperationSafetyVerificationChecklistBuilder.test.js`
+
+## Phase21-23 Security Software Safe Operation Checklist
+
+Phase21-23 adds a private/local safety panel for Norton, Windows Defender, and other security software detections. If Norton reports IDP.Generic or another security tool blocks a file, the operating rule is: 無理に許可しない, do not restore or reuse quarantined files, and do not recreate files that were deleted by security software.
+
+Updates should use manual `git pull` from the private repository, then manually open `private-local.html`. Do not use `.bat`, `.ps1`, `.cmd`, or `.exe` launcher/update files for this phase. The repository remains private, local first, and GitHub Pages publication is not required.
+
+Added files: `phase21-23-security-software-safe-operation-builder.js`, `phase21-23-security-software-safe-operation-db.json`, `phase21-23-security-software-safe-operation-summary-db.json`, `tests/phase21SecuritySoftwareSafeOperationBuilder.test.js`
