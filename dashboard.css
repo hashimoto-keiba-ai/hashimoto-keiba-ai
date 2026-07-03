@@ -1868,3 +1868,12 @@ tbody tr:last-child td {
 .phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-item.status-manualreviewrequired { border-color: rgba(96, 165, 250, 0.62); color: #dbeafe; }
 .phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
 @media (max-width: 680px) { .phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-actions { align-items: stretch; } .phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-actions button { width: 100%; } }
+.phase21-16-private-local-post-pr209-operation-continuity-verification-checklist { border: 1px solid rgba(16, 185, 129, 0.72); background: radial-gradient(circle at 82% 0, rgba(16, 185, 129, 0.15), transparent 42%), linear-gradient(145deg, #0c221c, #081512 74%); }
+.phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-actions span { color: #d1fae5; font-size: 13px; font-weight: 900; }
+.phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-grid article strong { color: #ecfdf5; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-item { border: 1px solid rgba(16, 185, 129, 0.34); border-radius: 10px; padding: 9px 11px; color: #ecfdf5; font-size: 12px; font-weight: 800; }
+.phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-item.status-manualreviewrequired { border-color: rgba(129, 140, 248, 0.62); color: #e0e7ff; }
+.phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-item.status-blocked { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-actions { align-items: stretch; } .phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-actions button { width: 100%; } }

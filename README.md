@@ -1179,3 +1179,11 @@ Phase21-15 adds a PLAN_ONLY / Protected checklist for private local operation co
 The checklist stays private-local only and does not assume GitHub Pages publication, public delivery, distribution, or external exposure changes. Validation results must be saved before any draft PR creation, while Ready for review and merge remain human-confirmed only. Unsafe true flags and conflict markers remain explicitly checked, and completion reports must identify the working folder path when multiple work folders exist.
 
 Added files: `phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-builder.js`, `phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-db.json`, `phase21-15-private-local-post-pr208-operation-continuity-stabilization-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr208OperationContinuityStabilizationChecklistBuilder.test.js`
+
+## Phase21-16 Private Local Post PR209 Operation Continuity Verification Checklist
+
+Phase21-16 adds a PLAN_ONLY / Protected checklist for private local operation continuity verification after PR #209 has been merged into `main`. It confirms that `main` is current after the PR #209 merge, local `main` / `origin/main` / `origin/HEAD` are aligned, the working tree is clean, Phase21-15 artifacts are reflected on `main`, and Phase21-12 through Phase21-15 continuity remains intact.
+
+The checklist stays private-local only and does not assume GitHub Pages publication, public delivery, distribution, or external exposure changes. Validation results must be saved before any draft PR creation, while Ready for review and merge remain human-confirmed only. Unsafe true flags and conflict markers remain explicitly checked.
+
+Added files: `phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-builder.js`, `phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-db.json`, `phase21-16-private-local-post-pr209-operation-continuity-verification-checklist-summary-db.json`, `tests/phase21PrivateLocalPostPr209OperationContinuityVerificationChecklistBuilder.test.js`
