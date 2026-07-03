@@ -1255,3 +1255,19 @@ Phase21-23 adds a private/local safety panel for Norton, Windows Defender, and o
 Updates should use manual `git pull` from the private repository, then manually open `private-local.html`. Do not use `.bat`, `.ps1`, `.cmd`, or `.exe` launcher/update files for this phase. The repository remains private, local first, and GitHub Pages publication is not required.
 
 Added files: `phase21-23-security-software-safe-operation-builder.js`, `phase21-23-security-software-safe-operation-db.json`, `phase21-23-security-software-safe-operation-summary-db.json`, `tests/phase21SecuritySoftwareSafeOperationBuilder.test.js`
+
+## Phase21-24 Manual Update Local Launch Operation Checklist
+
+Phase21-24 adds the standard private/local operation checklist for manual update and manual launch after a GitHub merge. The recommended PC update flow is:
+
+```bash
+git switch main
+git pull origin main
+git status
+```
+
+After the working tree is clean, launch by manually opening `private-local.html`. iPad review should use the GitHub app or browser against the private repository; GitHub Pages is not required.
+
+Do not use `.bat`, `.ps1`, `.cmd`, or `.exe` launcher/update files. Do not reuse files blocked by Norton or other security software, do not restore quarantined files, and do not force allow detections. Private repository / local first / no GitHub Pages dependency remains the operating premise.
+
+Added files: `phase21-24-manual-update-local-launch-operation-builder.js`, `phase21-24-manual-update-local-launch-operation-db.json`, `phase21-24-manual-update-local-launch-operation-summary-db.json`, `tests/phase21ManualUpdateLocalLaunchOperationBuilder.test.js`
