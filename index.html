@@ -3903,6 +3903,41 @@
         </ul>
         <p class="data-footnote">Official Release v2.8 Protected / PLAN_ONLY / Phase21-25 multi device manual operation unification / updated: <span id="phase21-25-updated">--</span></p>
       </section>
+
+      <section class="panel phase21-26-main-direct-commit-prevention" id="phase21-26-main-direct-commit-prevention" aria-label="Phase21-26 Main Direct Commit Prevention">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Phase21-26 / Branch Operation Safety</p><h2>Phase21-26 main直コミット防止・ブランチ運用確認</h2></div>
+          <span class="pill hot">FEATURE BRANCH ONLY</span>
+        </div>
+        <div class="phase21-26-main-direct-commit-prevention-actions"><button id="run-phase21-26-main-direct-commit-prevention" type="button">Phase21-26 Branch Policy Check</button><span>NO MAIN COMMIT / NO MAIN PUSH / PR FLOW</span></div>
+        <div class="phase2-kpis phase21-26-main-direct-commit-prevention-grid">
+          <article><span>Panel Status</span><strong id="phase21-26-panel-status">phase21_26_main_direct_commit_prevention_plan_only</strong></article>
+          <article><span>Status</span><strong id="phase21-26-status">PHASE21_26_MAIN_DIRECT_COMMIT_PREVENTION_READY</strong></article>
+          <article><span>Total Checks</span><strong id="phase21-26-total-checks">23</strong></article>
+          <article><span>Passed</span><strong id="phase21-26-passed">23</strong></article>
+          <article><span>Branch Policy</span><strong id="phase21-26-branch-policy">Create codex/phaseXX-* feature branches before implementation; never commit directly on main.</strong></article>
+          <article><span>Main Push Policy</span><strong id="phase21-26-main-push-policy">main direct push is prohibited; push only codex/phaseXX-* branches.</strong></article>
+          <article><span>PR Policy</span><strong id="phase21-26-pr-policy">main receives implementation through PR merge only.</strong></article>
+          <article><span>Main Ahead Policy</span><strong id="phase21-26-main-ahead-policy">if main is ahead, do not push main; create a feature branch first.</strong></article>
+          <article><span>Working Tree Clean</span><strong id="phase21-26-working-tree-clean">true</strong></article>
+          <article><span>Main Direct Commit</span><strong id="phase21-26-no-main-commit">false</strong></article>
+          <article><span>Main Direct Push</span><strong id="phase21-26-no-main-push">false</strong></article>
+          <article><span>Use bat</span><strong id="phase21-26-no-bat">false</strong></article>
+          <article><span>Use ps1</span><strong id="phase21-26-no-ps1">false</strong></article>
+          <article><span>Use cmd</span><strong id="phase21-26-no-cmd">false</strong></article>
+          <article><span>Use exe</span><strong id="phase21-26-no-exe">false</strong></article>
+          <article><span>GitHub Pages Required</span><strong id="phase21-26-no-pages">false</strong></article>
+          <article><span>Next Step</span><strong id="phase21-26-next-step">Start on main, pull origin main, confirm git status, create codex/phaseXX-* feature branch, then commit and push only that feature branch.</strong></article>
+        </div>
+        <ul class="phase21-26-main-direct-commit-prevention-list" id="phase21-26-main-direct-commit-prevention-list">
+          <li>作業前に git switch main、git pull origin main、git status を確認する。</li>
+          <li>実装前に git switch -c codex/phaseXX-description で feature branch を作る。</li>
+          <li>main に直接 commit しない。main を直接 push しない。</li>
+          <li>push は codex/phaseXX-* ブランチのみ。main へは PR 経由で取り込む。</li>
+          <li>working tree clean を確認し、.bat / ps1 / cmd / exe は使わない。</li>
+        </ul>
+        <p class="data-footnote">Official Release v2.8 Protected / PLAN_ONLY / Phase21-26 main direct commit prevention / updated: <span id="phase21-26-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -4000,6 +4035,7 @@
     <script src="phase21-23-security-software-safe-operation-builder.js"></script>
     <script src="phase21-24-manual-update-local-launch-operation-builder.js"></script>
     <script src="phase21-25-multi-device-manual-operation-unification-builder.js"></script>
+    <script src="phase21-26-main-direct-commit-prevention-builder.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
