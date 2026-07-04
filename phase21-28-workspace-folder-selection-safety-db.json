@@ -1,0 +1,70 @@
+{
+  "phase": "Phase21-28",
+  "checklistName": "Workspace Folder Selection Safety Checklist",
+  "status": "PHASE21_28_WORKSPACE_FOLDER_SELECTION_SAFETY_READY",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "workspacePolicy": "confirm the current workspace folder, branch, latest commit, and clean status before push or PR work.",
+  "refspecPolicy": "if src refspec appears, suspect the wrong workspace folder or a missing local branch before retrying push.",
+  "mainPushPolicy": "do not push main directly.",
+  "blockedScriptPolicy": {
+    "autoUpdateLauncherAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false,
+    "shortcutCreationAllowed": false,
+    "restoreQuarantinedFileAllowed": false,
+    "reuseBlockedFileAllowed": false,
+    "forceAllowSecuritySoftwareAllowed": false
+  },
+  "workspaceFolderChecks": [
+    { "id": "P21-28-PWD", "label": "Confirm the current workspace folder before push or PR work.", "command": "pwd", "status": "Required" },
+    { "id": "P21-28-BRANCH", "label": "Confirm the current branch exists in this folder.", "command": "git branch", "status": "Required" },
+    { "id": "P21-28-STATUS", "label": "Confirm working tree clean.", "command": "git status", "status": "Required" },
+    { "id": "P21-28-LOG", "label": "Confirm the latest local commit SHA.", "command": "git log --oneline -3", "status": "Required" }
+  ],
+  "multipleFolderDecisionRules": [
+    { "id": "P21-28-LATEST-WORK-FOLDER", "label": "Prefer the latest Codex work/hashimoto-keiba-ai folder that contains the target branch and commit.", "status": "Required" },
+    { "id": "P21-28-OLD-FOLDER-NO-PUSH", "label": "Do not push from an older folder unless branch, commit, and clean status are verified.", "status": "Blocked" },
+    { "id": "P21-28-NO-BRANCH-NO-PUSH", "label": "Do not push from a folder where the target branch does not exist.", "status": "Blocked" }
+  ],
+  "pushBeforeChecks": [
+    { "id": "P21-28-PUSH-FOLDER", "label": "Confirm current folder before push.", "command": "pwd", "status": "Required" },
+    { "id": "P21-28-PUSH-BRANCH", "label": "Confirm current branch before push.", "command": "git branch", "status": "Required" },
+    { "id": "P21-28-PUSH-STATUS", "label": "Confirm working tree clean before push.", "command": "git status", "status": "Required" },
+    { "id": "P21-28-PUSH-COMMIT", "label": "Confirm latest commit SHA before push.", "command": "git log --oneline -3", "status": "Required" }
+  ],
+  "srcRefspecResponse": [
+    { "id": "P21-28-REFSPEC-SUSPECT-FOLDER", "label": "If src refspec appears, suspect the wrong workspace folder first.", "status": "Required" },
+    { "id": "P21-28-REFSPEC-CHECK-BRANCH", "label": "Check whether the target branch exists in the current folder.", "command": "git branch", "status": "Required" },
+    { "id": "P21-28-REFSPEC-MOVE-LATEST", "label": "Move to the latest Codex work/hashimoto-keiba-ai folder that contains the commit.", "status": "Required" },
+    { "id": "P21-28-REFSPEC-NO-MAIN-PUSH", "label": "Do not solve refspec errors by pushing main.", "status": "Blocked" }
+  ],
+  "correctCommitChecks": [
+    { "id": "P21-28-COMMIT-SHA", "label": "Confirm the expected commit SHA before push.", "command": "git log --oneline -3", "status": "Required" },
+    { "id": "P21-28-COMMIT-BRANCH", "label": "Confirm the commit is on the intended feature branch.", "command": "git branch", "status": "Required" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-28-NO-OLD-FOLDER-PUSH", "label": "Do not push blindly from an old Codex folder.", "status": "Blocked" },
+    { "id": "P21-28-NO-MAIN-PUSH", "label": "Do not push main directly.", "status": "Blocked" },
+    { "id": "P21-28-NO-MAIN-COMMIT", "label": "Do not commit directly to main.", "status": "Blocked" },
+    { "id": "P21-28-NO-BAT", "label": "Do not use .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-28-NO-PS1", "label": "Do not use .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-28-NO-CMD", "label": "Do not use .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-28-NO-EXE", "label": "Do not use .exe files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-28-NO-PAGES", "label": "Do not make GitHub Pages required.", "status": "PrivateLocalPolicy" }
+  ],
+  "operationPrinciples": [
+    "Multiple hashimoto-keiba-ai folders may exist, so folder confirmation is required before push or PR work.",
+    "src refspec errors often indicate that the target branch does not exist in the current folder.",
+    "Use the latest Codex work/hashimoto-keiba-ai folder that contains the intended branch and commit.",
+    "Private repository, local first, and no GitHub Pages dependency remain the operating premise."
+  ],
+  "nextRecommendedStep": "Before push, confirm pwd, git branch, git status, git log --oneline -3, and the expected commit SHA in the latest work/hashimoto-keiba-ai folder."
+}

@@ -1,0 +1,23 @@
+{
+  "phase": "Phase21-28",
+  "status": "PHASE21_28_WORKSPACE_FOLDER_SELECTION_SAFETY_READY",
+  "totalChecks": 25,
+  "passed": 25,
+  "workspacePolicy": "confirm pwd, git branch, git status, git log --oneline -3, and expected commit SHA before push.",
+  "refspecPolicy": "src refspec errors require folder and branch verification before retrying push.",
+  "mainPushPolicy": "main direct push is prohibited.",
+  "blockedScriptPolicy": {
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false,
+    "autoUpdateLauncherAllowed": false,
+    "forceAllowSecuritySoftwareAllowed": false
+  },
+  "workingTreeCleanRequired": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "dangerousLauncherExtensionsAdded": false,
+  "nextRecommendedStep": "Before push or PR work, move to the latest Codex work/hashimoto-keiba-ai folder and confirm pwd, branch, clean status, and latest commit SHA."
+}
