@@ -1,0 +1,42 @@
+{
+  "phase": "Phase21-29",
+  "checklistName": "Draft PR Creation Safety Checklist",
+  "status": "PHASE21_29_DRAFT_PR_CREATION_SAFETY_READY",
+  "totalChecks": 20,
+  "passed": 20,
+  "operationMode": "private_local_only",
+  "draftPrRequired": true,
+  "workingTreeCleanRequired": true,
+  "pushedBranchRequired": true,
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "dangerousLauncherExtensionsAdded": false,
+  "draftPrPolicy": "Draft PR only after pwd, git branch, git status, git log --oneline -3, and origin push are confirmed.",
+  "prHoldPolicy": "Draft PR must remain draft; Ready for review and merge are not performed in this phase.",
+  "branchPolicy": "base main / head feature branch / no main direct push / no main direct commit.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "readyForReviewAllowed": false,
+    "mergeAllowed": false,
+    "autoMergeAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "recommendedManualCommands": [
+    "pwd",
+    "git branch",
+    "git status",
+    "git log --oneline -3",
+    "git push -u origin codex/phase21-29-draft-pr-creation-safety-checklist"
+  ],
+  "nextRecommendedStep": "Create Draft PR, then stop before Ready for review or merge and report PR number, branch, commit SHA, and safety status."
+}
