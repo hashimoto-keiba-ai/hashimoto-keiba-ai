@@ -18,7 +18,7 @@
   "publicDeliveryAllowed": false,
   "externalApiAllowed": false,
   "dangerousLauncherExtensionsAdded": false,
-  "mainSyncPolicy": "Sync main after PR 228.",
+  "mainSyncPolicy": "Sync main after PR #228.",
   "phasePresencePolicy": "Check Phase21-34 files.",
   "draftPrPolicy": "Use Draft PR first.",
   "blockedActionPolicy": {
@@ -41,5 +41,5 @@
     "git log --oneline -3",
     "dir phase21-34-*"
   ],
-  "nextRecommendedStep": "Sync main, verify clean status and Phase21-34 files, then continue with Draft PR flow."
+  "nextRecommendedStep": "Confirm PR #228 merge, sync main, verify clean status and Phase21-34 files, then continue with Draft PR flow."
 }

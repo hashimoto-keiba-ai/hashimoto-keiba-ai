@@ -1420,3 +1420,50 @@ push 前の推奨確認:
 - セキュリティソフトで強制許可しない。
 
 Added files: `phase21-28-workspace-folder-selection-safety-builder.js`, `phase21-28-workspace-folder-selection-safety-db.json`, `phase21-28-workspace-folder-selection-safety-summary-db.json`, `tests/phase21WorkspaceFolderSelectionSafetyBuilder.test.js`
+
+## Phase21-36 Private Local Operation Hardening Checklist
+
+Phase21-36 adds Private Local Operation Hardening after Phase21-35 / PR #228 reflected main. The goal is to keep `private-local.html`, `index.html`, local browser display, and private repository operation stable for home PC, company PC, and iPad without changing the racing AI UI or existing DB references.
+
+Operation policy:
+
+- Private Local first.
+- GitHub Pages not required.
+- Repository remains private.
+- PLAN_ONLY / Protected / Private Local remains the policy.
+- Manual confirmation required.
+- Local files and browser display confirmation are required.
+- Desktop shortcut operation remains optional.
+- iPad is view/confirm only.
+- PowerShell operation remains manual.
+
+Blocked automation:
+
+- No automatic remote publish.
+- No automatic merge.
+- No hidden background update.
+- No suspicious auto-run script.
+- No public delivery or external sending.
+- No launcher-type file changes.
+
+PR / merge policy:
+
+- PR remains Draft until confirmed.
+- Ready for review is not automatic.
+- Merge only after user confirmation.
+
+Security software policy:
+
+- Norton / security software friendly operation is required.
+- `.bat` / `.ps1` / `.cmd` / `.exe` files are not created or modified.
+- Automatic update and automatic execution scripts are not added.
+
+Verification results:
+
+- JSON syntax confirmation required for the Phase21-36 DB files.
+- Builder syntax confirmation required for `phase21-36-private-local-operation-hardening-builder.js`.
+- Phase21-36 test required: `tests/phase21PrivateLocalOperationHardeningBuilder.test.js`.
+- Existing Phase21 related tests should remain unaffected.
+- Conflict markers, automatic publish, external sending, and public operation additions must remain absent.
+
+Added files: `phase21-36-private-local-operation-hardening-builder.js`, `phase21-36-private-local-operation-hardening-db.json`, `phase21-36-private-local-operation-hardening-summary-db.json`, `tests/phase21PrivateLocalOperationHardeningBuilder.test.js`

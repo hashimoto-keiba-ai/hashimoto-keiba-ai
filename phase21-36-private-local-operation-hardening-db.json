@@ -1,0 +1,84 @@
+{
+  "phase": "Phase21-36",
+  "checklistName": "Private Local Operation Hardening Checklist",
+  "status": "PHASE21_36_PRIVATE_LOCAL_OPERATION_HARDENING_READY",
+  "baseline": "Phase21-35 / PR #228 reflected main",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "automaticRemotePublishAllowed": false,
+  "automaticMergeAllowed": false,
+  "hiddenBackgroundUpdateAllowed": false,
+  "suspiciousAutoRunScriptAllowed": false,
+  "planOnly": true,
+  "protected": true,
+  "desktopShortcutOptional": true,
+  "ipadViewConfirmOnly": true,
+  "powerShellManualOnly": true,
+  "draftPrUntilConfirmed": true,
+  "mergeAfterUserConfirmationOnly": true,
+  "localFilesAndBrowserConfirmationRequired": true,
+  "operationPolicy": "Private Local first; private-local.html, index.html, and local browser confirmation remain the operating basis.",
+  "securitySoftwarePolicy": "Norton and security-software friendly operation; no hidden updater, auto-run launcher, or suspicious background execution.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "automaticRemotePublishAllowed": false,
+    "automaticMergeAllowed": false,
+    "hiddenBackgroundUpdateAllowed": false,
+    "suspiciousAutoRunScriptAllowed": false,
+    "launcherFileChangeAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "privateLocalHardeningChecks": [
+    { "id": "P21-36-BASELINE", "label": "Confirm baseline is Phase21-35 / PR #228 reflected main.", "command": "git log --oneline -5", "status": "Required" },
+    { "id": "P21-36-PRIVATE-FIRST", "label": "Private Local first remains the primary operation mode.", "status": "Required" },
+    { "id": "P21-36-NO-PAGES", "label": "GitHub Pages is not required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-36-PRIVATE-REPO", "label": "Repository remains private.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-36-MANUAL-CONFIRM", "label": "Manual confirmation is required before publication, merge, or operation changes.", "status": "Required" },
+    { "id": "P21-36-LOCAL-FILES", "label": "private-local.html and index.html browser display confirmation are required.", "command": "manual browser confirmation", "status": "Required" }
+  ],
+  "blockedAutomationChecks": [
+    { "id": "P21-36-NO-REMOTE-PUBLISH", "label": "No automatic remote publish is added.", "status": "Blocked" },
+    { "id": "P21-36-NO-AUTO-MERGE", "label": "No automatic merge is added.", "status": "Blocked" },
+    { "id": "P21-36-NO-HIDDEN-UPDATE", "label": "No hidden background update is added.", "status": "Blocked" },
+    { "id": "P21-36-NO-AUTORUN", "label": "No suspicious auto-run script is added.", "status": "Blocked" },
+    { "id": "P21-36-NO-LAUNCHER-CHANGE", "label": "No launcher-type file changes are added.", "status": "BlockedScriptPolicy" }
+  ],
+  "deviceOperationChecks": [
+    { "id": "P21-36-HOME-PC", "label": "Home PC confirms local files and browser display manually.", "status": "Required" },
+    { "id": "P21-36-COMPANY-PC", "label": "Company PC follows feature branch, Draft PR, and manual confirmation flow.", "status": "Required" },
+    { "id": "P21-36-IPAD", "label": "iPad remains view/confirm only.", "status": "Required" },
+    { "id": "P21-36-SHORTCUT-OPTIONAL", "label": "Desktop shortcut operation remains optional.", "status": "Optional" },
+    { "id": "P21-36-POWERSHELL-MANUAL", "label": "PowerShell operation remains manual only.", "status": "Required" }
+  ],
+  "prAndMergeChecks": [
+    { "id": "P21-36-DRAFT-PR", "label": "PR remains Draft until confirmed.", "status": "Required" },
+    { "id": "P21-36-MERGE-CONFIRM", "label": "Merge only after user confirmation.", "status": "Required" },
+    { "id": "P21-36-NO-READY-AUTO", "label": "Ready for review is not automatic.", "status": "Blocked" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-36-NO-BAT", "label": "Do not create or modify .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-36-NO-PS1", "label": "Do not create or modify .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-36-NO-CMD", "label": "Do not create or modify .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-36-NO-EXE", "label": "Do not create or modify .exe files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-36-NO-PUBLIC", "label": "No public delivery or external sending is added.", "status": "PrivateLocalPolicy" }
+  ],
+  "operationPrinciples": [
+    "PLAN_ONLY / Protected / Private Local operation remains unchanged.",
+    "private-local.html and index.html remain the manual local entry points.",
+    "Existing racing AI UI and DB references must not be changed by this checklist.",
+    "Norton-friendly operation avoids auto-update, auto-run, and suspicious background execution."
+  ],
+  "nextRecommendedStep": "Confirm local files and browser display manually on home PC, company PC, and iPad without adding public delivery, auto-merge, hidden updater, or launcher changes."
+}

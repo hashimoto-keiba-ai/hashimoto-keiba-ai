@@ -1,0 +1,27 @@
+{
+  "phase": "Phase21-36",
+  "status": "PHASE21_36_PRIVATE_LOCAL_OPERATION_HARDENING_READY",
+  "baseline": "Phase21-35 / PR #228 reflected main",
+  "totalChecks": 23,
+  "passed": 23,
+  "operationPolicy": "Private Local first; private repository, private-local.html, index.html, and manual local browser confirmation remain required.",
+  "securitySoftwarePolicy": "Norton-friendly operation with no auto-run, hidden updater, or suspicious background execution.",
+  "devicePolicy": "home PC and company PC confirm local files manually; iPad is view/confirm only.",
+  "prMergePolicy": "Draft PR until confirmed; merge only after user confirmation.",
+  "blockedActionPolicy": {
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false,
+    "automaticRemotePublishAllowed": false,
+    "automaticMergeAllowed": false,
+    "hiddenBackgroundUpdateAllowed": false,
+    "suspiciousAutoRunScriptAllowed": false,
+    "githubPagesRequired": false
+  },
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "dangerousLauncherExtensionsAdded": false,
+  "nextRecommendedStep": "Keep Phase21-36 as PLAN_ONLY / Protected / Private Local hardening and confirm private-local.html plus index.html manually on each device."
+}
