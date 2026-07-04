@@ -1380,3 +1380,43 @@ Local feature branches that remain after merge are not an immediate problem. Pri
 - セキュリティソフトで強制許可しない。
 
 Added files: `phase21-27-post-merge-local-branch-cleanup-safety-builder.js`, `phase21-27-post-merge-local-branch-cleanup-safety-db.json`, `phase21-27-post-merge-local-branch-cleanup-safety-summary-db.json`, `tests/phase21PostMergeLocalBranchCleanupSafetyBuilder.test.js`
+
+## Phase21-28 Workspace Folder Selection Safety Checklist
+
+Phase21-28 adds the 作業フォルダ混在防止・正しいフォルダ確認 checklist. When multiple `hashimoto-keiba-ai` folders exist, do not push, create PRs, or run Git operations from an old folder until the current folder, branch, latest commit SHA, and clean status are confirmed. Private repository / local first / GitHub Pages 不要 remains the operating premise.
+
+複数作業フォルダがある場合の安全確認手順:
+
+```bash
+pwd
+git branch
+git status
+git log --oneline -3
+```
+
+push 前の推奨確認:
+
+- 現在フォルダ
+- 現在ブランチ
+- 最新 commit SHA
+- working tree clean
+
+`src refspec` エラー時の対応:
+
+- ブランチが存在しないフォルダで push していないか確認する。
+- 最新の Codex `work/hashimoto-keiba-ai` に移動する。
+- `git branch` で対象ブランチがあるか確認する。
+- `git log --oneline -3` で正しい commit SHA があるか確認する。
+- refspec エラーを main push で解決しようとしない。
+
+禁止事項:
+
+- 古いフォルダで無理に push しない。
+- main を直接 push しない。
+- main に直接 commit しない。
+- `.bat` / `.ps1` / `.cmd` / `.exe` は使わない。
+- Norton にブロックされたファイルは再利用しない。
+- 隔離ファイルを戻さない。
+- セキュリティソフトで強制許可しない。
+
+Added files: `phase21-28-workspace-folder-selection-safety-builder.js`, `phase21-28-workspace-folder-selection-safety-db.json`, `phase21-28-workspace-folder-selection-safety-summary-db.json`, `tests/phase21WorkspaceFolderSelectionSafetyBuilder.test.js`
