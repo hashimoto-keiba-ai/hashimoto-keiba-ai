@@ -1271,3 +1271,41 @@ After the working tree is clean, launch by manually opening `private-local.html`
 Do not use `.bat`, `.ps1`, `.cmd`, or `.exe` launcher/update files. Do not reuse files blocked by Norton or other security software, do not restore quarantined files, and do not force allow detections. Private repository / local first / no GitHub Pages dependency remains the operating premise.
 
 Added files: `phase21-24-manual-update-local-launch-operation-builder.js`, `phase21-24-manual-update-local-launch-operation-db.json`, `phase21-24-manual-update-local-launch-operation-summary-db.json`, `tests/phase21ManualUpdateLocalLaunchOperationBuilder.test.js`
+
+## Phase21-25 Multi Device Manual Operation Unification Checklist
+
+Phase21-25 adds the company PC / home PC / iPad unified manual operation checklist. The goal is to confirm and update Hashimoto Keiba AI from any device with the same safety rules while keeping Private repository / local first / GitHub Pages 不要.
+
+Device roles:
+
+- 会社PC: implementation, commit, push, and PR creation center.
+- 自宅PC: after merge, manually update `main` and confirm the local dashboard.
+- iPad: browsing confirmation through the GitHub app or browser.
+
+会社PC作業開始時の確認手順:
+
+```bash
+git switch main
+git pull origin main
+git status
+```
+
+merge 後の自宅PC更新手順:
+
+```bash
+git switch main
+git pull origin main
+git status
+```
+
+After `git status` confirms a clean working tree, launch by manually opening `private-local.html`. iPad confirmation remains browsing-focused; it does not require local launchers or GitHub Pages.
+
+禁止事項:
+
+- `.bat` / `.ps1` / `.cmd` / `.exe` は使わない。
+- Norton にブロックされたファイルは再利用しない。
+- 隔離ファイルを戻さない。
+- セキュリティソフトで強制許可しない。
+- 自動更新 launcher は使わない。
+
+Added files: `phase21-25-multi-device-manual-operation-unification-builder.js`, `phase21-25-multi-device-manual-operation-unification-db.json`, `phase21-25-multi-device-manual-operation-unification-summary-db.json`, `tests/phase21MultiDeviceManualOperationUnificationBuilder.test.js`

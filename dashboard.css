@@ -1931,3 +1931,12 @@ tbody tr:last-child td {
 .phase21-24-manual-update-local-launch-operation-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
 .phase21-24-manual-update-local-launch-operation-item.status-recommended { border-color: rgba(45, 212, 191, 0.62); color: #ccfbf1; }
 @media (max-width: 680px) { .phase21-24-manual-update-local-launch-operation-actions { align-items: stretch; } .phase21-24-manual-update-local-launch-operation-actions button { width: 100%; } }
+.phase21-25-multi-device-manual-operation-unification { border: 1px solid rgba(45, 212, 191, 0.72); background: radial-gradient(circle at 82% 0, rgba(45, 212, 191, 0.13), transparent 42%), linear-gradient(145deg, #082927, #061615 74%); }
+.phase21-25-multi-device-manual-operation-unification-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-25-multi-device-manual-operation-unification-actions span { color: #ccfbf1; font-size: 13px; font-weight: 900; }
+.phase21-25-multi-device-manual-operation-unification-grid article strong { color: #f0fdfa; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-25-multi-device-manual-operation-unification-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-25-multi-device-manual-operation-unification-item, .phase21-25-multi-device-manual-operation-unification-list li { border: 1px solid rgba(45, 212, 191, 0.34); border-radius: 10px; padding: 9px 11px; color: #f0fdfa; font-size: 12px; font-weight: 800; }
+.phase21-25-multi-device-manual-operation-unification-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
+.phase21-25-multi-device-manual-operation-unification-item.status-recommended, .phase21-25-multi-device-manual-operation-unification-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
+@media (max-width: 680px) { .phase21-25-multi-device-manual-operation-unification-actions { align-items: stretch; } .phase21-25-multi-device-manual-operation-unification-actions button { width: 100%; } }

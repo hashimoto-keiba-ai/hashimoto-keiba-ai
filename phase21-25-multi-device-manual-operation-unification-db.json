@@ -1,0 +1,103 @@
+{
+  "phase": "Phase21-25",
+  "checklistName": "Multi Device Manual Operation Unification Checklist",
+  "status": "PHASE21_25_MULTI_DEVICE_MANUAL_OPERATION_UNIFICATION_READY",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "launchPolicy": "manual private-local.html open",
+  "updatePolicy": "manual git pull from private repository",
+  "blockedScriptPolicy": {
+    "autoUpdateLauncherAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false,
+    "shortcutCreationAllowed": false,
+    "restoreQuarantinedFileAllowed": false,
+    "reuseBlockedFileAllowed": false,
+    "forceAllowSecuritySoftwareAllowed": false
+  },
+  "devices": [
+    {
+      "id": "company-pc",
+      "name": "Company PC",
+      "role": "Implementation, commit, push, and PR creation center",
+      "primaryActions": [
+        "Start work from main with git switch main",
+        "Update with git pull origin main before implementation",
+        "Confirm git status before work and before handoff",
+        "Implement, test, commit, then push only when the owner decides"
+      ],
+      "checks": [
+        "Working tree clean before starting",
+        "No .bat/.ps1/.cmd/.exe launch or update files added",
+        "private-local.html remains the manual launch entry",
+        "Private repository and local-first operation remain unchanged"
+      ]
+    },
+    {
+      "id": "home-pc",
+      "name": "Home PC",
+      "role": "Manual confirmation after merge",
+      "primaryActions": [
+        "Run git switch main after merge",
+        "Run git pull origin main manually",
+        "Run git status and confirm working tree clean",
+        "Open private-local.html manually"
+      ],
+      "checks": [
+        "Merged main is reflected locally",
+        "No automatic updater or launcher is used",
+        "Dashboard Phase21-25 panel is visible",
+        "Norton or security software detections are not force allowed"
+      ]
+    },
+    {
+      "id": "ipad",
+      "name": "iPad",
+      "role": "Private repository browsing and visual confirmation",
+      "primaryActions": [
+        "Use the GitHub app or browser to view the private repository",
+        "Confirm README and index.html changes from the private repository",
+        "Use iPad for browsing confirmation, not local script execution"
+      ],
+      "checks": [
+        "GitHub Pages is not required",
+        "No launcher or executable operation is needed",
+        "Private repository access remains the review path"
+      ]
+    }
+  ],
+  "postMergeUpdateSteps": [
+    { "id": "P21-25-HOME-SWITCH-MAIN", "label": "On Home PC, switch to main after merge.", "command": "git switch main", "status": "Required" },
+    { "id": "P21-25-HOME-PULL-MAIN", "label": "Pull the merged private repository main branch.", "command": "git pull origin main", "status": "Required" },
+    { "id": "P21-25-HOME-STATUS", "label": "Confirm working tree clean.", "command": "git status", "status": "Required" },
+    { "id": "P21-25-HOME-OPEN-LOCAL", "label": "Open private-local.html manually.", "command": "manual private-local.html open", "status": "Required" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-25-NO-BAT", "label": "Do not use .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-25-NO-PS1", "label": "Do not use .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-25-NO-CMD", "label": "Do not use .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-25-NO-EXE", "label": "Do not use .exe files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-25-NO-AUTO-LAUNCHER", "label": "Do not use automatic update launchers.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-25-NO-PAGES", "label": "Do not make GitHub Pages required.", "status": "PrivateLocalPolicy" }
+  ],
+  "securitySoftwareResponse": [
+    { "id": "P21-25-NORTON-NO-FORCE", "label": "If Norton blocks a file, do not force allow it.", "status": "Required" },
+    { "id": "P21-25-NO-REUSE-BLOCKED", "label": "Do not reuse files blocked by Norton or other security software.", "status": "Required" },
+    { "id": "P21-25-NO-RESTORE", "label": "Do not restore quarantined files.", "status": "Required" },
+    { "id": "P21-25-NO-SECURITY-OVERRIDE", "label": "Do not override security software to continue operation.", "status": "Required" }
+  ],
+  "operationPrinciples": [
+    "Company PC is the center for implementation, commit, push, and PR creation.",
+    "Home PC confirms merged main by manual git pull and manual private-local.html launch.",
+    "iPad confirms the private repository through the GitHub app or browser.",
+    "Private repository, local first, and no GitHub Pages dependency remain the operating premise."
+  ],
+  "nextRecommendedStep": "Use Company PC for implementation workflow, Home PC for post-merge git pull confirmation, and iPad for private repository browsing confirmation."
+}
