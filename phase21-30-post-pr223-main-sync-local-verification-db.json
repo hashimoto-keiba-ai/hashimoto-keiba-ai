@@ -1,0 +1,68 @@
+{
+  "phase": "Phase21-30",
+  "checklistName": "Post PR223 Main Sync Local Verification Checklist",
+  "status": "PHASE21_30_POST_PR223_MAIN_SYNC_LOCAL_VERIFICATION_READY",
+  "postPrNumber": 223,
+  "expectedMergeCommit": "584efb59396e7dc075febc5bb0e47d1605082613",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "mainSyncPolicy": "after PR #223 merge, switch to main, pull origin main, and confirm clean status before starting the next phase.",
+  "localVerificationPolicy": "open private-local.html manually and confirm local-only operation remains stable after main sync.",
+  "nextPhaseGatePolicy": "do not begin the next implementation phase until main sync, clean status, latest log, and local visual confirmation are complete.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "readyForReviewAllowed": false,
+    "mergeAllowed": false,
+    "autoMergeAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "mainSyncChecks": [
+    { "id": "P21-30-SWITCH-MAIN", "label": "Switch local repository to main after PR #223 merge.", "command": "git switch main", "status": "Required" },
+    { "id": "P21-30-PULL-MAIN", "label": "Pull latest origin/main after PR #223 merge.", "command": "git pull origin main", "status": "Required" },
+    { "id": "P21-30-STATUS-CLEAN", "label": "Confirm local main is up to date and working tree is clean.", "command": "git status", "status": "Required" },
+    { "id": "P21-30-LOG-MERGE", "label": "Confirm recent log includes PR #223 merge commit or Phase21-29 files.", "command": "git log --oneline -3", "status": "Required" }
+  ],
+  "localVerificationChecks": [
+    { "id": "P21-30-OPEN-PRIVATE", "label": "Open private-local.html manually for local visual confirmation.", "command": "start .\\private-local.html", "status": "Manual" },
+    { "id": "P21-30-NO-AUTO-LAUNCHER", "label": "Do not create auto update launchers for the local confirmation.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-30-NO-PAGES", "label": "Do not require GitHub Pages for display confirmation.", "status": "PrivateLocalPolicy" }
+  ],
+  "phase2129PresenceChecks": [
+    { "id": "P21-30-P21-29-BUILDER", "label": "Confirm Phase21-29 builder exists on main.", "command": "dir phase21-29-draft-pr-creation-safety-builder.js", "status": "Required" },
+    { "id": "P21-30-P21-29-DB", "label": "Confirm Phase21-29 DB exists on main.", "command": "dir phase21-29-draft-pr-creation-safety-db.json", "status": "Required" },
+    { "id": "P21-30-P21-29-SUMMARY", "label": "Confirm Phase21-29 summary DB exists on main.", "command": "dir phase21-29-draft-pr-creation-safety-summary-db.json", "status": "Required" },
+    { "id": "P21-30-P21-29-TEST", "label": "Confirm Phase21-29 test exists on main.", "command": "dir tests\\phase21DraftPrCreationSafetyBuilder.test.js", "status": "Required" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-30-NO-MAIN-PUSH", "label": "Do not push main directly after pull confirmation.", "status": "Blocked" },
+    { "id": "P21-30-NO-MAIN-COMMIT", "label": "Do not commit directly to main.", "status": "Blocked" },
+    { "id": "P21-30-NO-FORCE-PUSH", "label": "Do not force push or reset main to solve confusion.", "status": "Blocked" },
+    { "id": "P21-30-NO-BAT", "label": "Do not create or modify .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-30-NO-PS1", "label": "Do not create or modify .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-30-NO-CMD", "label": "Do not create or modify .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-30-NO-EXE", "label": "Do not create or modify .exe files.", "status": "BlockedScriptPolicy" }
+  ],
+  "privateLocalRules": [
+    { "id": "P21-30-PRIVATE-LOCAL", "label": "Private repository and local-first operation remain required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-30-NO-PUBLIC", "label": "No public release or external delivery is included.", "status": "PrivateLocalPolicy" }
+  ],
+  "operationPrinciples": [
+    "Post-merge confirmation is performed on main after pull.",
+    "Phase21-29 files must exist on main before starting the next phase.",
+    "private-local.html is opened manually; no launcher script is added.",
+    "Main direct push, main direct commit, force push, and public delivery remain blocked."
+  ],
+  "nextRecommendedStep": "After confirming main is updated and clean, open private-local.html manually, then proceed only if display is stable."
+}
