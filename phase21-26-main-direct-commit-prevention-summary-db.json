@@ -1,0 +1,24 @@
+{
+  "phase": "Phase21-26",
+  "status": "PHASE21_26_MAIN_DIRECT_COMMIT_PREVENTION_READY",
+  "totalChecks": 23,
+  "passed": 23,
+  "branchPolicy": "Create codex/phaseXX-* feature branches before implementation; never commit directly on main.",
+  "mainPushPolicy": "main direct push is prohibited; push only codex/phaseXX-* branches.",
+  "prPolicy": "main receives implementation through PR merge only.",
+  "mainAheadPolicy": "if main is ahead, do not push main; create a feature branch from the current commit and push that branch.",
+  "blockedScriptPolicy": {
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false,
+    "autoUpdateLauncherAllowed": false,
+    "forceAllowSecuritySoftwareAllowed": false
+  },
+  "workingTreeCleanRequired": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "dangerousLauncherExtensionsAdded": false,
+  "nextRecommendedStep": "Start on main, pull origin main, confirm git status, create codex/phaseXX-* feature branch, then commit and push only that feature branch."
+}

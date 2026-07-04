@@ -1,0 +1,82 @@
+{
+  "phase": "Phase21-26",
+  "checklistName": "Main Direct Commit Prevention Checklist",
+  "status": "PHASE21_26_MAIN_DIRECT_COMMIT_PREVENTION_READY",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "branchPolicy": "main is stable; all implementation commits must be made on codex/phaseXX-* feature branches.",
+  "mainPushPolicy": "direct push to main is prohibited; push only codex/phaseXX-* branches.",
+  "prPolicy": "merge to main only through PR review and merge flow.",
+  "postMergePolicy": "after merge, update each PC manually with git pull origin main.",
+  "blockedScriptPolicy": {
+    "autoUpdateLauncherAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false,
+    "shortcutCreationAllowed": false,
+    "restoreQuarantinedFileAllowed": false,
+    "reuseBlockedFileAllowed": false,
+    "forceAllowSecuritySoftwareAllowed": false
+  },
+  "workStartChecks": [
+    { "id": "P21-26-START-SWITCH-MAIN", "label": "Switch to stable main before starting work.", "command": "git switch main", "status": "Required" },
+    { "id": "P21-26-START-PULL-MAIN", "label": "Update main from the private repository before implementation.", "command": "git pull origin main", "status": "Required" },
+    { "id": "P21-26-START-STATUS", "label": "Confirm working tree clean before creating a feature branch.", "command": "git status", "status": "Required" },
+    { "id": "P21-26-START-BRANCH", "label": "Create a feature branch before editing or committing.", "command": "git switch -c codex/phaseXX-description", "status": "Required" }
+  ],
+  "mainRefreshSteps": [
+    "git switch main",
+    "git pull origin main",
+    "git status"
+  ],
+  "featureBranchSteps": [
+    "git switch -c codex/phaseXX-description",
+    "confirm the current branch is not main",
+    "commit only after branch confirmation"
+  ],
+  "commitBeforeChecks": [
+    { "id": "P21-26-COMMIT-BRANCH", "label": "Run git branch and confirm the current branch is codex/phaseXX-*.", "command": "git branch", "status": "Required" },
+    { "id": "P21-26-COMMIT-STATUS", "label": "Run git status and confirm intended files only.", "command": "git status", "status": "Required" },
+    { "id": "P21-26-COMMIT-NO-MAIN", "label": "Do not commit directly on main.", "command": "blocked", "status": "MainBlocked" }
+  ],
+  "pushBeforeChecks": [
+    { "id": "P21-26-PUSH-BRANCH", "label": "Run git branch before push and confirm feature branch.", "command": "git branch", "status": "Required" },
+    { "id": "P21-26-PUSH-STATUS", "label": "Run git status before push.", "command": "git status", "status": "Required" },
+    { "id": "P21-26-PUSH-LOG", "label": "Review the last commits before push.", "command": "git log --oneline -3", "status": "Required" },
+    { "id": "P21-26-PUSH-FEATURE-ONLY", "label": "Push only codex/phaseXX-* branches.", "command": "git push origin codex/phaseXX-description", "status": "Required" },
+    { "id": "P21-26-NO-MAIN-PUSH", "label": "Do not push main directly.", "command": "blocked", "status": "MainBlocked" }
+  ],
+  "prBeforeChecks": [
+    { "id": "P21-26-PR-FEATURE-BRANCH", "label": "Create PR from feature branch to main only after validation.", "status": "Required" },
+    { "id": "P21-26-PR-NO-READY-AUTO", "label": "Do not mark Ready for review automatically.", "status": "Required" },
+    { "id": "P21-26-PR-MERGE-ONLY", "label": "main receives changes through PR merge, not direct local commit.", "status": "Required" }
+  ],
+  "mainDirectCommitResponse": [
+    { "id": "P21-26-MAIN-AHEAD-STOP", "label": "If main shows ahead, stop before pushing.", "status": "Required" },
+    { "id": "P21-26-MAIN-AHEAD-BRANCH", "label": "Create a feature branch from the current commit before any push.", "command": "git switch -c codex/phaseXX-description", "status": "Required" },
+    { "id": "P21-26-MAIN-AHEAD-PUSH-FEATURE", "label": "Push the feature branch only; do not push main.", "status": "Required" },
+    { "id": "P21-26-MAIN-AHEAD-PR", "label": "Use PR flow to integrate into main.", "status": "Required" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-26-NO-MAIN-COMMIT", "label": "Do not commit directly to main.", "status": "MainBlocked" },
+    { "id": "P21-26-NO-MAIN-PUSH", "label": "Do not push main directly.", "status": "MainBlocked" },
+    { "id": "P21-26-NO-BAT", "label": "Do not use .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-26-NO-PS1", "label": "Do not use .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-26-NO-CMD", "label": "Do not use .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-26-NO-EXE", "label": "Do not use .exe files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-26-NO-PAGES", "label": "Do not make GitHub Pages required.", "status": "PrivateLocalPolicy" }
+  ],
+  "operationPrinciples": [
+    "main is always treated as the merged stable state.",
+    "All implementation work starts from updated main and moves to a feature branch before editing.",
+    "Push is limited to codex/phaseXX-* feature branches.",
+    "Private repository, local first, and no GitHub Pages dependency remain the operating premise."
+  ],
+  "nextRecommendedStep": "Before any future implementation, run git switch main, git pull origin main, git status, then git switch -c codex/phaseXX-description and commit only on that feature branch."
+}

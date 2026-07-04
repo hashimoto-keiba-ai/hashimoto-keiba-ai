@@ -1309,3 +1309,39 @@ After `git status` confirms a clean working tree, launch by manually opening `pr
 - 自動更新 launcher は使わない。
 
 Added files: `phase21-25-multi-device-manual-operation-unification-builder.js`, `phase21-25-multi-device-manual-operation-unification-db.json`, `phase21-25-multi-device-manual-operation-unification-summary-db.json`, `tests/phase21MultiDeviceManualOperationUnificationBuilder.test.js`
+
+## Phase21-26 Main Direct Commit Prevention Checklist
+
+Phase21-26 adds the main直コミット防止・ブランチ運用安全確認 checklist. `main` is treated as the merged stable branch, implementation must happen on a feature branch, and main is updated only through PR merge. Private repository / local first / GitHub Pages 不要 remains the operating premise.
+
+作業開始時の推奨手順:
+
+```bash
+git switch main
+git pull origin main
+git status
+git switch -c codex/phaseXX-description
+```
+
+Commit and validation happen only after confirming the current branch is not `main`. Push is limited to `codex/phaseXX-*` branches, then changes are integrated into `main` through PR flow.
+
+push 前の推奨確認:
+
+```bash
+git branch
+git status
+git log --oneline -3
+```
+
+main ahead が出た場合は main push せず、現在の commit から `git switch -c codex/phaseXX-description` で feature branch 化してから、その feature branch だけを push します。
+
+禁止事項:
+
+- main に直接 commit しない。
+- main を直接 push しない。
+- `.bat` / `.ps1` / `.cmd` / `.exe` は使わない。
+- Norton にブロックされたファイルは再利用しない。
+- 隔離ファイルを戻さない。
+- セキュリティソフトで強制許可しない。
+
+Added files: `phase21-26-main-direct-commit-prevention-builder.js`, `phase21-26-main-direct-commit-prevention-db.json`, `phase21-26-main-direct-commit-prevention-summary-db.json`, `tests/phase21MainDirectCommitPreventionBuilder.test.js`
