@@ -1,0 +1,68 @@
+{
+  "phase": "Phase21-29",
+  "checklistName": "Draft PR Creation Safety Checklist",
+  "status": "PHASE21_29_DRAFT_PR_CREATION_SAFETY_READY",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "draftPrPolicy": "create a Draft PR only after current folder, feature branch, clean status, latest commit SHA, and origin push are confirmed.",
+  "prHoldPolicy": "after Draft PR creation, do not press Ready for review and do not merge until manual confirmation.",
+  "branchPolicy": "base branch must be main and head branch must be the Phase21-29 feature branch; main direct push is prohibited.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "readyForReviewAllowed": false,
+    "mergeAllowed": false,
+    "autoMergeAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "localPreflightChecks": [
+    { "id": "P21-29-PWD", "label": "Confirm the current workspace folder before opening a PR.", "command": "pwd", "status": "Required" },
+    { "id": "P21-29-BRANCH", "label": "Confirm the current branch is the Phase21-29 feature branch, not main.", "command": "git branch", "status": "Required" },
+    { "id": "P21-29-STATUS", "label": "Confirm working tree clean before opening the PR.", "command": "git status", "status": "Required" },
+    { "id": "P21-29-LOG", "label": "Confirm the latest commit SHA before opening the PR.", "command": "git log --oneline -3", "status": "Required" },
+    { "id": "P21-29-PUSHED", "label": "Confirm the feature branch has been pushed to origin.", "command": "git push -u origin codex/phase21-29-draft-pr-creation-safety-checklist", "status": "Required" }
+  ],
+  "githubPrCreationChecks": [
+    { "id": "P21-29-BASE-MAIN", "label": "Use main as the PR base branch.", "command": "GitHub base: main", "status": "Required" },
+    { "id": "P21-29-HEAD-FEATURE", "label": "Use the Phase21-29 feature branch as the PR head branch.", "command": "GitHub head: codex/phase21-29-draft-pr-creation-safety-checklist", "status": "Required" },
+    { "id": "P21-29-DRAFT", "label": "Create the pull request as Draft.", "command": "Create Draft PR", "status": "Required" },
+    { "id": "P21-29-BODY", "label": "PR body must state that Ready for review and merge are not performed.", "command": "PR body", "status": "Required" }
+  ],
+  "draftPrHoldRules": [
+    { "id": "P21-29-HOLD-DRAFT", "label": "Keep the PR in Draft state after creation.", "status": "Required" },
+    { "id": "P21-29-NO-READY", "label": "Do not press Ready for review during Phase21-29.", "status": "Blocked" },
+    { "id": "P21-29-NO-MERGE", "label": "Do not merge during Phase21-29.", "status": "Blocked" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-29-NO-MAIN-PUSH", "label": "Do not push main directly.", "status": "Blocked" },
+    { "id": "P21-29-NO-MAIN-COMMIT", "label": "Do not commit directly to main.", "status": "Blocked" },
+    { "id": "P21-29-NO-FORCE-PUSH", "label": "Do not force push to solve PR or refspec issues.", "status": "Blocked" },
+    { "id": "P21-29-NO-BAT", "label": "Do not create or modify .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-29-NO-PS1", "label": "Do not create or modify .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-29-NO-CMD", "label": "Do not create or modify .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-29-NO-EXE", "label": "Do not create or modify .exe files.", "status": "BlockedScriptPolicy" }
+  ],
+  "privateLocalRules": [
+    { "id": "P21-29-PRIVATE-LOCAL", "label": "Private repository and local-first operation remain required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-29-NO-PAGES", "label": "GitHub Pages is not required for this operation.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-29-NO-PUBLIC", "label": "No public release or external delivery is included.", "status": "PrivateLocalPolicy" }
+  ],
+  "operationPrinciples": [
+    "Draft PR creation is a stop point, not a merge point.",
+    "Confirm folder, branch, status, commit SHA, and origin push before opening the PR.",
+    "Use base main and head feature branch only.",
+    "Ready for review and merge require separate manual confirmation."
+  ],
+  "nextRecommendedStep": "After creating the Draft PR, stop and report the PR number, branch, latest commit SHA, and that Ready for review / merge were not performed."
+}
