@@ -1345,3 +1345,38 @@ main ahead が出た場合は main push せず、現在の commit から `git sw
 - セキュリティソフトで強制許可しない。
 
 Added files: `phase21-26-main-direct-commit-prevention-builder.js`, `phase21-26-main-direct-commit-prevention-db.json`, `phase21-26-main-direct-commit-prevention-summary-db.json`, `tests/phase21MainDirectCommitPreventionBuilder.test.js`
+
+## Phase21-27 Post Merge Local Branch Cleanup Safety Checklist
+
+Phase21-27 adds the merge後ローカル整理・不要ブランチ安全確認 checklist. The goal is to avoid confusion after PR merge when company PC, home PC, or Codex work folders still have old local feature branches. Private repository / local first / GitHub Pages 不要 remains the operating premise.
+
+merge 後の安全確認手順:
+
+```bash
+git switch main
+git pull origin main
+git status
+git log --oneline -5
+git branch
+```
+
+Local feature branches that remain after merge are not an immediate problem. Prioritize updated `main`, a clean working tree, recent merge commit confirmation, and current branch confirmation before any cleanup.
+
+削除する場合の注意:
+
+- main にいることを確認する。
+- 対象ブランチが merge 済みであることを確認する。
+- 未確認ブランチを削除しない。
+- main を削除しない。
+- 自動削除や危険な一括削除はしない。
+
+禁止事項:
+
+- main を直接 push しない。
+- main に直接 commit しない。
+- `.bat` / `.ps1` / `.cmd` / `.exe` は使わない。
+- Norton にブロックされたファイルは再利用しない。
+- 隔離ファイルを戻さない。
+- セキュリティソフトで強制許可しない。
+
+Added files: `phase21-27-post-merge-local-branch-cleanup-safety-builder.js`, `phase21-27-post-merge-local-branch-cleanup-safety-db.json`, `phase21-27-post-merge-local-branch-cleanup-safety-summary-db.json`, `tests/phase21PostMergeLocalBranchCleanupSafetyBuilder.test.js`

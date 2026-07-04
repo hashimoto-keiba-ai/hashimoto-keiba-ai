@@ -3938,6 +3938,42 @@
         </ul>
         <p class="data-footnote">Official Release v2.8 Protected / PLAN_ONLY / Phase21-26 main direct commit prevention / updated: <span id="phase21-26-updated">--</span></p>
       </section>
+
+      <section class="panel phase21-27-post-merge-local-branch-cleanup-safety" id="phase21-27-post-merge-local-branch-cleanup-safety" aria-label="Phase21-27 Post Merge Local Branch Cleanup Safety">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Phase21-27 / Post Merge Local Branch Cleanup Safety</p><h2>Phase21-27 merge後ローカル整理・不要ブランチ安全確認</h2></div>
+          <span class="pill hot">CHECK BEFORE DELETE</span>
+        </div>
+        <div class="phase21-27-post-merge-local-branch-cleanup-safety-actions"><button id="run-phase21-27-post-merge-local-branch-cleanup-safety" type="button">Phase21-27 Branch Cleanup Check</button><span>NO AUTO DELETE / NO MAIN DELETE / NO MAIN PUSH</span></div>
+        <div class="phase2-kpis phase21-27-post-merge-local-branch-cleanup-safety-grid">
+          <article><span>Panel Status</span><strong id="phase21-27-panel-status">phase21_27_post_merge_local_branch_cleanup_safety_plan_only</strong></article>
+          <article><span>Status</span><strong id="phase21-27-status">PHASE21_27_POST_MERGE_LOCAL_BRANCH_CLEANUP_SAFETY_READY</strong></article>
+          <article><span>Total Checks</span><strong id="phase21-27-total-checks">21</strong></article>
+          <article><span>Passed</span><strong id="phase21-27-passed">21</strong></article>
+          <article><span>Cleanup Policy</span><strong id="phase21-27-cleanup-policy">update main, confirm working tree clean, review recent log, and inspect branches before cleanup.</strong></article>
+          <article><span>Branch Delete Policy</span><strong id="phase21-27-branch-delete-policy">old feature branches may remain; delete only confirmed merged branches while on main.</strong></article>
+          <article><span>Main Protection</span><strong id="phase21-27-main-protection-policy">do not delete main and do not push main directly.</strong></article>
+          <article><span>Working Tree Clean</span><strong id="phase21-27-working-tree-clean">true</strong></article>
+          <article><span>Auto Delete</span><strong id="phase21-27-auto-delete">false</strong></article>
+          <article><span>Delete Main</span><strong id="phase21-27-delete-main">false</strong></article>
+          <article><span>Main Direct Push</span><strong id="phase21-27-main-push">false</strong></article>
+          <article><span>Use bat</span><strong id="phase21-27-no-bat">false</strong></article>
+          <article><span>Use ps1</span><strong id="phase21-27-no-ps1">false</strong></article>
+          <article><span>Use cmd</span><strong id="phase21-27-no-cmd">false</strong></article>
+          <article><span>Use exe</span><strong id="phase21-27-no-exe">false</strong></article>
+          <article><span>GitHub Pages Required</span><strong id="phase21-27-no-pages">false</strong></article>
+          <article><span>Next Step</span><strong id="phase21-27-next-step">After merge, confirm main with git switch main, git pull origin main, git status, git log --oneline -5, and git branch; leave old branches unless deletion is explicitly verified.</strong></article>
+        </div>
+        <ul class="phase21-27-post-merge-local-branch-cleanup-safety-list" id="phase21-27-post-merge-local-branch-cleanup-safety-list">
+          <li>merge 後は git switch main、git pull origin main、git status を確認する。</li>
+          <li>git log --oneline -5 で最新 merge commit を確認し、git branch で現在ブランチを確認する。</li>
+          <li>古い feature branch は残っていても即問題ではない。</li>
+          <li>削除前に main にいることを確認し、未確認ブランチを削除しない。</li>
+          <li>main を削除しない。main を直接 push しない。</li>
+          <li>.bat / ps1 / cmd / exe は使わない。</li>
+        </ul>
+        <p class="data-footnote">Official Release v2.8 Protected / PLAN_ONLY / Phase21-27 post merge local branch cleanup safety / updated: <span id="phase21-27-updated">--</span></p>
+      </section>
     </main>
 
     <script src="dashboard.js"></script>
@@ -4036,6 +4072,7 @@
     <script src="phase21-24-manual-update-local-launch-operation-builder.js"></script>
     <script src="phase21-25-multi-device-manual-operation-unification-builder.js"></script>
     <script src="phase21-26-main-direct-commit-prevention-builder.js"></script>
+    <script src="phase21-27-post-merge-local-branch-cleanup-safety-builder.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

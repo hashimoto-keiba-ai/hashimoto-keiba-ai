@@ -1,0 +1,74 @@
+{
+  "phase": "Phase21-27",
+  "checklistName": "Post Merge Local Branch Cleanup Safety Checklist",
+  "status": "PHASE21_27_POST_MERGE_LOCAL_BRANCH_CLEANUP_SAFETY_READY",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "cleanupPolicy": "after merge, update main and confirm status/log/branch before considering local branch cleanup.",
+  "branchDeletePolicy": "old feature branches may remain; delete only after confirming current branch is main and the target branch is already merged.",
+  "mainPushPolicy": "main direct push is prohibited.",
+  "blockedScriptPolicy": {
+    "autoUpdateLauncherAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false,
+    "shortcutCreationAllowed": false,
+    "restoreQuarantinedFileAllowed": false,
+    "reuseBlockedFileAllowed": false,
+    "forceAllowSecuritySoftwareAllowed": false
+  },
+  "postMergeChecks": [
+    { "id": "P21-27-SWITCH-MAIN", "label": "After merge, switch to main first.", "command": "git switch main", "status": "Required" },
+    { "id": "P21-27-PULL-MAIN", "label": "Update main from the private repository.", "command": "git pull origin main", "status": "Required" },
+    { "id": "P21-27-STATUS", "label": "Confirm working tree clean.", "command": "git status", "status": "Required" },
+    { "id": "P21-27-LOG", "label": "Confirm the latest merge commits.", "command": "git log --oneline -5", "status": "Required" },
+    { "id": "P21-27-BRANCH", "label": "Confirm the current branch and remaining local branches.", "command": "git branch", "status": "Required" }
+  ],
+  "mainRefreshSteps": [
+    "git switch main",
+    "git pull origin main",
+    "git status",
+    "git log --oneline -5",
+    "git branch"
+  ],
+  "remainingBranchPolicy": [
+    { "id": "P21-27-OLD-BRANCH-OK", "label": "Old local feature branches are not an immediate problem.", "status": "Informational" },
+    { "id": "P21-27-NO-AUTO-CLEANUP", "label": "Do not automatically delete local branches.", "status": "Required" },
+    { "id": "P21-27-NO-BULK-DELETE", "label": "Do not run dangerous bulk branch deletion.", "status": "Blocked" }
+  ],
+  "deleteBeforeChecks": [
+    { "id": "P21-27-DELETE-MAIN-CURRENT", "label": "Before deletion, confirm the current branch is main.", "command": "git branch", "status": "Required" },
+    { "id": "P21-27-DELETE-MERGED", "label": "Confirm the target branch is already merged.", "command": "manual merged check", "status": "Required" },
+    { "id": "P21-27-DELETE-TARGET", "label": "Confirm the exact target branch name before deletion.", "command": "manual target check", "status": "Required" }
+  ],
+  "neverDelete": [
+    { "id": "P21-27-NO-DELETE-UNKNOWN", "label": "Do not delete unconfirmed branches.", "status": "Blocked" },
+    { "id": "P21-27-NO-DELETE-MAIN", "label": "Do not delete main.", "status": "Blocked" },
+    { "id": "P21-27-NO-MAIN-PUSH", "label": "Do not push main directly.", "status": "Blocked" }
+  ],
+  "mainAheadResponse": [
+    { "id": "P21-27-MAIN-AHEAD-STOP", "label": "If main is ahead, stop before any push.", "status": "Required" },
+    { "id": "P21-27-MAIN-AHEAD-NO-PUSH", "label": "Do not push main when ahead appears unexpectedly.", "status": "Blocked" },
+    { "id": "P21-27-MAIN-AHEAD-BRANCH", "label": "Use a feature branch or PR-safe recovery path instead of main push.", "status": "Required" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-27-NO-BAT", "label": "Do not use .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-27-NO-PS1", "label": "Do not use .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-27-NO-CMD", "label": "Do not use .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-27-NO-EXE", "label": "Do not use .exe files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-27-NO-PAGES", "label": "Do not make GitHub Pages required.", "status": "PrivateLocalPolicy" }
+  ],
+  "operationPrinciples": [
+    "Cleanup starts with main update, working tree clean confirmation, log review, and branch review.",
+    "Local feature branches may remain after merge without causing an immediate problem.",
+    "Deletion is manual, explicit, and only after merge status is confirmed.",
+    "Private repository, local first, and no GitHub Pages dependency remain the operating premise."
+  ],
+  "nextRecommendedStep": "After PR merge, run git switch main, git pull origin main, git status, git log --oneline -5, and git branch before considering any local branch cleanup."
+}
