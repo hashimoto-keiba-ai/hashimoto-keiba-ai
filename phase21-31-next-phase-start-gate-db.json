@@ -1,0 +1,69 @@
+{
+  "phase": "Phase21-31",
+  "checklistName": "Next Phase Start Gate Checklist",
+  "status": "PHASE21_31_NEXT_PHASE_START_GATE_READY",
+  "priorPrNumber": 224,
+  "priorPhase": "Phase21-30",
+  "expectedPriorMergeCommit": "8648f1831371c1c6ea52f59fd68f19f413fae556",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "startGatePolicy": "start the next phase only after PR #224 is merged, main is pulled, working tree is clean, and the current workspace folder is confirmed.",
+  "branchPolicy": "create feature branches only from updated main; do not work directly on main.",
+  "draftPrPolicy": "future PRs must start as Draft and stop before Ready for review or merge until manual confirmation.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "mergeWithoutLocalCheckAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "preStartChecks": [
+    { "id": "P21-31-PR224-MERGED", "label": "Confirm PR #224 is merged before starting the next phase.", "command": "GitHub PR #224", "status": "Required" },
+    { "id": "P21-31-PWD", "label": "Confirm current workspace folder before branch creation.", "command": "pwd", "status": "Required" },
+    { "id": "P21-31-SWITCH-MAIN", "label": "Switch to main before starting the next branch.", "command": "git switch main", "status": "Required" },
+    { "id": "P21-31-PULL-MAIN", "label": "Pull latest origin/main before starting the next branch.", "command": "git pull origin main", "status": "Required" },
+    { "id": "P21-31-STATUS-CLEAN", "label": "Confirm working tree is clean before starting the next branch.", "command": "git status", "status": "Required" },
+    { "id": "P21-31-LOG-MERGE", "label": "Confirm recent log includes Phase21-30 merge commit.", "command": "git log --oneline -3", "status": "Required" }
+  ],
+  "branchStartChecks": [
+    { "id": "P21-31-FEATURE-BRANCH", "label": "Create a feature branch from updated main only.", "command": "git switch -c codex/<phase-branch>", "status": "Required" },
+    { "id": "P21-31-NO-MAIN-WORK", "label": "Do not implement directly on main.", "status": "Blocked" },
+    { "id": "P21-31-NO-OLD-FOLDER", "label": "Do not continue from an old folder unless branch, status, and commit are verified.", "status": "Blocked" }
+  ],
+  "draftPrGateChecks": [
+    { "id": "P21-31-DRAFT-PR", "label": "Create future PRs as Draft first.", "status": "Required" },
+    { "id": "P21-31-NO-READY", "label": "Do not press Ready for review without manual confirmation.", "status": "Blocked" },
+    { "id": "P21-31-NO-MERGE", "label": "Do not merge without local verification and manual confirmation.", "status": "Blocked" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-31-NO-MAIN-PUSH", "label": "Do not push main directly.", "status": "Blocked" },
+    { "id": "P21-31-NO-MAIN-COMMIT", "label": "Do not commit directly to main.", "status": "Blocked" },
+    { "id": "P21-31-NO-FORCE-PUSH", "label": "Do not force push or reset main during start gate work.", "status": "Blocked" },
+    { "id": "P21-31-NO-BAT", "label": "Do not create or modify .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-31-NO-PS1", "label": "Do not create or modify .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-31-NO-CMD", "label": "Do not create or modify .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-31-NO-EXE", "label": "Do not create or modify .exe files.", "status": "BlockedScriptPolicy" }
+  ],
+  "privateLocalRules": [
+    { "id": "P21-31-PRIVATE-LOCAL", "label": "Private repository and local-first operation remain required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-31-NO-PAGES", "label": "GitHub Pages is not required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-31-NO-PUBLIC", "label": "No public release or external delivery is included.", "status": "PrivateLocalPolicy" }
+  ],
+  "operationPrinciples": [
+    "A new phase begins only after the previous PR is merged and local main is updated.",
+    "The current workspace folder, branch, clean status, and recent log must be confirmed.",
+    "Implementation occurs on feature branches only, never directly on main.",
+    "Draft PR, Ready for review, and merge remain separate manual checkpoints."
+  ],
+  "nextRecommendedStep": "Confirm PR #224 merged, sync main locally, verify clean status, then create the next feature branch from updated main."
+}
