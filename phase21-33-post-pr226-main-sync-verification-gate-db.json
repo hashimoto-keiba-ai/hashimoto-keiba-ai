@@ -1,0 +1,71 @@
+{
+  "phase": "Phase21-33",
+  "checklistName": "Post PR226 Main Sync Verification Gate Checklist",
+  "status": "PHASE21_33_POST_PR226_MAIN_SYNC_VERIFICATION_GATE_READY",
+  "priorPrNumber": 226,
+  "priorPhase": "Phase21-32",
+  "expectedPriorMergeCommit": "059b2d21b6629eb0a81a1e66ed99d7082e701c54",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "mainSyncPolicy": "after PR #226 merge, sync local main and confirm clean status before continuing with the next operation.",
+  "phasePresencePolicy": "confirm Phase21-32 files exist on main after pull so the local workspace matches GitHub.",
+  "draftPrPolicy": "future PRs start as Draft and stop before review or merge until manual confirmation.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "launcherFileChangeAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "postMergeMainSyncChecks": [
+    { "id": "P21-33-PR226-MERGED", "label": "Confirm PR #226 is merged before continuing.", "command": "GitHub PR #226", "status": "Required" },
+    { "id": "P21-33-PWD", "label": "Confirm current workspace folder before pulling main.", "command": "pwd", "status": "Required" },
+    { "id": "P21-33-SWITCH-MAIN", "label": "Switch local repository to main.", "command": "git switch main", "status": "Required" },
+    { "id": "P21-33-PULL-MAIN", "label": "Pull latest origin/main after PR #226 merge.", "command": "git pull origin main", "status": "Required" },
+    { "id": "P21-33-STATUS-CLEAN", "label": "Confirm local main is up to date and working tree is clean.", "command": "git status", "status": "Required" },
+    { "id": "P21-33-LOG-MERGE", "label": "Confirm recent log includes PR #226 merge commit.", "command": "git log --oneline -3", "status": "Required" }
+  ],
+  "phase2132PresenceChecks": [
+    { "id": "P21-33-P21-32-BUILDER", "label": "Confirm Phase21-32 builder exists on main.", "command": "dir phase21-32-post-pr225-sync-gate-builder.js", "status": "Required" },
+    { "id": "P21-33-P21-32-DB", "label": "Confirm Phase21-32 DB exists on main.", "command": "dir phase21-32-post-pr225-sync-gate-db.json", "status": "Required" },
+    { "id": "P21-33-P21-32-SUMMARY", "label": "Confirm Phase21-32 summary DB exists on main.", "command": "dir phase21-32-post-pr225-sync-gate-summary-db.json", "status": "Required" },
+    { "id": "P21-33-P21-32-TEST", "label": "Confirm Phase21-32 test exists on main.", "command": "dir tests\\phase21PostPr225SyncGateBuilder.test.js", "status": "Required" }
+  ],
+  "nextDraftGateChecks": [
+    { "id": "P21-33-DRAFT-FIRST", "label": "Next PR remains Draft first.", "status": "Required" },
+    { "id": "P21-33-NO-READY-FIRST", "label": "Do not move from Draft without manual confirmation.", "status": "Blocked" },
+    { "id": "P21-33-NO-MERGE-FIRST", "label": "Do not merge without local verification and manual confirmation.", "status": "Blocked" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-33-NO-MAIN-PUSH", "label": "Do not push main directly.", "status": "Blocked" },
+    { "id": "P21-33-NO-MAIN-COMMIT", "label": "Do not commit directly to main.", "status": "Blocked" },
+    { "id": "P21-33-NO-FORCE-PUSH", "label": "Do not force push or reset main during verification.", "status": "Blocked" },
+    { "id": "P21-33-NO-LAUNCHER-FILE", "label": "Do not create or modify launcher-type files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-33-NO-BAT", "label": "Do not create or modify .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-33-NO-PS1", "label": "Do not create or modify .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-33-NO-CMD", "label": "Do not create or modify .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-33-NO-EXE", "label": "Do not create or modify .exe files.", "status": "BlockedScriptPolicy" }
+  ],
+  "privateLocalRules": [
+    { "id": "P21-33-PRIVATE-LOCAL", "label": "Private repository and local-first operation remain required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-33-NO-PAGES", "label": "GitHub Pages is not required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-33-NO-PUBLIC", "label": "No public release or external delivery is included.", "status": "PrivateLocalPolicy" }
+  ],
+  "operationPrinciples": [
+    "Post-merge verification is performed on main after each completed PR.",
+    "The active workspace folder, clean status, and recent log must be confirmed before continuing.",
+    "Phase21-32 file presence is checked so local workspace and GitHub main stay aligned.",
+    "Draft PR, review readiness, and merge remain separate manual checkpoints."
+  ],
+  "nextRecommendedStep": "Confirm PR #226 merge, pull latest main, verify clean status and Phase21-32 files, then continue only through Draft PR flow."
+}
