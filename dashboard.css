@@ -2053,3 +2053,12 @@ tbody tr:last-child td {
 .phase21-44-private-local-post-pr238-operation-continuity-check-item.status-blocked, .phase21-44-private-local-post-pr238-operation-continuity-check-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
 .phase21-44-private-local-post-pr238-operation-continuity-check-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
 @media (max-width: 680px) { .phase21-44-private-local-post-pr238-operation-continuity-check-actions { align-items: stretch; } .phase21-44-private-local-post-pr238-operation-continuity-check-actions button { width: 100%; } }
+.phase21-45-private-local-post-pr239-operation-stability-check { border: 1px solid rgba(132, 204, 22, 0.72); background: radial-gradient(circle at 84% 0, rgba(132, 204, 22, 0.12), transparent 42%), linear-gradient(145deg, #17230a, #10170a 74%); }
+.phase21-45-private-local-post-pr239-operation-stability-check-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-45-private-local-post-pr239-operation-stability-check-actions span { color: #ecfccb; font-size: 13px; font-weight: 900; }
+.phase21-45-private-local-post-pr239-operation-stability-check-grid article strong { color: #f7fee7; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-45-private-local-post-pr239-operation-stability-check-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-45-private-local-post-pr239-operation-stability-check-item, .phase21-45-private-local-post-pr239-operation-stability-check-list li { border: 1px solid rgba(132, 204, 22, 0.34); border-radius: 10px; padding: 9px 11px; color: #f7fee7; font-size: 12px; font-weight: 800; }
+.phase21-45-private-local-post-pr239-operation-stability-check-item.status-blocked, .phase21-45-private-local-post-pr239-operation-stability-check-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
+.phase21-45-private-local-post-pr239-operation-stability-check-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
+@media (max-width: 680px) { .phase21-45-private-local-post-pr239-operation-stability-check-actions { align-items: stretch; } .phase21-45-private-local-post-pr239-operation-stability-check-actions button { width: 100%; } }
