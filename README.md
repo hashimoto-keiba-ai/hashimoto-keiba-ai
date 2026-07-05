@@ -1728,3 +1728,37 @@ Verification results:
 - `private-local.html` and `index.html` display text changes must preserve structure.
 
 Added files: `phase21-41-private-local-japanese-text-display-cleanup-builder.js`, `phase21-41-private-local-japanese-text-display-cleanup-db.json`, `phase21-41-private-local-japanese-text-display-cleanup-summary-db.json`, `tests/phase21PrivateLocalJapaneseTextDisplayCleanupBuilder.test.js`
+
+## Phase21-42 Private Local Post PR236 Operation Check
+
+Phase21-42 adds a Private Local Post PR236 Operation Check after PR #236 merge and Phase21-41 main reflection. The purpose is to confirm that private-local operation remains safe after the Japanese text display cleanup, without requiring GitHub Pages or public delivery.
+
+Operation policy:
+
+- PR #236 merged confirmation is required.
+- Phase21-41 main reflection is confirmed after pull.
+- Private Local operation remains the primary mode.
+- Japanese text display cleanup is confirmed in the local app.
+- Safe local use requires local browser confirmation.
+- GitHub Pages is not required.
+- Repository remains private.
+- PLAN_ONLY / protected / draft PR only / do not merge yet remains active.
+
+Blocked automation:
+
+- No auto publish.
+- No auto update.
+- No hidden update.
+- No external sending.
+- No suspicious auto-run script.
+- No new `.bat` / `.ps1` / `.cmd` / `.exe` files.
+
+Verification results:
+
+- JSON syntax confirmation required for the Phase21-42 DB files.
+- Builder syntax confirmation required for `phase21-42-private-local-post-pr236-operation-check-builder.js`.
+- Phase21-42 test required: `tests/phase21PrivateLocalPostPr236OperationCheckBuilder.test.js`.
+- Existing Phase21 related tests should remain unaffected.
+- Conflict markers, dangerous public settings, automatic publish, external sending, hidden updates, suspicious auto-run scripts, and dangerous launcher extension changes must remain absent.
+
+Added files: `phase21-42-private-local-post-pr236-operation-check-builder.js`, `phase21-42-private-local-post-pr236-operation-check-db.json`, `phase21-42-private-local-post-pr236-operation-check-summary-db.json`, `tests/phase21PrivateLocalPostPr236OperationCheckBuilder.test.js`
