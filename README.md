@@ -2225,3 +2225,55 @@ Verification results:
 - Conflict markers, dangerous public settings, automatic publish, external sending, deletion processes, credential output, hidden updates, suspicious auto-run scripts, unnecessary public Pages routes, and dangerous launcher extension changes must remain absent.
 
 Added files: `phase21-53-private-local-post-pr247-stacked-continuation-check-builder.js`, `phase21-53-private-local-post-pr247-stacked-continuation-check-db.json`, `phase21-53-private-local-post-pr247-stacked-continuation-check-summary-db.json`, `tests/phase21PrivateLocalPostPr247StackedContinuationCheckBuilder.test.js`
+
+## Phase21-54 Private Local Final Stack Merge Preparation Check
+
+Phase21-54 adds the final pre-merge checklist for the stacked PR sequence before restarting safely tomorrow on the company PC. It records that PR #243 through PR #248 remain Draft, confirms their stacked base branches, and defines the intended main merge order without performing Ready for review, PR creation, or merge in this operation.
+
+Stack premise:
+
+- PR #243 is Phase21-48 / Draft / base = main.
+- PR #244 is Phase21-49 / Draft / base = Phase21-48.
+- PR #245 is Phase21-50 / Draft / base = Phase21-49.
+- PR #246 is Phase21-51 / Draft / base = Phase21-50.
+- PR #247 is Phase21-52 / Draft / base = Phase21-51.
+- PR #248 is Phase21-53 / Draft / base = Phase21-52.
+- Merge order is PR #243 -> PR #244 -> PR #245 -> PR #246 -> PR #247 -> PR #248 -> Phase21-54 PR.
+- main sync is required after each ordered merge before continuing.
+- Tomorrow company PC restart should begin from latest main and a clean working tree.
+- The tomorrow company PC restart path is latest main, clean working tree, and local browser confirmation.
+
+Operation policy:
+
+- Private Local operation remains the primary mode.
+- GitHub Pages is not required.
+- Repository remains private.
+- Local browser confirmation remains required.
+- Japanese text display continuity through Phase21-53 remains confirmed.
+- PLAN_ONLY / protected / draft PR only / do not merge yet remains active.
+- Ready for review is not performed.
+- Merge is not performed.
+- No PR is created by this Phase21-54 operation.
+- Every later Ready for review and merge transition requires explicit user confirmation.
+
+Blocked automation:
+
+- No auto publish.
+- No auto update.
+- No hidden update.
+- No external sending.
+- No deletion process.
+- No credential output.
+- No unnecessary public Pages route.
+- No suspicious auto-run script.
+- No new `.bat` / `.ps1` / `.cmd` / `.exe` files.
+
+Verification results:
+
+- JSON syntax confirmation required for the Phase21-54 DB files.
+- Builder syntax confirmation required for `phase21-54-private-local-final-stack-merge-preparation-check-builder.js`.
+- Phase21-54 test required: `tests/phase21PrivateLocalFinalStackMergePreparationCheckBuilder.test.js`.
+- Existing Phase21 related tests should remain unaffected.
+- Conflict markers, dangerous public settings, automatic publish, external sending, deletion processes, credential output, hidden updates, suspicious auto-run scripts, unnecessary public Pages routes, and dangerous launcher extension changes must remain absent.
+
+Added files: `phase21-54-private-local-final-stack-merge-preparation-check-builder.js`, `phase21-54-private-local-final-stack-merge-preparation-check-db.json`, `phase21-54-private-local-final-stack-merge-preparation-check-summary-db.json`, `tests/phase21PrivateLocalFinalStackMergePreparationCheckBuilder.test.js`
