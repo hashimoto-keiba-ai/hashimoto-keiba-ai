@@ -1,0 +1,99 @@
+{
+  "phase": "Phase21-37",
+  "checklistName": "Post PR231 Private Local Operation Verification Checklist",
+  "status": "PHASE21_37_POST_PR231_PRIVATE_LOCAL_OPERATION_VERIFICATION_READY",
+  "baseline": "PR #231 merged main / Phase21-36 reflected",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "automaticUpdateAllowed": false,
+  "automaticRemotePublishAllowed": false,
+  "automaticMergeAllowed": false,
+  "hiddenBackgroundUpdateAllowed": false,
+  "suspiciousAutoRunScriptAllowed": false,
+  "planOnly": true,
+  "protected": true,
+  "pr231MergedConfirmationRequired": true,
+  "phase2136MainReflectionRequired": true,
+  "companyPcWorkingTreeCleanRequired": true,
+  "homePcContinuationReadyRequired": true,
+  "mainBranchOnlyAfterPull": true,
+  "featureBranchRequired": true,
+  "draftPrRequired": true,
+  "mergeAfterUserConfirmationOnly": true,
+  "ipadViewConfirmOnly": true,
+  "powerShellManualOnly": true,
+  "localBrowserConfirmationRequired": true,
+  "operationPolicy": "Private Local first; private-local.html, index.html, and local browser confirmation remain the operating basis after PR #231 main pull.",
+  "handoffPolicy": "Company PC working tree clean confirmation and home PC continuation readiness are manual confirmation items.",
+  "securitySoftwarePolicy": "Norton and security-software friendly operation; no hidden updater, auto-run launcher, suspicious background execution, or dangerous launcher extension changes.",
+  "devicePolicy": "Home PC continues after main pull; company PC hands off from a clean tree; iPad remains view / confirmation only.",
+  "prMergePolicy": "Main branch only after pull; no direct commit to main; feature branch and Draft PR are required; merge only after user confirmation.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "automaticRemotePublishAllowed": false,
+    "automaticMergeAllowed": false,
+    "hiddenBackgroundUpdateAllowed": false,
+    "automaticUpdateAllowed": false,
+    "externalSendAllowed": false,
+    "suspiciousAutoRunScriptAllowed": false,
+    "launcherFileChangeAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "postPr231MergeChecks": [
+    { "id": "P21-37-PR231-MERGED", "label": "PR #231 merged confirmation is required before using main as the baseline.", "command": "manual PR confirmation", "status": "Required" },
+    { "id": "P21-37-PHASE21-36-MAIN", "label": "Phase21-36 main reflection is confirmed after pull.", "command": "manual main reflection confirmation", "status": "Required" },
+    { "id": "P21-37-MAIN-AFTER-PULL", "label": "Main branch is used only after pull confirmation.", "command": "manual branch confirmation", "status": "Required" }
+  ],
+  "handoffChecks": [
+    { "id": "P21-37-COMPANY-CLEAN", "label": "Company PC working tree clean confirmation is required.", "command": "git status --short", "status": "Required" },
+    { "id": "P21-37-HOME-READY", "label": "Home PC continuation ready confirmation is required.", "command": "manual home PC confirmation", "status": "Required" },
+    { "id": "P21-37-LOCAL-BROWSER", "label": "Local browser confirmation is required for private-local.html and index.html.", "command": "manual browser confirmation", "status": "Required" }
+  ],
+  "branchPrMergeChecks": [
+    { "id": "P21-37-NO-MAIN-COMMIT", "label": "No direct commit to main.", "command": "blocked", "status": "Blocked" },
+    { "id": "P21-37-FEATURE-BRANCH", "label": "Feature branch is required for follow-up work.", "command": "feature branch", "status": "Required" },
+    { "id": "P21-37-DRAFT-PR", "label": "Draft PR is required.", "command": "Draft PR", "status": "Required" },
+    { "id": "P21-37-MERGE-CONFIRM", "label": "Merge only after user confirmation.", "command": "manual merge confirmation", "status": "Required" }
+  ],
+  "privateLocalChecks": [
+    { "id": "P21-37-PRIVATE-FIRST", "label": "Private Local first remains required.", "status": "Required" },
+    { "id": "P21-37-NO-PAGES", "label": "GitHub Pages is not required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-37-PRIVATE-REPO", "label": "Repository remains private.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-37-POWERSHELL-MANUAL", "label": "PowerShell operation remains manual.", "status": "Required" },
+    { "id": "P21-37-IPAD-VIEW", "label": "iPad remains view / confirmation only.", "status": "Required" },
+    { "id": "P21-37-SECURITY-FRIENDLY", "label": "Security software friendly operation remains required.", "status": "Required" }
+  ],
+  "blockedAutomationChecks": [
+    { "id": "P21-37-NO-AUTO-PUBLISH", "label": "No auto publish is added.", "status": "Blocked" },
+    { "id": "P21-37-NO-AUTO-UPDATE", "label": "No auto update is added.", "status": "Blocked" },
+    { "id": "P21-37-NO-HIDDEN-UPDATE", "label": "No hidden update is added.", "status": "Blocked" },
+    { "id": "P21-37-NO-EXTERNAL-SEND", "label": "No external sending is added.", "status": "Blocked" },
+    { "id": "P21-37-NO-AUTORUN", "label": "No suspicious auto-run script is added.", "status": "BlockedScriptPolicy" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-37-NO-BAT", "label": "Do not create or modify .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-37-NO-PS1", "label": "Do not create or modify .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-37-NO-CMD", "label": "Do not create or modify .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-37-NO-EXE", "label": "Do not create or modify .exe files.", "status": "BlockedScriptPolicy" }
+  ],
+  "operationPrinciples": [
+    "PLAN_ONLY / Protected / Draft PR first / merge only after user confirmation remains unchanged.",
+    "private-local.html and index.html remain the manual local entry points.",
+    "GitHub Pages and public delivery are not required.",
+    "Company PC to home PC handoff is verified manually after PR #231 is merged.",
+    "Security software friendly operation avoids auto-update, auto-run, hidden updater, and suspicious background execution."
+  ],
+  "nextRecommendedStep": "Pull main on home PC after PR #231 merge confirmation, confirm private-local.html and index.html locally, and start follow-up work only from a feature branch with a Draft PR."
+}

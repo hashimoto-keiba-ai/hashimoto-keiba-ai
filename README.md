@@ -1467,3 +1467,51 @@ Verification results:
 - Conflict markers, automatic publish, external sending, and public operation additions must remain absent.
 
 Added files: `phase21-36-private-local-operation-hardening-builder.js`, `phase21-36-private-local-operation-hardening-db.json`, `phase21-36-private-local-operation-hardening-summary-db.json`, `tests/phase21PrivateLocalOperationHardeningBuilder.test.js`
+
+## Phase21-37 Post PR231 Private Local Operation Verification Checklist
+
+Phase21-37 adds Post PR231 Private Local Operation Verification after PR #231 merge and Phase21-36 main reflection. The purpose is to confirm that company PC work can be safely handed off to home PC operation while keeping `private-local.html`, `index.html`, local browser confirmation, and private repository operation unchanged.
+
+Operation policy:
+
+- PR #231 merged confirmation is required.
+- Phase21-36 main reflection is confirmed after pull.
+- Company PC working tree clean confirmation is required.
+- Home PC continuation ready confirmation is required.
+- Main branch is used only after pull.
+- No direct commit to main.
+- Feature branch is required for follow-up work.
+- Draft PR is required.
+- Merge only after user confirmation.
+- Private Local first.
+- GitHub Pages not required.
+- Repository remains private.
+- PowerShell operation remains manual.
+- iPad remains view / confirmation only.
+- Local browser confirmation is required.
+
+Blocked automation:
+
+- No auto publish.
+- No auto update.
+- No hidden update.
+- No external sending.
+- No suspicious auto-run script.
+- No new `.bat` / `.ps1` / `.cmd` / `.exe` files.
+
+Security software policy:
+
+- Norton / security software friendly operation is required.
+- Automatic execution, hidden updater behavior, and suspicious launcher behavior are not added.
+- Existing `private-local.html` and `index.html` routes remain manual local entry points.
+
+Verification results:
+
+- JSON syntax confirmation required for the Phase21-37 DB files.
+- Builder syntax confirmation required for `phase21-37-post-pr231-private-local-operation-verification-builder.js`.
+- Phase21-37 test required: `tests/phase21PostPr231PrivateLocalOperationVerificationBuilder.test.js`.
+- Existing Phase21 related tests should remain unaffected.
+- `git diff --check` and `git diff --cached --check` should pass.
+- Conflict markers, automatic publish, external sending, public operation additions, hidden updates, and dangerous launcher extension changes must remain absent.
+
+Added files: `phase21-37-post-pr231-private-local-operation-verification-builder.js`, `phase21-37-post-pr231-private-local-operation-verification-db.json`, `phase21-37-post-pr231-private-local-operation-verification-summary-db.json`, `tests/phase21PostPr231PrivateLocalOperationVerificationBuilder.test.js`
