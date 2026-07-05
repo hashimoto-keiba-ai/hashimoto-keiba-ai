@@ -1,0 +1,129 @@
+{
+  "phase": "Phase21-41",
+  "checklistName": "Private Local Japanese Text Display Cleanup Checklist",
+  "status": "PHASE21_41_PRIVATE_LOCAL_JAPANESE_TEXT_DISPLAY_CLEANUP_READY",
+  "baseline": "PR #235 merged main / Phase21-40 reflected",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "automaticUpdateAllowed": false,
+  "automaticRemotePublishAllowed": false,
+  "automaticMergeAllowed": false,
+  "hiddenBackgroundUpdateAllowed": false,
+  "suspiciousAutoRunScriptAllowed": false,
+  "planOnly": true,
+  "protected": true,
+  "pr235MergedConfirmationRequired": true,
+  "phase2140MainReflectionRequired": true,
+  "homePcAppReflectionConfirmed": true,
+  "japaneseTextDisplayIssueObserved": true,
+  "mojibakeCleanupRequired": true,
+  "noFunctionalBehaviorChange": true,
+  "featureBranchRequired": true,
+  "draftPrRequired": true,
+  "mergeAfterUserConfirmationOnly": true,
+  "branchDeletionOnlyAfterMergeConfirmation": true,
+  "mainSyncRequiredAfterMerge": true,
+  "ipadViewConfirmOnly": true,
+  "powerShellManualOnly": true,
+  "localBrowserConfirmationRequired": true,
+  "oldUnrelatedStashesUntouched": true,
+  "operationPolicy": "Private Local first; Japanese display cleanup is limited to visible text review after PR #235 main pull.",
+  "cleanupPolicy": "Only clear visible mojibake or unnatural labels are cleaned up; unclear text remains pending.",
+  "textScopePolicy": "Display labels and descriptions may change; ids, links, anchors, file paths, script references, DB structure, builder structure, and tests remain stable.",
+  "pendingPolicy": "Text whose meaning cannot be inferred safely is recorded as pending and is not rewritten.",
+  "securitySoftwarePolicy": "Norton and security-software friendly operation; no hidden updater, auto-run launcher, suspicious background execution, or dangerous launcher extension changes.",
+  "prMergePolicy": "No direct commit to main; feature branch and Draft PR are required; merge only after user confirmation.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "automaticRemotePublishAllowed": false,
+    "automaticMergeAllowed": false,
+    "hiddenBackgroundUpdateAllowed": false,
+    "automaticUpdateAllowed": false,
+    "externalSendAllowed": false,
+    "suspiciousAutoRunScriptAllowed": false,
+    "launcherFileChangeAllowed": false,
+    "unrelatedStashChangeAllowed": false,
+    "branchDeletionBeforeMergeConfirmationAllowed": false,
+    "mainSyncAfterMergeRequired": true,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "cleanedTextChanges": [
+    { "file": "private-local.html", "from": "One Tap", "to": "ワンタップ", "reason": "Private Local home menu pill display cleanup." },
+    { "file": "private-local.html", "from": "One Tap Menu Auto Generation", "to": "ワンタップメニュー自動生成", "reason": "One Tap Menu heading display cleanup." },
+    { "file": "private-local.html", "from": "One Tap Menu", "to": "ワンタップメニュー", "reason": "Quick menu eyebrow display cleanup." }
+  ],
+  "pendingTextCleanup": [
+    { "file": "README.md", "label": "Existing One Tap Menu references", "reason": "Existing tests use these English labels as stable documentation text; not rewritten in Phase21-41." },
+    { "file": "index.html", "label": "Existing One Tap Menu monitoring labels", "reason": "Existing tests use these labels; not rewritten without broader UI copy update." }
+  ],
+  "postPr235MergeChecks": [
+    { "id": "P21-41-PR235-MERGED", "label": "PR #235 merged confirmation is required before using main as the baseline.", "command": "manual PR confirmation", "status": "Required" },
+    { "id": "P21-41-PHASE21-40-MAIN", "label": "Phase21-40 main reflection is confirmed after pull.", "command": "manual main reflection confirmation", "status": "Required" }
+  ],
+  "japaneseTextReviewChecks": [
+    { "id": "P21-41-HOME-APP-REFLECTION", "label": "Home PC app reflection is confirmed before text cleanup review.", "command": "manual app display confirmation", "status": "Required" },
+    { "id": "P21-41-JA-ISSUE-OBSERVED", "label": "Japanese text display issue is observed in Private Local app review.", "command": "manual display review", "status": "Required" },
+    { "id": "P21-41-PRIVATE-LOCAL-REVIEW", "label": "private-local.html text review completed for One Tap Menu display.", "command": "private-local.html", "status": "Required" },
+    { "id": "P21-41-INDEX-REVIEW", "label": "index.html text review completed with stable test-bound labels preserved.", "command": "index.html", "status": "Required" },
+    { "id": "P21-41-README-REVIEW", "label": "README text review completed with test-bound labels preserved.", "command": "README.md", "status": "Required" },
+    { "id": "P21-41-PANEL-LABEL-REVIEW", "label": "Phase21 panel label review completed.", "command": "Phase21 panels", "status": "Required" }
+  ],
+  "textCleanupScopeChecks": [
+    { "id": "P21-41-MOJIBAKE-CLEANUP", "label": "Mojibake cleanup is limited to visible labels and descriptions.", "command": "text-only cleanup", "status": "Required" },
+    { "id": "P21-41-NO-BEHAVIOR-CHANGE", "label": "No functional behavior change is added.", "command": "display text only", "status": "Required" },
+    { "id": "P21-41-PENDING-README", "label": "README One Tap Menu references remain pending because they are test-bound stable documentation labels.", "command": "pending", "status": "Pending" },
+    { "id": "P21-41-PENDING-INDEX", "label": "index.html One Tap Menu monitoring labels remain pending because they are test-bound stable UI labels.", "command": "pending", "status": "Pending" }
+  ],
+  "branchPrMergeChecks": [
+    { "id": "P21-41-NO-MAIN-COMMIT", "label": "No direct commit to main.", "command": "blocked", "status": "Blocked" },
+    { "id": "P21-41-FEATURE-BRANCH", "label": "Feature branch is required for follow-up work.", "command": "feature branch", "status": "Required" },
+    { "id": "P21-41-DRAFT-PR", "label": "Draft PR is required.", "command": "Draft PR", "status": "Required" },
+    { "id": "P21-41-MERGE-CONFIRM", "label": "Merge only after user confirmation.", "command": "manual merge confirmation", "status": "Required" },
+    { "id": "P21-41-BRANCH-DELETE-CONFIRM", "label": "Branch deletion only after merge confirmation.", "command": "manual branch deletion confirmation", "status": "Required" },
+    { "id": "P21-41-MAIN-SYNC-AFTER-MERGE", "label": "Main sync required after merge.", "command": "manual main sync confirmation", "status": "Required" }
+  ],
+  "privateLocalChecks": [
+    { "id": "P21-41-PRIVATE-FIRST", "label": "Private Local first remains required.", "status": "Required" },
+    { "id": "P21-41-NO-PAGES", "label": "GitHub Pages is not required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-41-PRIVATE-REPO", "label": "Repository remains private.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-41-POWERSHELL-MANUAL", "label": "PowerShell operation remains manual.", "status": "Required" },
+    { "id": "P21-41-IPAD-VIEW", "label": "iPad remains view / confirmation only.", "status": "Required" },
+    { "id": "P21-41-LOCAL-BROWSER", "label": "Local browser confirmation is required.", "status": "Required" },
+    { "id": "P21-41-SECURITY-FRIENDLY", "label": "Security software friendly operation remains required.", "status": "Required" },
+    { "id": "P21-41-STASHES-UNTOUCHED", "label": "Old unrelated stashes remain untouched.", "status": "Required" }
+  ],
+  "blockedAutomationChecks": [
+    { "id": "P21-41-NO-AUTO-PUBLISH", "label": "No auto publish is added.", "status": "Blocked" },
+    { "id": "P21-41-NO-AUTO-UPDATE", "label": "No auto update is added.", "status": "Blocked" },
+    { "id": "P21-41-NO-HIDDEN-UPDATE", "label": "No hidden update is added.", "status": "Blocked" },
+    { "id": "P21-41-NO-EXTERNAL-SEND", "label": "No external sending is added.", "status": "Blocked" },
+    { "id": "P21-41-NO-AUTORUN", "label": "No suspicious auto-run script is added.", "status": "BlockedScriptPolicy" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-41-NO-BAT", "label": "Do not create or modify .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-41-NO-PS1", "label": "Do not create or modify .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-41-NO-CMD", "label": "Do not create or modify .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-41-NO-EXE", "label": "Do not create or modify .exe files.", "status": "BlockedScriptPolicy" }
+  ],
+  "operationPrinciples": [
+    "PLAN_ONLY / Protected / Draft PR first / merge only after user confirmation remains unchanged.",
+    "private-local.html and index.html remain the manual local entry points.",
+    "Only visible text labels and descriptions are cleaned up.",
+    "Existing links, ids, anchors, file paths, and script references remain unchanged.",
+    "GitHub Pages and public delivery are not required.",
+    "Security software friendly operation avoids auto-update, auto-run, hidden updater, and suspicious background execution."
+  ],
+  "nextRecommendedStep": "Confirm private-local.html and index.html locally, then continue text cleanup only as visible display wording review."
+}

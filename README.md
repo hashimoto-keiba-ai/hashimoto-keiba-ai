@@ -1664,3 +1664,67 @@ Verification results:
 - Conflict markers, automatic publish, external sending, public operation additions, hidden updates, suspicious auto-run scripts, and dangerous launcher extension changes must remain absent.
 
 Added files: `phase21-40-post-pr234-private-local-operation-safety-check-builder.js`, `phase21-40-post-pr234-private-local-operation-safety-check-db.json`, `phase21-40-post-pr234-private-local-operation-safety-check-summary-db.json`, `tests/phase21PostPr234PrivateLocalOperationSafetyCheckBuilder.test.js`
+
+## Phase21-41 Private Local Japanese Text Display Cleanup Checklist
+
+Phase21-41 adds a Private Local Japanese Text Display Cleanup Checklist after PR #235 merge and Phase21-40 main reflection. The purpose is to review Japanese display text in `private-local.html`, `index.html`, README, and Phase21 panels without changing behavior, links, ids, anchors, file paths, script references, DB structure, builder structure, or test structure.
+
+Cleanup policy:
+
+- Fix only clear visible mojibake or unnatural display labels.
+- Do not rewrite text when the meaning cannot be inferred safely.
+- Do not force full translation of existing English labels.
+- Prioritize the `private-local.html` One Tap Menu display.
+- Keep existing links, ids, file paths, anchors, and script references unchanged.
+
+Text cleanup completed:
+
+- `private-local.html`: `One Tap` -> `ワンタップ`
+- `private-local.html`: `One Tap Menu Auto Generation` -> `ワンタップメニュー自動生成`
+- `private-local.html`: `One Tap Menu` -> `ワンタップメニュー`
+
+Pending text cleanup:
+
+- `README.md` existing `One Tap Menu` references are left unchanged because existing tests use them as stable documentation labels.
+- `index.html` existing `One Tap Menu` monitoring labels are left unchanged because existing tests use them as stable UI labels.
+
+Operation policy:
+
+- PR #235 merged confirmation is required.
+- Phase21-40 main reflection is confirmed after pull.
+- Home PC app reflection is confirmed.
+- No functional behavior change.
+- No direct commit to main.
+- Feature branch is required for follow-up work.
+- Draft PR is required.
+- Merge only after user confirmation.
+- Private Local first.
+- GitHub Pages not required.
+- Repository remains private.
+- PowerShell operation remains manual.
+- iPad remains view / confirmation only.
+- Local browser confirmation is required.
+- Old unrelated stashes remain untouched.
+- Branch deletion only after merge confirmation.
+- Main sync required after merge.
+
+Blocked automation:
+
+- No auto publish.
+- No auto update.
+- No hidden update.
+- No external sending.
+- No suspicious auto-run script.
+- No new `.bat` / `.ps1` / `.cmd` / `.exe` files.
+
+Verification results:
+
+- JSON syntax confirmation required for the Phase21-41 DB files.
+- Builder syntax confirmation required for `phase21-41-private-local-japanese-text-display-cleanup-builder.js`.
+- Phase21-41 test required: `tests/phase21PrivateLocalJapaneseTextDisplayCleanupBuilder.test.js`.
+- Existing Phase21 related tests should remain unaffected.
+- `git diff --check` and `git diff --cached --check` should pass.
+- Conflict markers, automatic publish, external sending, public operation additions, hidden updates, suspicious auto-run scripts, and dangerous launcher extension changes must remain absent.
+- `private-local.html` and `index.html` display text changes must preserve structure.
+
+Added files: `phase21-41-private-local-japanese-text-display-cleanup-builder.js`, `phase21-41-private-local-japanese-text-display-cleanup-db.json`, `phase21-41-private-local-japanese-text-display-cleanup-summary-db.json`, `tests/phase21PrivateLocalJapaneseTextDisplayCleanupBuilder.test.js`
