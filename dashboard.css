@@ -2062,3 +2062,12 @@ tbody tr:last-child td {
 .phase21-45-private-local-post-pr239-operation-stability-check-item.status-blocked, .phase21-45-private-local-post-pr239-operation-stability-check-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
 .phase21-45-private-local-post-pr239-operation-stability-check-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
 @media (max-width: 680px) { .phase21-45-private-local-post-pr239-operation-stability-check-actions { align-items: stretch; } .phase21-45-private-local-post-pr239-operation-stability-check-actions button { width: 100%; } }
+.phase21-46-private-local-post-pr240-operation-integrity-check { border: 1px solid rgba(234, 179, 8, 0.72); background: radial-gradient(circle at 84% 0, rgba(234, 179, 8, 0.12), transparent 42%), linear-gradient(145deg, #241e05, #171405 74%); }
+.phase21-46-private-local-post-pr240-operation-integrity-check-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-46-private-local-post-pr240-operation-integrity-check-actions span { color: #fef9c3; font-size: 13px; font-weight: 900; }
+.phase21-46-private-local-post-pr240-operation-integrity-check-grid article strong { color: #fefce8; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-46-private-local-post-pr240-operation-integrity-check-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-46-private-local-post-pr240-operation-integrity-check-item, .phase21-46-private-local-post-pr240-operation-integrity-check-list li { border: 1px solid rgba(234, 179, 8, 0.34); border-radius: 10px; padding: 9px 11px; color: #fefce8; font-size: 12px; font-weight: 800; }
+.phase21-46-private-local-post-pr240-operation-integrity-check-item.status-blocked, .phase21-46-private-local-post-pr240-operation-integrity-check-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
+.phase21-46-private-local-post-pr240-operation-integrity-check-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
+@media (max-width: 680px) { .phase21-46-private-local-post-pr240-operation-integrity-check-actions { align-items: stretch; } .phase21-46-private-local-post-pr240-operation-integrity-check-actions button { width: 100%; } }
