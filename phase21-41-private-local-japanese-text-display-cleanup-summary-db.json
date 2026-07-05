@@ -1,0 +1,45 @@
+{
+  "phase": "Phase21-41",
+  "status": "PHASE21_41_PRIVATE_LOCAL_JAPANESE_TEXT_DISPLAY_CLEANUP_READY",
+  "baseline": "PR #235 merged main / Phase21-40 reflected",
+  "totalChecks": 37,
+  "passed": 35,
+  "pending": 2,
+  "operationPolicy": "Private Local first; Japanese display cleanup is limited to visible text review after PR #235 main pull.",
+  "cleanupPolicy": "Only clear visible mojibake or unnatural labels are cleaned up; unclear or test-bound text remains pending.",
+  "textScopePolicy": "Display labels and descriptions may change; ids, links, anchors, file paths, script references, DB structure, builder structure, and tests remain stable.",
+  "pendingPolicy": "README and index One Tap Menu labels that are bound to existing tests remain pending.",
+  "securitySoftwarePolicy": "Norton-friendly and security-software friendly operation with no auto-run, hidden updater, auto update, or suspicious background execution.",
+  "prMergePolicy": "No direct commit to main; feature branch and Draft PR are required; merge only after user confirmation.",
+  "blockedActionPolicy": {
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false,
+    "automaticRemotePublishAllowed": false,
+    "automaticMergeAllowed": false,
+    "hiddenBackgroundUpdateAllowed": false,
+    "automaticUpdateAllowed": false,
+    "externalSendAllowed": false,
+    "suspiciousAutoRunScriptAllowed": false,
+    "githubPagesRequired": false,
+    "unrelatedStashChangeAllowed": false,
+    "branchDeletionBeforeMergeConfirmationAllowed": false,
+    "mainSyncAfterMergeRequired": true
+  },
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "dangerousLauncherExtensionsAdded": false,
+  "cleanedTextChanges": [
+    "private-local.html: One Tap -> ワンタップ",
+    "private-local.html: One Tap Menu Auto Generation -> ワンタップメニュー自動生成",
+    "private-local.html: One Tap Menu -> ワンタップメニュー"
+  ],
+  "pendingTextCleanup": [
+    "README.md existing One Tap Menu references are test-bound stable documentation labels.",
+    "index.html existing One Tap Menu monitoring labels are test-bound stable UI labels."
+  ],
+  "nextRecommendedStep": "Keep Phase21-41 as PLAN_ONLY / Protected / Private Local text cleanup and confirm private-local.html plus index.html in a local browser."
+}

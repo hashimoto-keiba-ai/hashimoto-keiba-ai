@@ -2016,3 +2016,13 @@ tbody tr:last-child td {
 .phase21-40-post-pr234-private-local-operation-safety-check-item.status-blocked, .phase21-40-post-pr234-private-local-operation-safety-check-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
 .phase21-40-post-pr234-private-local-operation-safety-check-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
 @media (max-width: 680px) { .phase21-40-post-pr234-private-local-operation-safety-check-actions { align-items: stretch; } .phase21-40-post-pr234-private-local-operation-safety-check-actions button { width: 100%; } }
+.phase21-41-private-local-japanese-text-display-cleanup { border: 1px solid rgba(14, 165, 233, 0.72); background: radial-gradient(circle at 84% 0, rgba(14, 165, 233, 0.12), transparent 42%), linear-gradient(145deg, #062033, #07131d 74%); }
+.phase21-41-private-local-japanese-text-display-cleanup-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-41-private-local-japanese-text-display-cleanup-actions span { color: #e0f2fe; font-size: 13px; font-weight: 900; }
+.phase21-41-private-local-japanese-text-display-cleanup-grid article strong { color: #f0f9ff; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-41-private-local-japanese-text-display-cleanup-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-41-private-local-japanese-text-display-cleanup-item, .phase21-41-private-local-japanese-text-display-cleanup-list li { border: 1px solid rgba(14, 165, 233, 0.34); border-radius: 10px; padding: 9px 11px; color: #f0f9ff; font-size: 12px; font-weight: 800; }
+.phase21-41-private-local-japanese-text-display-cleanup-item.status-blocked, .phase21-41-private-local-japanese-text-display-cleanup-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
+.phase21-41-private-local-japanese-text-display-cleanup-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
+.phase21-41-private-local-japanese-text-display-cleanup-item.status-pending { border-color: rgba(250, 204, 21, 0.68); color: #fef3c7; }
+@media (max-width: 680px) { .phase21-41-private-local-japanese-text-display-cleanup-actions { align-items: stretch; } .phase21-41-private-local-japanese-text-display-cleanup-actions button { width: 100%; } }
