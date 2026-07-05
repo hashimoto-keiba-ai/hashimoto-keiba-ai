@@ -1,0 +1,106 @@
+{
+  "phase": "Phase21-38",
+  "checklistName": "Post PR232 Private Local Operation Stability Check",
+  "status": "PHASE21_38_POST_PR232_PRIVATE_LOCAL_OPERATION_STABILITY_CHECK_READY",
+  "baseline": "PR #232 merged main / Phase21-37 reflected",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "automaticUpdateAllowed": false,
+  "automaticRemotePublishAllowed": false,
+  "automaticMergeAllowed": false,
+  "hiddenBackgroundUpdateAllowed": false,
+  "suspiciousAutoRunScriptAllowed": false,
+  "planOnly": true,
+  "protected": true,
+  "pr232MergedConfirmationRequired": true,
+  "phase2137MainReflectionRequired": true,
+  "homePcMainLatestConfirmed": true,
+  "workingTreeCleanConfirmed": true,
+  "oldTemporaryPhase2137StashRemoved": true,
+  "oldUnrelatedStashesUntouched": true,
+  "featureBranchRequired": true,
+  "draftPrRequired": true,
+  "mergeAfterUserConfirmationOnly": true,
+  "ipadViewConfirmOnly": true,
+  "powerShellManualOnly": true,
+  "localBrowserConfirmationRequired": true,
+  "operationPolicy": "Private Local first; private-local.html, index.html, and local browser confirmation remain the operating basis after PR #232 main pull.",
+  "stabilityPolicy": "Home PC continuation starts from latest main and clean working tree only.",
+  "stashPolicy": "Old temporary Phase21-37 stash removal is confirmed while old unrelated stashes remain untouched.",
+  "securitySoftwarePolicy": "Norton and security-software friendly operation; no hidden updater, auto-run launcher, suspicious background execution, or dangerous launcher extension changes.",
+  "devicePolicy": "Home PC continues stable private local operation; iPad remains view / confirmation only.",
+  "prMergePolicy": "No direct commit to main; feature branch and Draft PR are required; merge only after user confirmation.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "automaticRemotePublishAllowed": false,
+    "automaticMergeAllowed": false,
+    "hiddenBackgroundUpdateAllowed": false,
+    "automaticUpdateAllowed": false,
+    "externalSendAllowed": false,
+    "suspiciousAutoRunScriptAllowed": false,
+    "launcherFileChangeAllowed": false,
+    "unrelatedStashChangeAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "postPr232MergeChecks": [
+    { "id": "P21-38-PR232-MERGED", "label": "PR #232 merged confirmation is required before using main as the baseline.", "command": "manual PR confirmation", "status": "Required" },
+    { "id": "P21-38-PHASE21-37-MAIN", "label": "Phase21-37 main reflection is confirmed after pull.", "command": "manual main reflection confirmation", "status": "Required" }
+  ],
+  "homePcStabilityChecks": [
+    { "id": "P21-38-HOME-MAIN-LATEST", "label": "Home PC main branch latest confirmation is required.", "command": "manual latest main confirmation", "status": "Required" },
+    { "id": "P21-38-WORKTREE-CLEAN", "label": "Working tree clean confirmation is required before follow-up work.", "command": "git status --short", "status": "Required" },
+    { "id": "P21-38-LOCAL-BROWSER", "label": "Local browser confirmation is required for private-local.html and index.html.", "command": "manual browser confirmation", "status": "Required" }
+  ],
+  "stashSafetyChecks": [
+    { "id": "P21-38-TEMP-STASH-REMOVED", "label": "Old temporary Phase21-37 stash removed confirmation is required.", "command": "manual stash confirmation", "status": "Required" },
+    { "id": "P21-38-UNRELATED-STASHES-UNTOUCHED", "label": "Old unrelated stashes remain untouched.", "command": "manual stash preservation confirmation", "status": "Required" }
+  ],
+  "branchPrMergeChecks": [
+    { "id": "P21-38-NO-MAIN-COMMIT", "label": "No direct commit to main.", "command": "blocked", "status": "Blocked" },
+    { "id": "P21-38-FEATURE-BRANCH", "label": "Feature branch is required for follow-up work.", "command": "feature branch", "status": "Required" },
+    { "id": "P21-38-DRAFT-PR", "label": "Draft PR is required.", "command": "Draft PR", "status": "Required" },
+    { "id": "P21-38-MERGE-CONFIRM", "label": "Merge only after user confirmation.", "command": "manual merge confirmation", "status": "Required" }
+  ],
+  "privateLocalChecks": [
+    { "id": "P21-38-PRIVATE-FIRST", "label": "Private Local first remains required.", "status": "Required" },
+    { "id": "P21-38-NO-PAGES", "label": "GitHub Pages is not required.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-38-PRIVATE-REPO", "label": "Repository remains private.", "status": "PrivateLocalPolicy" },
+    { "id": "P21-38-POWERSHELL-MANUAL", "label": "PowerShell operation remains manual.", "status": "Required" },
+    { "id": "P21-38-IPAD-VIEW", "label": "iPad remains view / confirmation only.", "status": "Required" },
+    { "id": "P21-38-SECURITY-FRIENDLY", "label": "Security software friendly operation remains required.", "status": "Required" }
+  ],
+  "blockedAutomationChecks": [
+    { "id": "P21-38-NO-AUTO-PUBLISH", "label": "No auto publish is added.", "status": "Blocked" },
+    { "id": "P21-38-NO-AUTO-UPDATE", "label": "No auto update is added.", "status": "Blocked" },
+    { "id": "P21-38-NO-HIDDEN-UPDATE", "label": "No hidden update is added.", "status": "Blocked" },
+    { "id": "P21-38-NO-EXTERNAL-SEND", "label": "No external sending is added.", "status": "Blocked" },
+    { "id": "P21-38-NO-AUTORUN", "label": "No suspicious auto-run script is added.", "status": "BlockedScriptPolicy" }
+  ],
+  "prohibitedActions": [
+    { "id": "P21-38-NO-BAT", "label": "Do not create or modify .bat files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-38-NO-PS1", "label": "Do not create or modify .ps1 files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-38-NO-CMD", "label": "Do not create or modify .cmd files.", "status": "BlockedScriptPolicy" },
+    { "id": "P21-38-NO-EXE", "label": "Do not create or modify .exe files.", "status": "BlockedScriptPolicy" }
+  ],
+  "operationPrinciples": [
+    "PLAN_ONLY / Protected / Draft PR first / merge only after user confirmation remains unchanged.",
+    "private-local.html and index.html remain the manual local entry points.",
+    "GitHub Pages and public delivery are not required.",
+    "Home PC continuation is recorded from latest main and a clean working tree after PR #232 is merged.",
+    "Only old temporary Phase21-37 stash cleanup is confirmed; unrelated stashes remain untouched.",
+    "Security software friendly operation avoids auto-update, auto-run, hidden updater, and suspicious background execution."
+  ],
+  "nextRecommendedStep": "Continue home PC work only from latest clean main, confirm private-local.html and index.html locally, and start follow-up work only from a feature branch with a Draft PR."
+}

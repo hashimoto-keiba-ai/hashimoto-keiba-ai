@@ -1515,3 +1515,52 @@ Verification results:
 - Conflict markers, automatic publish, external sending, public operation additions, hidden updates, and dangerous launcher extension changes must remain absent.
 
 Added files: `phase21-37-post-pr231-private-local-operation-verification-builder.js`, `phase21-37-post-pr231-private-local-operation-verification-db.json`, `phase21-37-post-pr231-private-local-operation-verification-summary-db.json`, `tests/phase21PostPr231PrivateLocalOperationVerificationBuilder.test.js`
+
+## Phase21-38 Post PR232 Private Local Operation Stability Check
+
+Phase21-38 adds Post PR232 Private Local Operation Stability Check after PR #232 merge and Phase21-37 main reflection. The purpose is to record that home PC continuation starts from latest main and a clean working tree while keeping `private-local.html`, `index.html`, local browser confirmation, and private repository operation unchanged.
+
+Operation policy:
+
+- PR #232 merged confirmation is required.
+- Phase21-37 main reflection is confirmed after pull.
+- Home PC main branch latest confirmation is required.
+- working tree clean confirmation is required.
+- old temporary Phase21-37 stash removed confirmation is required.
+- old unrelated stashes remain untouched.
+- No direct commit to main.
+- Feature branch is required for follow-up work.
+- Draft PR is required.
+- Merge only after user confirmation.
+- Private Local first.
+- GitHub Pages not required.
+- Repository remains private.
+- PowerShell operation remains manual.
+- iPad remains view / confirmation only.
+- Local browser confirmation is required.
+
+Blocked automation:
+
+- No auto publish.
+- No auto update.
+- No hidden update.
+- No external sending.
+- No suspicious auto-run script.
+- No new `.bat` / `.ps1` / `.cmd` / `.exe` files.
+
+Security software policy:
+
+- Norton / security software friendly operation is required.
+- Automatic execution, hidden updater behavior, and suspicious launcher behavior are not added.
+- Existing `private-local.html` and `index.html` routes remain manual local entry points.
+
+Verification results:
+
+- JSON syntax confirmation required for the Phase21-38 DB files.
+- Builder syntax confirmation required for `phase21-38-post-pr232-private-local-operation-stability-check-builder.js`.
+- Phase21-38 test required: `tests/phase21PostPr232PrivateLocalOperationStabilityCheckBuilder.test.js`.
+- Existing Phase21 related tests should remain unaffected.
+- `git diff --check` and `git diff --cached --check` should pass.
+- Conflict markers, automatic publish, external sending, public operation additions, hidden updates, suspicious auto-run scripts, and dangerous launcher extension changes must remain absent.
+
+Added files: `phase21-38-post-pr232-private-local-operation-stability-check-builder.js`, `phase21-38-post-pr232-private-local-operation-stability-check-db.json`, `phase21-38-post-pr232-private-local-operation-stability-check-summary-db.json`, `tests/phase21PostPr232PrivateLocalOperationStabilityCheckBuilder.test.js`
