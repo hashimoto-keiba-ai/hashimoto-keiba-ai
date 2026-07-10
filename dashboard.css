@@ -2143,3 +2143,12 @@ tbody tr:last-child td {
 .phase21-54-private-local-final-stack-merge-preparation-check-item.status-blocked, .phase21-54-private-local-final-stack-merge-preparation-check-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
 .phase21-54-private-local-final-stack-merge-preparation-check-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
 @media (max-width: 680px) { .phase21-54-private-local-final-stack-merge-preparation-check-actions { align-items: stretch; } .phase21-54-private-local-final-stack-merge-preparation-check-actions button { width: 100%; } }
+.phase21-55-private-local-post-final-stack-continuation-check { border: 1px solid rgba(45, 212, 191, 0.72); background: radial-gradient(circle at 84% 0, rgba(45, 212, 191, 0.12), transparent 42%), linear-gradient(145deg, #06251f, #091716 74%); }
+.phase21-55-private-local-post-final-stack-continuation-check-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.phase21-55-private-local-post-final-stack-continuation-check-actions span { color: #ccfbf1; font-size: 13px; font-weight: 900; }
+.phase21-55-private-local-post-final-stack-continuation-check-grid article strong { color: #f0fdfa; font-size: 16px; overflow-wrap: anywhere; }
+.phase21-55-private-local-post-final-stack-continuation-check-list { display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.phase21-55-private-local-post-final-stack-continuation-check-item, .phase21-55-private-local-post-final-stack-continuation-check-list li { border: 1px solid rgba(45, 212, 191, 0.34); border-radius: 10px; padding: 9px 11px; color: #f0fdfa; font-size: 12px; font-weight: 800; }
+.phase21-55-private-local-post-final-stack-continuation-check-item.status-blocked, .phase21-55-private-local-post-final-stack-continuation-check-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
+.phase21-55-private-local-post-final-stack-continuation-check-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
+@media (max-width: 680px) { .phase21-55-private-local-post-final-stack-continuation-check-actions { align-items: stretch; } .phase21-55-private-local-post-final-stack-continuation-check-actions button { width: 100%; } }
