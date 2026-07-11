@@ -6,6 +6,7 @@ const vm = require("vm");
 
 const root = path.resolve(__dirname, "..");
 const engine = require("../phase22-1-race-input-core-foundation.js");
+const cleanupEngine = require("../phase22-local-storage-cleanup.js");
 const readText = (file) => fs.readFileSync(path.join(root, file), "utf8");
 
 function createStorage() {
@@ -49,6 +50,7 @@ const validInput = {
 
 assert.strictEqual(engine.SCHEMA_VERSION, 1);
 assert.strictEqual(engine.STORAGE_KEY, "hashimotoKeibaAi.phase22.raceInput.v1");
+assert.strictEqual(engine.formatBytes(2048), cleanupEngine.formatBytes(2048), "Phase22-1 uses shared cleanup formatter");
 assert.strictEqual(engine.buildHorseRows(5).length, 5, "頭数に応じた入力行を生成できる");
 assert.strictEqual(engine.buildHorseRows(0).length, 0, "無効な頭数は生成しない");
 assert.strictEqual(engine.buildHorseRows(19).length, 0, "最大頭数超過は生成しない");
@@ -162,6 +164,7 @@ assert.ok(index.includes('data-phase22-race="fieldSize"'));
 assert.ok(index.includes('id="phase22-horse-input-list"'));
 assert.ok(index.includes('id="phase22-cleanup-phase21-storage"'));
 assert.ok(index.includes('id="phase22-phase21-cleanup-summary"'));
+assert.ok(index.includes('<script src="phase22-local-storage-cleanup.js"></script>'));
 assert.ok(index.includes('<script src="phase22-1-race-input-core-foundation.js"></script>'));
 assert.ok(privateLocal.includes("Phase22 本体機能"));
 assert.ok(privateLocal.includes('href="index.html#phase22-race-input-core"'));
@@ -258,6 +261,7 @@ sandbox.window.window = sandbox.window;
 sandbox.window.globalThis = sandbox.window;
 vm.createContext(sandbox);
 assert.doesNotThrow(() => {
+  vm.runInContext(readText("phase22-local-storage-cleanup.js"), sandbox, { filename: "phase22-local-storage-cleanup.js" });
   vm.runInContext(readText("phase22-1-race-input-core-foundation.js"), sandbox, { filename: "phase22-1-race-input-core-foundation.js" });
 }, "browser実行時にroot未定義を起こさない");
 assert.strictEqual(typeof browser.listeners.generate, "function", "生成ボタンのイベントを登録する");

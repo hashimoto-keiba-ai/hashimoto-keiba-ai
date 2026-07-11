@@ -8,6 +8,7 @@
   const SCHEMA_VERSION = 1;
   const RACE_INPUT_STORAGE_KEY = "hashimotoKeibaAi.phase22.raceInput.v1";
   const STORAGE_KEY = "hashimotoKeibaAi.phase22.predictionEvaluation.v1";
+  const PROTECTED_CLEANUP_KEYS = [RACE_INPUT_STORAGE_KEY, STORAGE_KEY];
   const MARK_OPTIONS = ["◎", "○", "▲", "△", "☆", "注", "消", "無印"];
   const MARK_LABELS = {
     "◎": "◎ 本命",
@@ -20,6 +21,11 @@
     "無印": "無印"
   };
   const MARK_SORT_ORDER = { "◎": 1, "○": 2, "▲": 3, "△": 4, "☆": 5, "注": 6, "消": 7, "無印": 8 };
+  const cleanupApi = (() => {
+    if (root && root.HashimotoPhase22LocalStorageCleanup) return root.HashimotoPhase22LocalStorageCleanup;
+    if (typeof module === "object" && module.exports) return require("./phase22-local-storage-cleanup.js");
+    return null;
+  })();
 
   function getStorage(storage) {
     return storage || (root && root.localStorage) || null;
@@ -209,6 +215,22 @@
     return { deleted: true };
   }
 
+  function formatBytes(bytes) {
+    return cleanupApi.formatBytes(bytes);
+  }
+
+  function isPhase21CleanupKey(key) {
+    return cleanupApi.isPhase21CleanupKey(key, PROTECTED_CLEANUP_KEYS);
+  }
+
+  function summarizePhase21Cleanup(storage) {
+    return cleanupApi.summarizePhase21Cleanup(getStorage(storage), PROTECTED_CLEANUP_KEYS);
+  }
+
+  function cleanupPhase21LocalData(storage, confirmCleanup = () => false) {
+    return cleanupApi.cleanupPhase21LocalData(getStorage(storage), confirmCleanup, PROTECTED_CLEANUP_KEYS);
+  }
+
   function sortEvaluations(evaluations, mode = "horseNumber") {
     const rows = [...(evaluations || [])];
     const numeric = (value, fallback = Number.POSITIVE_INFINITY) => {
@@ -235,6 +257,16 @@
     if (!node) return;
     node.textContent = message;
     node.dataset.kind = kind;
+  }
+
+  function updateCleanupSummary(doc, storage) {
+    const node = doc.querySelector("#phase22-prediction-phase21-cleanup-summary");
+    if (!node) return null;
+    const summary = summarizePhase21Cleanup(storage);
+    node.textContent = `削除対象候補: ${summary.count}件 / 概算 ${summary.displaySize}`;
+    node.dataset.count = String(summary.count);
+    node.dataset.bytes = String(summary.bytes);
+    return summary;
   }
 
   function renderRaceSummary(doc, race) {
@@ -424,12 +456,31 @@
       setMessage(doc, result.deleted ? "保存済み予想評価を削除しました。Phase22-1のレース入力データは残しています。" : "削除には確認が必要です。", result.deleted ? "success" : "error");
       return result;
     };
+    const cleanupPhase21 = () => {
+      evaluations = collectEvaluationsFromDocument(doc);
+      const before = summarizePhase21Cleanup(storage);
+      const confirmCleanup = options.confirmCleanup || ((summary) => (
+        root && typeof root.confirm === "function"
+          ? root.confirm(`古いPhase21ローカル保存データ ${summary.count}件（概算 ${summary.displaySize}）を整理します。Phase22-1のレース入力データ、Phase22-2の保存データ、入力中の予想評価フォームは削除しません。実行しますか？`)
+          : false
+      ));
+      const result = cleanupPhase21LocalData(storage, confirmCleanup);
+      updateCleanupSummary(doc, storage);
+      if (!result.deleted) {
+        setMessage(doc, result.reason === "confirmation_required" ? "Phase21ローカル保存データ整理は確認が必要です。" : "localStorageを利用できないため整理できません。", "error");
+        return result;
+      }
+      render();
+      setMessage(doc, `古いPhase21ローカル保存データを${result.removedCount}件整理しました。概算${formatBytes(before.bytes)}を解放しました。入力中の予想評価は保持しています。`, "success");
+      return result;
+    };
 
     const actions = [
       ["#phase22-load-race-for-prediction", "click", loadRace],
       ["#phase22-save-prediction-evaluation", "click", save],
       ["#phase22-restore-prediction-evaluation", "click", restore],
       ["#phase22-delete-prediction-evaluation", "click", remove],
+      ["#phase22-cleanup-phase21-storage-for-prediction", "click", cleanupPhase21],
       ["#phase22-prediction-sort", "change", () => render(null, true)]
     ];
     actions.forEach(([selector, event, handler]) => {
@@ -437,7 +488,8 @@
       if (node) node.addEventListener(event, handler);
     });
     loadRace();
-    return { loadRace, save, restore, remove, render };
+    updateCleanupSummary(doc, storage);
+    return { loadRace, save, restore, remove, cleanupPhase21, render };
   }
 
   if (typeof window !== "undefined" && typeof document !== "undefined") {
@@ -450,6 +502,7 @@
     SCHEMA_VERSION,
     RACE_INPUT_STORAGE_KEY,
     STORAGE_KEY,
+    PROTECTED_CLEANUP_KEYS,
     MARK_OPTIONS,
     MARK_LABELS,
     buildSourceRaceKey,
@@ -463,6 +516,10 @@
     saveEvaluation,
     loadSavedEvaluation,
     deleteSavedEvaluation,
+    formatBytes,
+    isPhase21CleanupKey,
+    summarizePhase21Cleanup,
+    cleanupPhase21LocalData,
     sortEvaluations,
     renderRaceSummary,
     renderEvaluationRows,

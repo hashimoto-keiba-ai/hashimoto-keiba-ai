@@ -157,8 +157,10 @@
           <button id="phase22-save-prediction-evaluation" type="button">予想評価を保存</button>
           <button id="phase22-restore-prediction-evaluation" type="button">予想評価を再読み込み</button>
           <button id="phase22-delete-prediction-evaluation" type="button">予想評価保存データ削除</button>
+          <button id="phase22-cleanup-phase21-storage-for-prediction" type="button">古いPhase21ローカル保存データを整理</button>
           <label class="phase22-sort-control"><span>並び替え</span><select id="phase22-prediction-sort"><option value="horseNumber">馬番順</option><option value="aiScore">AI評価点順</option><option value="popularity">人気順</option><option value="odds">オッズ順</option><option value="mark">印順</option></select></label>
         </div>
+        <div id="phase22-prediction-phase21-cleanup-summary" class="phase22-cleanup-summary">削除対象候補: 0件 / 概算 0 B</div>
         <div class="phase22-safety-strip">
           <span>Phase22-1連携</span>
           <span>localStorage only</span>
@@ -5982,6 +5984,7 @@
     <script src="phase21-56-private-local-home-pc-continuation-check-builder.js"></script>
     <script src="phase21-55-private-local-post-final-stack-continuation-check-builder.js"></script>
     <script src="phase21-54-private-local-final-stack-merge-preparation-check-builder.js"></script>
+    <script src="phase22-local-storage-cleanup.js"></script>
     <script src="phase22-1-race-input-core-foundation.js"></script>
     <script src="phase22-2-prediction-evaluation-core.js"></script>
     <script src="win5-phase95.js"></script>

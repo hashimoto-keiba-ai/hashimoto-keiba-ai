@@ -10,8 +10,11 @@
   const MAX_FIELD_SIZE = 18;
   const RACE_FIELDS = ["raceDate", "racecourse", "raceNumber", "raceName", "surface", "distance", "trackCondition", "fieldSize"];
   const HORSE_FIELDS = ["horseNumber", "horseName", "jockey", "odds", "popularity"];
-  const PHASE21_CLEANUP_KEY_PATTERN = /phase21/i;
-  const PHASE21_CLEANUP_TYPE_PATTERN = /(checklist|check|continuation|latest|summary|generated|temporary|temp|panel|builder|closure|operation)/i;
+  const cleanupApi = (() => {
+    if (root && root.HashimotoPhase22LocalStorageCleanup) return root.HashimotoPhase22LocalStorageCleanup;
+    if (typeof module === "object" && module.exports) return require("./phase22-local-storage-cleanup.js");
+    return null;
+  })();
 
   function text(value) {
     return String(value ?? "").trim();
@@ -163,47 +166,29 @@
   }
 
   function estimateStorageBytes(key, value) {
-    return (String(key || "").length + String(value || "").length) * 2;
+    return cleanupApi.estimateStorageBytes(key, value);
   }
 
   function formatBytes(bytes) {
-    if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+    return cleanupApi.formatBytes(bytes);
   }
 
   function isPhase21CleanupKey(key) {
-    if (!key || key === STORAGE_KEY) return false;
-    return PHASE21_CLEANUP_KEY_PATTERN.test(key) && PHASE21_CLEANUP_TYPE_PATTERN.test(key);
+    return cleanupApi.isPhase21CleanupKey(key, [STORAGE_KEY]);
   }
 
   function getPhase21CleanupCandidates(storage) {
     const targetStorage = getStorage(storage);
-    if (!targetStorage || typeof targetStorage.length !== "number" || typeof targetStorage.key !== "function") return [];
-    const candidates = [];
-    for (let index = 0; index < targetStorage.length; index += 1) {
-      const key = targetStorage.key(index);
-      if (!isPhase21CleanupKey(key)) continue;
-      const value = targetStorage.getItem(key) || "";
-      candidates.push({ key, bytes: estimateStorageBytes(key, value) });
-    }
-    return candidates;
+    return cleanupApi.getPhase21CleanupCandidates(targetStorage, [STORAGE_KEY]);
   }
 
   function summarizePhase21Cleanup(storage) {
-    const candidates = getPhase21CleanupCandidates(storage);
-    const bytes = candidates.reduce((sum, item) => sum + item.bytes, 0);
-    return { count: candidates.length, bytes, displaySize: formatBytes(bytes), keys: candidates.map((item) => item.key) };
+    return cleanupApi.summarizePhase21Cleanup(getStorage(storage), [STORAGE_KEY]);
   }
 
   function cleanupPhase21LocalData(storage, confirmCleanup = () => false) {
     const targetStorage = getStorage(storage);
-    const summary = summarizePhase21Cleanup(targetStorage);
-    if (!targetStorage) return { deleted: false, reason: "storage_unavailable", ...summary };
-    if (!confirmCleanup(summary)) return { deleted: false, reason: "confirmation_required", ...summary };
-    summary.keys.forEach((key) => targetStorage.removeItem(key));
-    return { deleted: true, removedCount: summary.count, releasedBytes: summary.bytes, releasedSize: summary.displaySize, keys: summary.keys };
+    return cleanupApi.cleanupPhase21LocalData(targetStorage, confirmCleanup, [STORAGE_KEY]);
   }
 
   function collectFromDocument(doc) {

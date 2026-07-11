@@ -2674,6 +2674,7 @@ Implemented scope:
 - Runner rows are generated from field size and capture horse number, horse name, jockey, odds, and popularity.
 - Save / restore / delete are handled by `phase22-1-race-input-core-foundation.js`.
 - Local cleanup can remove old Phase21 checklist / check / continuation / latest / summary / generated localStorage entries after confirmation.
+- Phase21 local cleanup logic is shared through `phase22-local-storage-cleanup.js`.
 - Input validation rejects empty required fields, invalid field size, invalid odds or popularity, and duplicate horse numbers.
 - Delete requires an explicit confirmation callback / browser confirmation.
 
@@ -2715,6 +2716,7 @@ Implemented scope:
 - Each runner can store AI score, mark, evaluation reason, pace comment, dangerous popular flag, longshot flag, key candidate flag, and opponent candidate flag.
 - Sorting is available by horse number, AI score, popularity, odds, and mark.
 - Save / restore / delete are handled by `phase22-2-prediction-evaluation-core.js`.
+- Old Phase21 local cleanup is available from the Phase22-2 panel and uses the same shared cleanup logic as Phase22-1.
 - Delete requires confirmation and never deletes the Phase22-1 race input data.
 
 localStorage:
@@ -2735,6 +2737,14 @@ Validation:
 - Evaluations for horse numbers not present in Phase22-1 are rejected.
 - AI score accepts blank as unevaluated, or a decimal number from 0 to 100.
 - If the Phase22-1 race changes, saved evaluations with a different `sourceRaceKey` are not automatically applied and a Japanese warning is shown.
+
+Cleanup target keys:
+
+- Phase22-1 and Phase22-2 both use `phase22-local-storage-cleanup.js`.
+- Cleanup targets only localStorage keys that include `phase21` and one of: `checklist`, `check`, `continuation`, `latest`, `summary`, `generated`, `temporary`, `temp`, `panel`, `builder`, `closure`, or `operation`.
+- Cleanup never deletes `hashimotoKeibaAi.phase22.raceInput.v1`.
+- Cleanup never deletes `hashimotoKeibaAi.phase22.predictionEvaluation.v1`.
+- Phase22-2 cleanup does not clear the currently edited prediction evaluation form.
 
 Safety policy:
 
