@@ -142,6 +142,37 @@
         <div id="phase22-horse-input-list" class="phase22-horse-list" aria-label="出走馬情報入力"></div>
       </section>
 
+      <section class="panel phase22-prediction-evaluation-core" id="phase22-prediction-evaluation-core" aria-label="Phase22-2 Prediction Evaluation Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-2 / Prediction Evaluation Core</p>
+            <h2>予想評価入力</h2>
+          </div>
+          <span class="pill">Private Local / Manual</span>
+        </div>
+        <p class="console-menu-lead">Phase22-1で保存したレース情報と出走馬情報を読み込み、各馬のAI評価点、印、評価理由、展開コメント、候補フラグを手動で保存します。</p>
+        <div id="phase22-prediction-race-summary" class="phase2-kpis phase22-prediction-summary" aria-label="読み込み済みレース情報"></div>
+        <div class="phase22-race-actions">
+          <button id="phase22-load-race-for-prediction" type="button">Phase22-1レース情報を読み込み</button>
+          <button id="phase22-save-prediction-evaluation" type="button">予想評価を保存</button>
+          <button id="phase22-restore-prediction-evaluation" type="button">予想評価を再読み込み</button>
+          <button id="phase22-delete-prediction-evaluation" type="button">予想評価保存データ削除</button>
+          <button id="phase22-cleanup-phase21-storage-for-prediction" type="button">古いPhase21ローカル保存データを整理</button>
+          <label class="phase22-sort-control"><span>並び替え</span><select id="phase22-prediction-sort"><option value="horseNumber">馬番順</option><option value="aiScore">AI評価点順</option><option value="popularity">人気順</option><option value="odds">オッズ順</option><option value="mark">印順</option></select></label>
+        </div>
+        <div id="phase22-prediction-phase21-cleanup-summary" class="phase22-cleanup-summary">削除対象候補: 0件 / 概算 0 B</div>
+        <div class="phase22-safety-strip">
+          <span>Phase22-1連携</span>
+          <span>localStorage only</span>
+          <span>no fetch</span>
+          <span>no external API</span>
+          <span>no IPAT</span>
+          <span>no auto betting</span>
+        </div>
+        <div id="phase22-prediction-message" class="phase22-race-message" data-kind="info">先にPhase22-1 レース情報入力で保存してください。</div>
+        <div id="phase22-prediction-evaluation-list" class="phase22-evaluation-list" aria-label="予想評価入力"></div>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -5953,7 +5984,9 @@
     <script src="phase21-56-private-local-home-pc-continuation-check-builder.js"></script>
     <script src="phase21-55-private-local-post-final-stack-continuation-check-builder.js"></script>
     <script src="phase21-54-private-local-final-stack-merge-preparation-check-builder.js"></script>
+    <script src="phase22-local-storage-cleanup.js"></script>
     <script src="phase22-1-race-input-core-foundation.js"></script>
+    <script src="phase22-2-prediction-evaluation-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

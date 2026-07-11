@@ -2154,8 +2154,21 @@ tbody tr:last-child td {
 .phase22-race-message[data-kind="error"] { border-color: rgba(220, 91, 79, 0.58); color: #ffd7d3; }
 .phase22-cleanup-summary { margin-top: 8px; color: #e9d8a6; font-size: 12px; font-weight: 800; }
 .phase22-horse-list { display: grid; gap: 10px; margin-top: 14px; }
+.phase22-prediction-evaluation-core { border: 1px solid rgba(212, 175, 55, 0.5); background: linear-gradient(145deg, rgba(39, 31, 13, 0.94), rgba(18, 17, 14, 0.98)); }
+.phase22-sort-control { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 900; }
+.phase22-sort-control select { min-height: 40px; border: 1px solid rgba(212, 175, 55, 0.44); border-radius: 6px; background: rgba(0, 0, 0, 0.22); color: var(--ink); padding: 8px; }
+.phase22-evaluation-list { display: grid; gap: 12px; margin-top: 14px; }
+.phase22-evaluation-row { display: grid; grid-template-columns: minmax(180px, 1.2fr) minmax(110px, 0.5fr) minmax(120px, 0.6fr) minmax(180px, 1fr) minmax(180px, 1fr); gap: 10px; border: 1px solid rgba(212, 175, 55, 0.26); border-radius: 8px; padding: 12px; background: rgba(0, 0, 0, 0.18); }
+.phase22-evaluation-horse { display: grid; gap: 4px; color: #f7f1df; font-size: 12px; font-weight: 800; }
+.phase22-evaluation-row label { display: grid; gap: 6px; min-width: 0; color: var(--muted); font-size: 12px; font-weight: 800; }
+.phase22-evaluation-row input, .phase22-evaluation-row select, .phase22-evaluation-row textarea { width: 100%; min-height: 38px; border: 1px solid rgba(212, 175, 55, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 8px; font: inherit; }
+.phase22-evaluation-row textarea { min-height: 72px; resize: vertical; }
+.phase22-evaluation-flags { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.phase22-evaluation-flags label { display: flex; align-items: center; gap: 6px; }
+.phase22-evaluation-flags input { width: auto; min-height: auto; }
 @media (max-width: 920px) { .phase22-race-form-grid, .phase22-horse-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .phase22-race-form-grid, .phase22-horse-row { grid-template-columns: 1fr; } .phase22-race-actions button { width: 100%; } }
+@media (max-width: 1100px) { .phase22-evaluation-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .phase22-evaluation-horse, .phase22-evaluation-flags { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .phase22-race-form-grid, .phase22-horse-row, .phase22-evaluation-row { grid-template-columns: 1fr; } .phase22-race-actions button, .phase22-sort-control { width: 100%; } }
 .phase21-63-final-private-local-continuation-closure { border: 1px solid rgba(7, 89, 133, 0.72); background: radial-gradient(circle at 84% 0, rgba(7, 89, 133, 0.12), transparent 42%), linear-gradient(145deg, #061830, #08121e 74%); }
 .phase21-63-final-private-local-continuation-closure-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
 .phase21-63-final-private-local-continuation-closure-actions span { color: #e0f2fe; font-size: 13px; font-weight: 900; }
