@@ -531,6 +531,87 @@
         <label class="phase22-actual-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-actual-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-learning-candidate-review-summary-core" id="phase22-learning-candidate-review-summary-core" aria-label="Phase22-8 Learning Candidate Review Summary Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-8 / Learning Candidate Review Summary Core</p>
+            <h2>学習候補・振り返り集約</h2>
+          </div>
+          <span class="pill">承認候補 / 自動学習なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-7で確定した実績を振り返り、学習候補と改善アクションを整理します。候補は利用者承認用の準備データで、自動学習・自動モデル更新・外部送信は行いません。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-learning-reload" type="button">Phase22-7データを再読込</button>
+          <button id="phase22-learning-save" type="button">振り返りを保存</button>
+          <button id="phase22-learning-restore" type="button">振り返りを復元</button>
+          <button id="phase22-learning-reset" type="button">Phase22-8のみ初期化</button>
+          <button id="phase22-learning-finalize" type="button">学習候補を確定</button>
+          <button id="phase22-learning-unlock" type="button">確定解除</button>
+          <button id="phase22-learning-print" type="button">印刷</button>
+          <button id="phase22-learning-text" type="button">テキスト生成</button>
+          <button id="phase22-learning-copy" type="button">コピー</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>自動学習ではない</span>
+          <span>利用者の承認が必要</span>
+          <span>no external API</span>
+          <span>no scraping</span>
+          <span>no model update</span>
+          <span>no external sending</span>
+        </div>
+        <div id="phase22-learning-message" class="phase22-race-message" data-kind="info">Phase22-7実績結果を保存・確定してから再読込してください。</div>
+        <div id="phase22-learning-finalized-status" class="phase22-ticket-total-summary" data-kind="warning">未確定</div>
+        <div class="phase22-learning-top">
+          <div>
+            <h3>振り返りサマリー</h3>
+            <div id="phase22-learning-summary" class="phase22-learning-summary-grid" aria-label="振り返りサマリー"></div>
+          </div>
+          <div>
+            <h3>比較指標</h3>
+            <div id="phase22-learning-metrics" class="phase22-learning-summary-grid" aria-label="比較指標"></div>
+          </div>
+        </div>
+        <div id="phase22-learning-warning-list" class="phase22-learning-warning-list" aria-label="警告集約"></div>
+        <details class="phase22-budget-settings" open>
+          <summary>振り返り総合評価</summary>
+          <div class="phase22-learning-overall-grid">
+            <label><span>総合評価</span><select data-phase22-learning-overall="overallRating"><option value="">未選択</option><option value="5">5 非常に良い</option><option value="4">4 良い</option><option value="3">3 普通</option><option value="2">2 改善必要</option><option value="1">1 失敗</option></select></label>
+            <label><span>予想精度評価</span><select data-phase22-learning-overall="predictionAccuracy"><option value="">未選択</option><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+            <label><span>買い目評価</span><select data-phase22-learning-overall="ticketRating"><option value="">未選択</option><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+            <label><span>予算配分評価</span><select data-phase22-learning-overall="budgetRating"><option value="">未選択</option><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+            <label><span>実行判断評価</span><select data-phase22-learning-overall="executionRating"><option value="">未選択</option><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+            <label><span>結果照合品質</span><select data-phase22-learning-overall="reconciliationQuality"><option value="">未選択</option><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+            <label><span>確認者名</span><input id="phase22-learning-confirmer" type="text" placeholder="任意"></label>
+            <label><span>今回の最大成功要因</span><textarea data-phase22-learning-overall="biggestSuccess"></textarea></label>
+            <label><span>今回の最大失敗要因</span><textarea data-phase22-learning-overall="biggestFailure"></textarea></label>
+            <label><span>次回最優先改善点</span><textarea data-phase22-learning-overall="topImprovement"></textarea></label>
+            <label><span>継続すべきルール</span><textarea data-phase22-learning-overall="rulesToKeep"></textarea></label>
+            <label><span>見直すべきルール</span><textarea data-phase22-learning-overall="rulesToReview"></textarea></label>
+            <label><span>新しく検証する仮説</span><textarea data-phase22-learning-overall="newHypothesis"></textarea></label>
+          </div>
+        </details>
+        <details class="phase22-budget-settings" open>
+          <summary>カテゴリ別振り返り</summary>
+          <div id="phase22-learning-category-list" class="phase22-learning-category-list"></div>
+        </details>
+        <div class="phase22-learning-table-wrap">
+          <div id="phase22-learning-candidate-list" class="phase22-learning-candidate-list" aria-label="学習候補一覧"></div>
+        </div>
+        <div class="phase22-learning-memos">
+          <label><span>総合振り返り</span><textarea data-phase22-learning-memo="overall"></textarea></label>
+          <label><span>展開予測の検証</span><textarea data-phase22-learning-memo="raceFlow"></textarea></label>
+          <label><span>馬場判断の検証</span><textarea data-phase22-learning-memo="track"></textarea></label>
+          <label><span>印の検証</span><textarea data-phase22-learning-memo="marks"></textarea></label>
+          <label><span>危険人気馬の検証</span><textarea data-phase22-learning-memo="dangerous"></textarea></label>
+          <label><span>穴馬・神穴候補の検証</span><textarea data-phase22-learning-memo="longshot"></textarea></label>
+          <label><span>買い目の検証</span><textarea data-phase22-learning-memo="tickets"></textarea></label>
+          <label><span>予算配分の検証</span><textarea data-phase22-learning-memo="budget"></textarea></label>
+          <label><span>次回改善方針</span><textarea data-phase22-learning-memo="nextPolicy"></textarea></label>
+          <label><span>学習引継ぎメモ</span><textarea data-phase22-learning-memo="handoff"></textarea></label>
+        </div>
+        <label class="phase22-learning-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-learning-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6350,6 +6431,7 @@
     <script src="phase22-5-budget-allocation-betting-optimization-core.js"></script>
     <script src="phase22-6-final-purchase-plan-confirmation-core.js"></script>
     <script src="phase22-7-actual-result-input-reconciliation-core.js"></script>
+    <script src="phase22-8-learning-candidate-review-summary-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
