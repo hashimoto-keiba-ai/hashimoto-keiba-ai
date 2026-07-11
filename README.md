@@ -2838,6 +2838,94 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-8 Learning Candidate Review Summary Core
+
+Phase22-8 adds the learning candidate and review summary core for Private Local operation. It reads the Phase22-7 actual result reconciliation data and aggregates race review notes, candidate lessons, comparison metrics, and improvement actions. The candidates are only preparation data for user approval: Phase22-8 does not run automatic learning, update models, change rules or weights, call external APIs, scrape sites, or send data outside the browser.
+
+Review summary:
+
+- Shows race overview, final prediction references, final marks, AI score top horses, actual top finishers, purchase plan, actual purchases, hit tickets, missed tickets, payout total, refund total, profit, ROI, hit rate, plan-vs-actual difference, and warnings.
+- Missing items are displayed as `未設定` or `データなし`.
+- Phase22-1 through Phase22-7 source data is read only.
+
+Category review:
+
+- Categories include race selection, race flow, pace, track, post position, jockey, training, AI score, final marks, key horse, opponents, dangerous popular judgement, longshot, divine longshot, ticket structure, ticket type, ticket count, budget allocation, last-minute decision, skip decision, and result reconciliation.
+- Each category stores rating, importance, good points, improvement points, evidence, next action, and whether to treat it as a learning candidate.
+
+Automatic candidate extraction:
+
+- Candidate extraction is heuristic and non-final. Items are labeled as `候補` / `要確認` through titles, evidence, confidence, and approval state.
+- Candidates include hit-contributing factors, miss-factor candidates, high-AI-score run / flop, dangerous popular success / failure, longshot and divine longshot success / failure, Phase22-6 vs actual purchase difference impact, ROI decline factors, and ROI improvement factors.
+- Duplicate candidates are prevented by stable candidate IDs.
+- Approval states are `未確認`, `採用候補`, `保留`, `不採用`, and `修正必要`.
+- Marking a candidate as `採用候補` does not change any model, logic, weight, or rule.
+
+Comparison metrics:
+
+- AI rank vs finish rank difference.
+- Mark-level hit contribution and ROI.
+- Candidate category performance for dangerous popular, longshot, and divine longshot.
+- Dangerous popular judgement success rate.
+- Longshot and divine longshot success rates.
+- Ticket-type ROI.
+- Priority-score band ROI.
+- Stake-band ROI.
+- Planned-vs-actual purchase difference impact.
+- Budget usage rate.
+- High-priority allocation rate.
+- Hit-ticket allocation rate.
+- Zero denominators are displayed as 0 or `算出不可`; NaN and Infinity are not displayed.
+
+Overall review and actions:
+
+- Overall rating, prediction accuracy, ticket rating, budget rating, execution judgement, reconciliation quality, biggest success factor, biggest failure factor, top next improvement, rules to keep, rules to review, and new hypotheses can be stored.
+- Improvement actions can store action body, category, priority, due memo, next check condition, done state, and note.
+- No scheduling or external notification is added.
+
+Finalization:
+
+- `学習候補を確定` requires Phase22-7 actual result finalization, overall rating, biggest success factor, biggest failure factor, top next improvement, zero unconfirmed learning candidates, and zero error warnings.
+- A confirmation dialog is required before finalization.
+- Finalization stores finalized time and confirmer name.
+- Finalization and unlock do not run automatic learning, model updates, rule updates, or external sending.
+
+localStorage:
+
+- Phase22-7 source key: `hashimotoKeibaAi.phase22.actualResultReconciliation.v1`
+- Phase22-8 save key: `hashimotoKeibaAi.phase22.learningCandidateReviewSummary.v1`
+- Schema root: `{ schemaVersion, savedAt, sourceRaceKey, phase227SavedAt, reviewSummary, categoryReviews, candidates, metrics, overallReview, actions, finalized, finalizedAt, confirmerName, finalMemos, warnings, phase227Snapshot }`
+- Phase22-8 reset deletes only `hashimotoKeibaAi.phase22.learningCandidateReviewSummary.v1`.
+- Phase22-1 through Phase22-7 keys are protected and are not deleted or changed.
+
+Output:
+
+- `印刷` uses browser printing and A4 portrait print CSS.
+- `テキスト生成` creates a plain-text race summary, result overview, ROI, category reviews, success / failure factors, learning candidates, improvement actions, warnings, final state, and final memo.
+- `コピー` uses the clipboard only when available; otherwise the textarea remains available for manual copy.
+
+Phase22-1 through Phase22-8 flow:
+
+- Phase22-1 saves race and horse inputs.
+- Phase22-2 saves prediction evaluations.
+- Phase22-3 summarizes final prediction information.
+- Phase22-4 generates editable ticket candidates.
+- Phase22-5 optimizes selected tickets and amounts.
+- Phase22-6 confirms, saves, prints, and exports the final purchase plan.
+- Phase22-7 manually records official results and actual purchase outcomes.
+- Phase22-8 reviews Phase22-7 results and prepares learning candidates for user approval only.
+
+Safety policy:
+
+- Private Local only.
+- 自動学習ではありません。
+- 利用者承認が必要です。
+- Models, coefficients, rules, and weights are not automatically changed.
+- External API, scraping, and external sending are not used.
+- GitHub Pages and Public URL are not required.
+- `start-local.bat` is not changed.
+- No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
+
 ## Phase22-7 Actual Result Input Reconciliation Core
 
 Phase22-7 adds the actual result input and reconciliation core for Private Local operation. It reads the Phase22-6 final purchase plan, then lets the user manually enter official race results, payouts, refunds, and actual purchase records. It is for post-race confirmation and learning notes only: it does not fetch results automatically, scrape racing sites, connect to IPAT, buy tickets, vote, send data externally, or apply automatic learning updates.
