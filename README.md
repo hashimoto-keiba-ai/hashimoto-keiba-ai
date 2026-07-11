@@ -2838,6 +2838,97 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-7 Actual Result Input Reconciliation Core
+
+Phase22-7 adds the actual result input and reconciliation core for Private Local operation. It reads the Phase22-6 final purchase plan, then lets the user manually enter official race results, payouts, refunds, and actual purchase records. It is for post-race confirmation and learning notes only: it does not fetch results automatically, scrape racing sites, connect to IPAT, buy tickets, vote, send data externally, or apply automatic learning updates.
+
+Race result input:
+
+- Manual fields are provided for 1st through 5th horse numbers.
+- Dead heat, race exclusion, scratch, disqualification, demotion, race cancellation, invalid race, official confirmation, confirmed time, and result memo can be recorded.
+- Normal placement duplicate horse numbers are rejected unless dead heat is enabled.
+- Place and wide target rank counts are user-configurable instead of being automatically assumed for special field-size rules.
+
+Payout and refund input:
+
+- Payout rows support 単勝, 複勝, 枠連, 馬連, ワイド, 馬単, 三連複, and 三連単.
+- Payout amount is treated as amount per 100 yen by default.
+- Combination, payout unit, popularity, and note can be recorded.
+- Refunds and special cases are stored separately from payouts and included in total received amount.
+- Unsupported Phase22-4 ticket types such as 枠連 can still be recorded as payout data; insufficient frame information is shown as 判定不能.
+
+Actual purchase records:
+
+- Initial actual purchases are copied from the Phase22-6 final purchase plan.
+- Actual stake, purchased / not purchased state, purchase time, purchase memo, change reason, manual additions, manual deletion handling, received payout, refund, and confirmation state can be stored.
+- Phase22-6 data is never modified by Phase22-7.
+
+Hit judgement:
+
+- 単勝: ticket contains the 1st-place horse.
+- 複勝: ticket horse is within the user-selected place target rank count, default 3.
+- 馬連: 1st and 2nd horses, order ignored.
+- ワイド: both horses are within the user-selected wide target rank count, default 3.
+- 馬単: 1st and 2nd horses, exact order.
+- 三連複: 1st through 3rd horses, order ignored.
+- 三連単: 1st through 3rd horses, exact order.
+- 枠連: 判定不能 unless enough frame data is manually available in a later extension.
+- Canceled, invalid, refund, and unclear cases are separated from normal hit / miss as 要確認 or 判定不能.
+
+Reconciliation and formulas:
+
+- Total received = payout total + refund total.
+- Profit = total received - actual purchase total.
+- ROI = total received / actual purchase total * 100.
+- Hit rate = hit tickets / decidable actual purchase tickets * 100.
+- When the denominator is zero, the display uses 0 or 算出不可 and never shows NaN or Infinity.
+- Reconciliation rows show ticket type, combination, planned amount, actual amount, difference, planned / actual state, hit status, payout per 100 yen, payout total, refund amount, profit, ROI, difference type, reason, and warnings.
+
+Checklist and finalization:
+
+- The result checklist covers race info, official placement, dead heat / demotion / disqualification, scratches, payout, refund, actual purchase, hit judgement, payout total, profit, ROI, unknown tickets, and final user confirmation.
+- `結果確認完了` appears only when every checklist item is checked.
+- `実績結果を確定` requires official result confirmation, at least one actual purchase or an explicit no-purchase race, payout / refund confirmation, no unknown or needs-review items, complete checklist, and zero error warnings.
+- Finalization stores finalized time and confirmer name.
+- Finalization and unlock do not send data externally and do not apply automatic learning.
+
+localStorage:
+
+- Phase22-6 source key: `hashimotoKeibaAi.phase22.finalPurchasePlanConfirmation.v1`
+- Phase22-7 save key: `hashimotoKeibaAi.phase22.actualResultReconciliation.v1`
+- Schema root: `{ schemaVersion, savedAt, sourceRaceKey, phase226SavedAt, raceResult, payouts, refunds, purchases, reconciliation, finalSummary, checklist, resultStatus, finalized, finalizedAt, confirmerName, memos, phase226Snapshot }`
+- Phase22-7 reset deletes only `hashimotoKeibaAi.phase22.actualResultReconciliation.v1`.
+- Phase22-1 through Phase22-6 keys are protected and are not deleted or changed.
+
+Output:
+
+- `印刷` uses browser printing and A4 portrait print CSS.
+- `テキスト生成` creates a plain-text race result, payout, purchase, judgement, profit, ROI, warnings, and memo summary.
+- `コピー` uses the clipboard only when available; otherwise the textarea remains available for manual copy.
+
+Phase22-1 through Phase22-7 flow:
+
+- Phase22-1 saves race and horse inputs.
+- Phase22-2 saves prediction evaluations.
+- Phase22-3 summarizes final prediction information.
+- Phase22-4 generates editable ticket candidates.
+- Phase22-5 optimizes selected tickets and amounts.
+- Phase22-6 confirms, saves, prints, and exports the final purchase plan.
+- Phase22-7 manually records official results and actual purchase outcomes, then reconciles performance for future review.
+
+Safety policy:
+
+- Private Local only.
+- 自動結果取得ではありません。
+- 公式結果と必ず照合してください。
+- 自動購入・自動投票機能ではありません。
+- IPAT connection is not used.
+- External API, scraping, and external site sending are not used.
+- Automatic learning reflection is not performed.
+- GitHub Pages and Public URL are not required.
+- `start-local.bat` is not changed.
+- No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
+
 ## Phase22-6 Final Purchase Plan Confirmation Core
 
 Phase22-6 adds the final purchase plan confirmation core for Private Local operation. It reads the Phase22-5 optimized tickets and Phase22-1 race information, then organizes the plan for human review before purchase. It is a confirmation and printing tool only: it does not buy tickets, vote, connect to IPAT, call external APIs, or send data outside the browser.

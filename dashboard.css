@@ -2236,17 +2236,51 @@ tbody tr:last-child td {
 .phase22-final-purchase-empty { border: 1px dashed rgba(212, 175, 55, 0.22); border-radius: 6px; padding: 10px; color: var(--muted); font-weight: 800; }
 .phase22-final-purchase-text-output { margin-top: 14px; }
 .phase22-final-purchase-text-output textarea { min-height: 180px; }
+.phase22-actual-result-reconciliation-core { border: 1px solid rgba(90, 214, 164, 0.54); background: linear-gradient(145deg, rgba(11, 42, 31, 0.95), rgba(14, 16, 18, 0.98)); }
+.phase22-actual-top { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+.phase22-actual-top h3, .phase22-actual-checklist-wrap h3 { margin: 0; color: #d8ffe9; }
+.phase22-actual-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.phase22-actual-kv { display: grid; gap: 4px; border: 1px solid rgba(90, 214, 164, 0.24); border-radius: 6px; padding: 8px; background: rgba(0, 0, 0, 0.18); }
+.phase22-actual-kv span { color: var(--muted); font-size: 12px; font-weight: 800; }
+.phase22-actual-kv strong { color: var(--ink); font-size: 13px; overflow-wrap: anywhere; }
+.phase22-actual-warning-list { display: grid; gap: 8px; margin-top: 14px; }
+.phase22-actual-warning { border-radius: 6px; padding: 9px 10px; font-size: 13px; font-weight: 800; }
+.phase22-actual-warning.error { border: 1px solid rgba(255, 107, 107, 0.52); background: rgba(255, 107, 107, 0.12); color: #ffd4d4; }
+.phase22-actual-warning.warning { border: 1px solid rgba(244, 196, 48, 0.52); background: rgba(244, 196, 48, 0.12); color: #f7e8b5; }
+.phase22-actual-warning.notice { border: 1px solid rgba(90, 214, 164, 0.42); background: rgba(90, 214, 164, 0.12); color: #d8ffe9; }
+.phase22-actual-input-grid, .phase22-actual-memos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.phase22-actual-input-grid label, .phase22-actual-memos label, .phase22-actual-text-output { display: grid; gap: 6px; min-width: 0; color: var(--muted); font-size: 12px; font-weight: 800; }
+.phase22-actual-input-grid label:has(input[type="checkbox"]) { display: flex; align-items: center; }
+.phase22-actual-input-grid .wide { grid-column: span 2; }
+.phase22-actual-input-grid input, .phase22-actual-input-grid select, .phase22-actual-input-grid textarea, .phase22-actual-memos textarea, .phase22-actual-text-output textarea, .phase22-actual-payout-row input, .phase22-actual-payout-row select { width: 100%; min-height: 38px; border: 1px solid rgba(90, 214, 164, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 8px; font: inherit; }
+.phase22-actual-input-grid textarea, .phase22-actual-memos textarea { min-height: 92px; resize: vertical; }
+.phase22-actual-payout-list { display: grid; gap: 8px; margin-top: 10px; }
+.phase22-actual-payout-row { display: grid; grid-template-columns: 110px minmax(110px, 1fr) 120px 90px 80px minmax(140px, 1fr); gap: 8px; align-items: center; }
+.phase22-actual-checklist-wrap { margin-top: 14px; border: 1px solid rgba(90, 214, 164, 0.24); border-radius: 8px; padding: 12px; background: rgba(0, 0, 0, 0.16); }
+.phase22-actual-checklist { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.phase22-actual-check-item { display: flex; gap: 8px; align-items: flex-start; min-width: 0; color: var(--ink); font-size: 13px; font-weight: 800; }
+.phase22-actual-table-wrap { margin-top: 14px; overflow-x: auto; }
+.phase22-actual-reconciliation-list { min-width: 1380px; }
+.phase22-actual-table { display: grid; gap: 8px; }
+.phase22-actual-row { display: grid; grid-template-columns: 64px minmax(120px, 0.8fr) 82px 82px 82px 76px 82px 82px 82px 82px 76px 88px minmax(150px, 1fr) 104px; gap: 8px; align-items: center; border: 1px solid rgba(90, 214, 164, 0.24); border-radius: 6px; padding: 8px; color: var(--ink); font-size: 12px; font-weight: 800; }
+.phase22-actual-row.head { color: #d8ffe9; background: rgba(90, 214, 164, 0.1); }
+.phase22-actual-row span { overflow-wrap: anywhere; }
+.phase22-actual-row select { width: 100%; min-height: 32px; border: 1px solid rgba(90, 214, 164, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 6px; font: inherit; }
+.phase22-actual-text-output { margin-top: 14px; }
+.phase22-actual-text-output textarea { min-height: 180px; }
 @media (max-width: 920px) { .phase22-race-form-grid, .phase22-horse-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 1100px) { .phase22-evaluation-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .phase22-evaluation-horse, .phase22-evaluation-flags { grid-column: 1 / -1; } }
-@media (max-width: 920px) { .phase22-mark-summary, .phase22-summary-columns, .phase22-final-memo-grid, .phase22-ticket-settings, .phase22-ticket-types, .phase22-ticket-manual, .phase22-budget-grid, .phase22-final-purchase-top, .phase22-final-purchase-summary-grid, .phase22-final-purchase-checklist, .phase22-final-purchase-memos { grid-template-columns: 1fr; } .phase22-ranking-row { grid-template-columns: 32px minmax(0, 1fr); } }
+@media (max-width: 920px) { .phase22-mark-summary, .phase22-summary-columns, .phase22-final-memo-grid, .phase22-ticket-settings, .phase22-ticket-types, .phase22-ticket-manual, .phase22-budget-grid, .phase22-final-purchase-top, .phase22-final-purchase-summary-grid, .phase22-final-purchase-checklist, .phase22-final-purchase-memos, .phase22-actual-top, .phase22-actual-summary-grid, .phase22-actual-input-grid, .phase22-actual-memos, .phase22-actual-checklist, .phase22-actual-payout-row { grid-template-columns: 1fr; } .phase22-actual-input-grid .wide { grid-column: auto; } .phase22-ranking-row { grid-template-columns: 32px minmax(0, 1fr); } }
 @media (max-width: 560px) { .phase22-race-form-grid, .phase22-horse-row, .phase22-evaluation-row { grid-template-columns: 1fr; } .phase22-race-actions button, .phase22-sort-control { width: 100%; } }
 @media print {
   body { background: #fff !important; color: #000 !important; }
-  .console-menu, .private-section, .phase22-race-actions, .phase22-budget-settings, .phase22-safety-strip, .phase22-final-purchase-text-output, nav, header, footer { display: none !important; }
-  .panel, .phase22-final-purchase-plan-confirmation-core { box-shadow: none !important; border: 0 !important; background: #fff !important; color: #000 !important; }
-  .phase22-final-purchase-row, .phase22-final-purchase-kv, .phase22-final-purchase-type, .phase22-final-purchase-warning { break-inside: avoid; color: #000 !important; border-color: #999 !important; background: #fff !important; }
+  .console-menu, .private-section, .phase22-race-actions, .phase22-budget-settings, .phase22-safety-strip, .phase22-final-purchase-text-output, .phase22-actual-text-output, nav, header, footer { display: none !important; }
+  .panel, .phase22-final-purchase-plan-confirmation-core, .phase22-actual-result-reconciliation-core { box-shadow: none !important; border: 0 !important; background: #fff !important; color: #000 !important; }
+  .phase22-final-purchase-row, .phase22-final-purchase-kv, .phase22-final-purchase-type, .phase22-final-purchase-warning, .phase22-actual-row, .phase22-actual-kv, .phase22-actual-warning { break-inside: avoid; color: #000 !important; border-color: #999 !important; background: #fff !important; }
   .phase22-final-purchase-table { min-width: 0; font-size: 10px; }
   .phase22-final-purchase-row { grid-template-columns: 28px 42px minmax(72px, 1fr) minmax(44px, 0.6fr) minmax(86px, 1fr) 42px 42px 42px 54px minmax(80px, 1fr) minmax(80px, 1fr) 56px; gap: 4px; padding: 5px; }
+  .phase22-actual-reconciliation-list { min-width: 0; }
+  .phase22-actual-row { grid-template-columns: 42px minmax(70px, 1fr) 48px 48px 48px 48px 52px 48px 48px 48px 48px 52px minmax(70px, 1fr) 58px; gap: 4px; padding: 5px; font-size: 10px; }
   @page { size: A4 portrait; margin: 12mm; }
 }
 .phase21-63-final-private-local-continuation-closure { border: 1px solid rgba(7, 89, 133, 0.72); background: radial-gradient(circle at 84% 0, rgba(7, 89, 133, 0.12), transparent 42%), linear-gradient(145deg, #061830, #08121e 74%); }
