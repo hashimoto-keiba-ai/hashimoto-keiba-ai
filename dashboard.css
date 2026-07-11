@@ -2166,8 +2166,24 @@ tbody tr:last-child td {
 .phase22-evaluation-flags { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .phase22-evaluation-flags label { display: flex; align-items: center; gap: 6px; }
 .phase22-evaluation-flags input { width: auto; min-height: auto; }
+.phase22-final-prediction-summary-core { border: 1px solid rgba(244, 196, 48, 0.54); background: linear-gradient(145deg, rgba(42, 34, 10, 0.95), rgba(19, 18, 15, 0.98)); }
+.phase22-final-layout { display: grid; gap: 16px; margin-top: 16px; }
+.phase22-final-layout h3 { margin: 0 0 10px; color: #f7e8b5; font-size: 15px; overflow-wrap: anywhere; }
+.phase22-ranking-list, .phase22-mark-summary, .phase22-summary-columns, .phase22-final-memo-grid { display: grid; gap: 10px; }
+.phase22-ranking-row, .phase22-mark-block, .phase22-summary-columns > article, .phase22-summary-horse { border: 1px solid rgba(212, 175, 55, 0.27); border-radius: 8px; background: rgba(0, 0, 0, 0.18); padding: 10px; }
+.phase22-ranking-row { display: grid; grid-template-columns: 40px minmax(140px, 1fr) minmax(100px, auto) minmax(90px, auto); gap: 10px; align-items: center; }
+.phase22-ranking-rank { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: rgba(212, 175, 55, 0.2); color: #fff7d1; font-weight: 900; }
+.phase22-mark-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.phase22-mark-block strong, .phase22-summary-columns > article > strong { display: block; margin-bottom: 8px; color: #fff1b8; }
+.phase22-mark-horses, .phase22-summary-list, .phase22-summary-horse { display: grid; gap: 6px; color: var(--ink); font-size: 12px; font-weight: 800; overflow-wrap: anywhere; }
+.phase22-summary-columns { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.phase22-empty-note { margin: 0; color: var(--muted); font-size: 12px; font-weight: 800; }
+.phase22-final-memo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.phase22-final-memo-grid label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; font-weight: 800; }
+.phase22-final-memo-grid textarea { width: 100%; min-height: 140px; border: 1px solid rgba(212, 175, 55, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 10px; font: inherit; resize: vertical; }
 @media (max-width: 920px) { .phase22-race-form-grid, .phase22-horse-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 1100px) { .phase22-evaluation-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .phase22-evaluation-horse, .phase22-evaluation-flags { grid-column: 1 / -1; } }
+@media (max-width: 920px) { .phase22-mark-summary, .phase22-summary-columns, .phase22-final-memo-grid { grid-template-columns: 1fr; } .phase22-ranking-row { grid-template-columns: 32px minmax(0, 1fr); } }
 @media (max-width: 560px) { .phase22-race-form-grid, .phase22-horse-row, .phase22-evaluation-row { grid-template-columns: 1fr; } .phase22-race-actions button, .phase22-sort-control { width: 100%; } }
 .phase21-63-final-private-local-continuation-closure { border: 1px solid rgba(7, 89, 133, 0.72); background: radial-gradient(circle at 84% 0, rgba(7, 89, 133, 0.12), transparent 42%), linear-gradient(145deg, #061830, #08121e 74%); }
 .phase21-63-final-private-local-continuation-closure-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
