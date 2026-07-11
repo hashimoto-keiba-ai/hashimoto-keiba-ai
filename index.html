@@ -433,6 +433,104 @@
         <label class="phase22-final-purchase-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-final-purchase-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-actual-result-reconciliation-core" id="phase22-actual-result-reconciliation-core" aria-label="Phase22-7 Actual Result Input Reconciliation Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-7 / Actual Result Input Reconciliation Core</p>
+            <h2>実績結果入力・照合</h2>
+          </div>
+          <span class="pill">手動入力 / 公式照合</span>
+        </div>
+        <p class="console-menu-lead">レース確定後に着順・払戻・実購入内容を手動入力し、Phase22-6の最終購入計画と照合します。自動結果取得・外部API・IPAT接続・自動購入・自動投票・自動学習反映は行いません。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-actual-reload" type="button">Phase22-6データを再読込</button>
+          <button id="phase22-actual-save" type="button">実績結果を保存</button>
+          <button id="phase22-actual-restore" type="button">実績結果を復元</button>
+          <button id="phase22-actual-reset" type="button">Phase22-7のみ初期化</button>
+          <button id="phase22-actual-finalize" type="button">実績結果を確定</button>
+          <button id="phase22-actual-unlock" type="button">確定解除</button>
+          <button id="phase22-actual-print" type="button">印刷</button>
+          <button id="phase22-actual-text" type="button">テキスト生成</button>
+          <button id="phase22-actual-copy" type="button">コピー</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>結果は手動入力</span>
+          <span>公式結果と必ず照合</span>
+          <span>no external API</span>
+          <span>no scraping</span>
+          <span>no IPAT</span>
+          <span>no auto betting</span>
+          <span>no auto voting</span>
+        </div>
+        <div id="phase22-actual-message" class="phase22-race-message" data-kind="info">Phase22-6最終購入計画を保存・確定してから再読込してください。</div>
+        <div id="phase22-actual-finalized-status" class="phase22-ticket-total-summary" data-kind="warning">未確定</div>
+        <div class="phase22-actual-top">
+          <div>
+            <h3>レース情報</h3>
+            <div id="phase22-actual-race-summary" class="phase22-actual-summary-grid" aria-label="レース情報"></div>
+          </div>
+          <div>
+            <h3>実績集計</h3>
+            <div id="phase22-actual-summary" class="phase22-actual-summary-grid" aria-label="実績集計"></div>
+          </div>
+        </div>
+        <div id="phase22-actual-warning-list" class="phase22-actual-warning-list" aria-label="警告集約"></div>
+        <details class="phase22-budget-settings" open>
+          <summary>レース結果入力</summary>
+          <div class="phase22-actual-input-grid">
+            <label><span>1着馬番</span><input data-phase22-actual-result="first" type="text"></label>
+            <label><span>2着馬番</span><input data-phase22-actual-result="second" type="text"></label>
+            <label><span>3着馬番</span><input data-phase22-actual-result="third" type="text"></label>
+            <label><span>4着馬番</span><input data-phase22-actual-result="fourth" type="text"></label>
+            <label><span>5着馬番</span><input data-phase22-actual-result="fifth" type="text"></label>
+            <label><span>複勝対象着順数</span><input data-phase22-actual-result="placeTargetCount" type="number" min="1" max="5" step="1" value="3"></label>
+            <label><span>ワイド対象着順数</span><input data-phase22-actual-result="wideTargetCount" type="number" min="2" max="5" step="1" value="3"></label>
+            <label><span>結果確定日時</span><input data-phase22-actual-result="confirmedAt" type="datetime-local"></label>
+            <label><span>結果確認状態</span><select id="phase22-actual-result-status"><option value="notEntered">未入力</option><option value="editing">入力中</option><option value="reconciled">照合済み</option><option value="confirmed">確認済み</option><option value="needsCorrection">修正必要</option></select></label>
+            <label><span>確認者名</span><input id="phase22-actual-confirmer" type="text" placeholder="任意"></label>
+            <label><input data-phase22-actual-result="deadHeat" type="checkbox"><span>同着あり</span></label>
+            <label><input data-phase22-actual-result="raceCanceled" type="checkbox"><span>レース中止</span></label>
+            <label><input data-phase22-actual-result="invalidRace" type="checkbox"><span>不成立</span></label>
+            <label><input data-phase22-actual-result="official" type="checkbox"><span>確定状態</span></label>
+            <label><input data-phase22-actual-result="noPurchaseRace" type="checkbox"><span>未購入レースとして記録</span></label>
+            <label><span>同着情報</span><input data-phase22-actual-result="deadHeatInfo" type="text"></label>
+            <label><span>競走除外</span><input data-phase22-actual-result="raceExclusions" type="text"></label>
+            <label><span>出走取消</span><input data-phase22-actual-result="scratches" type="text"></label>
+            <label><span>失格</span><input data-phase22-actual-result="disqualifications" type="text"></label>
+            <label><span>降着</span><input data-phase22-actual-result="demotions" type="text"></label>
+            <label class="wide"><span>結果入力メモ</span><textarea data-phase22-actual-result="memo"></textarea></label>
+          </div>
+        </details>
+        <details class="phase22-budget-settings" open>
+          <summary>払戻入力</summary>
+          <div id="phase22-actual-payout-list" class="phase22-actual-payout-list" aria-label="払戻入力"></div>
+        </details>
+        <div class="phase22-actual-checklist-wrap">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Actual Result Checklist</p>
+              <h3>結果確認チェックリスト</h3>
+            </div>
+            <span id="phase22-actual-checklist-status" class="pill">未確認 13件</span>
+          </div>
+          <div id="phase22-actual-checklist" class="phase22-actual-checklist"></div>
+        </div>
+        <div class="phase22-actual-memos">
+          <label><span>レース結果所感</span><textarea data-phase22-actual-memo="impression"></textarea></label>
+          <label><span>的中・不的中要因</span><textarea data-phase22-actual-memo="hitFactor"></textarea></label>
+          <label><span>買い方の反省</span><textarea data-phase22-actual-memo="purchaseReflection"></textarea></label>
+          <label><span>予算配分の反省</span><textarea data-phase22-actual-memo="budgetReflection"></textarea></label>
+          <label><span>危険人気馬評価</span><textarea data-phase22-actual-memo="dangerousReview"></textarea></label>
+          <label><span>穴馬評価</span><textarea data-phase22-actual-memo="longshotReview"></textarea></label>
+          <label><span>次回改善点</span><textarea data-phase22-actual-memo="nextImprovement"></textarea></label>
+          <label><span>学習候補メモ</span><textarea data-phase22-actual-memo="learningCandidate"></textarea></label>
+        </div>
+        <div class="phase22-actual-table-wrap">
+          <div id="phase22-actual-reconciliation-list" class="phase22-actual-reconciliation-list" aria-label="照合結果"></div>
+        </div>
+        <label class="phase22-actual-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-actual-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6251,6 +6349,7 @@
     <script src="phase22-4-betting-ticket-generation-core.js"></script>
     <script src="phase22-5-budget-allocation-betting-optimization-core.js"></script>
     <script src="phase22-6-final-purchase-plan-confirmation-core.js"></script>
+    <script src="phase22-7-actual-result-input-reconciliation-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
