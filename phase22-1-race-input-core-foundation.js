@@ -1,8 +1,8 @@
 (function (root, factory) {
-  const api = factory();
+  const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.HashimotoPhase221RaceInputCore = api;
-})(typeof window !== "undefined" ? window : globalThis, function () {
+})(typeof window !== "undefined" ? window : globalThis, function (root) {
   "use strict";
 
   const SCHEMA_VERSION = 1;
@@ -113,16 +113,36 @@
     return { valid: errors.length === 0, errors, data: normalized };
   }
 
-  function saveRaceInput(input, storage = root.localStorage) {
-    const result = validateRaceInput(input);
-    if (!result.valid) return result;
-    storage.setItem(STORAGE_KEY, JSON.stringify(result.data));
-    return { ...result, saved: true };
+  function getStorage(storage) {
+    return storage || (root && root.localStorage) || null;
   }
 
-  function loadRaceInput(storage = root.localStorage) {
+  function saveRaceInput(input, storage) {
+    const result = validateRaceInput(input);
+    if (!result.valid) return result;
+    const targetStorage = getStorage(storage);
+    if (!targetStorage) return { ...result, valid: false, saved: false, storageError: true, errors: ["localStorageを利用できません。"] };
     try {
-      const raw = storage.getItem(STORAGE_KEY);
+      targetStorage.setItem(STORAGE_KEY, JSON.stringify(result.data));
+      return { ...result, saved: true };
+    } catch (error) {
+      const quotaExceeded = error && (error.name === "QuotaExceededError" || error.code === 22 || error.code === 1014);
+      return {
+        ...result,
+        valid: false,
+        saved: false,
+        quotaExceeded,
+        storageError: true,
+        errors: [quotaExceeded ? "localStorageの容量が不足しているため保存できませんでした。不要な保存データを削除してから再度保存してください。" : "localStorageへの保存に失敗しました。"]
+      };
+    }
+  }
+
+  function loadRaceInput(storage) {
+    try {
+      const targetStorage = getStorage(storage);
+      if (!targetStorage) return null;
+      const raw = targetStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
       if (parsed.schemaVersion !== SCHEMA_VERSION) return null;
@@ -132,9 +152,11 @@
     }
   }
 
-  function deleteRaceInput(storage = root.localStorage, confirmDelete = () => false) {
+  function deleteRaceInput(storage, confirmDelete = () => false) {
     if (!confirmDelete()) return { deleted: false, reason: "confirmation_required" };
-    storage.removeItem(STORAGE_KEY);
+    const targetStorage = getStorage(storage);
+    if (!targetStorage) return { deleted: false, reason: "storage_unavailable" };
+    targetStorage.removeItem(STORAGE_KEY);
     return { deleted: true };
   }
 
@@ -194,9 +216,11 @@
   }
 
   function bindRaceInputPanel(options = {}) {
-    const doc = options.document || root.document;
-    const storage = options.storage || root.localStorage;
-    if (!doc || !storage || !doc.querySelector("#phase22-race-input-core")) return null;
+    const doc = options.document || (root && root.document) || null;
+    const storage = getStorage(options.storage);
+    if (!doc || typeof doc.querySelector !== "function") return null;
+    const panel = doc.querySelector("#phase22-race-input-core");
+    if (!panel) return null;
 
     const generate = () => {
       const sizeNode = doc.querySelector('[data-phase22-race="fieldSize"]');
@@ -231,7 +255,7 @@
     };
 
     const remove = () => {
-      const confirmDelete = options.confirmDelete || (() => root.confirm("保存済みのレース入力を削除しますか？"));
+      const confirmDelete = options.confirmDelete || (() => (root && typeof root.confirm === "function" ? root.confirm("保存済みのレース入力を削除しますか？") : false));
       const result = deleteRaceInput(storage, confirmDelete);
       setMessage(doc, result.deleted ? "保存済みデータを削除しました。" : "削除には確認が必要です。", result.deleted ? "success" : "error");
       return result;

@@ -2,6 +2,7 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const childProcess = require("child_process");
+const vm = require("vm");
 
 const root = path.resolve(__dirname, "..");
 const engine = require("../phase22-1-race-input-core-foundation.js");
@@ -75,6 +76,20 @@ const deleteDone = engine.deleteRaceInput(storage, () => true);
 assert.deepStrictEqual(deleteDone, { deleted: true }, "確認後に削除できる");
 assert.strictEqual(storage.getItem(engine.STORAGE_KEY), null);
 
+const quotaStorage = {
+  getItem() { return null; },
+  setItem() {
+    const error = new Error("quota");
+    error.name = "QuotaExceededError";
+    throw error;
+  },
+  removeItem() {}
+};
+const quotaResult = engine.saveRaceInput(validInput, quotaStorage);
+assert.strictEqual(quotaResult.saved, false, "容量超過時は保存失敗を返す");
+assert.strictEqual(quotaResult.quotaExceeded, true, "QuotaExceededErrorを識別する");
+assert.ok(quotaResult.errors[0].includes("localStorageの容量"));
+
 const emptyRejected = engine.validateRaceInput({ race: { fieldSize: 1 }, horses: [{}] });
 assert.strictEqual(emptyRejected.valid, false, "空欄を拒否する");
 assert.ok(emptyRejected.errors.some((error) => error.includes("開催日")));
@@ -121,5 +136,80 @@ assert.strictEqual(/externalApi\s*:\s*true/i.test(changedText), false);
 assert.strictEqual(/ipatConnection\s*:\s*true/i.test(changedText), false);
 assert.strictEqual(/autoBetting\s*:\s*true/i.test(changedText), false);
 assert.strictEqual(/autoExecution\s*:\s*true/i.test(changedText), false);
+
+function createBrowserLikeDocument() {
+  const listeners = {};
+  const list = {
+    children: [],
+    textContent: "",
+    appendChild(row) {
+      this.children.push(row);
+    }
+  };
+  const message = { textContent: "", dataset: {} };
+  const fieldSize = { value: "3" };
+  const panel = {};
+  const buttons = {
+    "#phase22-generate-horses": { addEventListener(event, handler) { listeners.generate = handler; } },
+    "#phase22-save-race-input": { addEventListener() {} },
+    "#phase22-restore-race-input": { addEventListener() {} },
+    "#phase22-delete-race-input": { addEventListener() {} }
+  };
+  const document = {
+    readyState: "complete",
+    querySelector(selector) {
+      if (selector === "#phase22-race-input-core") return panel;
+      if (selector === '[data-phase22-race="fieldSize"]') return fieldSize;
+      if (selector === "#phase22-horse-input-list") return list;
+      if (selector === "#phase22-race-input-message") return message;
+      return buttons[selector] || null;
+    },
+    querySelectorAll() {
+      return [];
+    },
+    createElement() {
+      const inputs = new Map();
+      return {
+        className: "",
+        attributes: {},
+        setAttribute(name, value) {
+          this.attributes[name] = value;
+        },
+        set innerHTML(markup) {
+          ["horseNumber", "horseName", "jockey", "odds", "popularity"].forEach((field) => {
+            if (markup.includes(`data-phase22-horse="${field}"`)) inputs.set(field, { value: "" });
+          });
+        },
+        querySelector(selector) {
+          const match = selector.match(/data-phase22-horse="([^"]+)"/);
+          return match ? inputs.get(match[1]) || null : null;
+        }
+      };
+    }
+  };
+  return { document, list, message, listeners };
+}
+
+const browser = createBrowserLikeDocument();
+const sandbox = {
+  window: {
+    document: browser.document,
+    localStorage: createStorage(),
+    confirm: () => true
+  },
+  document: browser.document,
+  console
+};
+sandbox.window.window = sandbox.window;
+sandbox.window.globalThis = sandbox.window;
+vm.createContext(sandbox);
+assert.doesNotThrow(() => {
+  vm.runInContext(readText("phase22-1-race-input-core-foundation.js"), sandbox, { filename: "phase22-1-race-input-core-foundation.js" });
+}, "browser実行時にroot未定義を起こさない");
+assert.strictEqual(typeof browser.listeners.generate, "function", "生成ボタンのイベントを登録する");
+browser.list.children = [];
+browser.listeners.generate();
+assert.strictEqual(browser.list.children.length, 3, "実機操作相当で頭数3から3行生成する");
+assert.ok(browser.message.textContent.includes("3"), "生成後のステータスを更新する");
 
 console.log("Phase22-1 race input core foundation test passed");
