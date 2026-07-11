@@ -2701,6 +2701,45 @@ Safety policy:
 - Automatic execution is not added.
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
+
+## Phase22-3 Final Prediction Summary Core
+
+Phase22-3 adds the final prediction summary core for Private Local operation. It reuses Phase22-1 race input data and Phase22-2 prediction evaluation data, then displays AI score ranking, final marks, key / opponent / hold candidates, dangerous popular horses, longshots, divine longshot candidates, and race-level final memo fields.
+
+Operation:
+
+- Open `private-local.html`, then choose `最終予想集約`.
+- Save Phase22-1 race input first, then save Phase22-2 prediction evaluation.
+- Use `Phase22-2評価を集約` to refresh the summary from localStorage.
+- Use `最終予想メモを保存` and `最終予想メモを復元` for the Phase22-3 memo only.
+- Use `Phase22-3のみ初期化` to delete only the Phase22-3 memo key.
+
+localStorage:
+
+- Phase22-1 source key: `hashimotoKeibaAi.phase22.raceInput.v1`
+- Phase22-2 source key: `hashimotoKeibaAi.phase22.predictionEvaluation.v1`
+- Phase22-3 save key: `hashimotoKeibaAi.phase22.finalPredictionSummary.v1`
+- Schema root: `{ schemaVersion, savedAt, sourceRaceKey, memos }`
+- `memos`: `{ finalView, paceMemo, bettingMemo, cautionMemo }`
+
+Linkage:
+
+- Phase22-1 provides race information and runner identity.
+- Phase22-2 provides AI score, marks, evaluation comments, and candidate flags.
+- Phase22-3 aggregates those saved values and stores only final memo text.
+- Phase22-3 initialization never deletes Phase22-1 or Phase22-2 data.
+- Phase21 local cleanup uses `phase22-local-storage-cleanup.js` and protects all Phase22-1 / Phase22-2 / Phase22-3 keys.
+
+Safety policy:
+
+- Private Local only.
+- GitHub Pages is not used.
+- Public URL is not created.
+- External API is not used.
+- Racing sites are not automatically fetched.
+- IPAT is not connected.
+- Betting is not automatically purchased.
+- Automatic execution is not added.
 - Phase21 panels remain intact.
 
 ## Phase22-2 Prediction Evaluation Core

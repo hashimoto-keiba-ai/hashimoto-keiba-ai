@@ -173,6 +173,70 @@
         <div id="phase22-prediction-evaluation-list" class="phase22-evaluation-list" aria-label="予想評価入力"></div>
       </section>
 
+      <section class="panel phase22-final-prediction-summary-core" id="phase22-final-prediction-summary-core" aria-label="Phase22-3 Final Prediction Summary Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-3 / Final Prediction Summary Core</p>
+            <h2>最終予想集約</h2>
+          </div>
+          <span class="pill">Private Local / Manual</span>
+        </div>
+        <p class="console-menu-lead">Phase22-1のレース情報とPhase22-2の予想評価を集約し、AI評価点ランキング、最終印、候補分類、危険人気馬・穴馬、最終予想メモをローカル保存します。</p>
+        <div id="phase22-final-race-summary" class="phase2-kpis phase22-final-race-summary" aria-label="最終予想対象レース"></div>
+        <div class="phase22-race-actions">
+          <button id="phase22-refresh-final-summary" type="button">Phase22-2評価を集約</button>
+          <button id="phase22-save-final-summary" type="button">最終予想メモを保存</button>
+          <button id="phase22-restore-final-summary" type="button">最終予想メモを復元</button>
+          <button id="phase22-reset-final-summary" type="button">Phase22-3のみ初期化</button>
+          <button id="phase22-cleanup-phase21-storage-for-final-summary" type="button">古いPhase21ローカル保存データを整理</button>
+        </div>
+        <div id="phase22-final-phase21-cleanup-summary" class="phase22-cleanup-summary">削除対象候補: 0件 / 概算 0 B</div>
+        <div class="phase22-safety-strip">
+          <span>Phase22-1/22-2連携</span>
+          <span>localStorage only</span>
+          <span>no fetch</span>
+          <span>no external API</span>
+          <span>no IPAT</span>
+          <span>no auto betting</span>
+        </div>
+        <div id="phase22-final-summary-message" class="phase22-race-message" data-kind="info">Phase22-2 予想評価入力で保存してから集約してください。</div>
+        <div class="phase22-final-layout">
+          <section aria-label="AI評価点順ランキング">
+            <h3>AI評価点順ランキング</h3>
+            <div id="phase22-final-ranking" class="phase22-ranking-list"></div>
+          </section>
+          <section aria-label="最終印一覧">
+            <h3>最終印一覧</h3>
+            <div id="phase22-final-mark-summary" class="phase22-mark-summary"></div>
+          </section>
+          <section aria-label="軸候補・相手候補の集約">
+            <h3>軸候補・相手候補</h3>
+            <div class="phase22-summary-columns">
+              <article><strong>軸候補</strong><div id="phase22-final-key-candidates" class="phase22-summary-list"></div></article>
+              <article><strong>相手候補</strong><div id="phase22-final-opponent-candidates" class="phase22-summary-list"></div></article>
+              <article><strong>押さえ候補</strong><div id="phase22-final-hold-candidates" class="phase22-summary-list"></div></article>
+            </div>
+          </section>
+          <section aria-label="危険人気馬・穴馬一覧">
+            <h3>危険人気馬・穴馬</h3>
+            <div class="phase22-summary-columns">
+              <article><strong>危険人気馬</strong><div id="phase22-final-dangerous-popular" class="phase22-summary-list"></div></article>
+              <article><strong>穴馬</strong><div id="phase22-final-longshots" class="phase22-summary-list"></div></article>
+              <article><strong>神穴候補</strong><div id="phase22-final-divine-longshots" class="phase22-summary-list"></div></article>
+            </div>
+          </section>
+          <section aria-label="レース単位の最終予想メモ">
+            <h3>最終予想メモ</h3>
+            <div class="phase22-final-memo-grid">
+              <label><span>最終見解</span><textarea data-phase22-final-memo="finalView"></textarea></label>
+              <label><span>展開メモ</span><textarea data-phase22-final-memo="paceMemo"></textarea></label>
+              <label><span>買い方メモ</span><textarea data-phase22-final-memo="bettingMemo"></textarea></label>
+              <label><span>注意事項</span><textarea data-phase22-final-memo="cautionMemo"></textarea></label>
+            </div>
+          </section>
+        </div>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -5987,6 +6051,7 @@
     <script src="phase22-local-storage-cleanup.js"></script>
     <script src="phase22-1-race-input-core-foundation.js"></script>
     <script src="phase22-2-prediction-evaluation-core.js"></script>
+    <script src="phase22-3-final-prediction-summary-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
