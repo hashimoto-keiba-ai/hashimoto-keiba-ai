@@ -2838,6 +2838,94 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-10 Improvement Rule Validation Plan Pre-Application Evaluation Core
+
+Phase22-10 adds a Private Local validation plan and pre-application evaluation core. It reads Phase22-9 improvement rule management data and generates validation plans before any real prediction logic, automatic learning, or production operation changes. Passing a validation plan never applies the rule automatically.
+
+Validation plan generation:
+
+- Source key: `hashimotoKeibaAi.phase22.improvementRuleManagement.v1`
+- Phase22-10 save key: `hashimotoKeibaAi.phase22.improvementRuleValidationPlan.v1`
+- Eligible Phase22-9 rules are converted into validation plans in deterministic rule-ID order.
+- The same input produces the same validation plan IDs and ordering.
+- Phase22-9 rules, Phase22-8 candidates, approval results, and prediction results are never modified.
+
+Validation plan fields:
+
+- Validation plan ID
+- Name
+- Description
+- Target improvement rule ID
+- Validation purpose
+- Validation hypothesis
+- Target conditions
+- Exclusion conditions
+- Baseline / candidate comparison structure
+- Evaluation metrics
+- Pass criteria
+- Fail criteria
+- Validation start date
+- Planned end date
+- Validation period
+- Target race scope
+- Target data scope
+- Sample size condition
+- Validation status
+- Judgement result
+- Judgement reason
+- Evaluation value
+- Criteria value
+- Difference value
+- Validation memo
+
+Validation statuses:
+
+- `draft`
+- `ready`
+- `running`
+- `paused`
+- `completed`
+- `cancelled`
+- `expired`
+
+Judgement results:
+
+- `pending`
+- `passed`
+- `failed`
+- `inconclusive`
+- `rejected`
+
+Safe transitions:
+
+- `draft -> ready`
+- `ready -> running`
+- `running -> paused / completed / cancelled`
+- `paused -> running / cancelled`
+- Completed, cancelled, and expired plans are terminal in this core.
+- After completion, the plan content should not be directly changed; create a new validation plan instead.
+
+Validation and rejection:
+
+- Missing ID, name, description, target rule ID, purpose, hypothesis, target conditions, exclusion conditions, metrics, pass criteria, fail criteria, dates, race scope, data scope, or sample size condition is rejected.
+- Planned end date earlier than validation start date is rejected.
+- Invalid status transitions are rejected.
+- Non-completed plans must keep judgement result as `pending`.
+- `passed`, `failed`, and `rejected` require a judgement reason when completed.
+- `passed` does not automatically apply the rule.
+- `failed` / `rejected` are not application targets.
+
+Safety policy:
+
+- PLAN_ONLY is maintained.
+- protected mode is maintained.
+- Private Local operation is maintained.
+- Automatic application, automatic learning, and automatic updates are not implemented.
+- Public URL, GitHub Pages, external API, scraping, and external sending are not used.
+- Phase22-1 through Phase22-9 source keys are protected and are not deleted or changed.
+- `start-local.bat` is not changed.
+- No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
+
 ## Phase22-9 Approved Learning Candidate Improvement Rule Management Core
 
 Phase22-9 adds a Private Local improvement rule management core. It reads Phase22-8 learning candidates that were marked as `採用候補` and generates deterministic improvement rule management data. These rules are management candidates only: they are not automatically learned, applied, updated, sent externally, or used to change prediction logic.
