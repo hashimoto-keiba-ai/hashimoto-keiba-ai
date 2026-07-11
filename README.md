@@ -2762,6 +2762,79 @@ Safety policy:
 - No public URL or GitHub Pages route is required.
 - Phase22-4 reset deletes only `hashimotoKeibaAi.phase22.bettingTicketGeneration.v1`.
 - Phase21 cleanup uses `phase22-local-storage-cleanup.js` and protects all Phase22-1 / Phase22-2 / Phase22-3 / Phase22-4 keys.
+
+## Phase22-5 Budget Allocation Betting Optimization Core
+
+Phase22-5 adds a Private Local budget allocation and betting ticket optimization core. It reads the Phase22-4 saved ticket list, calculates a priority score for selected tickets, and allocates the total budget in 100 yen units without buying, voting, connecting to IPAT, or sending anything outside the browser.
+
+Priority score:
+
+- AI score weight: default 35
+- Final mark weight: default 20
+- Candidate category weight: default 15
+- Ticket type priority weight: default 10
+- Longshot / divine longshot adjustment weight: default 10
+- Dangerous popular penalty weight: default 10
+- Manual adjustment can be stored per ticket.
+- Weights are normalized internally, so the entered values do not need to total 100%.
+
+Allocation modes:
+
+- 均等配分
+- 優先度比例配分
+- 上位集中配分
+- 券種別予算配分
+- 固定額＋残額比例配分
+- 手動調整モード
+
+Constraints:
+
+- Total budget
+- Minimum stake
+- Per-ticket maximum stake
+- Maximum ticket count
+- Minimum priority score
+- Dangerous popular maximum stake
+- Longshot and divine longshot minimum allocation
+- Trifecta maximum budget ratio
+- Ticket-type maximum budget ratios
+
+Rounding and remainder:
+
+- All recommendations are rounded down to 100 yen units.
+- Remaining budget is redistributed to higher-priority eligible tickets when possible.
+- Final saved optimization results are rejected if the total allocation exceeds the budget.
+
+Manual adjustment:
+
+- Each optimized ticket can store manual score adjustment and manual stake changes.
+- Adopt / exclude state is stored in Phase22-5 only.
+- `自動配分に戻す` is represented by clearing manual flags and recalculating.
+
+Phase22-4 reflection:
+
+- Phase22-5 can reflect only amount and selected state back to Phase22-4.
+- Before reflection, a confirmation is required.
+- A backup is saved to `hashimotoKeibaAi.phase22.bettingTicketGeneration.backupBeforeOptimization.v1`.
+- Ticket type, horse numbers, generation reason, and combinations are not changed.
+- Reflection is not purchase, not voting, and not external sending.
+
+localStorage:
+
+- Phase22-4 source key: `hashimotoKeibaAi.phase22.bettingTicketGeneration.v1`
+- Phase22-5 save key: `hashimotoKeibaAi.phase22.budgetAllocationOptimization.v1`
+- Phase22-4 backup key: `hashimotoKeibaAi.phase22.bettingTicketGeneration.backupBeforeOptimization.v1`
+- Schema root: `{ schemaVersion, savedAt, sourceRaceKey, phase224SavedAt, settings, results, summary }`
+
+Safety policy:
+
+- Private Local only.
+- 自動購入・自動投票機能ではありません。
+- IPAT connection is not used.
+- External API and external site sending are not used.
+- GitHub Pages and Public URL are not required.
+- Phase22-5 reset deletes only `hashimotoKeibaAi.phase22.budgetAllocationOptimization.v1`.
+- Phase21 cleanup protects all Phase22-1 through Phase22-5 keys and the Phase22-4 backup key.
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 

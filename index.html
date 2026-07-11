@@ -295,6 +295,73 @@
         <div id="phase22-ticket-list" class="phase22-ticket-list" aria-label="買い目一覧"></div>
       </section>
 
+      <section class="panel phase22-budget-allocation-optimization-core" id="phase22-budget-allocation-optimization-core" aria-label="Phase22-5 Budget Allocation Betting Optimization Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-5 / Budget Allocation Optimization Core</p>
+            <h2>予算配分・買い目最適化</h2>
+          </div>
+          <span class="pill">検討用 / 自動投票なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-4で保存した買い目を読み込み、優先度スコアと制約条件から100円単位で予算配分します。購入前の検討用で、自動購入・自動投票・IPAT接続・外部送信は行いません。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-budget-reload-source" type="button">Phase22-4買い目を再読込</button>
+          <button id="phase22-budget-recalculate-score" type="button">優先度再計算</button>
+          <button id="phase22-budget-allocate" type="button">予算再配分</button>
+          <button id="phase22-budget-reset-auto" type="button">自動配分に戻す</button>
+          <button id="phase22-budget-save" type="button">最適化結果を保存</button>
+          <button id="phase22-budget-restore" type="button">最適化結果を復元</button>
+          <button id="phase22-budget-reset" type="button">Phase22-5のみ初期化</button>
+          <button id="phase22-budget-apply-to-phase224" type="button">Phase22-4へ金額反映</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>購入前の検討用</span>
+          <span>Phase22-4バックアップ作成</span>
+          <span>no external API</span>
+          <span>no IPAT</span>
+          <span>no auto betting</span>
+          <span>no auto voting</span>
+        </div>
+        <div id="phase22-budget-summary" class="phase22-ticket-total-summary" data-kind="success">対象 0点 / 採用 0点 / 配分 0円 / 未使用 0円</div>
+        <div id="phase22-budget-message" class="phase22-race-message" data-kind="info">Phase22-4買い目を保存してから再読込してください。</div>
+        <details class="phase22-budget-settings" open>
+          <summary>最適化設定</summary>
+          <div class="phase22-budget-grid">
+            <label><span>配分モード</span><select data-phase22-budget-setting="mode"><option value="proportional">優先度比例配分</option><option value="equal">均等配分</option><option value="topHeavy">上位集中配分</option><option value="typeBudget">券種別予算配分</option><option value="fixedPlusProportional">固定額＋残額比例配分</option><option value="manual">手動調整モード</option></select></label>
+            <label><span>総予算</span><input type="number" min="100" step="100" data-phase22-budget-setting="budget" value="3000"></label>
+            <label><span>最低購入額</span><input type="number" min="100" step="100" data-phase22-budget-setting="minStake" value="100"></label>
+            <label><span>1買い目上限額</span><input type="number" min="100" step="100" data-phase22-budget-setting="maxStake" value="1000"></label>
+            <label><span>最大購入点数</span><input type="number" min="1" step="1" data-phase22-budget-setting="maxTicketCount" value="30"></label>
+            <label><span>最低優先度</span><input type="number" min="0" max="100" step="1" data-phase22-budget-setting="minPriorityScore" value="0"></label>
+            <label><span>危険人気馬上限</span><input type="number" min="0" step="100" data-phase22-budget-setting="dangerousMaxStake" value="300"></label>
+            <label><span>穴馬最低配分</span><input type="number" min="0" step="100" data-phase22-budget-setting="longshotMinStake" value="100"></label>
+            <label><span>神穴最低配分</span><input type="number" min="0" step="100" data-phase22-budget-setting="divineLongshotMinStake" value="100"></label>
+            <label><span>三連単最大比率</span><input type="number" min="0" max="100" step="1" data-phase22-budget-setting="trifectaMaxBudgetRatio" value="40"></label>
+            <label><span>上位集中 件数</span><input type="number" min="1" step="1" data-phase22-budget-setting="topCount" value="5"></label>
+            <label><span>上位配分率</span><input type="number" min="0" max="100" step="1" data-phase22-budget-setting="topShare" value="70"></label>
+            <label><span>固定額</span><input type="number" min="100" step="100" data-phase22-budget-setting="fixedStake" value="100"></label>
+            <label><span>AI評価点重み</span><input type="number" min="0" step="1" data-phase22-budget-setting="weightAi" value="35"></label>
+            <label><span>印重み</span><input type="number" min="0" step="1" data-phase22-budget-setting="weightMark" value="20"></label>
+            <label><span>候補区分重み</span><input type="number" min="0" step="1" data-phase22-budget-setting="weightCategory" value="15"></label>
+            <label><span>券種重み</span><input type="number" min="0" step="1" data-phase22-budget-setting="weightType" value="10"></label>
+            <label><span>穴馬重み</span><input type="number" min="0" step="1" data-phase22-budget-setting="weightLongshot" value="10"></label>
+            <label><span>危険人気馬ペナルティ</span><input type="number" min="0" step="1" data-phase22-budget-setting="weightDanger" value="10"></label>
+            <label><input type="checkbox" data-phase22-budget-setting="includeManualTickets" checked><span>手動追加買い目を対象</span></label>
+            <label><input type="checkbox" data-phase22-budget-setting="target-win" checked><span>単勝対象</span></label>
+            <label><input type="checkbox" data-phase22-budget-setting="target-place" checked><span>複勝対象</span></label>
+            <label><input type="checkbox" data-phase22-budget-setting="target-quinella" checked><span>馬連対象</span></label>
+            <label><input type="checkbox" data-phase22-budget-setting="target-wide" checked><span>ワイド対象</span></label>
+            <label><input type="checkbox" data-phase22-budget-setting="target-exacta" checked><span>馬単対象</span></label>
+            <label><input type="checkbox" data-phase22-budget-setting="target-trio" checked><span>三連複対象</span></label>
+            <label><input type="checkbox" data-phase22-budget-setting="target-trifecta" checked><span>三連単対象</span></label>
+          </div>
+        </details>
+        <label class="phase22-sort-control"><span>並び替え</span><select id="phase22-budget-sort"><option value="priority">優先度順</option><option value="amount">推奨金額順</option><option value="type">券種順</option><option value="original">元の表示順</option></select></label>
+        <div class="phase22-budget-table-wrap">
+          <div id="phase22-budget-result-list" class="phase22-budget-result-list" aria-label="最適化結果一覧"></div>
+        </div>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6111,6 +6178,7 @@
     <script src="phase22-2-prediction-evaluation-core.js"></script>
     <script src="phase22-3-final-prediction-summary-core.js"></script>
     <script src="phase22-4-betting-ticket-generation-core.js"></script>
+    <script src="phase22-5-budget-allocation-betting-optimization-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

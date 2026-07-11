@@ -2195,9 +2195,20 @@ tbody tr:last-child td {
 .phase22-ticket-row { display: grid; grid-template-columns: 28px 70px 90px minmax(220px, 1fr) minmax(150px, 0.8fr) minmax(120px, 0.8fr) 90px 80px 58px 42px 42px; gap: 8px; align-items: center; min-width: 980px; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 6px; padding: 8px; color: var(--ink); font-size: 12px; font-weight: 800; }
 .phase22-ticket-row input[type="number"] { width: 86px; min-height: 34px; border: 1px solid rgba(212, 175, 55, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 6px; }
 .phase22-ticket-row button, .phase22-ticket-manual button { min-height: 34px; }
+.phase22-budget-allocation-optimization-core { border: 1px solid rgba(125, 167, 255, 0.52); background: linear-gradient(145deg, rgba(14, 27, 51, 0.95), rgba(18, 18, 15, 0.98)); }
+.phase22-budget-settings { margin-top: 14px; border: 1px solid rgba(212, 175, 55, 0.24); border-radius: 8px; padding: 10px; background: rgba(0, 0, 0, 0.16); }
+.phase22-budget-settings summary { cursor: pointer; color: #f7e8b5; font-weight: 900; }
+.phase22-budget-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.phase22-budget-grid label { display: grid; gap: 6px; min-width: 0; color: var(--muted); font-size: 12px; font-weight: 800; }
+.phase22-budget-grid label:has(input[type="checkbox"]) { display: flex; align-items: center; }
+.phase22-budget-grid input, .phase22-budget-grid select { width: 100%; min-height: 38px; border: 1px solid rgba(212, 175, 55, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 8px; font: inherit; }
+.phase22-budget-table-wrap { margin-top: 14px; overflow-x: auto; }
+.phase22-budget-result-list { display: grid; gap: 8px; min-width: 1120px; }
+.phase22-budget-row { display: grid; grid-template-columns: 44px 64px 72px 90px minmax(240px, 1fr) 90px 110px 86px 96px 76px minmax(130px, 0.8fr) minmax(140px, 0.8fr) 68px; gap: 8px; align-items: center; border: 1px solid rgba(125, 167, 255, 0.24); border-radius: 6px; padding: 8px; color: var(--ink); font-size: 12px; font-weight: 800; }
+.phase22-budget-row.manual { border-color: rgba(244, 196, 48, 0.48); }
 @media (max-width: 920px) { .phase22-race-form-grid, .phase22-horse-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 1100px) { .phase22-evaluation-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .phase22-evaluation-horse, .phase22-evaluation-flags { grid-column: 1 / -1; } }
-@media (max-width: 920px) { .phase22-mark-summary, .phase22-summary-columns, .phase22-final-memo-grid, .phase22-ticket-settings, .phase22-ticket-types, .phase22-ticket-manual { grid-template-columns: 1fr; } .phase22-ranking-row { grid-template-columns: 32px minmax(0, 1fr); } }
+@media (max-width: 920px) { .phase22-mark-summary, .phase22-summary-columns, .phase22-final-memo-grid, .phase22-ticket-settings, .phase22-ticket-types, .phase22-ticket-manual, .phase22-budget-grid { grid-template-columns: 1fr; } .phase22-ranking-row { grid-template-columns: 32px minmax(0, 1fr); } }
 @media (max-width: 560px) { .phase22-race-form-grid, .phase22-horse-row, .phase22-evaluation-row { grid-template-columns: 1fr; } .phase22-race-actions button, .phase22-sort-control { width: 100%; } }
 .phase21-63-final-private-local-continuation-closure { border: 1px solid rgba(7, 89, 133, 0.72); background: radial-gradient(circle at 84% 0, rgba(7, 89, 133, 0.12), transparent 42%), linear-gradient(145deg, #061830, #08121e 74%); }
 .phase21-63-final-private-local-continuation-closure-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
