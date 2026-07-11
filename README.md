@@ -2701,3 +2701,51 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 - Phase21 panels remain intact.
+
+## Phase22-2 Prediction Evaluation Core
+
+Phase22-2 adds the prediction evaluation input core for the saved Phase22-1 race. It reads the race and runner data from localStorage, displays the race summary and each runner, and lets the user manually enter AI score, mark, evaluation reason, pace comment, and candidate flags.
+
+Implemented scope:
+
+- Private Local adds a Phase22 core feature link to `index.html#phase22-prediction-evaluation-core`.
+- `index.html` adds the prediction evaluation panel without using fetch or external APIs.
+- The panel displays the Phase22-1 race date, racecourse, race number, race name, surface, distance, track condition, and field size.
+- Each saved runner displays horse number, horse name, jockey, odds, and popularity.
+- Each runner can store AI score, mark, evaluation reason, pace comment, dangerous popular flag, longshot flag, key candidate flag, and opponent candidate flag.
+- Sorting is available by horse number, AI score, popularity, odds, and mark.
+- Save / restore / delete are handled by `phase22-2-prediction-evaluation-core.js`.
+- Delete requires confirmation and never deletes the Phase22-1 race input data.
+
+localStorage:
+
+- Source key: `hashimotoKeibaAi.phase22.raceInput.v1`
+- Save key: `hashimotoKeibaAi.phase22.predictionEvaluation.v1`
+- Schema root: `{ schemaVersion, savedAt, sourceRaceKey, raceSummary, evaluations }`
+- `schemaVersion`: `1`
+- `sourceRaceKey`: `raceDate|racecourse|raceNumber`
+- `raceSummary`: `{ raceDate, racecourse, raceNumber, raceName, surface, distance, trackCondition, fieldSize }`
+- `evaluations[]`: `{ horseNumber, horseName, jockey, odds, popularity, aiScore, mark, reason, paceComment, dangerousPopular, longshot, keyCandidate, opponentCandidate }`
+
+Validation:
+
+- `◎`, `○`, and `▲` are each limited to one runner.
+- Duplicate horse number evaluations are rejected.
+- The evaluation count must match the Phase22-1 field size.
+- Evaluations for horse numbers not present in Phase22-1 are rejected.
+- AI score accepts blank as unevaluated, or a decimal number from 0 to 100.
+- If the Phase22-1 race changes, saved evaluations with a different `sourceRaceKey` are not automatically applied and a Japanese warning is shown.
+
+Safety policy:
+
+- Repository remains private.
+- GitHub Pages is not used.
+- Public URL is not created.
+- External API is not used.
+- Racing sites are not automatically fetched.
+- IPAT is not connected.
+- Betting is not automatically purchased.
+- Automatic execution is not added.
+- `PLAN_ONLY` and protected mode remain the operating premise.
+- `start-local.bat` is not changed.
+- No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
