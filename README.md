@@ -2838,6 +2838,73 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-9 Approved Learning Candidate Improvement Rule Management Core
+
+Phase22-9 adds a Private Local improvement rule management core. It reads Phase22-8 learning candidates that were marked as `採用候補` and generates deterministic improvement rule management data. These rules are management candidates only: they are not automatically learned, applied, updated, sent externally, or used to change prediction logic.
+
+Rule generation:
+
+- Source key: `hashimotoKeibaAi.phase22.learningCandidateReviewSummary.v1`
+- Phase22-9 save key: `hashimotoKeibaAi.phase22.improvementRuleManagement.v1`
+- Only Phase22-8 candidates with approval state `candidate` are converted.
+- Rule IDs are deterministic: the same approved candidate input produces the same `phase22-9-rule-*` ID.
+- Existing Phase22-8 candidates, approval states, prediction results, and learning review data are never modified.
+
+Rule fields:
+
+- Improvement rule ID
+- Name
+- Description
+- Source approved candidate ID
+- Source category and evidence
+- Target conditions
+- Target race conditions
+- Target logic
+- Application scope
+- Effective start date
+- Effective end date
+- Validation status
+- Management status
+- Verification memo
+
+Management states:
+
+- `draft`
+- `approved`
+- `validating`
+- `suspended`
+- `rejected`
+- `expired`
+
+Validation states:
+
+- `notStarted`
+- `readyForManualValidation`
+- `inReview`
+- `validated`
+- `needsRevision`
+- `failed`
+
+Validation and safety:
+
+- Missing rule ID, name, description, source candidate ID, target conditions, target race conditions, target logic, or application scope is rejected.
+- Invalid management or validation status is rejected.
+- An end date earlier than the start date is rejected.
+- `approved` status still means manual management only; it does not apply the rule automatically.
+- JSON output is sorted by rule ID so repeated input produces deterministic rule ordering.
+
+Safety policy:
+
+- PLAN_ONLY is maintained.
+- protected mode is maintained.
+- Private Local operation is maintained.
+- Automatic learning, automatic application, and automatic updates are not implemented.
+- Models, coefficients, rules, and weights are not automatically changed.
+- Public URL, GitHub Pages, external API, scraping, and external sending are not used.
+- Phase22-1 through Phase22-8 source keys are protected and are not deleted or changed.
+- `start-local.bat` is not changed.
+- No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
+
 ## Phase22-8 Learning Candidate Review Summary Core
 
 Phase22-8 adds the learning candidate and review summary core for Private Local operation. It reads the Phase22-7 actual result reconciliation data and aggregates race review notes, candidate lessons, comparison metrics, and improvement actions. The candidates are only preparation data for user approval: Phase22-8 does not run automatic learning, update models, change rules or weights, call external APIs, scrape sites, or send data outside the browser.

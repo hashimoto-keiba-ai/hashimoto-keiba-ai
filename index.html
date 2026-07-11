@@ -612,6 +612,45 @@
         <label class="phase22-learning-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-learning-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-improvement-rule-management-core" id="phase22-improvement-rule-management-core" aria-label="Phase22-9 Approved Learning Candidate Improvement Rule Management Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-9 / Improvement Rule Management Core</p>
+            <h2>承認済み学習候補・改善ルール管理</h2>
+          </div>
+          <span class="pill">PLAN_ONLY / 自動適用なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-8で採用候補になった学習候補から改善ルール管理データを生成します。自動学習・自動適用・自動更新・外部送信は行わず、Private Localの管理候補として保存します。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-rule-reload" type="button">Phase22-8承認候補を再読込</button>
+          <button id="phase22-rule-save" type="button">改善ルールを保存</button>
+          <button id="phase22-rule-restore" type="button">改善ルールを復元</button>
+          <button id="phase22-rule-reset" type="button">Phase22-9のみ初期化</button>
+          <button id="phase22-rule-finalize" type="button">改善ルール管理を確定</button>
+          <button id="phase22-rule-unlock" type="button">確定解除</button>
+          <button id="phase22-rule-text" type="button">テキスト生成</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>PLAN_ONLY</span>
+          <span>protected_mode</span>
+          <span>Private Local</span>
+          <span>no automatic learning</span>
+          <span>no automatic apply</span>
+          <span>no external API</span>
+        </div>
+        <div id="phase22-rule-message" class="phase22-race-message" data-kind="info">Phase22-8で学習候補を確定してから再読込してください。</div>
+        <div id="phase22-rule-finalized-status" class="phase22-ticket-total-summary" data-kind="warning">未確定</div>
+        <div class="phase22-rule-controls">
+          <div id="phase22-rule-summary" class="phase22-ticket-total-summary" data-kind="success">承認済み候補 0件 / 改善ルール候補 0件</div>
+          <label><span>確認者名</span><input id="phase22-rule-confirmer" type="text" placeholder="任意"></label>
+        </div>
+        <div id="phase22-rule-warning-list" class="phase22-rule-warning-list" aria-label="警告集約"></div>
+        <div class="phase22-rule-table-wrap">
+          <div id="phase22-rule-list" class="phase22-rule-list" aria-label="改善ルール一覧"></div>
+        </div>
+        <label class="phase22-rule-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-rule-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6432,6 +6471,7 @@
     <script src="phase22-6-final-purchase-plan-confirmation-core.js"></script>
     <script src="phase22-7-actual-result-input-reconciliation-core.js"></script>
     <script src="phase22-8-learning-candidate-review-summary-core.js"></script>
+    <script src="phase22-9-approved-learning-candidate-improvement-rule-management-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
