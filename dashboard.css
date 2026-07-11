@@ -2181,9 +2181,23 @@ tbody tr:last-child td {
 .phase22-final-memo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .phase22-final-memo-grid label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; font-weight: 800; }
 .phase22-final-memo-grid textarea { width: 100%; min-height: 140px; border: 1px solid rgba(212, 175, 55, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 10px; font: inherit; resize: vertical; }
+.phase22-betting-ticket-generation-core { border: 1px solid rgba(105, 196, 143, 0.52); background: linear-gradient(145deg, rgba(12, 42, 31, 0.95), rgba(18, 18, 15, 0.98)); }
+.phase22-ticket-total-summary { position: sticky; top: 8px; z-index: 2; margin-top: 14px; border: 1px solid rgba(105, 196, 143, 0.5); border-radius: 8px; background: rgba(0, 0, 0, 0.74); color: #d9fbe6; padding: 10px 12px; font-weight: 900; }
+.phase22-ticket-total-summary[data-kind="error"] { border-color: rgba(220, 91, 79, 0.62); color: #ffd7d3; }
+.phase22-ticket-settings, .phase22-ticket-types, .phase22-ticket-manual { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.phase22-ticket-settings label, .phase22-ticket-types label, .phase22-ticket-manual label { display: flex; align-items: center; gap: 7px; min-width: 0; color: var(--muted); font-size: 12px; font-weight: 800; }
+.phase22-ticket-settings label:not(:has(input[type="checkbox"])), .phase22-ticket-manual label { display: grid; align-items: stretch; }
+.phase22-ticket-settings input, .phase22-ticket-manual input, .phase22-ticket-manual select { width: 100%; min-height: 38px; border: 1px solid rgba(212, 175, 55, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 8px; font: inherit; }
+.phase22-ticket-list { display: grid; gap: 12px; margin-top: 16px; }
+.phase22-ticket-type { border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 8px; background: rgba(0, 0, 0, 0.16); padding: 10px; }
+.phase22-ticket-type summary { cursor: pointer; color: #f7e8b5; font-weight: 900; }
+.phase22-ticket-table-wrap { display: grid; gap: 8px; margin-top: 10px; overflow-x: auto; }
+.phase22-ticket-row { display: grid; grid-template-columns: 28px 70px 90px minmax(220px, 1fr) minmax(150px, 0.8fr) minmax(120px, 0.8fr) 90px 80px 58px 42px 42px; gap: 8px; align-items: center; min-width: 980px; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 6px; padding: 8px; color: var(--ink); font-size: 12px; font-weight: 800; }
+.phase22-ticket-row input[type="number"] { width: 86px; min-height: 34px; border: 1px solid rgba(212, 175, 55, 0.34); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--ink); padding: 6px; }
+.phase22-ticket-row button, .phase22-ticket-manual button { min-height: 34px; }
 @media (max-width: 920px) { .phase22-race-form-grid, .phase22-horse-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 1100px) { .phase22-evaluation-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .phase22-evaluation-horse, .phase22-evaluation-flags { grid-column: 1 / -1; } }
-@media (max-width: 920px) { .phase22-mark-summary, .phase22-summary-columns, .phase22-final-memo-grid { grid-template-columns: 1fr; } .phase22-ranking-row { grid-template-columns: 32px minmax(0, 1fr); } }
+@media (max-width: 920px) { .phase22-mark-summary, .phase22-summary-columns, .phase22-final-memo-grid, .phase22-ticket-settings, .phase22-ticket-types, .phase22-ticket-manual { grid-template-columns: 1fr; } .phase22-ranking-row { grid-template-columns: 32px minmax(0, 1fr); } }
 @media (max-width: 560px) { .phase22-race-form-grid, .phase22-horse-row, .phase22-evaluation-row { grid-template-columns: 1fr; } .phase22-race-actions button, .phase22-sort-control { width: 100%; } }
 .phase21-63-final-private-local-continuation-closure { border: 1px solid rgba(7, 89, 133, 0.72); background: radial-gradient(circle at 84% 0, rgba(7, 89, 133, 0.12), transparent 42%), linear-gradient(145deg, #061830, #08121e 74%); }
 .phase21-63-final-private-local-continuation-closure-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }

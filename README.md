@@ -2699,6 +2699,69 @@ Safety policy:
 - IPAT is not connected.
 - Betting is not automatically purchased.
 - Automatic execution is not added.
+
+## Phase22-4 Betting Ticket Generation Core
+
+Phase22-4 adds the betting ticket generation core for Private Local, pre-purchase review only. It reads Phase22-1 race data, Phase22-2 prediction evaluations, and Phase22-3-style final prediction aggregation, then generates editable ticket candidates, points, stake amounts, subtotals, and total budget warnings.
+
+Supported ticket types:
+
+- 単勝
+- 複勝
+- 馬連
+- ワイド
+- 馬単
+- 三連複
+- 三連単
+
+Operation:
+
+- Open `private-local.html`, then choose `買い目生成`.
+- Save Phase22-1 race input and Phase22-2 prediction evaluation first.
+- Use `Phase22-3情報を再読込` and `買い目候補を生成`.
+- Enable or disable each ticket type before generation.
+- Adjust total budget, base stake, max points, dangerous popular inclusion, longshot priority, divine longshot inclusion, BOX generation, and trifecta recommended limit.
+- Edit each ticket selection, stake, order, and deletion after generation.
+- Use manual add with the ticket type and horse numbers, for example `1 2 3`.
+
+Generation methods:
+
+- 単勝: main anchor and longshot candidates.
+- 複勝: key candidates, longshots, and divine longshot candidates.
+- 馬連: anchor-to-opponents, multiple anchors to opponents, and BOX.
+- ワイド: anchor-to-opponents, longshot-inclusive combinations, and BOX.
+- 馬単: first fixed, reverse, second fixed style candidates, and BOX permutations.
+- 三連複: one-horse key, two-horse key, formation-style candidates, and BOX.
+- 三連単: first fixed, second fixed, third fixed, first-second fixed, formation-style candidates, and BOX permutations.
+
+Point and money rules:
+
+- Stake is normalized to 100 yen units.
+- Default stake is 100 yen.
+- Selected points, subtotal by type, and grand total are recalculated locally.
+- Budget overrun is shown as a warning and does not trigger any purchase.
+- Trifecta recommended point warning uses: 10 runners or fewer = 8, 11 to 14 runners = 12, 15 to 18 runners = 16.
+- The trifecta limit is a warning only; generated tickets are not forcibly purchased or sent anywhere.
+
+localStorage:
+
+- Phase22-1 source key: `hashimotoKeibaAi.phase22.raceInput.v1`
+- Phase22-2 source key: `hashimotoKeibaAi.phase22.predictionEvaluation.v1`
+- Phase22-3 source key: `hashimotoKeibaAi.phase22.finalPredictionSummary.v1`
+- Phase22-4 save key: `hashimotoKeibaAi.phase22.bettingTicketGeneration.v1`
+- Schema root: `{ schemaVersion, savedAt, sourceRaceKey, settings, tickets }`
+- `tickets[]` stores type, selected state, horse numbers, horse display data, reason, stake, manual flag, and warnings.
+
+Safety policy:
+
+- This is not an auto-betting or auto-voting feature.
+- 自動購入・自動投票機能ではありません。
+- No IPAT connection is made.
+- No external site or API is contacted.
+- No ticket purchase is executed.
+- No public URL or GitHub Pages route is required.
+- Phase22-4 reset deletes only `hashimotoKeibaAi.phase22.bettingTicketGeneration.v1`.
+- Phase21 cleanup uses `phase22-local-storage-cleanup.js` and protects all Phase22-1 / Phase22-2 / Phase22-3 / Phase22-4 keys.
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
