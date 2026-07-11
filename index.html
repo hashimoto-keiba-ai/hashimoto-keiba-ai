@@ -362,6 +362,77 @@
         </div>
       </section>
 
+      <section class="panel phase22-final-purchase-plan-confirmation-core" id="phase22-final-purchase-plan-confirmation-core" aria-label="Phase22-6 Final Purchase Plan Confirmation Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-6 / Final Purchase Plan Confirmation Core</p>
+            <h2>最終購入計画・確認</h2>
+          </div>
+          <span class="pill">確認用 / 自動投票なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-5で保存した最適化結果を購入前の最終確認用に整理します。印刷・テキスト出力はできますが、自動購入・自動投票・IPAT接続・外部送信は行いません。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-final-purchase-reload" type="button">Phase22-5データを再読込</button>
+          <button id="phase22-final-purchase-save" type="button">最終購入計画を保存</button>
+          <button id="phase22-final-purchase-restore" type="button">最終購入計画を復元</button>
+          <button id="phase22-final-purchase-reset" type="button">Phase22-6のみ初期化</button>
+          <button id="phase22-final-purchase-finalize" type="button">最終購入計画を確定</button>
+          <button id="phase22-final-purchase-unlock" type="button">確定解除</button>
+          <button id="phase22-final-purchase-print" type="button">印刷</button>
+          <button id="phase22-final-purchase-text" type="button">テキスト生成</button>
+          <button id="phase22-final-purchase-copy" type="button">コピー</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>購入前の確認用</span>
+          <span>Phase22-5は変更しない</span>
+          <span>no external API</span>
+          <span>no IPAT</span>
+          <span>no auto betting</span>
+          <span>no auto voting</span>
+        </div>
+        <div id="phase22-final-purchase-message" class="phase22-race-message" data-kind="info">Phase22-5最適化結果を保存してから再読込してください。</div>
+        <div id="phase22-final-purchase-finalized-status" class="phase22-ticket-total-summary" data-kind="warning">未確定</div>
+        <div class="phase22-final-purchase-top">
+          <div>
+            <h3>レース情報</h3>
+            <div id="phase22-final-purchase-race-summary" class="phase22-final-purchase-summary-grid" aria-label="レース情報"></div>
+          </div>
+          <div>
+            <h3>集計</h3>
+            <div id="phase22-final-purchase-summary" class="phase22-final-purchase-summary-grid" aria-label="最終集計"></div>
+          </div>
+        </div>
+        <div id="phase22-final-purchase-warning-list" class="phase22-final-purchase-warning-list" aria-label="警告集約"></div>
+        <details class="phase22-budget-settings" open>
+          <summary>最終確認設定</summary>
+          <div class="phase22-budget-grid">
+            <label><span>券種内並び替え</span><select id="phase22-final-purchase-sort"><option value="priority">優先度順</option><option value="amount">金額順</option><option value="original">元の順序</option><option value="type">券種順</option></select></label>
+            <label><span>確認者名</span><input id="phase22-final-purchase-confirmer" type="text" placeholder="任意"></label>
+            <label><input id="phase22-final-purchase-exclude-planned" type="checkbox" checked><span>除外予定を総額集計から外す</span></label>
+          </div>
+        </details>
+        <div class="phase22-final-purchase-checklist-wrap">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Final Checklist</p>
+              <h3>最終確認チェックリスト</h3>
+            </div>
+            <span id="phase22-final-purchase-checklist-status" class="pill">未確認 13件</span>
+          </div>
+          <div id="phase22-final-purchase-checklist" class="phase22-final-purchase-checklist"></div>
+        </div>
+        <div class="phase22-final-purchase-memos">
+          <label><span>最終購入方針</span><textarea data-phase22-final-purchase-memo="policy"></textarea></label>
+          <label><span>券種別メモ</span><textarea data-phase22-final-purchase-memo="typeMemo"></textarea></label>
+          <label><span>注意事項</span><textarea data-phase22-final-purchase-memo="caution"></textarea></label>
+          <label><span>購入順序メモ</span><textarea data-phase22-final-purchase-memo="purchaseOrder"></textarea></label>
+          <label><span>見送り条件</span><textarea data-phase22-final-purchase-memo="skipCondition"></textarea></label>
+          <label><span>レース直前確認メモ</span><textarea data-phase22-final-purchase-memo="lastMinute"></textarea></label>
+        </div>
+        <div id="phase22-final-purchase-list" class="phase22-final-purchase-list" aria-label="最終購入計画一覧"></div>
+        <label class="phase22-final-purchase-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-final-purchase-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6179,6 +6250,7 @@
     <script src="phase22-3-final-prediction-summary-core.js"></script>
     <script src="phase22-4-betting-ticket-generation-core.js"></script>
     <script src="phase22-5-budget-allocation-betting-optimization-core.js"></script>
+    <script src="phase22-6-final-purchase-plan-confirmation-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
