@@ -237,6 +237,64 @@
         </div>
       </section>
 
+      <section class="panel phase22-betting-ticket-generation-core" id="phase22-betting-ticket-generation-core" aria-label="Phase22-4 Betting Ticket Generation Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-4 / Betting Ticket Generation Core</p>
+            <h2>買い目生成</h2>
+          </div>
+          <span class="pill">検討用 / 自動投票なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-3相当の最終予想情報から券種別の買い目候補、点数、金額、予算を作成します。これは購入前の検討用で、自動投票・自動購入・外部送信は行いません。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-refresh-ticket-source" type="button">Phase22-3情報を再読込</button>
+          <button id="phase22-generate-tickets" type="button">買い目候補を生成</button>
+          <button id="phase22-save-tickets" type="button">買い目を保存</button>
+          <button id="phase22-restore-tickets" type="button">買い目を復元</button>
+          <button id="phase22-reset-tickets" type="button">Phase22-4のみ初期化</button>
+          <button id="phase22-cleanup-phase21-storage-for-tickets" type="button">古いPhase21ローカル保存データを整理</button>
+        </div>
+        <div id="phase22-ticket-phase21-cleanup-summary" class="phase22-cleanup-summary">削除対象候補: 0件 / 概算 0 B</div>
+        <div class="phase22-safety-strip">
+          <span>購入前の検討用</span>
+          <span>localStorage only</span>
+          <span>no external API</span>
+          <span>no IPAT</span>
+          <span>no auto betting</span>
+          <span>no auto voting</span>
+        </div>
+        <div id="phase22-ticket-total-summary" class="phase22-ticket-total-summary" data-kind="success">選択 0点 / 合計 0円 / 予算 3,000円</div>
+        <div id="phase22-ticket-message" class="phase22-race-message" data-kind="info">Phase22-3情報を再読込してから買い目候補を生成してください。</div>
+        <div class="phase22-ticket-settings">
+          <label><span>総予算</span><input type="number" min="100" step="100" data-phase22-ticket-setting="budget" value="3000"></label>
+          <label><span>1点あたり基本金額</span><input type="number" min="100" step="100" data-phase22-ticket-setting="baseStake" value="100"></label>
+          <label><span>最大点数</span><input type="number" min="1" step="1" data-phase22-ticket-setting="maxTickets" value="60"></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="includeDangerousPopular"><span>危険人気馬を含める</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="prioritizeLongshots" checked><span>穴馬を優先する</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="includeDivineLongshots" checked><span>神穴候補を含める</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="allowBox" checked><span>BOX生成を許可</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="applyTrifectaLimit" checked><span>三連単推奨上限を適用</span></label>
+        </div>
+        <div class="phase22-ticket-types" aria-label="券種の有効無効">
+          <label><input type="checkbox" data-phase22-ticket-setting="enabled-win" checked><span>単勝</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="enabled-place" checked><span>複勝</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="enabled-quinella" checked><span>馬連</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="enabled-wide" checked><span>ワイド</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="enabled-exacta" checked><span>馬単</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="enabled-trio" checked><span>三連複</span></label>
+          <label><input type="checkbox" data-phase22-ticket-setting="enabled-trifecta" checked><span>三連単</span></label>
+        </div>
+        <div class="phase22-ticket-manual">
+          <label><span>一括金額 券種</span><select id="phase22-ticket-bulk-type"><option value="all">全券種</option><option value="win">単勝</option><option value="place">複勝</option><option value="quinella">馬連</option><option value="wide">ワイド</option><option value="exacta">馬単</option><option value="trio">三連複</option><option value="trifecta">三連単</option></select></label>
+          <label><span>一括金額</span><input id="phase22-ticket-bulk-stake" type="number" min="100" step="100" value="100"></label>
+          <button id="phase22-apply-bulk-stake" type="button">金額を反映</button>
+          <label><span>手動追加 券種</span><select id="phase22-manual-ticket-type"><option value="win">単勝</option><option value="place">複勝</option><option value="quinella">馬連</option><option value="wide">ワイド</option><option value="exacta">馬単</option><option value="trio">三連複</option><option value="trifecta">三連単</option></select></label>
+          <label><span>馬番</span><input id="phase22-manual-ticket-horses" type="text" placeholder="例: 1 2 3"></label>
+          <button id="phase22-add-manual-ticket" type="button">手動買い目を追加</button>
+        </div>
+        <div id="phase22-ticket-list" class="phase22-ticket-list" aria-label="買い目一覧"></div>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6052,6 +6110,7 @@
     <script src="phase22-1-race-input-core-foundation.js"></script>
     <script src="phase22-2-prediction-evaluation-core.js"></script>
     <script src="phase22-3-final-prediction-summary-core.js"></script>
+    <script src="phase22-4-betting-ticket-generation-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
