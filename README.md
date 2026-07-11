@@ -2838,6 +2838,72 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-6 Final Purchase Plan Confirmation Core
+
+Phase22-6 adds the final purchase plan confirmation core for Private Local operation. It reads the Phase22-5 optimized tickets and Phase22-1 race information, then organizes the plan for human review before purchase. It is a confirmation and printing tool only: it does not buy tickets, vote, connect to IPAT, call external APIs, or send data outside the browser.
+
+Final purchase plan:
+
+- Groups adopted Phase22-5 tickets by ticket type.
+- Shows combination, horse numbers, horse names, marks, AI scores, priority score, planned amount, allocation reason, and warnings.
+- Each ticket has a confirmation state: 未確認, 確認済み, 保留, or 除外予定.
+- 除外予定 can be excluded from Phase22-6 totals without changing Phase22-5.
+- Ticket-type sections are collapsible and can be sorted by priority, amount, ticket type, or original order.
+
+Race and totals:
+
+- Race information is read from `hashimotoKeibaAi.phase22.raceInput.v1`.
+- Missing race fields are displayed as `未設定`.
+- Totals include purchase point count, planned amount, budget, unused budget, usage ratio, ticket-type totals, dangerous popular totals, longshot totals, divine longshot totals, and priority score range.
+- NaN, Infinity, and negative totals are not displayed.
+
+Checklist and warnings:
+
+- The final checklist covers race information, scratches, horse numbers and names, ticket type, combination, amount, budget, dangerous popular warnings, longshot / divine longshot candidates, start time, purchase deadline, no auto voting, and user final judgment.
+- `最終確認完了` appears only when all checklist items are checked.
+- Warning aggregation separates errors, warnings, and notices for budget overrun, constraint warnings, dangerous popular tickets, unconfirmed tickets, incomplete checklist, missing race/start time, zero tickets, zero amount, non-100-yen amounts, Phase22-5 updates, and broken saved data.
+
+Finalization:
+
+- `最終購入計画を確定` requires at least one adopted ticket, total amount above zero, no budget overrun, all amounts in 100 yen units, all checklist items complete, and zero error warnings.
+- A confirmation dialog is required before finalization.
+- Finalization stores confirmed time and confirmer name.
+- Finalization and unlock do not purchase, vote, connect to IPAT, or send externally.
+
+Output:
+
+- `印刷` uses browser printing and print CSS for A4 portrait.
+- Operation buttons and nonessential navigation are hidden in print view.
+- `テキスト生成` creates a plain-text final plan with race information, ticket groups, amount totals, warnings, memos, and confirmation state.
+- `コピー` uses the clipboard only when available; otherwise the textarea remains available for manual copy.
+
+localStorage:
+
+- Phase22-5 source key: `hashimotoKeibaAi.phase22.budgetAllocationOptimization.v1`
+- Phase22-6 save key: `hashimotoKeibaAi.phase22.finalPurchasePlanConfirmation.v1`
+- Schema root: `{ schemaVersion, savedAt, sourceRaceKey, phase225SavedAt, confirmationStates, checklist, memos, sortMode, excludePlannedFromTotals, finalized, confirmedAt, confirmerName, finalSummary, phase225Snapshot }`
+- Phase22-6 reset deletes only `hashimotoKeibaAi.phase22.finalPurchasePlanConfirmation.v1`.
+- Phase22-1 through Phase22-5 keys are protected and are not deleted or changed.
+
+Phase22-1 through Phase22-6 flow:
+
+- Phase22-1 saves race and horse inputs.
+- Phase22-2 saves prediction evaluations.
+- Phase22-3 summarizes final prediction information.
+- Phase22-4 generates editable ticket candidates.
+- Phase22-5 optimizes selected tickets and amounts.
+- Phase22-6 confirms, saves, prints, and exports the final purchase plan for human review only.
+
+Safety policy:
+
+- Private Local only.
+- 自動購入・自動投票機能ではありません。
+- IPAT connection is not used.
+- External API and external site sending are not used.
+- GitHub Pages and Public URL are not required.
+- `start-local.bat` is not changed.
+- No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
+
 ## Phase22-3 Final Prediction Summary Core
 
 Phase22-3 adds the final prediction summary core for Private Local operation. It reuses Phase22-1 race input data and Phase22-2 prediction evaluation data, then displays AI score ranking, final marks, key / opponent / hold candidates, dangerous popular horses, longshots, divine longshot candidates, and race-level final memo fields.
