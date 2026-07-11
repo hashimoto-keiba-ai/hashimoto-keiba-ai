@@ -2152,6 +2152,7 @@ tbody tr:last-child td {
 .phase22-race-message { margin-top: 14px; border: 1px solid rgba(125, 167, 255, 0.3); border-radius: 6px; padding: 10px 12px; color: #dbeafe; font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
 .phase22-race-message[data-kind="success"] { border-color: rgba(105, 196, 143, 0.54); color: #d9fbe6; }
 .phase22-race-message[data-kind="error"] { border-color: rgba(220, 91, 79, 0.58); color: #ffd7d3; }
+.phase22-cleanup-summary { margin-top: 8px; color: #e9d8a6; font-size: 12px; font-weight: 800; }
 .phase22-horse-list { display: grid; gap: 10px; margin-top: 14px; }
 @media (max-width: 920px) { .phase22-race-form-grid, .phase22-horse-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .phase22-race-form-grid, .phase22-horse-row { grid-template-columns: 1fr; } .phase22-race-actions button { width: 100%; } }

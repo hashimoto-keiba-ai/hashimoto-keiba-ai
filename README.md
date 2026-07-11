@@ -2673,6 +2673,7 @@ Implemented scope:
 - `index.html` adds the race input panel for race date, racecourse, race number, race name, surface, distance, track condition, and field size.
 - Runner rows are generated from field size and capture horse number, horse name, jockey, odds, and popularity.
 - Save / restore / delete are handled by `phase22-1-race-input-core-foundation.js`.
+- Local cleanup can remove old Phase21 checklist / check / continuation / latest / summary / generated localStorage entries after confirmation.
 - Input validation rejects empty required fields, invalid field size, invalid odds or popularity, and duplicate horse numbers.
 - Delete requires an explicit confirmation callback / browser confirmation.
 
@@ -2684,6 +2685,8 @@ localStorage:
 - `race`: `{ raceDate, racecourse, raceNumber, raceName, surface, distance, trackCondition, fieldSize }`
 - `horses[]`: `{ horseNumber, horseName, jockey, odds, popularity }`
 - `safety`: keeps Private Local / PLAN_ONLY / protected mode true and public, Pages, external API, auto fetch, IPAT, auto betting, and auto execution false.
+- Cleanup never deletes `hashimotoKeibaAi.phase22.raceInput.v1` and does not clear the currently edited form.
+- Cleanup target keys must include `phase21` and one of: `checklist`, `check`, `continuation`, `latest`, `summary`, `generated`, `temporary`, `temp`, `panel`, `builder`, `closure`, or `operation`.
 
 Safety policy:
 

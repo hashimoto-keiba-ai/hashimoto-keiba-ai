@@ -10,6 +10,8 @@
   const MAX_FIELD_SIZE = 18;
   const RACE_FIELDS = ["raceDate", "racecourse", "raceNumber", "raceName", "surface", "distance", "trackCondition", "fieldSize"];
   const HORSE_FIELDS = ["horseNumber", "horseName", "jockey", "odds", "popularity"];
+  const PHASE21_CLEANUP_KEY_PATTERN = /phase21/i;
+  const PHASE21_CLEANUP_TYPE_PATTERN = /(checklist|check|continuation|latest|summary|generated|temporary|temp|panel|builder|closure|operation)/i;
 
   function text(value) {
     return String(value ?? "").trim();
@@ -160,6 +162,50 @@
     return { deleted: true };
   }
 
+  function estimateStorageBytes(key, value) {
+    return (String(key || "").length + String(value || "").length) * 2;
+  }
+
+  function formatBytes(bytes) {
+    if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+  }
+
+  function isPhase21CleanupKey(key) {
+    if (!key || key === STORAGE_KEY) return false;
+    return PHASE21_CLEANUP_KEY_PATTERN.test(key) && PHASE21_CLEANUP_TYPE_PATTERN.test(key);
+  }
+
+  function getPhase21CleanupCandidates(storage) {
+    const targetStorage = getStorage(storage);
+    if (!targetStorage || typeof targetStorage.length !== "number" || typeof targetStorage.key !== "function") return [];
+    const candidates = [];
+    for (let index = 0; index < targetStorage.length; index += 1) {
+      const key = targetStorage.key(index);
+      if (!isPhase21CleanupKey(key)) continue;
+      const value = targetStorage.getItem(key) || "";
+      candidates.push({ key, bytes: estimateStorageBytes(key, value) });
+    }
+    return candidates;
+  }
+
+  function summarizePhase21Cleanup(storage) {
+    const candidates = getPhase21CleanupCandidates(storage);
+    const bytes = candidates.reduce((sum, item) => sum + item.bytes, 0);
+    return { count: candidates.length, bytes, displaySize: formatBytes(bytes), keys: candidates.map((item) => item.key) };
+  }
+
+  function cleanupPhase21LocalData(storage, confirmCleanup = () => false) {
+    const targetStorage = getStorage(storage);
+    const summary = summarizePhase21Cleanup(targetStorage);
+    if (!targetStorage) return { deleted: false, reason: "storage_unavailable", ...summary };
+    if (!confirmCleanup(summary)) return { deleted: false, reason: "confirmation_required", ...summary };
+    summary.keys.forEach((key) => targetStorage.removeItem(key));
+    return { deleted: true, removedCount: summary.count, releasedBytes: summary.bytes, releasedSize: summary.displaySize, keys: summary.keys };
+  }
+
   function collectFromDocument(doc) {
     const race = {};
     RACE_FIELDS.forEach((field) => {
@@ -182,6 +228,16 @@
     if (!node) return;
     node.textContent = message;
     node.dataset.kind = kind;
+  }
+
+  function updateCleanupSummary(doc, storage) {
+    const node = doc.querySelector("#phase22-phase21-cleanup-summary");
+    if (!node) return null;
+    const summary = summarizePhase21Cleanup(storage);
+    node.textContent = `削除対象候補: ${summary.count}件 / 概算 ${summary.displaySize}`;
+    node.dataset.count = String(summary.count);
+    node.dataset.bytes = String(summary.bytes);
+    return summary;
   }
 
   function renderHorseRows(doc, horses) {
@@ -261,11 +317,29 @@
       return result;
     };
 
+    const cleanupPhase21 = () => {
+      const before = summarizePhase21Cleanup(storage);
+      const confirmCleanup = options.confirmCleanup || ((summary) => (
+        root && typeof root.confirm === "function"
+          ? root.confirm(`古いPhase21ローカル保存データ ${summary.count}件（概算 ${summary.displaySize}）を整理します。Phase22-1の入力中フォームと保存キーは削除しません。実行しますか？`)
+          : false
+      ));
+      const result = cleanupPhase21LocalData(storage, confirmCleanup);
+      updateCleanupSummary(doc, storage);
+      if (!result.deleted) {
+        setMessage(doc, result.reason === "confirmation_required" ? "Phase21ローカル保存データ整理は確認が必要です。" : "localStorageを利用できないため整理できません。", "error");
+        return result;
+      }
+      setMessage(doc, `古いPhase21ローカル保存データを${result.removedCount}件整理しました。概算${formatBytes(before.bytes)}を解放しました。`, "success");
+      return result;
+    };
+
     const actions = [
       ["#phase22-generate-horses", "click", generate],
       ["#phase22-save-race-input", "click", save],
       ["#phase22-restore-race-input", "click", restore],
-      ["#phase22-delete-race-input", "click", remove]
+      ["#phase22-delete-race-input", "click", remove],
+      ["#phase22-cleanup-phase21-storage", "click", cleanupPhase21]
     ];
     actions.forEach(([selector, event, handler]) => {
       const node = doc.querySelector(selector);
@@ -275,8 +349,9 @@
     const existing = loadRaceInput(storage);
     if (existing) restoreToDocument(doc, existing);
     else renderHorseRows(doc, buildHorseRows(8));
+    updateCleanupSummary(doc, storage);
     setMessage(doc, existing ? "保存済みデータを読み込みました。" : "頭数を指定して出走馬入力行を生成してください。", "info");
-    return { generate, save, restore, remove };
+    return { generate, save, restore, remove, cleanupPhase21 };
   }
 
   if (typeof window !== "undefined" && typeof document !== "undefined") {
@@ -295,6 +370,12 @@
     saveRaceInput,
     loadRaceInput,
     deleteRaceInput,
+    estimateStorageBytes,
+    formatBytes,
+    isPhase21CleanupKey,
+    getPhase21CleanupCandidates,
+    summarizePhase21Cleanup,
+    cleanupPhase21LocalData,
     renderHorseRows,
     restoreToDocument,
     bindRaceInputPanel
