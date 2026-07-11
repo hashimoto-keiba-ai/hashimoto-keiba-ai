@@ -2662,3 +2662,42 @@ Verification results:
 - Conflict markers, dangerous public settings, automatic publish, automatic merge, external sending, hidden updates, suspicious auto-run scripts, unnecessary public Pages routes, and dangerous launcher extension changes must remain absent.
 
 Renamed files: `phase21-63-final-private-local-continuation-closure-builder.js`, `phase21-63-final-private-local-continuation-closure-db.json`, `phase21-63-final-private-local-continuation-closure-summary-db.json`, `tests/phase21PrivateLocalFinalContinuationClosureBuilder.test.js`
+
+## Phase22-1 Race Input Core Foundation
+
+Phase22-1 starts the core Hashimoto Keiba AI feature work after Phase21 closure. It adds a Private Local race input foundation for manually entering race information and runners, saving the draft to browser localStorage, restoring it after reload, and deleting it only after confirmation.
+
+Implemented scope:
+
+- Private Local adds a Phase22 core feature section with a link to `index.html#phase22-race-input-core`.
+- `index.html` adds the race input panel for race date, racecourse, race number, race name, surface, distance, track condition, and field size.
+- Runner rows are generated from field size and capture horse number, horse name, jockey, odds, and popularity.
+- Save / restore / delete are handled by `phase22-1-race-input-core-foundation.js`.
+- Local cleanup can remove old Phase21 checklist / check / continuation / latest / summary / generated localStorage entries after confirmation.
+- Input validation rejects empty required fields, invalid field size, invalid odds or popularity, and duplicate horse numbers.
+- Delete requires an explicit confirmation callback / browser confirmation.
+
+localStorage:
+
+- Key: `hashimotoKeibaAi.phase22.raceInput.v1`
+- Schema root: `{ schemaVersion, savedAt, safety, race, horses }`
+- `schemaVersion`: `1`
+- `race`: `{ raceDate, racecourse, raceNumber, raceName, surface, distance, trackCondition, fieldSize }`
+- `horses[]`: `{ horseNumber, horseName, jockey, odds, popularity }`
+- `safety`: keeps Private Local / PLAN_ONLY / protected mode true and public, Pages, external API, auto fetch, IPAT, auto betting, and auto execution false.
+- Cleanup never deletes `hashimotoKeibaAi.phase22.raceInput.v1` and does not clear the currently edited form.
+- Cleanup target keys must include `phase21` and one of: `checklist`, `check`, `continuation`, `latest`, `summary`, `generated`, `temporary`, `temp`, `panel`, `builder`, `closure`, or `operation`.
+
+Safety policy:
+
+- Repository remains private.
+- GitHub Pages is not used.
+- Public URL is not created.
+- External API is not used.
+- Racing sites are not automatically fetched.
+- IPAT is not connected.
+- Betting is not automatically purchased.
+- Automatic execution is not added.
+- `start-local.bat` is not changed.
+- No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
+- Phase21 panels remain intact.

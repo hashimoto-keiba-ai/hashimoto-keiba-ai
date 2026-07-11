@@ -102,6 +102,46 @@
         </div>
       </section>
 
+      <section class="panel phase22-race-input-core" id="phase22-race-input-core" aria-label="Phase22-1 Race Input Core Foundation">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-1 / Race Input Core</p>
+            <h2>レース情報入力</h2>
+          </div>
+          <span class="pill">Private Local / PLAN_ONLY</span>
+        </div>
+        <p class="console-menu-lead">手動入力したレース情報と出走馬情報を、この端末のlocalStorageに保存・復元します。外部API、競馬サイト自動取得、IPAT、自動購入、自動実行は使いません。</p>
+        <div class="phase22-race-form-grid">
+          <label><span>開催日</span><input type="date" data-phase22-race="raceDate"></label>
+          <label><span>競馬場</span><input type="text" data-phase22-race="racecourse" placeholder="東京"></label>
+          <label><span>レース番号</span><input type="text" data-phase22-race="raceNumber" placeholder="11R"></label>
+          <label><span>レース名</span><input type="text" data-phase22-race="raceName" placeholder="メインレース"></label>
+          <label><span>芝／ダート</span><select data-phase22-race="surface"><option value="">選択</option><option value="芝">芝</option><option value="ダート">ダート</option></select></label>
+          <label><span>距離</span><input type="text" data-phase22-race="distance" placeholder="1600m"></label>
+          <label><span>馬場状態</span><input type="text" data-phase22-race="trackCondition" placeholder="良"></label>
+          <label><span>頭数</span><input type="number" min="1" max="18" step="1" data-phase22-race="fieldSize" value="8"></label>
+        </div>
+        <div class="phase22-race-actions">
+          <button id="phase22-generate-horses" type="button">出走馬入力行を生成</button>
+          <button id="phase22-save-race-input" type="button">保存</button>
+          <button id="phase22-restore-race-input" type="button">再読み込み</button>
+          <button id="phase22-delete-race-input" type="button">保存データ削除</button>
+          <button id="phase22-cleanup-phase21-storage" type="button">古いPhase21ローカル保存データを整理</button>
+        </div>
+        <div id="phase22-phase21-cleanup-summary" class="phase22-cleanup-summary">削除対象候補: 0件 / 概算 0 B</div>
+        <div class="phase22-safety-strip">
+          <span>Private Local</span>
+          <span>localStorage only</span>
+          <span>no Public</span>
+          <span>no Pages</span>
+          <span>no external API</span>
+          <span>no IPAT</span>
+          <span>no auto betting</span>
+        </div>
+        <div id="phase22-race-input-message" class="phase22-race-message" data-kind="info">頭数を指定して出走馬入力行を生成してください。</div>
+        <div id="phase22-horse-input-list" class="phase22-horse-list" aria-label="出走馬情報入力"></div>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -5913,6 +5953,7 @@
     <script src="phase21-56-private-local-home-pc-continuation-check-builder.js"></script>
     <script src="phase21-55-private-local-post-final-stack-continuation-check-builder.js"></script>
     <script src="phase21-54-private-local-final-stack-merge-preparation-check-builder.js"></script>
+    <script src="phase22-1-race-input-core-foundation.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
