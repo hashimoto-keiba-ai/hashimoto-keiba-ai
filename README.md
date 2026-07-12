@@ -2838,6 +2838,79 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-12 Eligible Rule Manual Approval Management Core
+
+Phase22-12 adds a Private Local manual approval management core for improvement rule candidates that were judged `eligible` in Phase22-11. It manages final approver information, approval conditions, approval validity periods, planned scope, revocation, expiry, cancellation, and the unapplied state. It never applies a rule automatically.
+
+Storage:
+
+- Source key: `hashimotoKeibaAi.phase22.validationResultReviewApplicationDecision.v1`
+- Phase22-12 save key: `hashimotoKeibaAi.phase22.eligibleRuleManualApprovalManagement.v1`
+- Schema root: `{ schemaVersion, savedAt, sourcePhase2211SavedAt, sourceRaceKey, approvals, finalized, finalizedAt, confirmerName, reviewSnapshot }`
+- Phase22-1 through Phase22-11 localStorage keys are not deleted or modified by Phase22-12.
+
+Approval case generation:
+
+- Only Phase22-11 review cases with `reviewStatus: completed` and `applicationDecision: eligible` are converted into approval cases.
+- Non-eligible review cases are ignored and cannot become approval cases.
+- The same Phase22-11 input produces the same approval case IDs and ordering.
+- Existing review cases, validation plans, improvement rules, learning candidates, and prediction results are read-only inputs.
+
+Approval fields:
+
+- Approval case ID, name, description
+- Target review ID
+- Target validation plan ID
+- Target improvement rule ID
+- Source Phase22-11 review status, application decision, reviewer, and review datetime
+- Final approver, approver ID, approved datetime, approval comment
+- Approval conditions, prerequisites, constraints, prohibited conditions
+- Planned scope, target race conditions, target logic, target data scope
+- Effective start date, effective end date, approval validity period
+- Rollback conditions, revocation conditions, reapproval conditions
+- Approval history, revocation history, reapproval history
+
+Approval statuses:
+
+- `draft`
+- `awaiting_approval`
+- `approved`
+- `revoked`
+- `rejected`
+- `expired`
+- `cancelled`
+
+Application statuses:
+
+- `not_applied`
+- `planned`
+- `blocked`
+- `cancelled`
+
+Safe transition and approval rules:
+
+- Safe status transitions are `draft -> awaiting_approval`, `awaiting_approval -> approved / rejected / cancelled`, and `approved -> revoked / expired`.
+- `revoked`, `rejected`, `expired`, and `cancelled` are terminal states.
+- Terminal states cannot directly transition back to `approved`.
+- Reapproval is managed as a new approval case.
+- `approved` requires Phase22-11 `reviewStatus: completed` and `applicationDecision: eligible`.
+- `approved` requires final approver, approver ID, approved datetime, approval conditions, effective start date, and effective end date.
+- The effective end date cannot be earlier than the effective start date.
+- `rejected` requires a rejection reason.
+- `revoked` requires a revocation reason, revoker, and revoked datetime.
+- `cancelled` requires a cancellation reason.
+- Approved approval cases are locked against direct content edits.
+
+Safety policy:
+
+- `approved` means only "approved and still unapplied".
+- `approved` does not automatically change application status to `planned`.
+- `approved` keeps `applicationStatus: not_applied`.
+- The `applied` state is not handled in Phase22-12.
+- Automatic learning, automatic application, automatic update, automatic execution, external API access, Public URL, and GitHub Pages are disabled.
+- PLAN_ONLY, protected mode, and Private Local operation are maintained.
+- Phase22-12 reset deletes only `hashimotoKeibaAi.phase22.eligibleRuleManualApprovalManagement.v1`.
+
 ## Phase22-11 Validation Result Review Application Eligibility Decision Core
 
 Phase22-11 adds a Private Local review and application eligibility decision core. It reads Phase22-10 validation plans and validation results, then creates human-review cases for deciding whether an improvement rule is only eligible as an application candidate. It never applies rules automatically and never changes prediction logic, learning logic, or production operation.
