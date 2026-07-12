@@ -2838,6 +2838,77 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-11 Validation Result Review Application Eligibility Decision Core
+
+Phase22-11 adds a Private Local review and application eligibility decision core. It reads Phase22-10 validation plans and validation results, then creates human-review cases for deciding whether an improvement rule is only eligible as an application candidate. It never applies rules automatically and never changes prediction logic, learning logic, or production operation.
+
+Storage:
+
+- Source key: `hashimotoKeibaAi.phase22.improvementRuleValidationPlan.v1`
+- Phase22-11 save key: `hashimotoKeibaAi.phase22.validationResultReviewApplicationDecision.v1`
+- Schema root: `{ schemaVersion, savedAt, sourcePhase2210SavedAt, sourceRaceKey, reviews, finalized, finalizedAt, confirmerName, validationSnapshot }`
+- Phase22-1 through Phase22-10 localStorage keys are not deleted or modified by Phase22-11.
+
+Review case generation:
+
+- Phase22-10 plans are converted into review cases in deterministic review-ID order.
+- Review IDs are generated from the Phase22-10 validation plan ID.
+- The same Phase22-10 input produces the same review IDs and ordering.
+- Existing validation plans, improvement rules, learning candidates, approval results, prediction results, and race results are read-only inputs.
+
+Review fields:
+
+- Review ID, name, description
+- Target validation plan ID
+- Target improvement rule ID
+- Source validation status and judgement result
+- Baseline / candidate comparison
+- Evaluation metrics, measured value, criteria value, difference value, sample count
+- Pass criteria, fail criteria, inconclusive factors
+- Result summary, advantages, problems, risks, notes
+- Reviewer, review datetime, review comment
+- Review history
+- Review status
+- Application decision
+
+Review statuses:
+
+- `draft`
+- `under_review`
+- `returned`
+- `completed`
+- `cancelled`
+- `expired`
+
+Application decisions:
+
+- `pending`
+- `eligible`
+- `revalidation_required`
+- `on_hold`
+- `rejected`
+
+Safe transition and decision rules:
+
+- Safe status transitions are `draft -> under_review`, `under_review -> returned / completed / cancelled`, and `returned -> under_review / cancelled`.
+- Completed, cancelled, and expired reviews are locked against direct edits.
+- `pending` cannot be completed.
+- Final decisions are rejected unless the Phase22-10 validation status is `completed`.
+- Final decisions are rejected when the Phase22-10 judgement result is `pending`.
+- `failed`, `rejected`, and `inconclusive` validation results cannot become `eligible`.
+- `passed` does not automatically become `eligible`; a human review record is required.
+- `revalidation_required` requires a revalidation reason and revalidation conditions.
+- `on_hold` requires a hold reason and recheck conditions.
+- `rejected` requires a rejection reason.
+
+Safety policy:
+
+- `eligible` means only "approved as an application candidate".
+- `eligible` is still unapplied and has no automatic reflection.
+- Automatic learning, automatic application, automatic update, automatic execution, external API access, Public URL, and GitHub Pages are disabled.
+- PLAN_ONLY, protected mode, and Private Local operation are maintained.
+- Phase22-11 reset deletes only `hashimotoKeibaAi.phase22.validationResultReviewApplicationDecision.v1`.
+
 ## Phase22-10 Improvement Rule Validation Plan Pre-Application Evaluation Core
 
 Phase22-10 adds a Private Local validation plan and pre-application evaluation core. It reads Phase22-9 improvement rule management data and generates validation plans before any real prediction logic, automatic learning, or production operation changes. Passing a validation plan never applies the rule automatically.

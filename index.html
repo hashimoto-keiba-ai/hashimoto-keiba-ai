@@ -690,6 +690,46 @@
         <label class="phase22-validation-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-validation-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-review-decision-core" id="phase22-validation-result-review-application-decision-core" aria-label="Phase22-11 Validation Result Review Application Eligibility Decision Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-11 / Review Decision Core</p>
+            <h2>検証結果レビュー・適用可否判定</h2>
+          </div>
+          <span class="pill">人による判定 / 自動適用なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-10の検証計画・検証結果を読み込み、改善ルール候補を適用候補にできるかを人がレビューします。eligibleでも未適用・自動反映なしです。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-review-reload" type="button">Phase22-10検証結果を再読込</button>
+          <button id="phase22-review-save" type="button">レビュー判定を保存</button>
+          <button id="phase22-review-restore" type="button">レビュー判定を復元</button>
+          <button id="phase22-review-reset" type="button">Phase22-11のみ初期化</button>
+          <button id="phase22-review-finalize" type="button">レビュー判定を確定</button>
+          <button id="phase22-review-unlock" type="button">確定解除</button>
+          <button id="phase22-review-text" type="button">テキスト生成</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>PLAN_ONLY</span>
+          <span>protected_mode</span>
+          <span>Private Local</span>
+          <span>未適用</span>
+          <span>no automatic apply</span>
+          <span>no automatic learning</span>
+          <span>no external API</span>
+        </div>
+        <div id="phase22-review-message" class="phase22-race-message" data-kind="info">Phase22-10検証計画を保存してから再読込してください。</div>
+        <div id="phase22-review-finalized-status" class="phase22-ticket-total-summary" data-kind="warning">未確定</div>
+        <div class="phase22-review-controls">
+          <div id="phase22-review-summary" class="phase22-ticket-total-summary" data-kind="success">検証計画 0件 / レビュー 0件 / eligible 0件</div>
+          <label><span>確認者名</span><input id="phase22-review-confirmer" type="text" placeholder="任意"></label>
+        </div>
+        <div id="phase22-review-warning-list" class="phase22-review-warning-list" aria-label="警告集約"></div>
+        <div class="phase22-review-table-wrap">
+          <div id="phase22-review-list" class="phase22-review-list" aria-label="レビュー判定一覧"></div>
+        </div>
+        <label class="phase22-review-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-review-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6512,6 +6552,7 @@
     <script src="phase22-8-learning-candidate-review-summary-core.js"></script>
     <script src="phase22-9-approved-learning-candidate-improvement-rule-management-core.js"></script>
     <script src="phase22-10-improvement-rule-validation-plan-pre-application-evaluation-core.js"></script>
+    <script src="phase22-11-validation-result-review-application-eligibility-decision-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
