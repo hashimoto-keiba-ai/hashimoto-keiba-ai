@@ -2838,6 +2838,77 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-16 Limited Trial Result Evaluation Continuation Decision Core
+
+Phase22-16 adds a Private Local limited-trial result evaluation and continuation-decision core. It reads Phase22-15 completed or stopped trials and Phase22-14 source plans, summarizes observations, anomalies, stop requests, scope violations, period violations, and comparison outcomes, then records a human-only continuation decision.
+
+Storage:
+
+- Trial source key: `hashimotoKeibaAi.phase22.limitedTrialObservationManagement.v1`
+- Plan source key: `hashimotoKeibaAi.phase22.manualApplicationRollbackPlan.v1`
+- Phase22-16 save key: `hashimotoKeibaAi.phase22.limitedTrialResultEvaluationContinuationDecision.v1`
+
+Connection:
+
+- Phase22-14 provides the original manual plan reference.
+- Phase22-15 provides completed or stopped shadow-mode trial observations.
+- Phase22-16 evaluates those results only; it does not create the next trial automatically.
+
+Evaluation statuses:
+
+- `draft`
+- `evaluating`
+- `awaiting_review`
+- `reviewed`
+- `finalized`
+- `on_hold`
+- `cancelled`
+- `expired`
+
+Safe transitions:
+
+- `draft -> evaluating / cancelled`
+- `evaluating -> awaiting_review / on_hold / cancelled`
+- `awaiting_review -> reviewed / evaluating / on_hold / cancelled`
+- `reviewed -> finalized / evaluating / on_hold / cancelled`
+- `on_hold -> evaluating / awaiting_review / cancelled`
+- `finalized`, `cancelled`, and `expired` are terminal states.
+
+Continuation decisions:
+
+- `pending`
+- `continue_limited_trial`
+- `continue_with_conditions`
+- `revision_required`
+- `additional_observation_required`
+- `pause_required`
+- `stop_required`
+- `rejected`
+- `cancelled`
+
+Recommended vs final decision:
+
+- The system calculates only `recommendedDecision` and `recommendedReason`.
+- The final `continuationDecision` must be recorded by a human.
+- Final decisions require a decision maker, reason, and datetime.
+- A continue decision does not create a next trial automatically.
+- A stop decision does not stop, roll back, or mutate any rule automatically.
+
+Safety policy:
+
+- Phase22-16 is evaluation-only.
+- Production predictions, betting tickets, evaluation logic, learned rules, trial status, and application status are not changed.
+- Automatic continuation, automatic learning, automatic application, automatic update, automatic execution, automatic rollback, external API access, Public URL, and GitHub Pages are disabled.
+- PLAN_ONLY, protected mode, Private Local, observationOnly, shadowMode, and evaluationOnly are maintained.
+
+Local confirmation:
+
+- Open `private-local.html`.
+- Open `Phase22 本体機能 -> 限定試験結果評価`.
+- Reload completed or stopped Phase22-15 trials.
+- Confirm observed count, anomalies, stop requests, recommended decision, final decision, and checklist results.
+- No public publishing or production mutation is performed.
+
 ## Phase22-15 Limited Trial Observation Management Core
 
 Phase22-15 adds a Private Local limited trial and observation management core. It reads Phase22-14 manual application plans and creates observation-only trial records only for plans that are `ready_for_manual_execution`, `ready`, and still `not_started`. The trial is shadow-mode only and does not change production predictions, betting tickets, learned rules, or application status.

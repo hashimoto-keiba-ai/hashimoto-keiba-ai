@@ -888,6 +888,39 @@
         <label class="phase22-trial-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-trial-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-evaluation-decision-core" id="phase22-trial-evaluation-decision-core" aria-label="Phase22-16 Limited Trial Result Evaluation Continuation Decision Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-16 / Trial Evaluation</p>
+            <h2>限定試験結果評価・継続可否判定</h2>
+          </div>
+          <span class="pill">評価専用 / 本番反映なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-15でcompletedまたはstoppedになった限定試験を評価し、推奨判定と人による最終判定を記録します。継続可でも自動で次試験・本番適用・学習更新は行いません。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-evaluation-reload" type="button">Phase22-15試験結果を再読込</button>
+          <button id="phase22-evaluation-save" type="button">評価判定を保存</button>
+          <button id="phase22-evaluation-text" type="button">テキスト生成</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>PLAN_ONLY</span>
+          <span>protectedMode</span>
+          <span>observationOnly</span>
+          <span>shadowMode</span>
+          <span>evaluationOnly</span>
+          <span>no auto continuation</span>
+          <span>no production mutation</span>
+        </div>
+        <div id="phase22-evaluation-message" class="phase22-race-message" data-kind="info">Phase22-15のcompleted / stopped試験を保存してから再読込してください。</div>
+        <div class="phase22-evaluation-decision-controls">
+          <div id="phase22-evaluation-summary" class="phase22-ticket-total-summary" data-kind="success">評価対象 0件 / 評価 0件</div>
+        </div>
+        <div class="phase22-evaluation-decision-table-wrap">
+          <div id="phase22-evaluation-list" class="phase22-evaluation-decision-list" aria-label="限定試験評価一覧"></div>
+        </div>
+        <label class="phase22-evaluation-decision-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-evaluation-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6715,6 +6748,7 @@
     <script src="phase22-13-pre-application-impact-scope-conflict-check-core.js"></script>
     <script src="phase22-14-manual-application-plan-rollback-plan-core.js"></script>
     <script src="phase22-15-limited-trial-observation-management-core.js"></script>
+    <script src="phase22-16-limited-trial-result-evaluation-continuation-decision-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
