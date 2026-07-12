@@ -2838,6 +2838,96 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-13 Pre-Application Impact Scope Conflict Check Core
+
+Phase22-13 adds a Private Local impact-scope and conflict-check core for Phase22-12 candidates that are `approved` and still `not_applied`. It records rule conflicts, target-condition overlap, priority conflicts, exclusion conflicts, validity-period overlap, impact scope, safety warnings, and human confirmation before any future application step. It never applies or changes prediction rules automatically.
+
+Storage:
+
+- Source key: `hashimotoKeibaAi.phase22.eligibleRuleManualApprovalManagement.v1`
+- Phase22-13 save key: `hashimotoKeibaAi.phase22.preApplicationImpactScopeConflictCheck.v1`
+- Schema root: `{ schemaVersion, savedAt, sourcePhase2212SavedAt, sourceRaceKey, impacts, finalized, finalizedAt, confirmerName, approvalSnapshot }`
+- Phase22-1 through Phase22-12 localStorage keys are not deleted or modified by Phase22-13.
+
+Impact check generation:
+
+- Only Phase22-12 approval cases with `approvalStatus: approved` and `applicationStatus: not_applied` are converted into impact-check cases.
+- Non-approved cases and cases that are not `not_applied` are ignored.
+- The same Phase22-12 input produces the same impact-check IDs and ordering.
+- Existing approval cases, review cases, validation plans, improvement rules, learning candidates, and prediction results are read-only inputs.
+
+Conflict types:
+
+- `none`
+- `condition_overlap`
+- `logic_overlap`
+- `priority_conflict`
+- `exclusion_conflict`
+- `data_scope_conflict`
+- `validity_period_conflict`
+- `duplicate_rule`
+- `unknown`
+
+Conflict severities:
+
+- `info`
+- `low`
+- `medium`
+- `high`
+- `critical`
+
+Safety warnings:
+
+- `no_warning`
+- `review_required`
+- `manual_resolution_required`
+- `application_blocked`
+
+Check statuses:
+
+- `draft`
+- `checking`
+- `conflict_found`
+- `cleared`
+- `blocked`
+- `cancelled`
+- `expired`
+
+Decision results:
+
+- `pending`
+- `no_conflict`
+- `resolvable`
+- `unresolved`
+- `blocked`
+
+Safe transition and decision rules:
+
+- Safe status transitions are `draft -> checking`, `checking -> conflict_found / cleared / blocked / cancelled`, and `conflict_found -> checking / cleared / blocked / cancelled`.
+- `cleared`, `blocked`, `cancelled`, and `expired` are terminal states and cannot be edited directly.
+- Recheck is managed as a new impact-check case.
+- `no_conflict` is rejected when unresolved `critical`, `high`, or `medium` conflicts exist.
+- `critical` conflicts prevent `no_conflict`.
+- `cleared` requires `no_conflict` or `resolvable`, no unresolved `high` or `critical` conflicts, and a human confirmation record.
+- `resolvable` requires a mitigation plan, resolution owner, and resolution due date.
+- `blocked` requires a block reason.
+- Missing existing-rule data is treated as `unknown` and `review_required`.
+- Duplicate rule IDs are treated as `duplicate_rule`.
+- Overlapping validity periods are treated as `validity_period_conflict`.
+- Full and partial target-condition matches are distinguished in comparison results.
+
+Safety policy:
+
+- `no_conflict` does not proceed automatically to any next step.
+- `cleared` does not apply anything automatically.
+- Phase22-13 does not change `applicationStatus`.
+- Existing rule priority is not changed automatically.
+- Existing rules are not modified automatically.
+- Prediction logic, learning logic, and production operation are not changed.
+- Automatic learning, automatic application, automatic update, automatic execution, external API access, Public URL, and GitHub Pages are disabled.
+- PLAN_ONLY, protected mode, and Private Local operation are maintained.
+- Phase22-13 reset deletes only `hashimotoKeibaAi.phase22.preApplicationImpactScopeConflictCheck.v1`.
+
 ## Phase22-12 Eligible Rule Manual Approval Management Core
 
 Phase22-12 adds a Private Local manual approval management core for improvement rule candidates that were judged `eligible` in Phase22-11. It manages final approver information, approval conditions, approval validity periods, planned scope, revocation, expiry, cancellation, and the unapplied state. It never applies a rule automatically.
