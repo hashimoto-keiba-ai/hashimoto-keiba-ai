@@ -2838,6 +2838,75 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-19 Manual Retrial Entry Start Approval Record Core
+
+Phase22-19 adds a Private Local manual retrial entry and start-approval record core. It reads only Phase22-18 records whose `creationStatus` is `start_ready` and whose `creationDecision` is `ready_for_manual_trial_entry`, then records the fact that a human manually registered a Phase22-15-style retrial candidate and separately approved it for manual start.
+
+Storage:
+
+- Phase22-18 source key: `hashimotoKeibaAi.phase22.manualRetrialCreationPrestartCheck.v1`
+- Phase22-15 reference key: `hashimotoKeibaAi.phase22.limitedTrialObservationManagement.v1`
+- Phase22-19 save key: `hashimotoKeibaAi.phase22.manualRetrialEntryStartApprovalRecord.v1`
+
+Reference relationship:
+
+- Phase22-18 supplies the start-ready creation check and candidate trial snapshot.
+- Phase22-15 is checked only for existing `trialId` duplication.
+- Phase22-19 does not write to Phase22-15 and does not create a live observation trial automatically.
+- Phase22-18 and earlier localStorage keys are not changed.
+
+Entry statuses:
+
+- `draft`
+- `registered`
+- `awaiting_start_approval`
+- `start_approved`
+- `returned`
+- `cancelled`
+- `expired`
+
+Safe transitions:
+
+- `draft -> registered / cancelled`
+- `registered -> awaiting_start_approval / returned / cancelled`
+- `awaiting_start_approval -> start_approved / returned / cancelled / expired`
+- `returned -> registered / cancelled`
+- `start_approved`, `cancelled`, and `expired` are terminal states.
+
+Entry decisions:
+
+- `pending`
+- `registered_for_manual_start_approval`
+- `start_approved`
+- `revision_required`
+- `rejected`
+- `cancelled`
+
+Required records:
+
+- Manual registration requires registrant, registration datetime, registration reason, and registration evidence.
+- Manual start approval requires approver, approval datetime, and approval reason.
+- `startedAt` remains blank even after `start_approved`.
+- Returned records require return maker, return datetime, and return reason.
+- Duplicate Phase22-15 `trialId` values are rejected.
+
+Safety policy:
+
+- Phase22-19 records only manual registration and manual start approval.
+- It does not start a trial and does not mutate Phase22-15 observation data.
+- Production predictions, betting tickets, learning rules, rule activation, and application status are not changed.
+- Automatic purchase, automatic application, automatic learning, automatic registration, automatic trial creation, automatic trial start, external API access, Public URL, and GitHub Pages are disabled.
+- Private Local only, PLAN_ONLY, protected mode, observationOnly, shadowMode, manualEntryOnly, and manualStartApprovalOnly are maintained.
+
+Local confirmation and tests:
+
+- Open `private-local.html`.
+- Open `Phase22 本体機能 -> 再試験手動登録・開始承認記録`.
+- Reload Phase22-18 `start_ready` candidates.
+- Confirm registered trial ID, entry state, registration evidence, start approval fields, and `startedAt` blank.
+- Run `node tests/phase22ManualRetrialEntryStartApprovalRecordCore.test.js`.
+- Run the Phase22 regression tests and Private Local main tests.
+
 ## Phase22-18 Manual Retrial Creation Prestart Check Core
 
 Phase22-18 adds a Private Local manual-retrial creation and prestart-check core. It reads only Phase22-17 retrial plans whose `planStatus` is `ready` and whose `planDecision` is `ready_for_manual_trial_creation`, then prepares a Phase22-15-style candidate trial snapshot and manual prestart checklist.

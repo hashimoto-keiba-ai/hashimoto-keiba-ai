@@ -32,6 +32,7 @@
   function buildSafety() {
     return {
       planOnly: true, protectedMode: true, privateLocal: true, observationOnly: true, shadowMode: true,
+      evaluationOnly: true, retrialPlanningOnly: true, manualCreationOnly: true, prestartCheckOnly: true,
       manualEntryOnly: true, manualStartApprovalOnly: true,
       automaticApply: false, automaticLearning: false, automaticUpdate: false, autoExecution: false,
       autoRollback: false, autoContinuation: false, autoTrialCreation: false, autoTrialStart: false,
