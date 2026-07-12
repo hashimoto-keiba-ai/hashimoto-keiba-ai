@@ -2838,6 +2838,97 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-14 Manual Application Plan Rollback Plan Core
+
+Phase22-14 adds a Private Local manual application plan and rollback plan core. It reads Phase22-13 impact checks and Phase22-12 manual approvals, then creates planning records only for candidates that are cleared, approved, and still not applied. It manages manual steps, operators, checkers, backup plans, rollback plans, abort conditions, and post-application checks before any future manual work. It never applies or executes anything automatically.
+
+Storage:
+
+- Source key: `hashimotoKeibaAi.phase22.preApplicationImpactScopeConflictCheck.v1`
+- Approval source key: `hashimotoKeibaAi.phase22.eligibleRuleManualApprovalManagement.v1`
+- Phase22-14 save key: `hashimotoKeibaAi.phase22.manualApplicationRollbackPlan.v1`
+- Schema root: `{ schemaVersion, savedAt, sourcePhase2213SavedAt, sourcePhase2212SavedAt, sourceRaceKey, plans, finalized, finalizedAt, confirmerName, sourceSnapshot }`
+- Phase22-1 through Phase22-13 localStorage keys are not deleted or modified by Phase22-14.
+
+Plan generation:
+
+- Phase22-13 must have `checkStatus: cleared`.
+- Phase22-13 must have `decisionResult: no_conflict` or `decisionResult: resolvable`.
+- Phase22-12 must have `approvalStatus: approved`.
+- Phase22-12 must have `applicationStatus: not_applied`.
+- `application_blocked`, `unresolved`, `blocked`, `cancelled`, and `expired` source cases are not plan targets.
+- The same source input produces the same plan IDs and ordering.
+
+Plan fields:
+
+- Manual application plan ID, name, description
+- Target impact check ID
+- Target approval ID
+- Target review ID
+- Target validation plan ID
+- Target improvement rule ID
+- Approval references: approver, approved datetime, approval conditions, effective period
+- Conflict-check references: decision result, warnings, mitigation, checker, checked datetime
+- Ordered manual application steps
+- Schedule, deadline, allowed time window, work location, target device
+- Operator, checker, approver role
+- Backup plan
+- Rollback plan
+- Abort, hold, and resume conditions
+- Ordered post-application check items
+
+Plan statuses:
+
+- `draft`
+- `planning`
+- `awaiting_approval`
+- `approved`
+- `ready`
+- `on_hold`
+- `cancelled`
+- `expired`
+
+Execution statuses:
+
+- `not_started`
+- `blocked`
+- `cancelled`
+
+Plan decisions:
+
+- `pending`
+- `ready_for_manual_execution`
+- `revision_required`
+- `blocked`
+- `cancelled`
+
+Readiness rules:
+
+- `ready_for_manual_execution` requires cleared Phase22-13 status and approved / not_applied Phase22-12 status.
+- Manual application steps must exist and their order must be consecutive without duplicates.
+- Operator and checker are required.
+- If operator and checker are the same person, an explicit exception reason is required.
+- Backup plan, rollback plan, abort conditions, and post-application checks are required.
+- `resolvable` source cases require the mitigation and resolution content to be reflected in the plan.
+- Human approval record is required.
+- `application_blocked` prevents readiness.
+- `revision_required` requires a revision reason.
+- `blocked` requires a block reason.
+- `cancelled` requires a cancellation reason.
+- `approved` and `ready` plans are locked against direct edits.
+- Replanning is managed as a new plan case.
+
+Safety policy:
+
+- `ready_for_manual_execution` still does not execute anything automatically.
+- `approved` and `ready` keep `executionStatus: not_started`.
+- Phase22-14 does not change `applicationStatus`.
+- Improvement rules are not activated automatically.
+- Prediction logic, learning logic, and production operation are not changed.
+- Automatic learning, automatic application, automatic update, automatic execution, external API access, Public URL, and GitHub Pages are disabled.
+- PLAN_ONLY, protected mode, and Private Local operation are maintained.
+- Phase22-14 reset deletes only `hashimotoKeibaAi.phase22.manualApplicationRollbackPlan.v1`.
+
 ## Phase22-13 Pre-Application Impact Scope Conflict Check Core
 
 Phase22-13 adds a Private Local impact-scope and conflict-check core for Phase22-12 candidates that are `approved` and still `not_applied`. It records rule conflicts, target-condition overlap, priority conflicts, exclusion conflicts, validity-period overlap, impact scope, safety warnings, and human confirmation before any future application step. It never applies or changes prediction rules automatically.
