@@ -986,6 +986,39 @@
         <label class="phase22-creation-check-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-creation-check-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-retrial-entry-core" id="phase22-manual-retrial-entry-start-approval-core" aria-label="Phase22-19 Manual Retrial Entry Start Approval Record Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-19 / Manual Entry Record</p>
+            <h2>再試験手動登録・開始承認記録</h2>
+          </div>
+          <span class="pill">登録記録専用 / 自動開始なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-18でstart_readyとなった候補だけを対象に、Phase22-15形式の再試験を人間が手動登録した事実と開始承認を記録します。startedAtは空欄のまま保持し、自動開始・本番反映・学習更新は行いません。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-retrial-entry-reload" type="button">Phase22-18 start_ready候補を再読込</button>
+          <button id="phase22-retrial-entry-save" type="button">登録・承認記録を保存</button>
+          <button id="phase22-retrial-entry-text" type="button">テキスト生成</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>PLAN_ONLY</span>
+          <span>protectedMode</span>
+          <span>manualEntryOnly</span>
+          <span>manualStartApprovalOnly</span>
+          <span>no auto trial creation</span>
+          <span>no auto start</span>
+          <span>startedAt blank</span>
+        </div>
+        <div id="phase22-retrial-entry-message" class="phase22-race-message" data-kind="info">Phase22-18のstart_ready候補を保存してから再読込してください。</div>
+        <div class="phase22-retrial-entry-controls">
+          <div id="phase22-retrial-entry-summary" class="phase22-ticket-total-summary" data-kind="success">ready checks 0 / entry records 0</div>
+        </div>
+        <div class="phase22-retrial-entry-table-wrap">
+          <div id="phase22-retrial-entry-list" class="phase22-retrial-entry-list" aria-label="再試験手動登録・開始承認記録一覧"></div>
+        </div>
+        <label class="phase22-retrial-entry-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-retrial-entry-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6816,6 +6849,7 @@
     <script src="phase22-16-limited-trial-result-evaluation-continuation-decision-core.js"></script>
     <script src="phase22-17-continuation-trial-conditions-retrial-plan-core.js"></script>
     <script src="phase22-18-manual-retrial-creation-prestart-check-core.js"></script>
+    <script src="phase22-19-manual-retrial-entry-start-approval-record-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
