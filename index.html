@@ -953,6 +953,39 @@
         <label class="phase22-retrial-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-retrial-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-creation-check-core" id="phase22-manual-retrial-creation-check-core" aria-label="Phase22-18 Manual Retrial Creation Prestart Check Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-18 / Manual Retrial Creation</p>
+            <h2>再試験手動作成・開始前確認</h2>
+          </div>
+          <span class="pill">手動作成準備 / 自動開始なし</span>
+        </div>
+        <p class="console-menu-lead">Phase22-17でstart準備対象になったready計画だけを読み込み、Phase22-15形式の候補試験IDと開始前チェックを人が確認するための管理パネルです。start_readyでも試験の自動作成・自動開始・本番反映は行いません。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-creation-check-reload" type="button">Phase22-17 ready計画を再読込</button>
+          <button id="phase22-creation-check-save" type="button">開始前確認を保存</button>
+          <button id="phase22-creation-check-text" type="button">テキスト生成</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>PLAN_ONLY</span>
+          <span>protectedMode</span>
+          <span>manualCreationOnly</span>
+          <span>prestartCheckOnly</span>
+          <span>no auto trial creation</span>
+          <span>no auto start</span>
+          <span>no production mutation</span>
+        </div>
+        <div id="phase22-creation-check-message" class="phase22-race-message" data-kind="info">Phase22-17のready計画を保存してから再読込してください。</div>
+        <div class="phase22-creation-check-controls">
+          <div id="phase22-creation-check-summary" class="phase22-ticket-total-summary" data-kind="success">ready plans 0 / creation checks 0</div>
+        </div>
+        <div class="phase22-creation-check-table-wrap">
+          <div id="phase22-creation-check-list" class="phase22-creation-check-list" aria-label="再試験手動作成・開始前確認一覧"></div>
+        </div>
+        <label class="phase22-creation-check-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-creation-check-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6782,6 +6815,7 @@
     <script src="phase22-15-limited-trial-observation-management-core.js"></script>
     <script src="phase22-16-limited-trial-result-evaluation-continuation-decision-core.js"></script>
     <script src="phase22-17-continuation-trial-conditions-retrial-plan-core.js"></script>
+    <script src="phase22-18-manual-retrial-creation-prestart-check-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

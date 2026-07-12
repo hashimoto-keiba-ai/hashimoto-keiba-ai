@@ -2838,6 +2838,124 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-18 Manual Retrial Creation Prestart Check Core
+
+Phase22-18 adds a Private Local manual-retrial creation and prestart-check core. It reads only Phase22-17 retrial plans whose `planStatus` is `ready` and whose `planDecision` is `ready_for_manual_trial_creation`, then prepares a Phase22-15-style candidate trial snapshot and manual prestart checklist.
+
+Storage:
+
+- Phase22-14 source key: `hashimotoKeibaAi.phase22.manualApplicationRollbackPlan.v1`
+- Phase22-15 source key: `hashimotoKeibaAi.phase22.limitedTrialObservationManagement.v1`
+- Phase22-16 source key: `hashimotoKeibaAi.phase22.limitedTrialResultEvaluationContinuationDecision.v1`
+- Phase22-17 source key: `hashimotoKeibaAi.phase22.continuationTrialConditionsRetrialPlan.v1`
+- Phase22-18 save key: `hashimotoKeibaAi.phase22.manualRetrialCreationPrestartCheck.v1`
+
+Connection:
+
+- Phase22-17 provides the source retrial plan.
+- Phase22-16, Phase22-15, and Phase22-14 references must still exist and match.
+- Phase22-18 copies the Phase22-17 trial-condition fields into a candidate trial snapshot.
+- The snapshot includes plan type, target scope, excluded scope, observation period, race counts, warning / critical thresholds, correction items, continuation conditions, stop conditions, and evaluation criteria.
+- It does not create or start a Phase22-15 trial automatically.
+
+Creation statuses:
+
+- `draft`
+- `preparing`
+- `awaiting_check`
+- `checked`
+- `awaiting_review`
+- `reviewed`
+- `awaiting_approval`
+- `approved`
+- `start_ready`
+- `on_hold`
+- `blocked`
+- `cancelled`
+- `expired`
+
+Safe transitions:
+
+- `draft -> preparing / cancelled`
+- `preparing -> awaiting_check / on_hold / cancelled`
+- `awaiting_check -> checked / preparing / blocked / on_hold / cancelled`
+- `checked -> awaiting_review / preparing / blocked / on_hold / cancelled`
+- `awaiting_review -> reviewed / checked / blocked / on_hold / cancelled`
+- `reviewed -> awaiting_approval / checked / blocked / on_hold / cancelled`
+- `awaiting_approval -> approved / reviewed / blocked / on_hold / cancelled`
+- `approved -> start_ready / blocked / on_hold / cancelled / expired`
+- `on_hold -> preparing / awaiting_check / checked / awaiting_review / reviewed / awaiting_approval / cancelled`
+- `blocked -> preparing / cancelled`
+- `start_ready`, `cancelled`, and `expired` are terminal states.
+
+Creation decisions:
+
+- `pending`
+- `ready_for_manual_trial_entry`
+- `revision_required`
+- `additional_check_required`
+- `approval_required`
+- `blocked`
+- `on_hold`
+- `cancelled`
+- `expired`
+
+Recommended vs final decision:
+
+- The system calculates only `recommendedCreationDecision` and `recommendedReason`.
+- The final `creationDecision` must be recorded by a human.
+- Final decisions require a decision maker, reason, and datetime.
+
+start_ready conditions:
+
+- Source Phase22-17 retrial plan exists.
+- Source plan is `ready` and `ready_for_manual_trial_creation`.
+- Phase22-14 through Phase22-17 references still exist and match.
+- `candidateTrialId` is stable and does not duplicate existing Phase22-15 trial IDs or other Phase22-18 checks.
+- Target scope is explicit.
+- Observation dates are valid.
+- Minimum / maximum race counts and minimum valid observation count are positive integers.
+- Minimum race count does not exceed maximum race count.
+- Required correction items are `verified` or `waived`.
+- Mandatory continuation conditions are `satisfied` or `waived`.
+- At least one critical stop condition exists.
+- Evaluation criteria exist.
+- No critical or failed prestart check item remains.
+- Final approver, approval datetime, and decision reason are present.
+- Safety flags remain valid.
+- Manual operation is explicitly checked.
+
+Blocking conditions:
+
+- Source Phase22-17 plan is not ready.
+- Source plan decision is not `ready_for_manual_trial_creation`.
+- Source Phase22-14 / 15 / 16 / 17 data is missing or mismatched.
+- Duplicate source retrial plan or duplicate candidate trial ID is detected.
+- Target scope is missing.
+- Observation date range or race-count settings are invalid.
+- Required corrections or continuation conditions are incomplete.
+- Critical stop conditions or evaluation criteria are missing.
+- Critical / failed prestart checks remain.
+- Safety flags are invalid.
+- localStorage JSON is broken or rejected.
+
+Safety policy:
+
+- Phase22-18 is manual-creation-preparation and prestart-check only.
+- `start_ready` does not create a Phase22-15 trial.
+- `start_ready` does not start a trial.
+- Production predictions, betting tickets, learning rules, application status, source trials, source evaluations, and source plans are not changed.
+- Automatic trial creation, automatic trial start, automatic continuation, automatic learning, automatic application, automatic update, automatic execution, automatic rollback, external API access, Public URL, and GitHub Pages are disabled.
+- PLAN_ONLY, protected mode, Private Local, observationOnly, shadowMode, evaluationOnly, retrialPlanningOnly, manualCreationOnly, and prestartCheckOnly are maintained.
+
+Local confirmation:
+
+- Open `private-local.html`.
+- Open `Phase22 本体機能 -> 再試験手動作成・開始前確認`.
+- Reload Phase22-17 ready retrial plans.
+- Confirm candidate trial ID, copied trial conditions, source references, prestart check items, recommended decision, final decision, and block reason.
+- No public publishing, automatic trial creation, automatic start, or production mutation is performed.
+
 ## Phase22-17 Continuation Trial Conditions Retrial Plan Core
 
 Phase22-17 adds a Private Local continuation-trial conditions and retrial-plan core. It reads only Phase22-16 `finalized` evaluations whose human final decision is a continuation-type result, then creates a planning record for the next limited trial conditions, required corrections, stop conditions, and evaluation criteria.
