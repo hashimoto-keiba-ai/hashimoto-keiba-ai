@@ -2838,6 +2838,84 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-17 Continuation Trial Conditions Retrial Plan Core
+
+Phase22-17 adds a Private Local continuation-trial conditions and retrial-plan core. It reads only Phase22-16 `finalized` evaluations whose human final decision is a continuation-type result, then creates a planning record for the next limited trial conditions, required corrections, stop conditions, and evaluation criteria.
+
+Storage:
+
+- Phase22-14 source key: `hashimotoKeibaAi.phase22.manualApplicationRollbackPlan.v1`
+- Phase22-15 source key: `hashimotoKeibaAi.phase22.limitedTrialObservationManagement.v1`
+- Phase22-16 source key: `hashimotoKeibaAi.phase22.limitedTrialResultEvaluationContinuationDecision.v1`
+- Phase22-17 save key: `hashimotoKeibaAi.phase22.continuationTrialConditionsRetrialPlan.v1`
+
+Connection:
+
+- Phase22-16 must be `finalized`.
+- Eligible Phase22-16 decisions are mapped deterministically:
+  - `continue_limited_trial` -> `continuation`
+  - `continue_with_conditions` -> `conditional_continuation`
+  - `revision_required` -> `revised_retrial`
+  - `additional_observation_required` -> `additional_observation`
+  - `pause_required` -> `paused_retrial`
+- `stop_required`, `rejected`, and `cancelled` do not create retrial plans.
+- Phase22-17 never creates a Phase22-15 trial automatically.
+
+Plan statuses:
+
+- `draft`
+- `planning`
+- `awaiting_review`
+- `reviewed`
+- `awaiting_approval`
+- `approved`
+- `ready`
+- `on_hold`
+- `cancelled`
+- `expired`
+
+Safe transitions:
+
+- `draft -> planning / cancelled`
+- `planning -> awaiting_review / on_hold / cancelled`
+- `awaiting_review -> reviewed / planning / on_hold / cancelled`
+- `reviewed -> awaiting_approval / planning / on_hold / cancelled`
+- `awaiting_approval -> approved / reviewed / on_hold / cancelled`
+- `approved -> ready / on_hold / cancelled / expired`
+- `on_hold -> planning / awaiting_review / reviewed / awaiting_approval / cancelled`
+- `ready`, `cancelled`, and `expired` are terminal states.
+
+Ready conditions:
+
+- Source Phase22-16 evaluation is `finalized` and continuation-eligible.
+- Source Phase22-15 trial and Phase22-14 manual plan still match the source references.
+- Target race keys or target conditions are explicitly defined.
+- Observation dates are valid.
+- Minimum and maximum race counts are positive integers and minimum does not exceed maximum.
+- Manual approver, approval datetime, and decision reason are present.
+- Required continuation conditions are satisfied or waived.
+- Required correction items are verified or waived.
+- At least one critical stop condition is defined.
+- Evaluation criteria are defined.
+- Unresolved issues require an approved exception reason.
+
+Safety policy:
+
+- Phase22-17 is retrial-planning-only.
+- `ready_for_manual_trial_creation` is only a human-readable planning decision.
+- Ready plans do not start observation, do not create Phase22-15 trials, and do not mutate Phase22-14 / 15 / 16 data.
+- Production predictions, betting tickets, application status, rule activation, learning, and updates are not changed.
+- Automatic trial creation, automatic continuation, automatic learning, automatic application, automatic update, automatic execution, automatic rollback, external API access, Public URL, and GitHub Pages are disabled.
+- PLAN_ONLY, protected mode, Private Local, observationOnly, shadowMode, evaluationOnly, and retrialPlanningOnly are maintained.
+
+Local confirmation:
+
+- Open `private-local.html`.
+- Open `Phase22 本体機能 -> 継続試験条件・再試験計画`.
+- Reload finalized Phase22-16 evaluations.
+- Confirm plan type, recommended decision, manual final decision, target scope, stop conditions, and evaluation criteria.
+- No public publishing, automatic trial creation, or production mutation is performed.
+
 ## Phase22-16 Limited Trial Result Evaluation Continuation Decision Core
 
 Phase22-16 adds a Private Local limited-trial result evaluation and continuation-decision core. It reads Phase22-15 completed or stopped trials and Phase22-14 source plans, summarizes observations, anomalies, stop requests, scope violations, period violations, and comparison outcomes, then records a human-only continuation decision.
