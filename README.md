@@ -2838,6 +2838,102 @@ Safety policy:
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
 
+## Phase22-15 Limited Trial Observation Management Core
+
+Phase22-15 adds a Private Local limited trial and observation management core. It reads Phase22-14 manual application plans and creates observation-only trial records only for plans that are `ready_for_manual_execution`, `ready`, and still `not_started`. The trial is shadow-mode only and does not change production predictions, betting tickets, learned rules, or application status.
+
+Storage:
+
+- Source key: `hashimotoKeibaAi.phase22.manualApplicationRollbackPlan.v1`
+- Phase22-15 save key: `hashimotoKeibaAi.phase22.limitedTrialObservationManagement.v1`
+- Schema root: `{ schemaVersion, savedAt, sourcePhase2214SavedAt, sourceRaceKey, trials, finalized, finalizedAt, confirmerName, sourceSnapshot }`
+- Phase22-1 through Phase22-14 localStorage keys are not deleted or modified by Phase22-15.
+
+Trial generation:
+
+- Source plan must have `planDecision: ready_for_manual_execution`.
+- Source plan must have `planStatus: ready`.
+- Source plan must have `executionStatus: not_started`.
+- Source safety flags must keep PLAN_ONLY, protected mode, Private Local, and all automatic mutation flags disabled.
+- Trial scope must explicitly define target race keys or target conditions.
+
+Trial statuses:
+
+- `draft`
+- `awaiting_start_approval`
+- `approved`
+- `observing`
+- `paused`
+- `stopped`
+- `completed`
+- `cancelled`
+- `expired`
+
+Safe transitions:
+
+- `draft -> awaiting_start_approval / cancelled`
+- `awaiting_start_approval -> approved / draft / cancelled`
+- `approved -> observing / cancelled / expired`
+- `observing -> paused / stopped / completed`
+- `paused -> observing / stopped / cancelled`
+- `stopped`, `completed`, `cancelled`, and `expired` are terminal states.
+
+Trial decisions:
+
+- `pending`
+- `observation_continue`
+- `observation_pause`
+- `stop_required`
+- `trial_completed`
+- `insufficient_data`
+- `abnormality_detected`
+- `cancelled`
+
+Observation records:
+
+- Observation ID
+- Race key
+- Observed datetime
+- Baseline prediction
+- Trial prediction
+- Difference summary
+- Expected behavior
+- Actual behavior
+- Result summary
+- Anomaly level
+- Anomaly details
+- Observer
+- Judgement
+- Notes
+
+Stop request rules:
+
+- A `critical` anomaly creates a stop request.
+- Warning anomalies at or above the configured warning limit create a stop request.
+- Out-of-scope race observation is rejected.
+- Observation outside the configured period creates a stop request.
+- Exceeding maximum race count creates a stop request.
+- Missing or non-ready Phase22-14 source plan creates a stop request.
+- Broken source data or invalid safety flags are treated safely.
+
+Safety policy:
+
+- Stop requests are records for human judgement only.
+- Stop requests do not run rollback automatically.
+- Trial observation does not mutate production predictions, betting tickets, application status, or improvement rules.
+- Observation is `observationOnly` and `shadowMode`.
+- Automatic learning, automatic application, automatic update, automatic execution, automatic rollback, external API access, Public URL, and GitHub Pages are disabled.
+- PLAN_ONLY, protected mode, and Private Local operation are maintained.
+- Phase22-15 reset deletes only `hashimotoKeibaAi.phase22.limitedTrialObservationManagement.v1`.
+
+Local confirmation:
+
+- Open `private-local.html`.
+- Open `Phase22 本体機能 -> 限定試験・観測管理`.
+- Reload Phase22-14 ready plans.
+- Confirm trial scope, progress, anomaly count, stop requests, and final decision.
+- No production execution or public publishing is performed.
+
 ## Phase22-14 Manual Application Plan Rollback Plan Core
 
 Phase22-14 adds a Private Local manual application plan and rollback plan core. It reads Phase22-13 impact checks and Phase22-12 manual approvals, then creates planning records only for candidates that are cleared, approved, and still not applied. It manages manual steps, operators, checkers, backup plans, rollback plans, abort conditions, and post-application checks before any future manual work. It never applies or executes anything automatically.

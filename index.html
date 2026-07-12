@@ -850,6 +850,44 @@
         <label class="phase22-plan-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-plan-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-trial-observation-core" id="phase22-limited-trial-observation-core" aria-label="Phase22-15 Limited Trial Observation Management Core">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Phase22-15 / Limited Trial Observation</p>
+            <h2>限定試験適用・観測管理</h2>
+          </div>
+          <span class="pill">観測専用 / シャドーモード</span>
+        </div>
+        <p class="console-menu-lead">Phase22-14でready_for_manual_executionになった計画を、対象レース・対象期間・対象条件を限定して観測専用で管理します。本番予想・買い目・学習済みルールには未反映です。</p>
+        <div class="phase22-race-actions">
+          <button id="phase22-trial-reload" type="button">Phase22-14 ready計画を再読込</button>
+          <button id="phase22-trial-save" type="button">観測管理を保存</button>
+          <button id="phase22-trial-restore" type="button">観測管理を復元</button>
+          <button id="phase22-trial-reset" type="button">Phase22-15のみ初期化</button>
+          <button id="phase22-trial-text" type="button">テキスト生成</button>
+        </div>
+        <div class="phase22-safety-strip">
+          <span>PLAN_ONLY</span>
+          <span>protectedMode</span>
+          <span>Private Local</span>
+          <span>observationOnly</span>
+          <span>shadowMode</span>
+          <span>no auto execution</span>
+          <span>no prediction mutation</span>
+        </div>
+        <div id="phase22-trial-message" class="phase22-race-message" data-kind="info">Phase22-14のready計画を保存してから再読込してください。</div>
+        <div id="phase22-trial-finalized-status" class="phase22-ticket-total-summary" data-kind="warning">未確定</div>
+        <div class="phase22-trial-controls">
+          <div id="phase22-trial-summary" class="phase22-ticket-total-summary" data-kind="success">候補 0件 / 試験 0件 / 停止要求 0件</div>
+          <label><span>確認者名</span><input id="phase22-trial-confirmer" type="text" placeholder="任意"></label>
+        </div>
+        <div id="phase22-trial-warning-list" class="phase22-trial-warning-list" aria-label="警告集約"></div>
+        <div class="phase22-trial-table-wrap">
+          <div id="phase22-trial-list" class="phase22-trial-list" aria-label="限定試験観測一覧"></div>
+        </div>
+        <label class="phase22-trial-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-trial-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6676,6 +6714,7 @@
     <script src="phase22-12-eligible-rule-manual-approval-management-core.js"></script>
     <script src="phase22-13-pre-application-impact-scope-conflict-check-core.js"></script>
     <script src="phase22-14-manual-application-plan-rollback-plan-core.js"></script>
+    <script src="phase22-15-limited-trial-observation-management-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
