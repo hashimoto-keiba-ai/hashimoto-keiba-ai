@@ -4246,3 +4246,14 @@ Phase23-6 is the first Phase23 component that can change the Private Local forma
 - Rollback is also manual and requires `FORMAL IMPORT ROLLBACK`. Inserts are deactivated with `active=false`; updates are restored as a new version with provenance. There is no automatic execution, retry, rollback, acquisition, purchase, betting, IPAT connection, external communication, Phase22 mutation, GitHub Pages, or Public release.
 
 See `docs/phase23-6-manual-formal-import-execution-core.md` for execution approval, atomic storage, verification, rollback, limits, and the Phase23-7 boundary.
+
+## Phase23-7 Post-import Verification Audit
+
+Phase23-7 manually re-verifies Phase23-6 `verified`, `verification_failed`, `rollback_candidate`, and `rolled_back` executions against read-only formal data, snapshots, and pending state. It audits schema/model rules, execution counts, references, chronology, provenance, checksums, rollback evidence, and non-destructive boundaries without changing any source.
+
+- Storage key: `hashimotoKeibaAi.phase23.postImportVerificationAudit.v1`. Only summaries, issues, human review, follow-up candidates, append-only history, and plain audit text are stored; formal records, snapshots, pending payloads, and credentials are not copied.
+- Results distinguish clean, warnings, error, fatal, rollback review, manual investigation, and unverifiable states. Errors/fatals cannot be closed as clean; warnings require explicit human acknowledgement.
+- Follow-ups are records only (`re_verification`, investigation, rollback/provenance/reference/count/checksum/chronology/pending review). They never trigger repair, import, or rollback.
+- Phase23-1 through Phase23-6, Phase22, formalData, execution, snapshot, and pending stores remain read-only. There is no external communication, automatic verification/repair/rollback, physical deletion, GitHub Pages, or Public release.
+
+See `docs/phase23-7-post-import-verification-audit-core.md` for audit rules and the Phase23-8 boundary.
