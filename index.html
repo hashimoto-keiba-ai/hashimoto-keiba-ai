@@ -1042,6 +1042,17 @@
         <div class="phase22-retrial-comparison-table-wrap"><div id="phase22-retrial-comparison-list" class="phase22-retrial-comparison-list" aria-label="再試験結果比較一覧"></div></div><label class="phase22-retrial-comparison-text-output"><span>監査テキスト出力</span><textarea id="phase22-retrial-comparison-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase2222-main-panel" id="phase22-limited-application-final-decision-handoff-main-core" aria-label="Phase22-22 Limited Application Final Decision Operational Handoff Plan">
+        <div class="section-heading"><div><p class="eyebrow">Phase22-22 / Human Decision &amp; Handoff Plan</p><h2>限定適用最終判定・運用引継ぎ計画</h2></div><a class="phase2222-main-link" href="phase22-22-private-local.html">専用画面を開く</a></div>
+        <p class="console-menu-lead">Phase22-21のfinalized評価だけを読み込み、限定適用の最終判定と運用引継ぎ計画を人間が手動記録します。自動適用・自動開始・本番反映は行いません。</p>
+        <div class="phase22-safety-strip"><span>Private Local</span><span>PLAN_ONLY</span><span>protectedMode</span><span>human decision only</span><span>no auto apply</span><span>no production release</span></div>
+        <div class="phase2222-main-grid"><label>対象記録<select id="p2222-main-record"></select></label><label>判定者・操作者<input id="p2222-main-operator" type="text"></label><label>日時<input id="p2222-main-at" type="datetime-local"></label><label>理由<input id="p2222-main-reason" type="text"></label><label>備考<input id="p2222-main-notes" type="text"></label><label>人間の最終判定<select id="p2222-main-decision"><option value="limited_application_approved">limited_application_approved</option><option value="limited_application_rejected">limited_application_rejected</option><option value="additional_retrial_required">additional_retrial_required</option><option value="on_hold">on_hold</option><option value="operation_stop">operation_stop</option></select></label></div>
+        <div class="phase2222-main-grid"><label>主担当<input id="p2222-main-owner" type="text"></label><label>副担当<input id="p2222-main-backup" type="text"></label><label>運用開始予定<input id="p2222-main-start" type="datetime-local"></label><label>見直し予定<input id="p2222-main-review" type="datetime-local"></label><label>限定対象範囲<textarea id="p2222-main-scope"></textarea></label><label>監視項目<textarea id="p2222-main-monitoring"></textarea></label><label>停止条件<textarea id="p2222-main-stop"></textarea></label><label>ロールバック手順<textarea id="p2222-main-rollback"></textarea></label><label>連絡計画<textarea id="p2222-main-communication"></textarea></label></div>
+        <div class="phase2222-main-actions"><button data-p2222-main-status="awaiting_decision" type="button">判定待ち</button><button id="p2222-main-set-decision" type="button">判定を記録</button><button data-p2222-main-status="decision_recorded" type="button">判定記録済み</button><button data-p2222-main-status="awaiting_handoff" type="button">引継ぎ待ち</button><button id="p2222-main-set-handoff" type="button">引継ぎ計画を記録</button><button data-p2222-main-status="handoff_planned" type="button">引継ぎ計画済み</button><button data-p2222-main-status="finalized" type="button">最終確定</button><button data-p2222-main-status="on_hold" type="button">保留</button><button data-p2222-main-status="blocked" type="button">ブロック</button><button data-p2222-main-status="cancelled" type="button">取消</button><button data-p2222-main-status="expired" type="button">期限切れ</button></div>
+        <div class="phase2222-main-actions"><button id="p2222-main-reload" type="button">Phase22-21再読込</button><button id="p2222-main-save" type="button">保存</button><button id="p2222-main-audit" type="button">監査テキスト出力</button></div>
+        <div id="p2222-main-message" class="phase2222-main-message">Phase22-21のfinalized評価を読み込んでください。</div><div id="p2222-main-summary" class="phase2222-main-summary">eligible 0 / records 0</div><div id="p2222-main-list" class="phase2222-main-list"></div><textarea id="p2222-main-output" class="phase2222-main-audit" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -2524,7 +2535,7 @@
         </div>
         <ul class="global-network-readiness-checks" id="global-network-readiness-checks"></ul>
         <p class="data-footnote">次の安全アクション: <span id="global-network-next-action">--</span></p>
-        <p class="data-footnote">Official Release v2.8 Protected / 実接続・外部通信なし / 更新: <span id="global-network-updated">--</span></p>
+        <p class="data-footnote">Official Release v2.8 Protected / 実接続・外部通信なし / 更新: <span id="global-network-readiness-updated">--</span></p>
       </section>
 
       <section class="panel global-network-core-panel" id="global-intelligence-network-core" aria-label="Global Intelligence Network Core Skeleton">
@@ -6875,6 +6886,8 @@
     <script src="phase22-19-manual-retrial-entry-start-approval-record-core.js"></script>
     <script src="phase22-20-retrial-start-execution-status-management-core.js"></script>
     <script src="phase22-21-retrial-result-comparison-final-evaluation-core.js"></script>
+    <script src="phase22-22-limited-application-final-decision-operational-handoff-plan-core.js"></script>
+    <script src="phase22-22a-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

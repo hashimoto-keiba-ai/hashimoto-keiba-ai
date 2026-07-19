@@ -141,7 +141,7 @@
     set("#global-network-external-allowed", result.simulation.external_connection_allowed);
     set("#global-network-blocked-reason", result.simulation.blocked_reason || "none");
     set("#global-network-next-action", result.simulation.recommended_next_action);
-    set("#global-network-updated", result.generatedAt);
+    set("#global-network-readiness-updated", result.generatedAt);
     const list = doc.querySelector("#global-network-readiness-checks");
     if (list) list.innerHTML = Object.entries(result.checks).map(([name, ok]) => `<li class="network-check-${ok ? "ok" : "warning"}">${name}: ${ok}</li>`).join("");
     return result;
