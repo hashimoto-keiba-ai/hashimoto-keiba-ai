@@ -4091,3 +4091,18 @@ Safety policy:
 - `PLAN_ONLY` and protected mode remain the operating premise.
 - `start-local.bat` is not changed.
 - No new `.bat` / `.cmd` / `.ps1` / `.exe` files are added.
+## Phase22-20 Retrial Start Execution Status Management Core
+
+Phase22-20 is a Private Local, PLAN_ONLY, protectedMode audit core for manually recording the start and execution status of retrials. It reads only Phase22-19 records with both `entryStatus` and `entryDecision` equal to `start_approved` and with a complete human approval record.
+
+- Source key (read only): `hashimotoKeibaAi.phase22.manualRetrialEntryStartApprovalRecord.v1`
+- Phase22-20 key: `hashimotoKeibaAi.phase22.retrialStartExecutionStatusManagement.v1`
+- Phase22-15 through Phase22-19 storage is never written, removed, or migrated.
+- Start requires a human operator, timestamp, and reason. Every transition stores operator, timestamp, reason, and optional notes in append-only history.
+- Allowed flow: `awaiting_manual_start -> started -> observing`; `started` or `observing` may move to `paused`, and `paused -> observing` is the only resume path.
+- `stopped`, `completed`, `abnormality_detected`, `cancelled`, and `expired` are terminal and cannot resume or transition again.
+- Cancellation and expiry are allowed only before manual start. Invalid transitions and missing audit fields are rejected.
+- No automatic start, stop, completion, purchase, application, learning, or update exists. Production predictions, betting tickets, rule application, Phase22-15 observation data, and learning data are not mutated.
+- Save, restore, and plain-text audit output are local-only. GitHub Pages, public URLs, and external APIs are not used.
+
+Testing: run `node tests/phase22RetrialStartExecutionStatusManagementCore.test.js`, then every `tests/phase22*.test.js`. Also run `node --check` for Phase22 JavaScript, verify duplicate HTML IDs and local script references, and run `git diff --check`.
