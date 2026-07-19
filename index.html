@@ -1066,6 +1066,16 @@
         <div id="p2223-message" class="phase2223-readiness-message">Phase22-22の対象記録を読み込んでください。</div><div id="p2223-summary" class="phase2223-readiness-summary">eligible 0 / records 0 / unchecked 0</div><div id="p2223-unchecked" class="phase2223-unchecked">未確認項目なし</div><textarea id="p2223-output" class="phase2223-readiness-audit" readonly></textarea>
       </section>
 
+      <section class="panel phase2224-approval-panel" id="phase22-manual-operation-start-approval-core" aria-label="Phase22-24 Manual Operation Start Approval Record Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase22-24 / Manual Approval Record</p><h2>限定適用・手動開始承認記録コア</h2></div><span class="pill">approval record only / no actual start</span></div>
+        <p class="console-menu-lead">Phase22-23で全必須準備項目が確認済みとなった候補について、人間の手動開始承認事実と条件だけを記録します。限定適用・開始・本番反映は実行しません。</p>
+        <div class="phase22-safety-strip"><span>Private Local</span><span>PLAN_ONLY</span><span>protectedMode</span><span>no auto approval</span><span>no auto start</span><span>no production release</span></div>
+        <div class="phase2224-approval-grid"><label>対象記録<select id="p2224-record"></select></label><label>承認者<input id="p2224-approver" type="text"></label><label>承認確認者<input id="p2224-reviewer" type="text"></label><label>承認日時<input id="p2224-approved-at" type="datetime-local"></label><label>承認理由<input id="p2224-approval-reason" type="text"></label><label>備考<input id="p2224-notes" type="text"></label><label>手動開始予定日時<input id="p2224-start-at" type="datetime-local"></label><label>開始担当者<input id="p2224-start-owner" type="text"></label><label>監視担当者<input id="p2224-monitoring-owner" type="text"></label><label>停止判断担当者<input id="p2224-stop-owner" type="text"></label><label>ロールバック担当者<input id="p2224-rollback-owner" type="text"></label><label>連絡責任者<input id="p2224-communication-owner" type="text"></label><label>承認有効期限<input id="p2224-expires-at" type="datetime-local"></label><label>承認条件<textarea id="p2224-conditions"></textarea></label><label>開始禁止条件<textarea id="p2224-prohibited"></textarea></label><label>開始前最終確認メモ<textarea id="p2224-final-memo"></textarea></label></div>
+        <div class="phase2224-approval-actions"><button id="p2224-update" type="button">承認内容を記録</button><button data-p2224-status="approval_reviewing" type="button">承認審査開始</button><button data-p2224-status="manual_start_approved" type="button">手動開始承認を記録</button><button data-p2224-status="approval_rejected" type="button">承認却下</button><button data-p2224-status="on_hold" type="button">保留</button><button data-p2224-status="blocked" type="button">ブロック</button><button data-p2224-status="cancelled" type="button">取消</button><button data-p2224-status="expired" type="button">期限切れ</button></div>
+        <div class="phase2224-approval-actions"><button id="p2224-reload" type="button">Phase22-23再読込</button><button id="p2224-save" type="button">保存</button><button id="p2224-audit" type="button">監査テキスト出力</button></div>
+        <div id="p2224-message" class="phase2224-approval-message">Phase22-23のready記録を読み込んでください。</div><div id="p2224-summary" class="phase2224-approval-summary">eligible 0 / records 0 / missing 0</div><div id="p2224-missing" class="phase2224-missing">不足項目なし</div><textarea id="p2224-output" class="phase2224-approval-audit" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6902,6 +6912,7 @@
     <script src="phase22-22-limited-application-final-decision-operational-handoff-plan-core.js"></script>
     <script src="phase22-22a-main-dashboard-integration.js"></script>
     <script src="phase22-23-pre-operation-final-readiness-check-core.js"></script>
+    <script src="phase22-24-manual-operation-start-approval-record-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
