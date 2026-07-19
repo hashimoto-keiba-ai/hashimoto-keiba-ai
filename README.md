@@ -4131,3 +4131,16 @@ Phase22-22 can now be opened from the normal `private-local.html` Phase22 featur
 - Use the Phase22-22 panel in `index.html` for the same manual decision, handoff-plan, status, save, reload, and audit-text operations from the main dashboard.
 - Both routes use the existing `phase22-22-limited-application-final-decision-operational-handoff-plan-core.js` and the same Phase22-22 localStorage key.
 - Operation remains Private Local / PLAN_ONLY / protectedMode. No automatic application, automatic start, production release, purchase, learning update, GitHub Pages, public URL, or external API is introduced.
+## Phase22-23 Pre-operation Final Readiness Check Core
+
+Phase22-23 manually verifies operational readiness before a limited application can be started. It reads only Phase22-22 records that are `finalized`, have `finalDecision=limited_application_approved`, and contain the required operational handoff plan. Phase22-22 and all earlier localStorage data remain read-only.
+
+- Source key: `hashimotoKeibaAi.phase22.limitedApplicationFinalDecisionOperationalHandoffPlan.v1`
+- Phase22-23 key: `hashimotoKeibaAi.phase22.preOperationFinalReadinessCheck.v1`
+- Flow: `awaiting_readiness_check -> checking`, then a human may select `ready_for_manual_start`, `on_hold`, `blocked`, `cancelled`, or `expired`. Awaiting records may also be cancelled or expired.
+- `ready_for_manual_start`, `on_hold`, `blocked`, `cancelled`, and `expired` are terminal and cannot be changed.
+- Required checks cover owner, backup owner, start schedule, limited scope, monitoring, stop conditions, rollback, communication, documents, backup, local environment, protectedMode, and PLAN_ONLY.
+- Every check remains manually checked or unchecked. Missing checks are listed, and `ready_for_manual_start` is rejected until every required check is checked. Completion never automatically changes status or starts operation.
+- The Phase22-23 store has `schemaVersion`, unique source-derived record IDs, operation history, status-transition history, check-change history, save/restore, and audit-text output.
+- The panel is available after Phase22-22 in `index.html`, with a launch card immediately after Phase22-22 in `private-local.html`.
+- Operation remains Private Local / PLAN_ONLY / protectedMode. There is no automatic start, application, production release, purchase, learning update, public URL, GitHub Pages, or external API.

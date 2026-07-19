@@ -1053,6 +1053,19 @@
         <div id="p2222-main-message" class="phase2222-main-message">Phase22-21のfinalized評価を読み込んでください。</div><div id="p2222-main-summary" class="phase2222-main-summary">eligible 0 / records 0</div><div id="p2222-main-list" class="phase2222-main-list"></div><textarea id="p2222-main-output" class="phase2222-main-audit" readonly></textarea>
       </section>
 
+      <section class="panel phase2223-readiness-panel" id="phase22-pre-operation-final-readiness-core" aria-label="Phase22-23 Pre-operation Final Readiness Check Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase22-23 / Manual Readiness Check</p><h2>限定適用開始前・最終運用準備確認コア</h2></div><span class="pill">Private Local / manual check only</span></div>
+        <p class="console-menu-lead">Phase22-22で最終確定した限定適用承認と引継ぎ計画だけを対象に、開始前準備を人間が確認します。全項目確認後も自動開始せず、人間の手動操作でreadyを記録します。</p>
+        <div class="phase22-safety-strip"><span>Private Local</span><span>PLAN_ONLY</span><span>protectedMode</span><span>no auto start</span><span>no auto apply</span><span>no production release</span></div>
+        <div class="phase2223-readiness-form"><label>対象記録<select id="p2223-record"></select></label><label>確認者・操作者<input id="p2223-operator" type="text"></label><label>確認日時<input id="p2223-at" type="datetime-local"></label><label>確認理由<input id="p2223-reason" type="text"></label><label>備考<input id="p2223-notes" type="text"></label></div>
+        <div class="phase2223-check-grid">
+          <label><input type="checkbox" data-p2223-check="owner_confirmed">主担当確認</label><label><input type="checkbox" data-p2223-check="backup_owner_confirmed">副担当確認</label><label><input type="checkbox" data-p2223-check="start_schedule_confirmed">運用開始予定確認</label><label><input type="checkbox" data-p2223-check="scope_confirmed">限定対象範囲確認</label><label><input type="checkbox" data-p2223-check="monitoring_ready">監視項目準備確認</label><label><input type="checkbox" data-p2223-check="stop_conditions_confirmed">停止条件確認</label><label><input type="checkbox" data-p2223-check="rollback_confirmed">ロールバック手順確認</label><label><input type="checkbox" data-p2223-check="communication_confirmed">連絡体制確認</label><label><input type="checkbox" data-p2223-check="documents_confirmed">必要資料確認</label><label><input type="checkbox" data-p2223-check="backup_confirmed">バックアップ確認</label><label><input type="checkbox" data-p2223-check="local_environment_confirmed">ローカル環境確認</label><label><input type="checkbox" data-p2223-check="protected_mode_confirmed">protectedMode確認</label><label><input type="checkbox" data-p2223-check="plan_only_confirmed">PLAN_ONLY確認</label>
+        </div>
+        <div class="phase2223-readiness-actions"><button id="p2223-update-checks" type="button">確認項目を記録</button><button data-p2223-status="checking" type="button">確認開始</button><button data-p2223-status="ready_for_manual_start" type="button">手動開始可能を記録</button><button data-p2223-status="on_hold" type="button">保留</button><button data-p2223-status="blocked" type="button">ブロック</button><button data-p2223-status="cancelled" type="button">取消</button><button data-p2223-status="expired" type="button">期限切れ</button></div>
+        <div class="phase2223-readiness-actions"><button id="p2223-reload" type="button">Phase22-22再読込</button><button id="p2223-save" type="button">保存</button><button id="p2223-audit" type="button">監査テキスト出力</button></div>
+        <div id="p2223-message" class="phase2223-readiness-message">Phase22-22の対象記録を読み込んでください。</div><div id="p2223-summary" class="phase2223-readiness-summary">eligible 0 / records 0 / unchecked 0</div><div id="p2223-unchecked" class="phase2223-unchecked">未確認項目なし</div><textarea id="p2223-output" class="phase2223-readiness-audit" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6888,6 +6901,7 @@
     <script src="phase22-21-retrial-result-comparison-final-evaluation-core.js"></script>
     <script src="phase22-22-limited-application-final-decision-operational-handoff-plan-core.js"></script>
     <script src="phase22-22a-main-dashboard-integration.js"></script>
+    <script src="phase22-23-pre-operation-final-readiness-check-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

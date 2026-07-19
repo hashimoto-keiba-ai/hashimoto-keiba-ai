@@ -2597,3 +2597,14 @@ tbody tr:last-child td {
 .phase2222-main-audit { width: 100%; min-height: 220px; margin-top: 12px; padding: 10px; border: 1px solid rgba(251, 191, 36, .35); border-radius: 8px; background: #050b14; color: #e5e7eb; }
 @media (max-width: 900px) { .phase2222-main-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); } }
 @media (max-width: 600px) { .phase2222-main-grid, .phase2222-main-row { grid-template-columns: 1fr; } .phase2222-main-actions button, .phase2222-main-link { width: 100%; } }
+.phase2223-readiness-panel { border: 1px solid rgba(52, 211, 153, .52); background: radial-gradient(circle at 85% 0, rgba(52, 211, 153, .08), transparent 42%); }
+.phase2223-readiness-form { display: grid; grid-template-columns: repeat(5, minmax(130px, 1fr)); gap: 10px; margin: 12px 0; }
+.phase2223-readiness-form label { display: grid; gap: 5px; color: #d1fae5; font-size: 12px; font-weight: 800; }
+.phase2223-readiness-form input, .phase2223-readiness-form select { min-width: 0; padding: 9px; border: 1px solid rgba(52, 211, 153, .36); border-radius: 8px; background: #071813; color: #ecfdf5; }
+.phase2223-check-grid { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 8px; margin: 14px 0; }
+.phase2223-check-grid label { display: flex; gap: 8px; align-items: center; padding: 9px; border: 1px solid rgba(52, 211, 153, .25); border-radius: 8px; color: #d1fae5; font-size: 12px; font-weight: 800; }
+.phase2223-readiness-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.phase2223-readiness-message, .phase2223-readiness-summary, .phase2223-unchecked { margin: 9px 0; padding: 10px; border-radius: 8px; background: rgba(7, 35, 28, .88); color: #d1fae5; }
+.phase2223-readiness-audit { width: 100%; min-height: 220px; margin-top: 12px; padding: 10px; border: 1px solid rgba(52, 211, 153, .34); border-radius: 8px; background: #04110d; color: #ecfdf5; }
+@media (max-width: 980px) { .phase2223-readiness-form, .phase2223-check-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
+@media (max-width: 600px) { .phase2223-readiness-form, .phase2223-check-grid { grid-template-columns: 1fr; } .phase2223-readiness-actions button { width: 100%; } }
