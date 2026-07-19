@@ -1087,6 +1087,18 @@
         <div id="p2225-message" class="phase2225-message">Phase22-24の承認済み記録を読み込んでください。</div><div id="p2225-summary" class="phase2225-summary">eligible 0 / records 0 / history 0</div><textarea id="p2225-output" class="phase2225-audit" readonly></textarea>
       </section>
 
+      <section class="panel phase231-design-panel" id="phase23-external-racing-data-acquisition-safety-design" aria-label="Phase23-1 External Racing Data Acquisition Safety Design">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-1 / Design and Evaluation Only</p><h2>外部競馬データ取得方式・安全設計</h2></div><span class="pill">NO NETWORK CONNECTION</span></div>
+        <p class="console-menu-lead">Phase22完了後の安全なデータ取込準備です。公式方式を優先して比較し、出馬表・オッズ・結果の標準形式と人間承認ゲートを設計します。このPhaseでは実接続・自動取得・ファイル取込を行いません。</p>
+        <div class="phase23-safety-strip"><span>Private Local only</span><span>PLAN_ONLY</span><span>protectedMode</span><span>外部接続なし</span><span>自動取得なし</span><span>自動購入・自動投票なし</span><span>認証情報を保存しない</span><span>スクレイピングなし</span><span>GitHub Pages / Publicなし</span></div>
+        <div class="phase231-controls"><label>採用判定<select id="p231-status"><option>draft</option><option>researching</option><option>needs_manual_verification</option><option>evaluated</option><option>recommended</option><option>rejected</option><option>approved_for_prototype</option><option>prohibited</option></select></label><label>調査日<input id="p231-researched-at" type="date"></label><label>操作者<input id="p231-operator" type="text" placeholder="人間の確認者"></label><label>調査元メモ<textarea id="p231-source-memo"></textarea></label></div>
+        <h3>取得方式候補・評価</h3><div id="p231-providers" class="phase231-provider-grid"></div>
+        <div class="phase231-info-grid"><article><strong>推奨方式</strong><p id="p231-recommendation"></p></article><article><strong>手動確認が必要な事項</strong><ul id="p231-needs"></ul></article><article><strong>禁止方式</strong><p>JRA／第三者サイトのHTMLスクレイピング、非公開API、認証・CAPTCHA・アクセス制限回避、IPAT接続</p></article></div>
+        <div class="phase231-design-grid"><article><strong>対象データ</strong><p id="p231-targets"></p></article><article><strong>標準データモデル</strong><p id="p231-models"></p></article><article><strong>安全アーキテクチャ</strong><p id="p231-architecture"></p></article></div>
+        <div class="phase231-actions"><button id="p231-save" type="button">設計内容を保存</button><button id="p231-restore" type="button">設計内容を復元</button><button id="p231-audit" type="button">監査用テキスト</button></div>
+        <div id="p231-message" class="phase231-message">設計定義のみを表示しています。外部サービスには接続していません。</div><div id="p231-summary" class="phase231-summary"></div><textarea id="p231-output" class="phase231-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6926,6 +6938,8 @@
     <script src="phase22-24-manual-operation-start-approval-record-core.js"></script>
     <script src="phase22-25-manual-operation-start-execution-record-core.js"></script>
     <script src="phase22-25-main-dashboard-integration.js"></script>
+    <script src="phase23-1-external-racing-data-acquisition-safety-design-core.js"></script>
+    <script src="phase23-1-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

@@ -4177,4 +4177,16 @@ Phase22-1 through Phase22-25 have completed final integration verification on th
 Phase22 remains a local planning, review, approval, and factual-record foundation. `Private Local`, `PLAN_ONLY`, and `protectedMode` remain mandatory. It does not automatically purchase, apply, update learning, start, stop, recover, release to production, or communicate with external APIs. No GitHub Pages or Public route is provided. Human approvals and execution records never trigger the corresponding real-world action.
 
 The final audit verifies the Phase22 core files and dashboard routes, unique write-side localStorage keys, the Phase22-19 through Phase22-25 source-key chain, HTML IDs, local scripts, local anchors, script ordering, and the absence of external communication APIs. See `docs/phase22-final-integration-completion-check.md` for the phase inventory, safety assessment, test scope, and known limitations.
+
 - Private Local / PLAN_ONLY / protectedMode remain mandatory. No automatic start, application, purchase, learning update, external API, production mutation, GitHub Pages, or public URL is introduced.
+
+## Phase23-1 External Racing Data Acquisition Safety Design
+
+Phase23 starts after Phase22 completion to prepare safe import of race cards, odds, and results for weekend operation. Phase23-1 compares acquisition approaches and defines provider adapters, validation, preview, human approval, audit history, and a common data model; it performs no external connection or real import.
+
+- JRA-VAN Data Lab. / JV-Link is the conditional primary candidate because official public information confirms a Windows service, official racing data, an ActiveX COM interface, real-time and historical data, a required subscription/use key, a published monthly price of JPY 2,090 including tax as checked on 2026-07-19, and simultaneous use on two PCs. Terms, redistribution/commercial use, company-PC approval, and Node.js/Python COM integration still require manual verification before a prototype is approved.
+- Manual CSV and JSON are the recommended local fallback designs. JRA official web pages are a human-viewing fallback, not an authorized automation API. Third-party HTML scraping is prohibited unless a formal API or explicit permission is verified.
+- Storage key: `hashimotoKeibaAi.phase23.externalRacingDataAcquisitionSafetyDesign.v1`. It stores design evaluation and audit history only; API keys, passwords, cookies, credentials, use keys, and contract numbers are removed and never intentionally stored.
+- `Private Local only`, `PLAN_ONLY`, and `protectedMode` remain mandatory. There is no scraping, automatic acquisition, scheduled execution, retry loop, IPAT connection, automatic purchase/betting, external write, Phase22 mutation, GitHub Pages, or Public release.
+
+See `docs/phase23-1-external-racing-data-acquisition-safety-design.md` for confirmed facts, verification tasks, comparison criteria, standard models, future states, and the Phase23-2 boundary.
