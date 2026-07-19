@@ -4235,3 +4235,14 @@ Phase23-5 reads only Phase23-4 `import_candidate_ready` gate records and their P
 - `ready_for_formal_import_execution` means preparation/audit readiness only. There is no external communication, automatic acquisition/approval/import, insert/update/upsert/delete execution, purchase, betting, IPAT connection, GitHub Pages, or Public release.
 
 See `docs/phase23-5-formal-import-preparation-review-core.md` for the full preparation contract and Phase23-6 boundary.
+
+## Phase23-6 Manual Formal Import Execution
+
+Phase23-6 is the first Phase23 component that can change the Private Local formal-data store. It accepts only Phase23-5 `ready_for_formal_import_execution` records, strictly re-links their Phase23-3 staged records, generates a checksum-bound execution plan, saves an affected-record snapshot, and runs only after a human enters `FORMAL IMPORT EXECUTE` exactly and clicks the warning-styled execution button.
+
+- Formal data: `hashimotoKeibaAi.phase23.formalData.v1`; execution audit: `hashimotoKeibaAi.phase23.manualFormalImportExecution.v1`; snapshots: `hashimotoKeibaAi.phase23.preImportSnapshot.v1`; pending transaction: `hashimotoKeibaAi.phase23.formalData.pending.v1`.
+- Natural keys and immutable fields are model-specific. Operations follow meeting → race → runner → oddsSnapshot → result → payout → acquisitionRecord. Insert, versioned update, exact skip, and unchanged are supported; physical deletion and forced conflict overwrite are not.
+- The synchronous pseudo-transaction validates inputs and locks, confirms snapshot/plan checksums, applies all operations in memory, verifies serialization/capacity, writes and verifies pending data, switches and verifies formal data, then writes the execution record. Failures preserve the prior formal value and leave no partial record application.
+- Rollback is also manual and requires `FORMAL IMPORT ROLLBACK`. Inserts are deactivated with `active=false`; updates are restored as a new version with provenance. There is no automatic execution, retry, rollback, acquisition, purchase, betting, IPAT connection, external communication, Phase22 mutation, GitHub Pages, or Public release.
+
+See `docs/phase23-6-manual-formal-import-execution-core.md` for execution approval, atomic storage, verification, rollback, limits, and the Phase23-7 boundary.
