@@ -4257,3 +4257,9 @@ Phase23-7 manually re-verifies Phase23-6 `verified`, `verification_failed`, `rol
 - Phase23-1 through Phase23-6, Phase22, formalData, execution, snapshot, and pending stores remain read-only. There is no external communication, automatic verification/repair/rollback, physical deletion, GitHub Pages, or Public release.
 
 See `docs/phase23-7-post-import-verification-audit-core.md` for audit rules and the Phase23-8 boundary.
+
+### Phase23-8 監査フォローアップ・解決計画
+
+`private-local.html` からPhase23-8パネルを開き、Phase23-7の対象監査と未完了follow-upを読取専用で選択できます。解決区分、優先度・リスク、担当者、計画アクション、確認チェック、証跡要約、完了条件、人間による計画承認と解決検証をPhase23-8専用localStorageへ保存します。
+
+Private Local only / protectedMode / PLAN_ONLYです。正式データ、Phase23-1〜7、Phase22、snapshot、pendingを変更せず、自動修復、自動再検証、自動rollback、自動インポート、外部通知を行いません。rollbackは検討推奨の記録のみです。詳細とテスト方法は `docs/phase23-8-audit-follow-up-resolution-planning-core.md` を参照してください。
