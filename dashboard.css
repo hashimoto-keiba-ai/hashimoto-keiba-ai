@@ -2618,3 +2618,15 @@ tbody tr:last-child td {
 .phase2224-approval-audit { width: 100%; min-height: 230px; margin-top: 12px; padding: 10px; border: 1px solid rgba(244, 114, 182, .34); border-radius: 8px; background: #120710; color: #fdf2f8; }
 @media (max-width: 980px) { .phase2224-approval-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
 @media (max-width: 600px) { .phase2224-approval-grid { grid-template-columns: 1fr; } .phase2224-approval-actions button { width: 100%; } }
+.phase2225-execution-panel { border: 1px solid rgba(96, 165, 250, .52); background: radial-gradient(circle at 85% 0, rgba(96, 165, 250, .09), transparent 42%); }
+.phase2225-execution-grid { display: grid; grid-template-columns: repeat(4, minmax(155px, 1fr)); gap: 10px; margin: 12px 0; }
+.phase2225-execution-grid label { display: grid; gap: 5px; color: #dbeafe; font-size: 12px; font-weight: 800; }
+.phase2225-execution-grid input, .phase2225-execution-grid select, .phase2225-execution-grid textarea { min-width: 0; padding: 9px; border: 1px solid rgba(96, 165, 250, .35); border-radius: 8px; background: #071426; color: #eff6ff; }
+.phase2225-execution-grid textarea { min-height: 72px; resize: vertical; }
+.phase2225-execution-grid .phase2225-check { display: flex; align-items: center; gap: 8px; padding: 9px; border: 1px solid rgba(96, 165, 250, .28); border-radius: 8px; }
+.phase2225-execution-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.phase2225-execution-actions button:disabled { opacity: .38; cursor: not-allowed; }
+.phase2225-status, .phase2225-message, .phase2225-summary { margin: 9px 0; padding: 10px; border-radius: 8px; background: rgba(8, 30, 58, .88); color: #dbeafe; }
+.phase2225-audit { width: 100%; min-height: 250px; margin-top: 12px; padding: 10px; border: 1px solid rgba(96, 165, 250, .34); border-radius: 8px; background: #040d1b; color: #eff6ff; }
+@media (max-width: 980px) { .phase2225-execution-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
+@media (max-width: 600px) { .phase2225-execution-grid { grid-template-columns: 1fr; } .phase2225-execution-actions button { width: 100%; } }

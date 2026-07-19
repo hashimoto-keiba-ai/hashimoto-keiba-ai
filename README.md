@@ -4157,3 +4157,16 @@ Phase22-24 records a human manual-start approval and its conditions for Phase22-
 - The schema stores source-derived unique IDs, source snapshots, approval details, operation history, transition history, approval-change history, created/updated/saved timestamps, save/restore, and audit text.
 - The panel follows Phase22-23 in `index.html`; its Private Local card follows the Phase22-23 card.
 - Private Local / PLAN_ONLY / protectedMode remain mandatory. There is no actual or automatic start, application, production release, purchase, learning update, public URL, GitHub Pages, or external API. Phase22-23 and earlier localStorage are not mutated.
+## Phase22-25 Manual Operation Start / Execution Record Core
+
+Phase22-25 reads only Phase22-24 records whose status and human final approval are both `manual_start_approved`. It records facts about manual operations performed externally by a human; it does not start, stop, pause, resume, cancel, apply, purchase, learn, or communicate with any external service automatically.
+
+- Phase22-24 source key (read only): `hashimotoKeibaAi.phase22.manualOperationStartApprovalRecord.v1`
+- Phase22-25 key: `hashimotoKeibaAi.phase22.manualOperationStartExecutionRecord.v1`
+- States: `awaiting_manual_execution`, `execution_recording`, `manually_started`, `start_failed`, `paused`, `stopped`, `cancelled`, and `expired`.
+- Humans may record start success/failure, pause, resume, stop, cancellation, and expiry. Required executor, timestamps, results/reasons, confirmations, and external-manual-operation acknowledgement are validated with Japanese error messages.
+- `start_failed` may return to `execution_recording` for a documented human retry. `paused` may return to `manually_started` only through a documented human resume. No automatic recovery or transition exists.
+- `stopped`, `cancelled`, and `expired` are terminal. Existing history is append-only, duplicate history IDs and duplicate records from the same approval are rejected.
+- The schema stores source IDs/snapshots, status descriptions, event-specific details, created/updated/saved timestamps, append-only audit history, safe JSON restore, and audit-text output.
+- The panel follows Phase22-24 in `index.html`; its Private Local card follows the Phase22-24 card.
+- Private Local / PLAN_ONLY / protectedMode remain mandatory. No automatic start, application, purchase, learning update, external API, production mutation, GitHub Pages, or public URL is introduced.
