@@ -4144,3 +4144,16 @@ Phase22-23 manually verifies operational readiness before a limited application 
 - The Phase22-23 store has `schemaVersion`, unique source-derived record IDs, operation history, status-transition history, check-change history, save/restore, and audit-text output.
 - The panel is available after Phase22-22 in `index.html`, with a launch card immediately after Phase22-22 in `private-local.html`.
 - Operation remains Private Local / PLAN_ONLY / protectedMode. There is no automatic start, application, production release, purchase, learning update, public URL, GitHub Pages, or external API.
+## Phase22-24 Manual Operation Start Approval Record Core
+
+Phase22-24 records a human manual-start approval and its conditions for Phase22-23 records whose status is `ready_for_manual_start` and whose required readiness checks are all checked. It is an approval-record system only: it never performs a limited application, starts operation, or releases anything to production.
+
+- Phase22-23 source key (read only): `hashimotoKeibaAi.phase22.preOperationFinalReadinessCheck.v1`
+- Phase22-24 key: `hashimotoKeibaAi.phase22.manualOperationStartApprovalRecord.v1`
+- Flow: `awaiting_manual_start_approval -> approval_reviewing`, followed by a human decision of `manual_start_approved`, `approval_rejected`, `on_hold`, or `blocked`. Awaiting or reviewing records can also be cancelled or expired.
+- Every result state is terminal and cannot be changed.
+- Approval requires approver, approval timestamp and reason, planned manual-start time, start/monitoring/stop-decision/rollback/communication owners, expiration, approval conditions, and start-prohibited conditions. Missing fields are listed and approval is rejected.
+- The readiness-based recommendation remains advisory and separate from the human final approval. There is no automatic approval.
+- The schema stores source-derived unique IDs, source snapshots, approval details, operation history, transition history, approval-change history, created/updated/saved timestamps, save/restore, and audit text.
+- The panel follows Phase22-23 in `index.html`; its Private Local card follows the Phase22-23 card.
+- Private Local / PLAN_ONLY / protectedMode remain mandatory. There is no actual or automatic start, application, production release, purchase, learning update, public URL, GitHub Pages, or external API. Phase22-23 and earlier localStorage are not mutated.

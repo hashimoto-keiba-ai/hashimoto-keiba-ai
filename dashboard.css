@@ -2608,3 +2608,13 @@ tbody tr:last-child td {
 .phase2223-readiness-audit { width: 100%; min-height: 220px; margin-top: 12px; padding: 10px; border: 1px solid rgba(52, 211, 153, .34); border-radius: 8px; background: #04110d; color: #ecfdf5; }
 @media (max-width: 980px) { .phase2223-readiness-form, .phase2223-check-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
 @media (max-width: 600px) { .phase2223-readiness-form, .phase2223-check-grid { grid-template-columns: 1fr; } .phase2223-readiness-actions button { width: 100%; } }
+.phase2224-approval-panel { border: 1px solid rgba(244, 114, 182, .5); background: radial-gradient(circle at 85% 0, rgba(244, 114, 182, .08), transparent 42%); }
+.phase2224-approval-grid { display: grid; grid-template-columns: repeat(4, minmax(155px, 1fr)); gap: 10px; margin: 12px 0; }
+.phase2224-approval-grid label { display: grid; gap: 5px; color: #fce7f3; font-size: 12px; font-weight: 800; }
+.phase2224-approval-grid input, .phase2224-approval-grid select, .phase2224-approval-grid textarea { min-width: 0; padding: 9px; border: 1px solid rgba(244, 114, 182, .34); border-radius: 8px; background: #1c0b17; color: #fdf2f8; }
+.phase2224-approval-grid textarea { min-height: 72px; resize: vertical; }
+.phase2224-approval-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.phase2224-approval-message, .phase2224-approval-summary, .phase2224-missing { margin: 9px 0; padding: 10px; border-radius: 8px; background: rgba(49, 16, 38, .85); color: #fce7f3; }
+.phase2224-approval-audit { width: 100%; min-height: 230px; margin-top: 12px; padding: 10px; border: 1px solid rgba(244, 114, 182, .34); border-radius: 8px; background: #120710; color: #fdf2f8; }
+@media (max-width: 980px) { .phase2224-approval-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
+@media (max-width: 600px) { .phase2224-approval-grid { grid-template-columns: 1fr; } .phase2224-approval-actions button { width: 100%; } }
