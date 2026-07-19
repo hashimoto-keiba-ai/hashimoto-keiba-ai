@@ -1127,6 +1127,16 @@
         <h3>保存済みステージング</h3><div id="p233-records" class="phase233-records"></div><div id="p233-summary" class="phase233-summary"></div><div id="p233-message" class="phase233-message">Phase23-2の人間確認済みpreviewを参照してください。</div><textarea id="p233-output" class="phase233-output" readonly></textarea>
       </section>
 
+      <section class="panel phase234-gate-panel" id="phase23-staging-integrity-reference-import-gate" aria-label="Phase23-4 Staging Integrity Reference Import Gate Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-4 / Integrity Gate</p><h2>ステージング整合性・参照関係・正式インポート候補ゲート</h2></div><span class="pill">HUMAN GATE / NO FORMAL IMPORT</span></div>
+        <p class="console-menu-lead">Phase23-3のstaged記録だけを読取専用で横断検証し、人間が正式インポート候補として扱えるかを記録します。正式インポートやPhase22反映は実行しません。</p>
+        <div class="phase23-safety-strip"><span>Phase23-3 read only</span><span>人間承認必須</span><span>正式インポートなし</span><span>Phase22反映なし</span><span>外部通信なし</span><span>Private Local only</span><span>PLAN_ONLY</span><span>protectedMode</span></div>
+        <div id="p234-summary" class="phase234-summary"></div><div id="p234-stagings" class="phase234-stagings"></div><div id="p234-integrity" class="phase234-integrity"></div><div id="p234-issues" class="phase234-issues"></div>
+        <div class="phase234-grid"><label>gate承認者<input id="p234-approver" type="text"></label><label>gate承認日時<input id="p234-approved-at" type="datetime-local"></label><label>gate承認理由<textarea id="p234-reason"></textarea></label><label class="phase234-check"><input id="p234-warning-confirmed" type="checkbox">warningを人間確認</label><label class="phase234-check"><input id="p234-phase22-confirmed" type="checkbox">Phase22非反映を確認</label><label class="phase234-check"><input id="p234-import-confirmed" type="checkbox">正式インポート未実行を確認</label></div>
+        <div class="phase234-actions"><button id="p234-reload" type="button">Phase23-3再読込・整合性検証</button><button id="p234-ready" type="button">正式インポート候補として記録</button><button id="p234-rejected" type="button">却下</button><button id="p234-cancelled" type="button">取消</button><button id="p234-expired" type="button">期限切れ</button><button id="p234-audit" type="button">監査テキスト</button></div>
+        <div id="p234-message" class="phase234-message"></div><textarea id="p234-output" class="phase234-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6972,6 +6982,8 @@
     <script src="phase23-2-main-dashboard-integration.js"></script>
     <script src="phase23-3-approved-preview-staging-storage-core.js"></script>
     <script src="phase23-3-main-dashboard-integration.js"></script>
+    <script src="phase23-4-staging-integrity-reference-import-gate-core.js"></script>
+    <script src="phase23-4-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

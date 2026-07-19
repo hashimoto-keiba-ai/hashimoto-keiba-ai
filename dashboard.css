@@ -2676,3 +2676,18 @@ tbody tr:last-child td {
 .phase233-output { width: 100%; min-height: 250px; padding: 10px; border: 1px solid rgba(74, 222, 128, .35); border-radius: 8px; background: #020b07; color: #f0fdf4; }
 @media (max-width: 980px) { .phase233-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } .phase233-records button { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .phase233-grid, .phase233-records button { grid-template-columns: 1fr; } .phase233-actions button { width: 100%; } }
+.phase234-gate-panel { border: 1px solid rgba(251, 191, 36, .58); background: radial-gradient(circle at 85% 0, rgba(251, 191, 36, .1), transparent 42%), linear-gradient(145deg, rgba(32, 23, 6, .98), rgba(12, 22, 35, .96)); }
+.phase234-summary, .phase234-integrity, .phase234-message { margin: 9px 0; padding: 10px; border: 1px solid rgba(251, 191, 36, .28); border-radius: 8px; background: rgba(55, 38, 5, .75); color: #fef3c7; overflow-wrap: anywhere; }
+.phase234-stagings, .phase234-issues { display: grid; gap: 8px; max-height: 400px; overflow: auto; margin: 10px 0; }
+.phase234-stagings button { display: grid; grid-template-columns: 1.25fr 1fr 1.6fr; gap: 8px; padding: 10px; text-align: left; border: 1px solid rgba(251, 191, 36, .3); border-radius: 8px; background: #211705; color: #fffbeb; }
+.phase234-stagings button.selected { outline: 2px solid #fbbf24; }
+.phase234-issues article { display: grid; gap: 4px; padding: 9px; border: 1px solid rgba(251, 191, 36, .25); border-radius: 8px; color: #fef3c7; }
+.phase234-issues .level-fatal, .phase234-issues .level-error { border-color: #fb7185; background: rgba(76, 5, 25, .7); } .phase234-issues .level-warning { border-color: #fbbf24; }
+.phase234-grid { display: grid; grid-template-columns: repeat(3, minmax(160px, 1fr)); gap: 10px; margin: 12px 0; }
+.phase234-grid label { display: grid; gap: 5px; color: #fef3c7; font-size: 12px; font-weight: 800; }
+.phase234-grid input, .phase234-grid textarea { min-width: 0; padding: 9px; border: 1px solid rgba(251, 191, 36, .35); border-radius: 8px; background: #211705; color: #fffbeb; }
+.phase234-grid .phase234-check { display: flex; align-items: center; gap: 8px; padding: 9px; border: 1px solid rgba(251, 191, 36, .25); border-radius: 8px; }
+.phase234-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.phase234-output { width: 100%; min-height: 250px; padding: 10px; border: 1px solid rgba(251, 191, 36, .35); border-radius: 8px; background: #0f0a02; color: #fffbeb; }
+@media (max-width: 980px) { .phase234-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } .phase234-stagings button { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .phase234-grid, .phase234-stagings button { grid-template-columns: 1fr; } .phase234-actions button { width: 100%; } }

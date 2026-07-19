@@ -4213,3 +4213,14 @@ Phase23-3 accepts only a Phase23-2 `preview_ready` dataset that has been explici
 - `Private Local only`, `PLAN_ONLY`, `protectedMode`, no external communication, no automatic approval/acquisition/purchase/betting, no Phase22 application, no GitHub Pages, and no Public release remain mandatory.
 
 See `docs/phase23-3-approved-preview-staging-storage-core.md` for the approval contract, duplicate rules, non-destructive lifecycle, stored schema, and Phase23-4 boundary.
+
+## Phase23-4 Staging Integrity / Reference / Import Candidate Gate
+
+Phase23-4 reads only Phase23-3 records whose status is `staged`, validates their common schema, model-specific fields, references, chronology, counts, sets, duplicates, and conflicts as one candidate group, and lets a human record whether an error-free record may be treated as a formal-import candidate. It does not execute formal import.
+
+- Fatal or error issues block candidate creation. Warning-only records require explicit human acknowledgement plus approver, reason, non-future approval time, `Private Local only`, `PLAN_ONLY`, `protectedMode`, Phase22 non-application confirmation, and formal-import-not-executed confirmation.
+- Storage key: `hashimotoKeibaAi.phase23.stagingIntegrityReferenceImportGate.v1`. Phase23-3 and all earlier Phase23/Phase22 keys remain read-only; records are append-only and save/read-back failures preserve the previous value.
+- `import_candidate_ready`, `rejected`, `cancelled`, and `expired` are terminal. Candidate readiness is a gate/audit fact only: `formalImportExecuted=false` and `phase22Applied=false` are enforced during normalization.
+- There is no external communication, automatic acquisition/approval/import/purchase/betting, IPAT connection, scheduled task, GitHub Pages, or Public release.
+
+See `docs/phase23-4-staging-integrity-reference-import-gate-core.md` for validation rules, lifecycle, storage boundaries, and the Phase23-5 boundary.
