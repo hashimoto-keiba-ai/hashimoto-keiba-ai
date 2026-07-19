@@ -1076,6 +1076,17 @@
         <div id="p2224-message" class="phase2224-approval-message">Phase22-23のready記録を読み込んでください。</div><div id="p2224-summary" class="phase2224-approval-summary">eligible 0 / records 0 / missing 0</div><div id="p2224-missing" class="phase2224-missing">不足項目なし</div><textarea id="p2224-output" class="phase2224-approval-audit" readonly></textarea>
       </section>
 
+      <section class="panel phase2225-execution-panel" id="phase22-manual-operation-start-execution-core" aria-label="Phase22-25 Manual Operation Start Execution Record Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase22-25 / Human External Operation Record</p><h2>手動運用開始・実施記録コア</h2></div><span class="pill">record only / no automatic execution</span></div>
+        <p class="console-menu-lead">Phase22-24で手動開始承認済みの対象について、人間が外部で実施した開始・失敗・一時停止・再開・停止等の事実だけを記録します。システムから外部処理は実行しません。</p>
+        <div class="phase22-safety-strip"><span>Private Local</span><span>PLAN_ONLY</span><span>protectedMode</span><span>human record only</span><span>no auto start</span><span>no external API</span></div>
+        <div class="phase2225-execution-grid"><label>対象記録<select id="p2225-record"></select></label><label>実施者・判断者<input id="p2225-executor" type="text"></label><label>操作日時<input id="p2225-at" type="datetime-local"></label><label>理由<input id="p2225-reason" type="text"></label><label>確認者<input id="p2225-confirmer" type="text"></label><label>確認日時<input id="p2225-confirmed-at" type="datetime-local"></label><label>結果・異常内容<input id="p2225-result" type="text"></label><label>方法・操作概要<input id="p2225-method" type="text"></label><label>対応方針<input id="p2225-response" type="text"></label><label>確認内容・再開条件<textarea id="p2225-conditions"></textarea></label><label>メモ・根拠<textarea id="p2225-notes"></textarea></label><label class="phase2225-check"><input id="p2225-manual-confirmed" type="checkbox">外部で人間が手動操作したことを確認</label><label class="phase2225-check"><input id="p2225-retry-allowed" type="checkbox">再試行可能</label></div>
+        <div id="p2225-status" class="phase2225-status">awaiting_manual_execution / 手動実施待ち</div>
+        <div class="phase2225-execution-actions"><button data-p2225-status="execution_recording" type="button">実施記録開始／再試行</button><button data-p2225-status="manually_started" type="button">手動開始成功／再開を記録</button><button data-p2225-status="start_failed" type="button">開始失敗を記録</button><button data-p2225-status="paused" type="button">一時停止を記録</button><button data-p2225-status="stopped" type="button">停止を記録</button><button data-p2225-status="cancelled" type="button">取消を記録</button><button data-p2225-status="expired" type="button">期限切れを記録</button></div>
+        <div class="phase2225-execution-actions"><button id="p2225-reload" type="button">Phase22-24再読込</button><button id="p2225-save" type="button">保存</button><button id="p2225-audit" type="button">監査テキスト出力</button></div>
+        <div id="p2225-message" class="phase2225-message">Phase22-24の承認済み記録を読み込んでください。</div><div id="p2225-summary" class="phase2225-summary">eligible 0 / records 0 / history 0</div><textarea id="p2225-output" class="phase2225-audit" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6913,6 +6924,8 @@
     <script src="phase22-22a-main-dashboard-integration.js"></script>
     <script src="phase22-23-pre-operation-final-readiness-check-core.js"></script>
     <script src="phase22-24-manual-operation-start-approval-record-core.js"></script>
+    <script src="phase22-25-manual-operation-start-execution-record-core.js"></script>
+    <script src="phase22-25-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
