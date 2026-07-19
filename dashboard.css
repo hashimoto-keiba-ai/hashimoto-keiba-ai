@@ -2645,3 +2645,20 @@ tbody tr:last-child td {
 .phase231-output { width: 100%; min-height: 240px; padding: 10px; border: 1px solid rgba(34, 211, 238, .35); border-radius: 8px; background: #030d12; color: #ecfeff; }
 @media (max-width: 980px) { .phase231-controls, .phase231-provider-grid, .phase231-info-grid, .phase231-design-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
 @media (max-width: 600px) { .phase231-controls, .phase231-provider-grid, .phase231-info-grid, .phase231-design-grid { grid-template-columns: 1fr; } .phase231-actions button { width: 100%; } }
+.phase232-preview-panel { border: 1px solid rgba(167, 139, 250, .58); background: radial-gradient(circle at 86% 0, rgba(167, 139, 250, .1), transparent 42%), linear-gradient(145deg, rgba(17, 12, 34, .98), rgba(10, 24, 40, .96)); }
+.phase232-file-zone { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+.phase232-file-zone label, .phase232-mapping label { display: grid; gap: 5px; color: #ede9fe; font-size: 12px; font-weight: 800; }
+.phase232-file-zone input, .phase232-file-zone select, .phase232-mapping select { min-width: 0; padding: 9px; border: 1px solid rgba(167, 139, 250, .35); border-radius: 8px; background: #100d20; color: #f5f3ff; }
+.phase232-file-info, .phase232-block, .phase232-message { margin: 9px 0; padding: 10px; border: 1px solid rgba(167, 139, 250, .25); border-radius: 8px; background: rgba(24, 18, 48, .8); color: #ddd6fe; overflow-wrap: anywhere; }
+.phase232-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.phase232-mapping { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 8px; max-height: 320px; overflow: auto; }
+.phase232-summary { display: grid; grid-template-columns: repeat(4, minmax(130px, 1fr)); gap: 8px; margin: 12px 0; }
+.phase232-summary article { padding: 9px; border: 1px solid rgba(167, 139, 250, .25); border-radius: 8px; display: grid; gap: 4px; color: #ddd6fe; }
+.phase232-confirm { display: flex; align-items: center; gap: 8px; padding: 10px; color: #f5f3ff; font-weight: 900; }
+.phase232-preview, .phase232-issues { display: grid; gap: 8px; max-height: 500px; overflow: auto; margin: 10px 0; }
+.phase232-preview article, .phase232-issues article { padding: 10px; border: 1px solid rgba(167, 139, 250, .24); border-radius: 8px; background: #0d0b1a; color: #ede9fe; overflow-x: auto; }
+.phase232-preview pre { margin: 6px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; }
+.phase232-issues article { display: grid; gap: 4px; } .phase232-issues .level-info { border-color: #38bdf8; } .phase232-issues .level-warning { border-color: #fbbf24; } .phase232-issues .level-error { border-color: #fb7185; } .phase232-issues .level-fatal { border-color: #ef4444; background: #2a090f; }
+.phase232-output { width: 100%; min-height: 240px; padding: 10px; border: 1px solid rgba(167, 139, 250, .35); border-radius: 8px; background: #07050e; color: #f5f3ff; }
+@media (max-width: 980px) { .phase232-file-zone, .phase232-mapping, .phase232-summary { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
+@media (max-width: 600px) { .phase232-file-zone, .phase232-mapping, .phase232-summary { grid-template-columns: 1fr; } .phase232-actions button { width: 100%; } }

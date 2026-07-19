@@ -4190,3 +4190,14 @@ Phase23 starts after Phase22 completion to prepare safe import of race cards, od
 - `Private Local only`, `PLAN_ONLY`, and `protectedMode` remain mandatory. There is no scraping, automatic acquisition, scheduled execution, retry loop, IPAT connection, automatic purchase/betting, external write, Phase22 mutation, GitHub Pages, or Public release.
 
 See `docs/phase23-1-external-racing-data-acquisition-safety-design.md` for confirmed facts, verification tasks, comparison criteria, standard models, future states, and the Phase23-2 boundary.
+
+## Phase23-2 Manual CSV / JSON Import Preview and Validation
+
+Phase23-2 reads one human-selected local CSV or JSON file inside the browser, parses it, maps Japanese or standard headers, normalizes records to the Phase23 models, validates required fields, duplicates, ranges, dates, and consistency, and displays errors and warnings for human confirmation. It is preview-only: there is no confirmed import or Phase22 bridge operation.
+
+- CSV supports UTF-8/BOM, quoted commas/newlines/escaped quotes, CRLF/LF, column reordering, and preserved unknown fields. Shift_JIS is available only when the browser `TextDecoder` supports it.
+- JSON supports one object, arrays, `records`, model-array packages, depth limits, and removal of prototype-pollution keys.
+- Storage key: `hashimotoKeibaAi.phase23.manualCsvJsonImportPreviewValidation.v1`. Only settings, file metadata/hash, summaries, limited issues, human-confirmation state, and audit history are saved. Full file content and preview records are not stored.
+- Local files are never transmitted. Phase22 and Phase23-1 storage are not written. There is no external communication, scraping, automatic acquisition, purchase, betting, correction, registration, retry, scheduled task, GitHub Pages, or Public release. `Private Local only`, `PLAN_ONLY`, and `protectedMode` remain mandatory.
+
+See `docs/phase23-2-manual-csv-json-import-preview-validation-core.md` for limits, mappings, normalization, validation, states, audit fields, and the Phase23-3 boundary.

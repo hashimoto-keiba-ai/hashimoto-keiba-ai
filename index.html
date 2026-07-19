@@ -1099,6 +1099,21 @@
         <div id="p231-message" class="phase231-message">設計定義のみを表示しています。外部サービスには接続していません。</div><div id="p231-summary" class="phase231-summary"></div><textarea id="p231-output" class="phase231-output" readonly></textarea>
       </section>
 
+      <section class="panel phase232-preview-panel" id="phase23-manual-csv-json-import-preview-validation" aria-label="Phase23-2 Manual CSV JSON Import Preview Validation Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-2 / Local File Preview Only</p><h2>手動CSV／JSON取込プレビュー・検証</h2></div><span class="pill">NO IMPORT / NO TRANSMISSION</span></div>
+        <p class="console-menu-lead">人間が選んだ1つのCSV／JSONをブラウザ内だけで解析し、標準形式への正規化、エラー・警告、重複・整合性を確認します。Phase22への反映・確定取込・自動修正はありません。</p>
+        <div class="phase23-safety-strip"><span>プレビュー専用</span><span>Private Local only</span><span>PLAN_ONLY</span><span>protectedMode</span><span>サーバー送信なし</span><span>Phase22へ反映なし</span><span>人間確認必須</span><span>自動購入・自動投票と分離</span><span>認証情報を読み込まない</span></div>
+        <div class="phase232-file-zone"><label>CSV／JSONファイル<input id="p232-file" type="file" accept=".csv,.json,text/csv,application/json"></label><label>文字コード<select id="p232-encoding"><option value="utf-8">UTF-8 / BOM</option><option value="shift_jis">Shift_JIS（ブラウザ対応時のみ）</option></select></label><label>データ種別<select id="p232-data-type"><option value="">自動推定／未選択</option><option>meeting</option><option>race</option><option>runner</option><option>oddsSnapshot</option><option>result</option><option>payout</option><option>acquisitionRecord</option></select></label><label>操作者<input id="p232-operator" type="text"></label></div>
+        <div id="p232-file-info" class="phase232-file-info">ファイル未選択</div><div>状態: <strong id="p232-state">idle</strong></div>
+        <div class="phase232-actions"><button id="p232-parse" type="button">解析開始</button><button id="p232-revalidate" type="button">マッピング適用・再検証</button><button id="p232-cancel" type="button">解析取消</button><button id="p232-reset" type="button">プレビュー初期化</button><button id="p232-save" type="button">検証結果保存</button><button id="p232-restore" type="button">保存結果復元</button><button id="p232-audit" type="button">監査用テキスト</button></div>
+        <h3>列マッピング</h3><div id="p232-mapping" class="phase232-mapping"></div>
+        <div id="p232-summary" class="phase232-summary"></div><div id="p232-block-reason" class="phase232-block"></div>
+        <label class="phase232-confirm"><input id="p232-confirmed" type="checkbox">人間がプレビューと検証結果を確認した</label>
+        <h3>正規化前／後（先頭100件）</h3><div id="p232-preview" class="phase232-preview"></div>
+        <h3>エラー・警告（先頭200件）</h3><div id="p232-issues" class="phase232-issues"></div>
+        <div id="p232-message" class="phase232-message">ローカルファイルを選択してください。内容は外部へ送信されません。</div><textarea id="p232-output" class="phase232-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6940,6 +6955,8 @@
     <script src="phase22-25-main-dashboard-integration.js"></script>
     <script src="phase23-1-external-racing-data-acquisition-safety-design-core.js"></script>
     <script src="phase23-1-main-dashboard-integration.js"></script>
+    <script src="phase23-2-manual-csv-json-import-preview-validation-core.js"></script>
+    <script src="phase23-2-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
