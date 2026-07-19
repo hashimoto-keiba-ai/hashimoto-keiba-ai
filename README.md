@@ -4123,3 +4123,11 @@ Phase22-21 is a Private Local, PLAN_ONLY, protectedMode comparison and human fin
 - Save, restore, and audit-text output are local-only. GitHub Pages, public URLs, and external APIs are not used.
 
 Testing: run `node tests/phase22RetrialResultComparisonFinalEvaluationCore.test.js`, then every `tests/phase22*.test.js`. Run `node --check` for Phase22 JavaScript, verify duplicate HTML IDs and local script references, and run `git diff --check`.
+## Phase22-22A Private Local / Main Dashboard Integration
+
+Phase22-22 can now be opened from the normal `private-local.html` Phase22 feature panel through the **限定適用最終判定・運用引継ぎ計画** card. The same Phase22-22 core operations are also integrated directly after the Phase22-21 panel in `index.html`.
+
+- Use `phase22-22-private-local.html` for the dedicated Phase22-22 screen.
+- Use the Phase22-22 panel in `index.html` for the same manual decision, handoff-plan, status, save, reload, and audit-text operations from the main dashboard.
+- Both routes use the existing `phase22-22-limited-application-final-decision-operational-handoff-plan-core.js` and the same Phase22-22 localStorage key.
+- Operation remains Private Local / PLAN_ONLY / protectedMode. No automatic application, automatic start, production release, purchase, learning update, GitHub Pages, public URL, or external API is introduced.

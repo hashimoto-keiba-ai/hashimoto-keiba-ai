@@ -2584,3 +2584,16 @@ tbody tr:last-child td {
 .phase22-retrial-comparison-text-output textarea { min-height: 180px; padding: 10px; background: #0c1024; color: #eef2ff; border: 1px solid rgba(129, 140, 248, .36); border-radius: 8px; }
 @media (max-width: 900px) { .phase22-retrial-comparison-form { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .phase22-retrial-comparison-form { grid-template-columns: 1fr; } }
+.phase2222-main-panel { border: 1px solid rgba(251, 191, 36, .5); background: radial-gradient(circle at 85% 0, rgba(251, 191, 36, .09), transparent 42%); }
+.phase2222-main-link { padding: 8px 11px; border: 1px solid rgba(251, 191, 36, .45); border-radius: 8px; color: #fde68a; text-decoration: none; font-weight: 800; }
+.phase2222-main-grid { display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 10px; margin: 12px 0; }
+.phase2222-main-grid label { display: grid; gap: 5px; color: #fef3c7; font-size: 12px; font-weight: 800; }
+.phase2222-main-grid input, .phase2222-main-grid select, .phase2222-main-grid textarea { min-width: 0; padding: 9px; border: 1px solid rgba(251, 191, 36, .35); border-radius: 8px; background: #07111f; color: #eef2ff; }
+.phase2222-main-grid textarea { min-height: 78px; resize: vertical; }
+.phase2222-main-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.phase2222-main-summary, .phase2222-main-message { margin: 10px 0; padding: 10px; border-radius: 8px; background: rgba(16, 29, 49, .9); }
+.phase2222-main-list { display: grid; gap: 8px; }
+.phase2222-main-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 8px; padding: 10px; border: 1px solid rgba(251, 191, 36, .25); border-radius: 8px; }
+.phase2222-main-audit { width: 100%; min-height: 220px; margin-top: 12px; padding: 10px; border: 1px solid rgba(251, 191, 36, .35); border-radius: 8px; background: #050b14; color: #e5e7eb; }
+@media (max-width: 900px) { .phase2222-main-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); } }
+@media (max-width: 600px) { .phase2222-main-grid, .phase2222-main-row { grid-template-columns: 1fr; } .phase2222-main-actions button, .phase2222-main-link { width: 100%; } }
