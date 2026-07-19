@@ -1114,6 +1114,19 @@
         <div id="p232-message" class="phase232-message">ローカルファイルを選択してください。内容は外部へ送信されません。</div><textarea id="p232-output" class="phase232-output" readonly></textarea>
       </section>
 
+      <section class="panel phase233-staging-panel" id="phase23-approved-preview-staging-storage" aria-label="Phase23-3 Approved Preview Staging Storage Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-3 / Approved Preview Staging</p><h2>承認済みプレビュー・ステージング保存</h2></div><span class="pill">NON-DESTRUCTIVE / PHASE22 NOT APPLIED</span></div>
+        <p class="console-menu-lead">Phase23-2で検証・人間確認済みのpreviewだけを、追加の人間承認後にPhase23専用領域へ非破壊保存します。normalizedRecordsだけが対象で、rawファイル本文・raw recordsは保存しません。</p>
+        <div class="phase23-safety-strip"><span>承認済みpreviewのみ</span><span>Phase23専用</span><span>非破壊保存</span><span>Phase22へ反映なし</span><span>外部通信なし</span><span>自動購入・自動投票なし</span><span>人間承認必須</span><span>Private Local only</span><span>PLAN_ONLY</span><span>protectedMode</span><span>GitHub Pages / Publicなし</span></div>
+        <div class="phase233-source" id="p233-source"></div><div class="phase233-duplicate">重複判定: <strong id="p233-duplicate">not_duplicate</strong></div><pre id="p233-sample" class="phase233-sample"></pre>
+        <div class="phase233-grid"><label>承認者<input id="p233-approver" type="text"></label><label>承認日時<input id="p233-approved-at" type="datetime-local"></label><label>承認理由<textarea id="p233-reason"></textarea></label><label>ステージング操作者<input id="p233-operator" type="text"></label><label class="phase233-check"><input id="p233-confirmed" type="checkbox">内容を人間が最終確認</label><label class="phase233-check"><input id="p233-phase22-confirmed" type="checkbox">Phase22へ反映しないことを確認</label><label class="phase233-check"><input id="p233-exception" type="checkbox">error例外承認</label><label>例外理由<textarea id="p233-exception-reason"></textarea></label></div>
+        <h3>承認条件</h3><ul id="p233-conditions" class="phase233-conditions"></ul>
+        <div class="phase233-actions"><button id="p233-reload" type="button">Phase23-2 preview再参照</button><button id="p233-stage" type="button">承認してステージング保存</button><button id="p233-audit" type="button">監査用テキスト</button></div>
+        <div class="phase233-grid"><label>操作日時<input id="p233-operated-at" type="datetime-local"></label><label>操作理由<input id="p233-operation-reason" type="text"></label><label>備考<textarea id="p233-notes"></textarea></label></div>
+        <div class="phase233-actions"><button id="p233-fail" type="button">ステージング失敗記録</button><button id="p233-cancel" type="button">取消記録</button><button id="p233-expire" type="button">失効記録</button><button id="p233-rollback-plan" type="button">ロールバック計画</button><button id="p233-rollback-done" type="button">ロールバック完了記録</button></div>
+        <h3>保存済みステージング</h3><div id="p233-records" class="phase233-records"></div><div id="p233-summary" class="phase233-summary"></div><div id="p233-message" class="phase233-message">Phase23-2の人間確認済みpreviewを参照してください。</div><textarea id="p233-output" class="phase233-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6957,6 +6970,8 @@
     <script src="phase23-1-main-dashboard-integration.js"></script>
     <script src="phase23-2-manual-csv-json-import-preview-validation-core.js"></script>
     <script src="phase23-2-main-dashboard-integration.js"></script>
+    <script src="phase23-3-approved-preview-staging-storage-core.js"></script>
+    <script src="phase23-3-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
