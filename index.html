@@ -1149,6 +1149,19 @@
         <div id="p235-message" class="phase235-message"></div><textarea id="p235-output" class="phase235-output" readonly></textarea>
       </section>
 
+      <section class="panel phase236-execution-panel" id="phase23-manual-formal-import-execution" aria-label="Phase23-6 Manual Formal Import Execution Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-6 / Manual Formal Import</p><h2>手動正式インポート実行</h2></div><span class="pill phase236-danger-pill">FORMAL DATA CHANGES</span></div>
+        <p class="console-menu-lead">Phase23-5の準備完了候補を、人間の明示操作だけでPrivate Local正式データへ反映します。自動実行ではありません。正式データが変更されます。Phase22には反映しません。</p>
+        <div class="phase23-safety-strip"><span>人間の明示クリックのみ</span><span>snapshot必須</span><span>原子的保存</span><span>自動rollbackなし</span><span>外部通信なし</span><span>Private Local only</span><span>protectedMode</span></div>
+        <div id="p236-summary" class="phase236-summary"></div><div id="p236-candidates" class="phase236-candidates"></div><div id="p236-detail" class="phase236-detail"></div>
+        <div class="phase236-actions"><button id="p236-reload" type="button">Phase23-5手動再読込</button><button id="p236-plan-generate" type="button">execution plan生成</button><button id="p236-snapshot-create" type="button">実行前snapshot作成</button></div>
+        <pre id="p236-plan" class="phase236-plan"></pre><div id="p236-snapshot" class="phase236-snapshot"></div>
+        <div class="phase236-grid"><label>実行者<input id="p236-operator"></label><label>実行理由<textarea id="p236-reason"></textarea></label><label>実行承認日時<input id="p236-approved-at" type="datetime-local"></label><label>確認文字列<input id="p236-confirmation" autocomplete="off" placeholder="FORMAL IMPORT EXECUTE"></label><label class="phase236-check"><input id="p236-plan-confirmed" data-p236-confirm type="checkbox">execution plan確認</label><label class="phase236-check"><input id="p236-snapshot-confirmed" data-p236-confirm type="checkbox">snapshot read-back確認</label><label class="phase236-check"><input id="p236-rollback-ready" data-p236-confirm type="checkbox">rollback準備確認</label><label class="phase236-check"><input id="p236-high-confirmed" data-p236-confirm type="checkbox">high impact再確認</label><label class="phase236-check"><input id="p236-no-external" data-p236-confirm type="checkbox">外部通信なし</label><label class="phase236-check"><input id="p236-no-auto" data-p236-confirm type="checkbox">自動処理なし</label><label class="phase236-check"><input id="p236-no-purchase" data-p236-confirm type="checkbox">自動購入なし</label><label class="phase236-check"><input id="p236-no-betting" data-p236-confirm type="checkbox">自動投票なし</label><label class="phase236-check"><input id="p236-no-ipat" data-p236-confirm type="checkbox">IPAT接続なし</label></div>
+        <div id="p236-execute-count" class="phase236-execute-count"></div><button id="p236-execute" class="phase236-execute" type="button" disabled>手動正式インポートを実行</button><pre id="p236-result" class="phase236-result"></pre>
+        <hr class="phase236-separator"><h3>手動rollback候補</h3><div class="phase236-grid"><label>rollback承認者<input id="p236-rollback-approver"></label><label>rollback理由<textarea id="p236-rollback-reason"></textarea></label><label>rollback承認日時<input id="p236-rollback-at" type="datetime-local"></label><label>rollback確認文字列<input id="p236-rollback-confirmation" autocomplete="off" placeholder="FORMAL IMPORT ROLLBACK"></label></div><button id="p236-rollback" class="phase236-rollback" type="button" disabled>手動rollbackを実行</button>
+        <div class="phase236-actions"><button id="p236-rejected" type="button" disabled>却下</button><button id="p236-cancelled" type="button" disabled>取消</button><button id="p236-expired" type="button" disabled>期限切れ</button><button id="p236-audit" type="button">監査テキスト</button></div><div id="p236-message" class="phase236-message"></div><textarea id="p236-output" class="phase236-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6998,6 +7011,8 @@
     <script src="phase23-4-main-dashboard-integration.js"></script>
     <script src="phase23-5-formal-import-preparation-review-core.js"></script>
     <script src="phase23-5-main-dashboard-integration.js"></script>
+    <script src="phase23-6-manual-formal-import-execution-core.js"></script>
+    <script src="phase23-6-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
