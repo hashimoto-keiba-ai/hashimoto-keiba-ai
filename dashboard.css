@@ -2562,3 +2562,14 @@ tbody tr:last-child td {
 .phase21-55-private-local-post-final-stack-continuation-check-item.status-blocked, .phase21-55-private-local-post-final-stack-continuation-check-item.status-blockedscriptpolicy { border-color: rgba(248, 113, 113, 0.68); color: #fee2e2; }
 .phase21-55-private-local-post-final-stack-continuation-check-item.status-privatelocalpolicy { border-color: rgba(59, 130, 246, 0.62); color: #dbeafe; }
 @media (max-width: 680px) { .phase21-55-private-local-post-final-stack-continuation-check-actions { align-items: stretch; } .phase21-55-private-local-post-final-stack-continuation-check-actions button { width: 100%; } }
+.phase22-retrial-execution-core { border: 1px solid rgba(45, 212, 191, .55); }
+.phase22-retrial-execution-form { display: grid; grid-template-columns: repeat(5, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
+.phase22-retrial-execution-form label { display: grid; gap: 5px; color: #ccfbf1; font-size: 12px; font-weight: 800; }
+.phase22-retrial-execution-form input, .phase22-retrial-execution-form select { min-width: 0; border: 1px solid rgba(45, 212, 191, .4); border-radius: 8px; padding: 8px; background: #071b1a; color: #f0fdfa; }
+.phase22-retrial-execution-table-wrap { overflow-x: auto; margin-top: 12px; }
+.phase22-retrial-execution-list { display: grid; gap: 7px; min-width: 680px; }
+.phase22-retrial-execution-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.4fr .8fr; gap: 8px; padding: 9px; border: 1px solid rgba(45, 212, 191, .25); border-radius: 9px; color: #ecfdf5; font-size: 12px; }
+.phase22-retrial-execution-text-output { display: grid; gap: 6px; margin-top: 12px; color: #ccfbf1; font-weight: 800; }
+.phase22-retrial-execution-text-output textarea { min-height: 150px; padding: 10px; background: #061817; color: #ecfdf5; border: 1px solid rgba(45, 212, 191, .35); border-radius: 8px; }
+@media (max-width: 900px) { .phase22-retrial-execution-form { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .phase22-retrial-execution-form { grid-template-columns: 1fr; } }

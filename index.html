@@ -1019,6 +1019,17 @@
         <label class="phase22-retrial-entry-text-output"><span>プレーンテキスト出力</span><textarea id="phase22-retrial-entry-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-retrial-execution-core" id="phase22-retrial-execution-status-core" aria-label="Phase22-20 Retrial Start Execution Status Management Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase22-20 / Manual Execution Record</p><h2>再試験開始・実施状況管理コア</h2></div><span class="pill">Private Local / manual only</span></div>
+        <p class="console-menu-lead">Phase22-19で手動登録・開始承認済みの再試験だけを対象に、人間が開始後の状態を記録します。自動処理や本番データへの反映は行いません。</p>
+        <div class="phase22-safety-strip"><span>PLAN_ONLY</span><span>protectedMode</span><span>manual start</span><span>manual status</span><span>no production mutation</span></div>
+        <div class="phase22-retrial-execution-form"><label>対象<select id="phase22-retrial-execution-record"></select></label><label>操作者<input id="phase22-retrial-execution-operator" type="text"></label><label>日時<input id="phase22-retrial-execution-at" type="datetime-local"></label><label>理由<input id="phase22-retrial-execution-reason" type="text"></label><label>備考<input id="phase22-retrial-execution-notes" type="text"></label></div>
+        <div class="phase22-race-actions"><button id="phase22-retrial-execution-started" type="button">開始</button><button id="phase22-retrial-execution-observing" type="button">観測中</button><button id="phase22-retrial-execution-paused" type="button">一時停止</button><button id="phase22-retrial-execution-stopped" type="button">停止</button><button id="phase22-retrial-execution-completed" type="button">完了</button><button id="phase22-retrial-execution-abnormality-detected" type="button">異常発生</button><button id="phase22-retrial-execution-cancelled" type="button">取消</button><button id="phase22-retrial-execution-expired" type="button">期限切れ</button></div>
+        <div class="phase22-race-actions"><button id="phase22-retrial-execution-reload" type="button">Phase22-19再読込</button><button id="phase22-retrial-execution-save" type="button">保存</button><button id="phase22-retrial-execution-text" type="button">テキスト出力</button></div>
+        <div id="phase22-retrial-execution-message" class="phase22-race-message" data-kind="info">承認済み記録を読み込んでください。</div><div id="phase22-retrial-execution-summary" class="phase22-ticket-total-summary" data-kind="success">approved sources 0 / execution records 0</div>
+        <div class="phase22-retrial-execution-table-wrap"><div id="phase22-retrial-execution-list" class="phase22-retrial-execution-list" aria-label="再試験実施状況一覧"></div></div><label class="phase22-retrial-execution-text-output"><span>監査テキスト出力</span><textarea id="phase22-retrial-execution-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6850,6 +6861,7 @@
     <script src="phase22-17-continuation-trial-conditions-retrial-plan-core.js"></script>
     <script src="phase22-18-manual-retrial-creation-prestart-check-core.js"></script>
     <script src="phase22-19-manual-retrial-entry-start-approval-record-core.js"></script>
+    <script src="phase22-20-retrial-start-execution-status-management-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
