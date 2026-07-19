@@ -1137,6 +1137,18 @@
         <div id="p234-message" class="phase234-message"></div><textarea id="p234-output" class="phase234-output" readonly></textarea>
       </section>
 
+      <section class="panel phase235-preparation-panel" id="phase23-formal-import-preparation-review" aria-label="Phase23-5 Formal Import Preparation Review Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-5 / Preparation Review</p><h2>正式インポート準備・人間確認</h2></div><span class="pill">PREPARATION ONLY / NO IMPORT</span></div>
+        <p class="console-menu-lead">Phase23-4のimport_candidate_ready記録について、差分・依存関係・影響範囲・ロールバック・検証計画を人間が確認します。「準備完了」の記録だけで、正式インポートは実行しません。</p>
+        <div class="phase23-safety-strip"><span>Phase23-4 read only</span><span>正式データ read only</span><span>正式インポートなし</span><span>Phase22反映なし</span><span>外部通信なし</span><span>Private Local only</span><span>PLAN_ONLY</span><span>protectedMode</span></div>
+        <div id="p235-summary" class="phase235-summary"></div><div id="p235-candidates" class="phase235-candidates"></div><div id="p235-detail" class="phase235-detail"></div><div id="p235-issues" class="phase235-issues"></div>
+        <h3>ロールバック準備</h3><div class="phase235-grid"><label>計画ID<input id="p235-rollback-id"></label><label>範囲<input id="p235-rollback-scope"></label><label>担当者<input id="p235-rollback-owner"></label><label>理由<input id="p235-rollback-reason"></label><label>準備日時<input id="p235-rollback-at" type="datetime-local"></label><label>復元後検証<input id="p235-rollback-verification"></label><label>備考<textarea id="p235-rollback-notes"></textarea></label><label class="phase235-check"><input id="p235-backup-confirmed" type="checkbox">backup準備確認</label><label class="phase235-check"><input id="p235-snapshot-confirmed" type="checkbox">snapshot準備確認</label></div>
+        <h3>検証計画</h3><div id="p235-verification-plan" class="phase235-check-grid"></div><h3>operator checklist</h3><div id="p235-operator-checklist" class="phase235-check-grid"></div>
+        <h3>人間確認</h3><div class="phase235-grid"><label>review承認者<input id="p235-reviewer"></label><label>review承認理由<textarea id="p235-review-reason"></textarea></label><label>review承認日時<input id="p235-review-at" type="datetime-local"></label><label class="phase235-check"><input id="p235-high-confirmed" type="checkbox">high impact確認</label><label class="phase235-check"><input id="p235-diff-confirmed" type="checkbox">差分確認</label><label class="phase235-check"><input id="p235-counts-confirmed" type="checkbox">件数確認</label><label class="phase235-check"><input id="p235-rollback-confirmed" type="checkbox">rollback確認</label><label class="phase235-check"><input id="p235-verification-confirmed" type="checkbox">検証計画確認</label><label class="phase235-check"><input id="p235-phase22-confirmed" type="checkbox">Phase22非反映</label><label class="phase235-check"><input id="p235-import-confirmed" type="checkbox">正式インポート未実行</label><label class="phase235-check"><input id="p235-external-confirmed" type="checkbox">外部通信なし</label><label class="phase235-check"><input id="p235-auto-confirmed" type="checkbox">自動処理なし</label></div>
+        <div class="phase235-actions"><button id="p235-reload" type="button">Phase23-4再読込</button><button id="p235-prepare" type="button">準備開始・差分確認記録</button><button id="p235-reprepare" type="button">再準備</button><button id="p235-review-start" type="button">人間確認開始</button><button id="p235-revision" type="button">修正要求</button><button id="p235-finalize" type="button">正式インポート実行候補の準備完了</button><button id="p235-rejected" type="button">却下</button><button id="p235-cancelled" type="button">取消</button><button id="p235-expired" type="button">期限切れ</button><button id="p235-audit" type="button">監査テキスト</button></div>
+        <div id="p235-message" class="phase235-message"></div><textarea id="p235-output" class="phase235-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6984,6 +6996,8 @@
     <script src="phase23-3-main-dashboard-integration.js"></script>
     <script src="phase23-4-staging-integrity-reference-import-gate-core.js"></script>
     <script src="phase23-4-main-dashboard-integration.js"></script>
+    <script src="phase23-5-formal-import-preparation-review-core.js"></script>
+    <script src="phase23-5-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

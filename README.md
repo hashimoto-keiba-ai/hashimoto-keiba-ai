@@ -4224,3 +4224,14 @@ Phase23-4 reads only Phase23-3 records whose status is `staged`, validates their
 - There is no external communication, automatic acquisition/approval/import/purchase/betting, IPAT connection, scheduled task, GitHub Pages, or Public release.
 
 See `docs/phase23-4-staging-integrity-reference-import-gate-core.md` for validation rules, lifecycle, storage boundaries, and the Phase23-5 boundary.
+
+## Phase23-5 Formal Import Preparation Review
+
+Phase23-5 reads only Phase23-4 `import_candidate_ready` gate records and their Phase23-3 staging references. It classifies planned differences against a read-only formal-data view, validates dependency order and impact, and records rollback preparation, a post-import verification plan, the operator checklist, and final human review. It never executes formal import.
+
+- Difference classes are `new_record`, `exact_match`, `update_candidate`, `conflicting_match`, `missing_dependency`, `ambiguous_match`, `unsupported_change`, and `review_unavailable`. No existing data is overwritten.
+- Critical/unknown impact, unresolved conflicts, dependency errors, incomplete rollback information, incomplete verification/checklist, or missing human approval block readiness. High impact requires explicit confirmation.
+- Storage key: `hashimotoKeibaAi.phase23.formalImportPreparationReview.v1`. Phase23-1 through Phase23-4, Phase22, and formal-data stores remain unchanged. `formalImportExecuted=false` and `phase22Applied=false` are enforced.
+- `ready_for_formal_import_execution` means preparation/audit readiness only. There is no external communication, automatic acquisition/approval/import, insert/update/upsert/delete execution, purchase, betting, IPAT connection, GitHub Pages, or Public release.
+
+See `docs/phase23-5-formal-import-preparation-review-core.md` for the full preparation contract and Phase23-6 boundary.
