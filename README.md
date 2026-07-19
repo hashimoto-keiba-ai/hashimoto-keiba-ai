@@ -4201,3 +4201,15 @@ Phase23-2 reads one human-selected local CSV or JSON file inside the browser, pa
 - Local files are never transmitted. Phase22 and Phase23-1 storage are not written. There is no external communication, scraping, automatic acquisition, purchase, betting, correction, registration, retry, scheduled task, GitHub Pages, or Public release. `Private Local only`, `PLAN_ONLY`, and `protectedMode` remain mandatory.
 
 See `docs/phase23-2-manual-csv-json-import-preview-validation-core.md` for limits, mappings, normalization, validation, states, audit fields, and the Phase23-3 boundary.
+
+## Phase23-3 Approved Preview Staging Storage
+
+Phase23-3 accepts only a Phase23-2 `preview_ready` dataset that has been explicitly confirmed by a human in the current browser session. After a second manual approval gate, sanitized `normalizedRecords` can be appended to the Phase23-only staging store. Raw file content and raw records are never staged.
+
+- Approval requires a source validation ID, known model, record/hash metadata, zero fatal issues, human confirmation, approver/time/reason, all safety flags, and explicit confirmation that Phase22 remains untouched. Errors require a separately checked exception approval and reason; warnings remain eligible for human approval.
+- Exact and conflicting duplicates are rejected. Possible duplicates are shown for human review. Records use immutable staging IDs and increasing versions; existing records are retained.
+- Cancellation, expiry, staging failure, rollback planning, and rollback completion append audit information. Rollback invalidates the Phase23 staging state and never changes Phase22 or physically deletes staged records.
+- Storage key: `hashimotoKeibaAi.phase23.approvedPreviewStagingStorage.v1`; maximum serialized staging payload is 2 MiB and maximum records per approved preview is 5,000. Save failures restore the prior value and never evict existing data.
+- `Private Local only`, `PLAN_ONLY`, `protectedMode`, no external communication, no automatic approval/acquisition/purchase/betting, no Phase22 application, no GitHub Pages, and no Public release remain mandatory.
+
+See `docs/phase23-3-approved-preview-staging-storage-core.md` for the approval contract, duplicate rules, non-destructive lifecycle, stored schema, and Phase23-4 boundary.
