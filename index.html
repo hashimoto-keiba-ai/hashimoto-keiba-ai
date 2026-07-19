@@ -1162,6 +1162,18 @@
         <div class="phase236-actions"><button id="p236-rejected" type="button" disabled>却下</button><button id="p236-cancelled" type="button" disabled>取消</button><button id="p236-expired" type="button" disabled>期限切れ</button><button id="p236-audit" type="button">監査テキスト</button></div><div id="p236-message" class="phase236-message"></div><textarea id="p236-output" class="phase236-output" readonly></textarea>
       </section>
 
+      <section class="panel phase237-audit-panel" id="phase23-post-import-verification-audit" aria-label="Phase23-7 Post Import Verification Audit Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-7 / Read-only Audit</p><h2>正式インポート後検証・監査</h2></div><span class="pill">READ ONLY VERIFICATION</span></div>
+        <p class="console-menu-lead">Phase23-6の実行記録、正式データ、snapshot、pendingを人間操作で再検証します。正式データは変更しません。自動修復しません。自動rollbackしません。</p>
+        <div class="phase23-safety-strip"><span>Phase23-6 read only</span><span>formalData read only</span><span>snapshot/pending read only</span><span>自動検証なし</span><span>自動修復なし</span><span>自動rollbackなし</span><span>Private Local only</span><span>protectedMode</span></div>
+        <div id="p237-summary" class="phase237-summary"></div><div id="p237-executions" class="phase237-executions"></div><div id="p237-detail" class="phase237-detail"></div><div id="p237-issues" class="phase237-issues"></div>
+        <div class="phase237-actions"><button id="p237-reload" type="button">Phase23-6手動再読込</button><button id="p237-verify" type="button">読取専用検証を開始</button></div>
+        <div class="phase237-grid"><label>監査者<input id="p237-reviewer"></label><label>監査理由<textarea id="p237-reason"></textarea></label><label>監査日時<input id="p237-reviewed-at" type="datetime-local"></label><label>follow-up備考<textarea id="p237-notes"></textarea></label><label class="phase237-check"><input id="p237-warning-confirmed" type="checkbox">warning全件確認</label><label>warning確認理由<input id="p237-warning-reason"></label><label class="phase237-check"><input id="p237-checksums" type="checkbox">checksum確認</label><label class="phase237-check"><input id="p237-references" type="checkbox">参照整合性確認</label><label class="phase237-check"><input id="p237-counts" type="checkbox">件数整合性確認</label><label class="phase237-check"><input id="p237-provenance" type="checkbox">provenance確認</label><label class="phase237-check"><input id="p237-pending" type="checkbox">pending確認</label><label class="phase237-check"><input id="p237-nondestructive" type="checkbox">Phase23-1〜6/Phase22非変更確認</label><label class="phase237-check"><input id="p237-safety" type="checkbox">外部通信・自動修復・自動rollbackなし</label></div>
+        <div class="phase237-actions"><button id="p237-clean" type="button">verified clean</button><button id="p237-warnings" type="button">verified with warnings</button><button id="p237-rollback-review" class="phase237-warning" type="button">rollback review required</button><button id="p237-investigation" class="phase237-danger" type="button">manual investigation required</button><button id="p237-close" type="button">closed</button></div>
+        <h3>follow-up候補</h3><div class="phase237-grid"><label>種別<select id="p237-follow-up-type"><option>re_verification</option><option>manual_investigation</option><option>rollback_review</option><option>provenance_review</option><option>reference_review</option><option>count_review</option><option>checksum_review</option><option>chronology_review</option><option>pending_review</option></select></label><label>タイトル<input id="p237-follow-up-title"></label><label>理由<textarea id="p237-follow-up-reason"></textarea></label><label>推奨手動対応<textarea id="p237-follow-up-action"></textarea></label><label>担当者<input id="p237-follow-up-owner"></label></div><button id="p237-follow-up" type="button">follow-up候補を記録</button>
+        <div class="phase237-actions"><button id="p237-audit-text" type="button">監査用テキスト</button><button id="p237-copy" type="button">テキストを選択</button></div><div id="p237-message" class="phase237-message"></div><textarea id="p237-output" class="phase237-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -7013,6 +7025,8 @@
     <script src="phase23-5-main-dashboard-integration.js"></script>
     <script src="phase23-6-manual-formal-import-execution-core.js"></script>
     <script src="phase23-6-main-dashboard-integration.js"></script>
+    <script src="phase23-7-post-import-verification-audit-core.js"></script>
+    <script src="phase23-7-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
