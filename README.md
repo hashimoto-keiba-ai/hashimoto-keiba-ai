@@ -4106,3 +4106,20 @@ Phase22-20 is a Private Local, PLAN_ONLY, protectedMode audit core for manually 
 - Save, restore, and plain-text audit output are local-only. GitHub Pages, public URLs, and external APIs are not used.
 
 Testing: run `node tests/phase22RetrialStartExecutionStatusManagementCore.test.js`, then every `tests/phase22*.test.js`. Also run `node --check` for Phase22 JavaScript, verify duplicate HTML IDs and local script references, and run `git diff --check`.
+## Phase22-21 Retrial Result Comparison Final Evaluation Core
+
+Phase22-21 is a Private Local, PLAN_ONLY, protectedMode comparison and human final-evaluation core. It reads Phase22-16 initial trial evaluations and only Phase22-20 retrials whose execution status is `completed` or `stopped`. The sources are linked through the deterministic Phase22-17 retrial plan ID derived from the Phase22-16 evaluation ID.
+
+- Phase22-16 source key (read only): `hashimotoKeibaAi.phase22.limitedTrialResultEvaluationContinuationDecision.v1`
+- Phase22-20 source key (read only): `hashimotoKeibaAi.phase22.retrialStartExecutionStatusManagement.v1`
+- Phase22-21 key: `hashimotoKeibaAi.phase22.retrialResultComparisonFinalEvaluation.v1`
+- Phase22-16 through Phase22-20 localStorage is never written, deleted, or migrated.
+- Comparison records include target race count, valid observation count, abnormality count, initial stop reason, retrial stop reason, and retrial completion reason.
+- Each metric records its initial value, retrial value, difference, judgement, and human comment.
+- Recommendation candidates are `improved`, `equivalent`, `worsened`, `insufficient_data`, and `stop_required`. A stopped retrial with a stop reason recommends `stop_required`; missing observation data recommends `insufficient_data`; abnormality and valid-observation ratios determine the remaining suggestions.
+- The recommendation is advisory and stored separately from the human final result. Finalization requires a human evaluator, timestamp, reason, and optional notes.
+- Main flow: `draft -> awaiting_comparison -> compared -> awaiting_review -> reviewed -> awaiting_final_evaluation -> finalized`. `on_hold` can return to comparison. `finalized`, `blocked`, `cancelled`, and `expired` are terminal and cannot resume.
+- No automatic adoption, stop, continuation, production application, purchase, rule application, or learning update occurs. Predictions, tickets, rules, learning data, and source records are not mutated.
+- Save, restore, and audit-text output are local-only. GitHub Pages, public URLs, and external APIs are not used.
+
+Testing: run `node tests/phase22RetrialResultComparisonFinalEvaluationCore.test.js`, then every `tests/phase22*.test.js`. Run `node --check` for Phase22 JavaScript, verify duplicate HTML IDs and local script references, and run `git diff --check`.

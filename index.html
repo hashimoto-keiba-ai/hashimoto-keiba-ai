@@ -1030,6 +1030,18 @@
         <div class="phase22-retrial-execution-table-wrap"><div id="phase22-retrial-execution-list" class="phase22-retrial-execution-list" aria-label="再試験実施状況一覧"></div></div><label class="phase22-retrial-execution-text-output"><span>監査テキスト出力</span><textarea id="phase22-retrial-execution-text-output" readonly></textarea></label>
       </section>
 
+      <section class="panel phase22-retrial-comparison-core" id="phase22-retrial-result-comparison-core" aria-label="Phase22-21 Retrial Result Comparison Final Evaluation Core">
+        <div class="section-heading"><div><p class="eyebrow">Phase22-21 / Human Final Evaluation</p><h2>再試験結果比較・最終評価コア</h2></div><span class="pill">Private Local / comparison only</span></div>
+        <p class="console-menu-lead">Phase22-16の初回試験評価と、completedまたはstoppedになったPhase22-20再試験を比較します。推奨判定と人間の最終判定は分離され、本番反映は行いません。</p>
+        <div class="phase22-safety-strip"><span>PLAN_ONLY</span><span>protectedMode</span><span>human final only</span><span>no auto adopt</span><span>no production mutation</span></div>
+        <div class="phase22-retrial-comparison-form"><label>対象<select id="phase22-retrial-comparison-record"></select></label><label>再試験対象数<input id="phase22-retrial-target-count" type="number" min="0"></label><label>有効観測数<input id="phase22-retrial-valid-count" type="number" min="0"></label><label>異常件数<input id="phase22-retrial-abnormal-count" type="number" min="0"></label><button id="phase22-retrial-comparison-apply-values" type="button">比較値を反映</button></div>
+        <div class="phase22-retrial-comparison-form"><label>評価者・操作者<input id="phase22-retrial-comparison-operator" type="text"></label><label>日時<input id="phase22-retrial-comparison-at" type="datetime-local"></label><label>理由<input id="phase22-retrial-comparison-reason" type="text"></label><label>備考<input id="phase22-retrial-comparison-notes" type="text"></label><label>人間の最終判定<select id="phase22-retrial-final-result"><option value="improved">improved</option><option value="equivalent">equivalent</option><option value="worsened">worsened</option><option value="insufficient_data">insufficient_data</option><option value="stop_required">stop_required</option></select></label></div>
+        <div class="phase22-race-actions"><button id="phase22-retrial-comparison-awaiting-comparison" type="button">比較待ち</button><button id="phase22-retrial-comparison-compared" type="button">比較済み</button><button id="phase22-retrial-comparison-awaiting-review" type="button">レビュー待ち</button><button id="phase22-retrial-comparison-reviewed" type="button">レビュー済み</button><button id="phase22-retrial-comparison-awaiting-final-evaluation" type="button">最終評価待ち</button><button id="phase22-retrial-comparison-finalize" type="button">最終評価確定</button><button id="phase22-retrial-comparison-on-hold" type="button">保留</button><button id="phase22-retrial-comparison-blocked" type="button">ブロック</button><button id="phase22-retrial-comparison-cancelled" type="button">取消</button><button id="phase22-retrial-comparison-expired" type="button">期限切れ</button></div>
+        <div class="phase22-race-actions"><button id="phase22-retrial-comparison-reload" type="button">Phase22-16・20再読込</button><button id="phase22-retrial-comparison-save" type="button">保存</button><button id="phase22-retrial-comparison-text" type="button">監査テキスト出力</button></div>
+        <div id="phase22-retrial-comparison-message" class="phase22-race-message" data-kind="info">初回評価と終了済み再試験を読み込んでください。</div><div id="phase22-retrial-comparison-summary" class="phase22-ticket-total-summary" data-kind="success">eligible retrials 0 / linked comparisons 0</div>
+        <div class="phase22-retrial-comparison-table-wrap"><div id="phase22-retrial-comparison-list" class="phase22-retrial-comparison-list" aria-label="再試験結果比較一覧"></div></div><label class="phase22-retrial-comparison-text-output"><span>監査テキスト出力</span><textarea id="phase22-retrial-comparison-text-output" readonly></textarea></label>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -6862,6 +6874,7 @@
     <script src="phase22-18-manual-retrial-creation-prestart-check-core.js"></script>
     <script src="phase22-19-manual-retrial-entry-start-approval-record-core.js"></script>
     <script src="phase22-20-retrial-start-execution-status-management-core.js"></script>
+    <script src="phase22-21-retrial-result-comparison-final-evaluation-core.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
