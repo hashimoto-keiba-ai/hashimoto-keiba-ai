@@ -1,0 +1,31 @@
+const assert=require("assert"),fs=require("fs"),path=require("path"),core=require("../phase23-audit-follow-up-manual-resolution-execution-record-core.js");
+const root=path.join(__dirname,".."),read=f=>fs.readFileSync(path.join(root,f),"utf8");
+function plan(status="plan_approved",severity="error"){return{resolutionPlanId:"rp-1",version:3,auditRecordId:"audit-1",followUpId:"fu-1",sourceSeverity:severity,sourceIssueIds:["issue-1"],priority:"high",riskLevel:"high",status,plannedActions:[{actionId:"a1",sequence:1,actionType:"inspect_audit_record",description:"inspect",owner:"Human"},{actionId:"a2",sequence:2,actionType:"collect_review_evidence",description:"collect",owner:"Human",prerequisiteActionIds:["a1"]}]}}
+function memory(initial={},mode="ok"){const data={...initial};return{data,getItem:k=>Object.prototype.hasOwnProperty.call(data,k)?data[k]:null,setItem(k,v){if(mode==="fail")throw Error("quota");data[k]=mode==="badread"?"corrupt":String(v)},removeItem(){throw Error("physical deletion forbidden")}}}
+for(const s of core.ELIGIBLE_PLAN_STATUSES)assert.strictEqual(core.eligiblePlans({records:[plan(s)]}).length,1);
+for(const s of["awaiting_manual_plan_review","rejected","cancelled","expired","closed"])assert.strictEqual(core.eligiblePlans({records:[plan(s)]}).length,0);
+assert.ok(core.planProblems(plan("rejected")).includes("plan_not_approved"));
+assert.ok(core.planProblems({...plan(),terminalLocked:true}).includes("plan_terminal_locked"));
+let made=core.createExecutionRecord(plan(),{createdBy:"Operator"},new Date("2026-07-24T00:00:00Z"));assert.ok(made.created);let r=made.record;
+assert.deepStrictEqual(r.actions.map(a=>a.actionId),["a1","a2"]);assert.deepStrictEqual(r.actions.map(a=>a.sequence),[1,2]);assert.deepStrictEqual(r.actions[1].prerequisiteActionIds,["a1"]);
+assert.strictEqual(core.recordAction(r,"missing","in_progress",{operator:"O",executedAt:"2026-07-24",resultSummary:"x"}).problems[0],"action_not_in_plan");
+assert.ok(core.recordAction(r,"a2","completed",{operator:"O",executedAt:"2026-07-24",resultSummary:"x"}).problems.includes("dependency_not_completed"));
+let x=core.recordAction(r,"a1","in_progress",{operator:"O",executedAt:"2026-07-24",notes:"start"});assert.ok(x.recorded);r=x.record;
+x=core.recordAction(r,"a1","paused",{operator:"O",executedAt:"2026-07-24"});assert.ok(x.recorded);r=x.record;
+x=core.recordAction(r,"a1","in_progress",{operator:"O",executedAt:"2026-07-24"});assert.ok(x.recorded);r=x.record;
+x=core.recordAction(r,"a1","completed",{operator:"O",executedAt:"2026-07-24",resultSummary:"done"});assert.ok(x.recorded);r=x.record;
+x=core.recordAction(r,"a2","in_progress",{operator:"O",executedAt:"2026-07-24"});assert.ok(x.recorded);r=x.record;
+assert.ok(core.recordAction(r,"a2","blocked",{operator:"O",executedAt:"2026-07-24",resultSummary:"blocked"}).problems.includes("reason_required"));
+x=core.recordAction(r,"a2","completed",{operator:"O",executedAt:"2026-07-24",resultSummary:"done"});assert.ok(x.recorded);r=x.record;
+let ev=core.addEvidence(r,{evidenceId:"ev-1",evidenceType:"manual_summary",summary:"metadata only",checksum:"sha256-x",localReference:"local/ref",capturedBy:"O",rawPayload:{secret:"x"},password:"x"});assert.ok(ev.added);assert.ok(!Object.prototype.hasOwnProperty.call(ev.evidence,"rawPayload"));assert.ok(!JSON.stringify(ev.evidence).includes("password"));r=ev.record;
+assert.ok(core.finalizeExecution(r,"execution_completed",{operator:"O",executedAt:"2026-07-24",resultSummary:"done",unresolvedIssues:[{severity:"error",summary:"left"}]}).problems.includes("fatal_or_error_unresolved"));
+assert.ok(core.finalizeExecution(r,"execution_partially_completed",{operator:"O",executedAt:"2026-07-24",resultSummary:"partial"}).problems.includes("partial_reason_and_remaining_work_required"));
+let final=core.finalizeExecution(r,"execution_completed",{operator:"O",executedAt:"2026-07-24",resultSummary:"done",unresolvedIssues:[],rollbackRequired:true,reimportRequired:true});assert.ok(final.recorded);assert.strictEqual(final.record.rollbackReview.required,true);assert.strictEqual(final.record.reimportReview.required,true);assert.ok(core.recordAction(final.record,"a1","in_progress",{operator:"O",executedAt:"2026-07-24"}).problems.includes("terminal_locked"));
+const source={formal:"same",snapshot:"same",pending:"same",p236:"same",p237:"same",p238:"same",phase22:"same"},mem=memory(source);let saved=core.addRecord(core.defaultStore(),made.record,mem,new Date("2026-07-24"));assert.ok(saved.saved);for(const[k,v]of Object.entries(source))assert.strictEqual(mem.data[k],v);
+const old=mem.data[core.STORAGE_KEY],fail=memory({[core.STORAGE_KEY]:old},"fail");assert.strictEqual(core.saveStore({records:[final.record]},fail).saved,false);assert.strictEqual(fail.data[core.STORAGE_KEY],old);
+assert.strictEqual(core.replaceRecord({records:[final.record]},{...final.record,resultSummary:"changed"},mem).reason,"terminal_locked");
+const index=read("index.html"),local=read("private-local.html"),code=read("phase23-audit-follow-up-manual-resolution-execution-record-core.js")+read("phase23-9-main-dashboard-integration.js");
+assert.ok(index.includes('id="phase23-audit-follow-up-manual-resolution-execution"'));assert.ok(local.includes('href="index.html#phase23-audit-follow-up-manual-resolution-execution"'));assert.ok(index.indexOf('id="phase23-audit-follow-up-resolution-planning"')<index.indexOf('id="phase23-audit-follow-up-manual-resolution-execution"'));assert.ok(index.indexOf("phase23-8-main-dashboard-integration.js")<index.indexOf("phase23-audit-follow-up-manual-resolution-execution-record-core.js"));
+for(const pattern of[/\bfetch\s*\(/,/XMLHttpRequest/,/\bWebSocket\s*\(/,/\bEventSource\s*\(/,/sendBeacon/,/setInterval\s*\(/,/addEventListener\s*\(\s*["']storage/,/\.removeItem\s*\(/])assert.ok(!pattern.test(code));
+for(const file of["index.html","private-local.html","phase22-22-private-local.html"]){const html=read(file),ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.strictEqual(ids.length,new Set(ids).size,file);for(const m of html.matchAll(/<script[^>]+src="([^"]+)"/g))if(!/^(?:https?:)?\/\//.test(m[1]))assert.ok(fs.existsSync(path.join(root,m[1])),m[1])}
+console.log("Phase23-9 manual resolution execution record core tests passed");

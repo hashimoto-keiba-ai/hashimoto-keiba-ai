@@ -1183,6 +1183,18 @@
         <div class="phase238-actions"><button id="p238-create" type="button">解決計画を作成・保存</button><button id="p238-approve" type="button">人間レビュー・計画承認</button><button id="p238-start" type="button">対応開始を記録</button><button id="p238-complete" type="button">対応結果を記録</button><button id="p238-verify" type="button">解決検証を記録</button></div><div class="phase238-actions"><button id="p238-no-action" type="button">no action承認を記録</button><button id="p238-rollback-review" class="phase238-warning" type="button">rollback検討推奨を記録</button><button id="p238-escalate" class="phase238-danger" type="button">手動判断要を記録</button><button id="p238-audit-text" type="button">監査テキスト出力</button></div><div id="p238-message" class="phase238-message" role="status"></div><textarea id="p238-output" class="phase238-output" readonly></textarea>
       </section>
 
+      <section class="panel phase239-execution-panel" id="phase23-audit-follow-up-manual-resolution-execution" aria-label="Phase23-9 manual resolution execution">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-9 / MANUAL RECORD ONLY</p><h2>監査フォローアップ・手動解決実施記録</h2></div><span class="pill">PRIVATE LOCAL</span></div>
+        <p class="console-menu-lead">Phase23-8で人間が承認した計画について、別途人間が行った作業の状況・結果・証跡要約・残存問題だけを追記記録します。</p>
+        <div class="phase23-safety-strip"><span>protectedMode</span><span>PLAN_ONLY</span><span>sources read only</span><span>no automatic repair</span><span>no rollback / re-import</span><span>Phase22 unchanged</span></div>
+        <div class="phase239-grid"><label>承認済み計画<select id="p239-plan"></select></label><label>実施記録<select id="p239-record"></select></label><label>action<select id="p239-action"></select></label><label>実施者<input id="p239-operator"></label><label>action状態<select id="p239-action-status"><option>in_progress</option><option>paused</option><option>completed</option><option>failed</option><option>blocked</option></select></label><label>最終状態<select id="p239-final-status"><option>awaiting_manual_verification</option><option>execution_completed</option><option>execution_partially_completed</option><option>execution_failed</option></select></label></div>
+        <div id="p239-detail" class="phase239-detail"></div>
+        <div class="phase239-grid"><label>結果要約<textarea id="p239-result"></textarea></label><label>注記<textarea id="p239-notes"></textarea></label><label>理由<textarea id="p239-reason"></textarea></label><label>影響<textarea id="p239-impact"></textarea></label><label>次の手動判断<textarea id="p239-next"></textarea></label><label>残作業<textarea id="p239-remaining"></textarea></label><label>残存リスク<textarea id="p239-risk"></textarea></label><label>未解決事項<textarea id="p239-unresolved"></textarea></label><label>未解決severity<select id="p239-unresolved-level"><option>warning</option><option>error</option><option>fatal</option><option>info</option></select></label></div>
+        <div class="phase239-grid"><label>証跡ID<input id="p239-evidence-id"></label><label>証跡種別<input id="p239-evidence-type"></label><label>証跡要約<textarea id="p239-evidence-summary"></textarea></label><label>checksum<input id="p239-checksum"></label><label>ローカル参照<input id="p239-local-ref"></label><label class="phase239-check"><input id="p239-rollback" type="checkbox">rollback手動検討が必要</label><label class="phase239-check"><input id="p239-reimport" type="checkbox">再インポート別途承認が必要</label></div>
+        <div class="phase239-actions"><button id="p239-reload" type="button">Phase23-8を手動再読込</button><button id="p239-create" type="button">実施記録を作成</button><button id="p239-action-record" type="button">action状況を追記</button><button id="p239-evidence" type="button">証跡メタデータを追記</button><button id="p239-finalize" type="button">実施結果を記録</button></div>
+        <div id="p239-message" class="phase239-message" role="status"></div><textarea id="p239-output" class="phase239-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -7038,6 +7050,8 @@
     <script src="phase23-7-main-dashboard-integration.js"></script>
     <script src="phase23-8-audit-follow-up-resolution-planning-core.js"></script>
     <script src="phase23-8-main-dashboard-integration.js"></script>
+    <script src="phase23-audit-follow-up-manual-resolution-execution-record-core.js"></script>
+    <script src="phase23-9-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
