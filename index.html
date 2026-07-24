@@ -1207,6 +1207,17 @@
         <div id="p2310-message" class="phase2310-message" role="status"></div><textarea id="p2310-output" class="phase2310-output" readonly></textarea>
       </section>
 
+      <section class="panel phase2311-closure-panel" id="phase23-audit-follow-up-final-closure-handoff" aria-label="Phase23-11 final closure handoff">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-11 / FINAL HUMAN RECORD</p><h2>監査フォローアップ最終閉鎖・引継ぎ</h2></div><span class="pill">PRIVATE LOCAL</span></div>
+        <p class="console-menu-lead">Phase23-10の検証判定を人間が最終確認し、閉鎖または次工程への手動引継ぎ記録だけを追記します。</p>
+        <div class="phase23-safety-strip"><span>protectedMode</span><span>PLAN_ONLY</span><span>Phase23-8〜10 read only</span><span>no automatic closure / handoff</span><span>no repair / rollback / re-import</span><span>Phase22 unchanged</span></div>
+        <div class="phase2311-grid"><label>Phase23-10判定済み記録<select id="p2311-verification"></select></label><label>閉鎖・引継ぎ記録<select id="p2311-record"></select></label><label>確認者<input id="p2311-reviewer"></label><label>最終判断<select id="p2311-decision"><option>closure_approved</option><option>closure_approved_with_conditions</option><option>handoff_to_rework</option><option>handoff_to_plan_revision</option><option>handoff_to_manual_investigation</option><option>handoff_to_rollback_review</option><option>closure_rejected</option></select></label><label>最終判断理由<textarea id="p2311-reason"></textarea></label><label>証跡確認結果<textarea id="p2311-evidence-result"></textarea></label></div>
+        <div id="p2311-detail" class="phase2311-detail"></div><pre id="p2311-source" class="phase2311-source"></pre>
+        <div class="phase2311-grid"><label>残存問題<textarea id="p2311-issues"></textarea></label><label>severity<select id="p2311-severity"><option>warning</option><option>error</option><option>fatal</option><option>info</option></select></label><label>残存リスク<select id="p2311-risk"><option>none</option><option>low</option><option>medium</option><option>high</option><option>critical</option><option>unknown</option></select></label><label>条件<textarea id="p2311-conditions"></textarea></label><label>次の責任者<input id="p2311-owner"></label><label>期限<input id="p2311-due" type="date"></label><label>再確認方法<textarea id="p2311-recheck"></textarea></label><label>条件未達時の扱い<textarea id="p2311-condition-failure"></textarea></label><label>引継ぎ先<input id="p2311-destination"></label><label>必要証跡<textarea id="p2311-required-evidence"></textarea></label><label>完了条件<textarea id="p2311-completion"></textarea></label><label>対象action ID（カンマ区切り）<input id="p2311-action-ids"></label><label>必要作業<textarea id="p2311-required-work"></textarea></label><label>修正・調査・rollback検討対象<textarea id="p2311-scope"></textarea></label><label>影響範囲<textarea id="p2311-impact"></textarea></label><label>次の手動対応<textarea id="p2311-next"></textarea></label><label class="phase2311-check"><input id="p2311-conditions-complete" type="checkbox">必須条件完了を人間確認</label><label class="phase2311-check"><input id="p2311-human-confirm" type="checkbox">最終安全条件を人間確認</label><label class="phase2311-check"><input id="p2311-reapproval" type="checkbox">計画の再承認が必要</label></div>
+        <div class="phase2311-buttons"><button id="p2311-reload" type="button">Phase23-8〜10を手動再読込</button><button id="p2311-create" type="button">記録を作成</button><button id="p2311-start" type="button">最終確認開始</button><button id="p2311-pause" type="button">保留</button><button id="p2311-resume" type="button">再開</button><button id="p2311-decide" type="button">最終判断を記録</button><button id="p2311-confirm-conditions" type="button">条件完了を確認</button><button id="p2311-close" type="button">closed</button><button id="p2311-cancel" type="button">取消</button></div>
+        <div id="p2311-message" class="phase2311-message" role="status"></div><textarea id="p2311-output" class="phase2311-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -7066,6 +7077,8 @@
     <script src="phase23-9-main-dashboard-integration.js"></script>
     <script src="phase23-audit-follow-up-manual-resolution-verification-decision-core.js"></script>
     <script src="phase23-10-main-dashboard-integration.js"></script>
+    <script src="phase23-audit-follow-up-final-closure-handoff-core.js"></script>
+    <script src="phase23-11-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

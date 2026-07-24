@@ -4275,3 +4275,9 @@ Private Local only / protectedMode / PLAN_ONLYです。formalData、snapshot、p
 Phase23-8の承認済み計画とPhase23-9の検証対象実施記録を人間が照合し、action結果・証跡・残存問題・残存リスク・安全条件について、合格、条件付き合格、再対応、計画差戻し、手動調査、rollback検討、失敗、却下を追記式で記録します。合格条件、判定別必須項目、参照整合、重複防止、terminal lockを強制します。
 
 Private Local only / protectedMode / PLAN_ONLYです。formalData、snapshot、pending、Phase23-6/7/8/9、Phase22は読取専用で、自動開始・判定・承認・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` のPhase23-10カードから利用します。テストは `node tests/phase23AuditFollowUpManualResolutionVerificationDecisionCore.test.js`、詳細は `docs/phase23-10-audit-follow-up-manual-resolution-verification-decision-core.md` を参照してください。
+
+### Phase23-11 監査フォローアップ最終閉鎖・引継ぎ
+
+Phase23-8〜10の計画、手動実施、検証判定を読取専用で照合し、人間が最終閉鎖、条件付き閉鎖、rework・計画修正・手動調査・rollback検討への引継ぎ、または却下を追記式で記録します。判定別の前提と必須項目、fatal/error・残存リスク・証跡ゲート、重複防止、terminal lockを強制します。
+
+Private Local only / protectedMode / PLAN_ONLYです。formalData、snapshot、pending、Phase23-6/7/8/9/10、Phase22は読取専用で、自動開始・閉鎖・引継ぎ・承認・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` のPhase23-11カードから利用します。テストは `node tests/phase23AuditFollowUpFinalClosureHandoffCore.test.js`、詳細は `docs/phase23-11-audit-follow-up-final-closure-handoff-core.md` を参照してください。
