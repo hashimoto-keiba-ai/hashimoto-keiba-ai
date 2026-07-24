@@ -1241,6 +1241,19 @@
         <div id="p23final-message" class="phase23final-message" role="status"></div><textarea id="p23final-output" class="phase23final-output" readonly></textarea>
       </section>
 
+      <section class="panel phase241-panel" id="phase24-external-data-acquisition-foundation" aria-label="Phase24-1 external data acquisition foundation">
+        <div class="section-heading"><div><p class="eyebrow">Phase24-1 / FOUNDATION ONLY</p><h2>外部データ取得基盤</h2></div><span class="pill">NO COMMUNICATION</span></div>
+        <p class="console-menu-lead">取得元・対象・形式・検証・手動承認・将来のPrivate Local一時保存とPhase23引継ぎ計画だけを管理します。外部通信や取得は実行しません。</p>
+        <div class="phase23-safety-strip"><span>Private Local only</span><span>protectedMode</span><span>PLAN_ONLY</span><span>no HTTP/API/scraping</span><span>no schedule/download</span><span>no IPAT/purchase/import</span></div>
+        <div id="p241-summary" class="phase241-summary"></div>
+        <div class="phase241-grid"><label>取得元<select id="p241-source"></select></label><label>取得対象<select id="p241-target"></select></label><label>取得要求<select id="p241-request"></select></label><label>確認者<input id="p241-reviewer"></label><label>理由<textarea id="p241-reason"></textarea></label></div>
+        <div class="phase241-grid"><label>取得元ID<input id="p241-source-id"></label><label>名称<input id="p241-source-name"></label><label>種別<select id="p241-source-type"><option>official_provider</option><option>official_website</option><option>licensed_vendor</option><option>third_party</option><option>manual_source</option><option>other</option></select></label><label>公式・非公式区分<input id="p241-classification"></label><label>利用目的<textarea id="p241-purpose"></textarea></label><label>参照URL<input id="p241-url"></label><label>規約確認<select id="p241-terms-status"><option>confirmed</option><option>unconfirmed</option><option>unknown</option></select></label><label>利用条件確認<input id="p241-usage" value="confirmed"></label><label>robots確認<input id="p241-robots-status"></label><label>再配布確認<input id="p241-redistribution-status"></label><label>保存可否確認<input id="p241-storage-status"></label><label><input id="p241-auth" type="checkbox">認証必須</label><label><input id="p241-public" type="checkbox">Public公開前提</label></div>
+        <div class="phase241-grid"><label>対象ID<input id="p241-target-id"></label><label>分類<select id="p241-target-type"><option>odds</option><option>race_card</option><option>race_result</option><option>payout</option><option>meeting_information</option><option>other</option></select></label><label>方式候補<select id="p241-method"><option>api</option><option>csv</option><option>json</option><option>html</option><option>manual_download</option><option>manual_transcription</option><option>other</option></select></label><label>許可対象<input id="p241-allowed"></label><label>禁止対象<input id="p241-prohibited"></label><label>頻度候補<input id="p241-frequency"></label><label>取得タイミング<input id="p241-timing"></label><label>必要鮮度<input id="p241-freshness"></label><label>予定取得時刻<input id="p241-planned" type="datetime-local"></label></div>
+        <div class="phase241-grid"><label><input id="p241-official" type="checkbox">公式性確認</label><label><input id="p241-terms" type="checkbox">規約確認</label><label><input id="p241-robots" type="checkbox">robots確認</label><label><input id="p241-redistribution" type="checkbox">再配布可否確認</label><label><input id="p241-storage" type="checkbox">保存可否確認</label><label>検証計画<textarea id="p241-validation"></textarea></label><label>必要証跡<textarea id="p241-evidence"></textarea></label><label>完了条件<textarea id="p241-completion"></textarea></label></div>
+        <div class="phase241-buttons"><button id="p241-add-source" type="button">取得元を登録</button><button id="p241-add-target" type="button">対象を登録</button><button id="p241-create" type="button">取得要求を作成</button><button id="p241-review" type="button">人間レビュー開始</button><button id="p241-approve" type="button">将来取得向け承認</button><button id="p241-handoff" type="button">Phase23 handoffPlan作成</button></div>
+        <div id="p241-message" class="phase241-message"></div><textarea id="p241-output" class="phase241-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -7106,6 +7119,8 @@
     <script src="phase23-12-main-dashboard-integration.js"></script>
     <script src="phase23-final-completion-check.js"></script>
     <script src="phase23-final-main-dashboard-integration.js"></script>
+    <script src="phase24-external-data-acquisition-foundation.js"></script>
+    <script src="phase24-1-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
