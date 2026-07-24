@@ -4269,3 +4269,9 @@ Private Local only / protectedMode / PLAN_ONLYです。正式データ、Phase23
 Phase23-8で人間が承認した計画だけを対象に、計画actionの開始・保留・再開・完了・失敗・blocked、実施者、日時、結果、証跡メタデータ、残存問題を追記式で記録します。action ID・順序・依存関係を維持し、計画外action、未完了依存を持つ完了、fatal/error未解決の全完了、terminal後の上書きを拒否します。
 
 Private Local only / protectedMode / PLAN_ONLYです。formalData、snapshot、pending、Phase23-6/7/8、Phase22は読取専用で、自動開始・承認・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` のPhase23-9カードから利用します。テストは `node tests/phase23AuditFollowUpManualResolutionExecutionRecordCore.test.js`、詳細は `docs/phase23-9-audit-follow-up-manual-resolution-execution-record-core.md` を参照してください。
+
+### Phase23-10 監査フォローアップ・手動解決検証判定
+
+Phase23-8の承認済み計画とPhase23-9の検証対象実施記録を人間が照合し、action結果・証跡・残存問題・残存リスク・安全条件について、合格、条件付き合格、再対応、計画差戻し、手動調査、rollback検討、失敗、却下を追記式で記録します。合格条件、判定別必須項目、参照整合、重複防止、terminal lockを強制します。
+
+Private Local only / protectedMode / PLAN_ONLYです。formalData、snapshot、pending、Phase23-6/7/8/9、Phase22は読取専用で、自動開始・判定・承認・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` のPhase23-10カードから利用します。テストは `node tests/phase23AuditFollowUpManualResolutionVerificationDecisionCore.test.js`、詳細は `docs/phase23-10-audit-follow-up-manual-resolution-verification-decision-core.md` を参照してください。
