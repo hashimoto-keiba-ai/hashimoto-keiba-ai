@@ -1195,6 +1195,18 @@
         <div id="p239-message" class="phase239-message" role="status"></div><textarea id="p239-output" class="phase239-output" readonly></textarea>
       </section>
 
+      <section class="panel phase2310-verification-panel" id="phase23-audit-follow-up-manual-resolution-verification-decision" aria-label="Phase23-10 manual resolution verification decision">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-10 / HUMAN DECISION ONLY</p><h2>監査フォローアップ・手動解決検証判定</h2></div><span class="pill">PRIVATE LOCAL</span></div>
+        <p class="console-menu-lead">Phase23-9の手動実施結果について、証跡・残存問題・リスク・安全条件を人間が確認し、検証判定だけを追記します。</p>
+        <div class="phase23-safety-strip"><span>protectedMode</span><span>PLAN_ONLY</span><span>Phase23-8/9 read only</span><span>no automatic decision</span><span>no repair / rollback / re-import</span><span>Phase22 unchanged</span></div>
+        <div class="phase2310-grid"><label>Phase23-9対象記録<select id="p2310-execution"></select></label><label>検証記録<select id="p2310-record"></select></label><label>検証者<input id="p2310-verifier"></label><label>判定<select id="p2310-decision"><option>verification_passed</option><option>verification_passed_with_conditions</option><option>rework_required</option><option>plan_revision_required</option><option>manual_investigation_required</option><option>rollback_review_required</option><option>verification_failed</option><option>verification_rejected</option></select></label><label>判定理由<textarea id="p2310-reason"></textarea></label><label>証跡確認結果<textarea id="p2310-evidence-result"></textarea></label></div>
+        <div id="p2310-detail" class="phase2310-detail"></div><pre id="p2310-actions" class="phase2310-actions-view"></pre>
+        <div class="phase2310-grid"><label>未解決事項<textarea id="p2310-unresolved"></textarea></label><label>severity<select id="p2310-severity"><option>warning</option><option>error</option><option>fatal</option><option>info</option></select></label><label>残存リスク<select id="p2310-risk"><option>none</option><option>low</option><option>medium</option><option>high</option><option>critical</option><option>unknown</option></select></label><label>条件<textarea id="p2310-conditions"></textarea></label><label>期限<input id="p2310-due" type="date"></label><label>担当者<input id="p2310-owner"></label><label>再確認方法<textarea id="p2310-recheck"></textarea></label><label>対象action ID（カンマ区切り）<input id="p2310-action-ids"></label><label>見直し・調査・影響範囲<textarea id="p2310-scope"></textarea></label><label>次の手動対応<textarea id="p2310-next"></textarea></label><label class="phase2310-check"><input id="p2310-high-risk" type="checkbox">critical/unknownリスクを人間確認</label><label class="phase2310-check"><input id="p2310-safety" type="checkbox">安全条件を人間確認</label></div>
+        <div class="phase2310-grid"><label>確認ID<input id="p2310-check-id"></label><label>確認種別<input id="p2310-check-type"></label><label>対象証跡ID（カンマ区切り）<input id="p2310-evidence-ids"></label><label>確認結果<select id="p2310-check-result"><option>confirmed</option><option>not_confirmed</option><option>not_applicable</option></select></label></div>
+        <div class="phase2310-buttons"><button id="p2310-reload" type="button">Phase23-8/9を手動再読込</button><button id="p2310-create" type="button">検証記録を作成</button><button id="p2310-start" type="button">検証開始</button><button id="p2310-pause" type="button">検証保留</button><button id="p2310-resume" type="button">検証再開</button><button id="p2310-check" type="button">確認項目を追記</button><button id="p2310-decide" type="button">検証判定を記録</button><button id="p2310-conditions-confirm" type="button">条件完了を確認</button><button id="p2310-close" type="button">closed</button><button id="p2310-cancel" type="button">取消</button></div>
+        <div id="p2310-message" class="phase2310-message" role="status"></div><textarea id="p2310-output" class="phase2310-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -7052,6 +7064,8 @@
     <script src="phase23-8-main-dashboard-integration.js"></script>
     <script src="phase23-audit-follow-up-manual-resolution-execution-record-core.js"></script>
     <script src="phase23-9-main-dashboard-integration.js"></script>
+    <script src="phase23-audit-follow-up-manual-resolution-verification-decision-core.js"></script>
+    <script src="phase23-10-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
