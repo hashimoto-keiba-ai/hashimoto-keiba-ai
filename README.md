@@ -4293,3 +4293,14 @@ Private Local only / protectedMode / PLAN_ONLYです。Phase23-2〜23-11、forma
 Phase23-12の合格済み統合結果を完了ゲートとして、Phase23-2〜23-12の実装・テスト・文書・Private Local導線、参照チェーン、安全境界、Phase23-2/4/5固有確認、全回帰結果、残存課題とPhase24引継ぎを人間が最終記録します。
 
 Private Local only / protectedMode / PLAN_ONLYです。既存Phase23、formalData、snapshot、pending、Phase22は読取専用で、自動取得・購入・投票・承認・完了・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` から利用します。テストは `node tests/phase23FinalCompletionCheck.test.js`、詳細は `docs/phase23-final-completion-check.md` を参照してください。Phase24は本記録を読取専用で引き継ぎ、別途人間承認後に開始します。
+## Phase24-1 External Data Acquisition Foundation
+
+Phase24-1 adds a Private Local planning and approval foundation for future acquisition of odds, race cards, results, payouts, meeting information, and other racing data. Humans register a source and target, define format and validation rules, create a request, review safety conditions, and may approve only a future acquisition or create a Phase23 handoff plan. URLs are stored as reference text and are never accessed by this phase.
+
+- Storage key: `hashimotoKeibaAi.phase24.externalDataAcquisitionFoundation.v1`. Records and history are append-only, bounded by text, array, nesting, and total-size limits, and use save validation plus read-back with previous-value preservation on failure.
+- Approval requires manual confirmation of officiality, terms, robots, redistribution, storage, Private Local, and no-communication conditions. Unconfirmed terms/usage, authentication-required sources, and Public-publication prerequisites block approval.
+- The future flow is source registration → target selection → manual request → human review → future acquisition → Private Local temporary storage → preview → validation → human approval → manual Phase23 candidate handoff.
+- `Private Local only`, `PLAN_ONLY`, and `protectedMode` remain mandatory. Phase24-1 performs no HTTP/API access, scraping, browser automation, download, scheduling, background task, external SDK call, IPAT connection, purchase/betting, automatic import, repair, rollback, learning update, Phase22 application, external notification, GitHub Pages, or Public release.
+- Credentials, cookies, tokens, passwords, private keys, raw HTML, raw payloads, raw records, and raw files are not stored.
+
+Start with `start-local.bat`, then open the Phase24-1 card in `private-local.html`. Run `node tests/phase24ExternalDataAcquisitionFoundation.test.js`. See `docs/phase24-1-external-data-acquisition-foundation.md` for states, models, safety boundaries, and the next-phase handoff.
