@@ -1218,6 +1218,17 @@
         <div id="p2311-message" class="phase2311-message" role="status"></div><textarea id="p2311-output" class="phase2311-output" readonly></textarea>
       </section>
 
+      <section class="panel phase2312-integration-panel" id="phase23-import-audit-flow-final-integration-check" aria-label="Phase23-12 import audit final integration check">
+        <div class="section-heading"><div><p class="eyebrow">Phase23-12 / FINAL INTEGRATION CHECK</p><h2>インポート・監査フロー最終統合確認</h2></div><span class="pill">PRIVATE LOCAL</span></div>
+        <p class="console-menu-lead">Phase23-2〜23-11の参照チェーン、状態、安全境界、保存、画面、文書、テストを人間が最終確認して記録します。既存処理は実行しません。</p>
+        <div class="phase23-safety-strip"><span>protectedMode</span><span>PLAN_ONLY</span><span>all sources read only</span><span>no automatic decision</span><span>no repair / rollback / re-import</span><span>no Phase22 / external send</span></div>
+        <div class="phase2312-grid"><label>統合確認記録<select id="p2312-record"></select></label><label>確認者<input id="p2312-reviewer"></label><label>チェック項目<select id="p2312-check"></select></label><label>手動確認結果<select id="p2312-check-status"><option>manual_confirmed</option><option>warning</option><option>failed</option><option>not_applicable</option></select></label><label>最終判断<select id="p2312-decision"><option>integration_passed</option><option>integration_passed_with_warnings</option><option>integration_rework_required</option><option>integration_blocked</option><option>integration_failed</option></select></label><label>確認・判断理由<textarea id="p2312-reason"></textarea></label></div>
+        <div id="p2312-detail" class="phase2312-detail"></div><pre id="p2312-detected" class="phase2312-detected"></pre>
+        <div class="phase2312-grid"><label>注記<textarea id="p2312-note"></textarea></label><label>証跡参照（カンマ区切り）<input id="p2312-evidence"></label><label>残存問題<textarea id="p2312-issues"></textarea></label><label>severity<select id="p2312-severity"><option>warning</option><option>error</option><option>fatal</option><option>info</option></select></label><label>残存リスク<select id="p2312-risk"><option>none</option><option>low</option><option>medium</option><option>high</option><option>critical</option><option>unknown</option></select></label><label>警告内容<textarea id="p2312-warning"></textarea></label><label>影響範囲<textarea id="p2312-impact"></textarea></label><label>対応方針<textarea id="p2312-policy"></textarea></label><label>担当者<input id="p2312-owner"></label><label>対象Phase（カンマ区切り）<input id="p2312-phases"></label><label>対象ファイル（カンマ区切り）<input id="p2312-files"></label><label>期限<input id="p2312-due" type="date"></label><label>依存事項<textarea id="p2312-dependencies"></textarea></label><label>解除条件<textarea id="p2312-unblock"></textarea></label><label>次の手動判断<textarea id="p2312-next"></textarea></label><label class="phase2312-check"><input id="p2312-safety" type="checkbox">全安全境界を人間確認</label></div>
+        <div class="phase2312-buttons"><button id="p2312-create" type="button">統合記録を作成</button><button id="p2312-start" type="button">統合確認開始</button><button id="p2312-check-record" type="button">確認項目を記録</button><button id="p2312-decide" type="button">最終判断を記録</button><button id="p2312-accept" type="button">警告を受容</button><button id="p2312-close" type="button">closed</button><button id="p2312-cancel" type="button">取消</button></div>
+        <div id="p2312-message" class="phase2312-message" role="status"></div><textarea id="p2312-output" class="phase2312-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -7079,6 +7090,8 @@
     <script src="phase23-10-main-dashboard-integration.js"></script>
     <script src="phase23-audit-follow-up-final-closure-handoff-core.js"></script>
     <script src="phase23-11-main-dashboard-integration.js"></script>
+    <script src="phase23-import-audit-flow-final-integration-check.js"></script>
+    <script src="phase23-12-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
