@@ -4281,3 +4281,9 @@ Private Local only / protectedMode / PLAN_ONLYです。formalData、snapshot、p
 Phase23-8〜10の計画、手動実施、検証判定を読取専用で照合し、人間が最終閉鎖、条件付き閉鎖、rework・計画修正・手動調査・rollback検討への引継ぎ、または却下を追記式で記録します。判定別の前提と必須項目、fatal/error・残存リスク・証跡ゲート、重複防止、terminal lockを強制します。
 
 Private Local only / protectedMode / PLAN_ONLYです。formalData、snapshot、pending、Phase23-6/7/8/9/10、Phase22は読取専用で、自動開始・閉鎖・引継ぎ・承認・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` のPhase23-11カードから利用します。テストは `node tests/phase23AuditFollowUpFinalClosureHandoffCore.test.js`、詳細は `docs/phase23-11-audit-follow-up-final-closure-handoff-core.md` を参照してください。
+
+### Phase23-12 インポート・監査フロー最終統合確認
+
+Phase23-2の手動プレビューからPhase23-11の最終閉鎖・引継ぎまで、コア、localStorageキー、ID参照チェーン、状態・重複防止、永続化、安全境界、Private Localカード、index/script/CSS、README/docs、回帰テストを20項目の専用チェックリストで人間が最終確認します。確認結果と最終判断だけを追記保存し、既存処理は実行しません。
+
+Private Local only / protectedMode / PLAN_ONLYです。Phase23-2〜23-11、formalData、snapshot、pending、Phase22は読取専用で、自動取得・購入・投票・承認・閉鎖・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` のPhase23-12カードから利用します。テストは `node tests/phase23ImportAuditFlowFinalIntegrationCheck.test.js`、詳細は `docs/phase23-12-import-audit-flow-final-integration-check.md` を参照してください。
