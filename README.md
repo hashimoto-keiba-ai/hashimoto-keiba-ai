@@ -4304,3 +4304,13 @@ Phase24-1 adds a Private Local planning and approval foundation for future acqui
 - Credentials, cookies, tokens, passwords, private keys, raw HTML, raw payloads, raw records, and raw files are not stored.
 
 Start with `start-local.bat`, then open the Phase24-1 card in `private-local.html`. Run `node tests/phase24ExternalDataAcquisitionFoundation.test.js`. See `docs/phase24-1-external-data-acquisition-foundation.md` for states, models, safety boundaries, and the next-phase handoff.
+
+## Phase24-2 Manual Acquisition Execution Preparation / Temporary Storage Gate
+
+Phase24-2 accepts only Phase24-1 requests whose status is `approved_for_future_acquisition` and whose source, target, request, approval, and handoffPlan IDs form a valid reference chain. It keeps Phase24-1 read-only and lets a human append execution-preparation, hold/resume, completion, revision, rejection, cancellation, approval, and `awaiting_manual_acquisition` decisions.
+
+The preparation records the planned acquirer/checker/time/method/scope/count/size/encoding/time basis, a bounded Private Local logical temporary-storage area, metadata candidates, format acceptance fields, manual steps and prohibited actions, future verification fields, anomaly-handling candidates, safety checks, and history. It never stores raw HTML, raw payloads, raw files, credentials, cookies, tokens, passwords, private keys, or personal information. Storage uses `hashimotoKeibaAi.phase24.manualAcquisitionExecutionTemporaryStorageGate.v1`, bounded arrays/text/total size, pre-save validation, read-back, and previous-value preservation.
+
+This phase is Private Local only, PLAN_ONLY, protectedMode, and metadata only. It adds no HTTP/API call, scraping, browser/DOM automation, automatic download, external SDK, schedule, background acquisition, IPAT, purchase/betting, learning update, application, repair, rollback, re-import, GitHub Pages, or Public publication. Approval does not start acquisition.
+
+Start with `start-local.bat`, open the Phase24-2 card in `private-local.html`, and run `node tests/phase24ManualAcquisitionExecutionTemporaryStorageGate.test.js`. See `docs/phase24-2-manual-acquisition-execution-temporary-storage-gate.md`. Phase24-3 may later read only an `awaiting_manual_acquisition` preparation and register a separately, manually acquired result.
