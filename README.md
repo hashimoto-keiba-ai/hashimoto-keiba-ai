@@ -4287,3 +4287,9 @@ Private Local only / protectedMode / PLAN_ONLYです。formalData、snapshot、p
 Phase23-2の手動プレビューからPhase23-11の最終閉鎖・引継ぎまで、コア、localStorageキー、ID参照チェーン、状態・重複防止、永続化、安全境界、Private Localカード、index/script/CSS、README/docs、回帰テストを20項目の専用チェックリストで人間が最終確認します。確認結果と最終判断だけを追記保存し、既存処理は実行しません。
 
 Private Local only / protectedMode / PLAN_ONLYです。Phase23-2〜23-11、formalData、snapshot、pending、Phase22は読取専用で、自動取得・購入・投票・承認・閉鎖・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` のPhase23-12カードから利用します。テストは `node tests/phase23ImportAuditFlowFinalIntegrationCheck.test.js`、詳細は `docs/phase23-12-import-audit-flow-final-integration-check.md` を参照してください。
+
+### Phase23 最終完了チェック
+
+Phase23-12の合格済み統合結果を完了ゲートとして、Phase23-2〜23-12の実装・テスト・文書・Private Local導線、参照チェーン、安全境界、Phase23-2/4/5固有確認、全回帰結果、残存課題とPhase24引継ぎを人間が最終記録します。
+
+Private Local only / protectedMode / PLAN_ONLYです。既存Phase23、formalData、snapshot、pending、Phase22は読取専用で、自動取得・購入・投票・承認・完了・修復・rollback・再インポート・適用・外部通知を行いません。`start-local.bat` で起動し、`private-local.html` から利用します。テストは `node tests/phase23FinalCompletionCheck.test.js`、詳細は `docs/phase23-final-completion-check.md` を参照してください。Phase24は本記録を読取専用で引き継ぎ、別途人間承認後に開始します。

@@ -1229,6 +1229,18 @@
         <div id="p2312-message" class="phase2312-message" role="status"></div><textarea id="p2312-output" class="phase2312-output" readonly></textarea>
       </section>
 
+      <section class="panel phase23final-panel" id="phase23-final-completion-check" aria-label="Phase23 final completion check">
+        <div class="section-heading"><div><p class="eyebrow">PHASE23 / FINAL COMPLETION</p><h2>Phase23 最終完了チェック</h2></div><span class="pill">PRIVATE LOCAL</span></div>
+        <p class="console-menu-lead">Phase23-12の合格済み統合結果を参照し、Phase23-2〜23-12の完了、安全境界、テスト、残存課題、Phase24引継ぎを人間が最終記録します。</p>
+        <div class="phase23-safety-strip"><span>protectedMode</span><span>PLAN_ONLY</span><span>Phase23 sources read only</span><span>no automatic completion</span><span>no repair / rollback / re-import</span><span>no Phase22 / external send</span></div>
+        <div class="phase23final-grid"><label>Phase23-12統合結果<select id="p23final-integration"></select></label><label>完了記録<select id="p23final-record"></select></label><label>確認者<input id="p23final-reviewer"></label><label>確認項目<select id="p23final-check"></select></label><label>確認結果<select id="p23final-check-status"><option>passed</option><option>warning</option><option>failed</option><option>not_applicable</option></select></label><label>完了判断<select id="p23final-decision"><option>completion_passed</option><option>completion_passed_with_warnings</option><option>completion_rework_required</option><option>completion_blocked</option><option>completion_failed</option></select></label><label>判断理由<textarea id="p23final-reason"></textarea></label><label>確認注記<textarea id="p23final-note"></textarea></label></div>
+        <div id="p23final-detail" class="phase23final-detail"></div>
+        <div class="phase23final-grid"><label>証跡参照<input id="p23final-evidence"></label><label>残存課題<textarea id="p23final-issues"></textarea></label><label>severity<select id="p23final-severity"><option>warning</option><option>error</option><option>fatal</option><option>info</option></select></label><label>残存リスク<select id="p23final-risk"><option>none</option><option>low</option><option>medium</option><option>high</option><option>critical</option><option>unknown</option></select></label><label>Phase24への引継ぎ<textarea id="p23final-handoff"></textarea></label><label>警告内容<textarea id="p23final-warning"></textarea></label><label>影響<textarea id="p23final-impact"></textarea></label><label>警告受容理由<textarea id="p23final-accept-reason"></textarea></label><label>責任者<input id="p23final-owner"></label><label>期限<input id="p23final-due" type="date"></label><label>再確認方法<textarea id="p23final-recheck"></textarea></label><label>対象Phase<input id="p23final-phases"></label><label>対象ファイル<input id="p23final-files"></label><label>依存事項<textarea id="p23final-dependencies"></textarea></label><label>解除条件<textarea id="p23final-unblock"></textarea></label><label>次の手動判断<textarea id="p23final-next"></textarea></label><label class="phase23final-check"><input id="p23final-safety" type="checkbox">全安全境界を人間確認</label></div>
+        <div class="phase23final-grid"><label>テスト群<input id="p23final-test-group"></label><label>結果<select id="p23final-test-result"><option>passed</option><option>failed</option></select></label><label>総数<input id="p23final-test-total" type="number"></label><label>失敗数<input id="p23final-test-failed" type="number"></label></div>
+        <div class="phase23final-buttons"><button id="p23final-reload" type="button">Phase23-12を手動再読込</button><button id="p23final-create" type="button">完了記録を作成</button><button id="p23final-start" type="button">最終確認開始</button><button id="p23final-check-record" type="button">確認項目を記録</button><button id="p23final-test" type="button">テスト結果を記録</button><button id="p23final-decide" type="button">完了判断を記録</button><button id="p23final-accept" type="button">警告を受容</button><button id="p23final-complete" type="button">completed</button><button id="p23final-cancel" type="button">取消</button></div>
+        <div id="p23final-message" class="phase23final-message" role="status"></div><textarea id="p23final-output" class="phase23final-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -7092,6 +7104,8 @@
     <script src="phase23-11-main-dashboard-integration.js"></script>
     <script src="phase23-import-audit-flow-final-integration-check.js"></script>
     <script src="phase23-12-main-dashboard-integration.js"></script>
+    <script src="phase23-final-completion-check.js"></script>
+    <script src="phase23-final-main-dashboard-integration.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
