@@ -4314,3 +4314,23 @@ The preparation records the planned acquirer/checker/time/method/scope/count/siz
 This phase is Private Local only, PLAN_ONLY, protectedMode, and metadata only. It adds no HTTP/API call, scraping, browser/DOM automation, automatic download, external SDK, schedule, background acquisition, IPAT, purchase/betting, learning update, application, repair, rollback, re-import, GitHub Pages, or Public publication. Approval does not start acquisition.
 
 Start with `start-local.bat`, open the Phase24-2 card in `private-local.html`, and run `node tests/phase24ManualAcquisitionExecutionTemporaryStorageGate.test.js`. See `docs/phase24-2-manual-acquisition-execution-temporary-storage-gate.md`. Phase24-3 may later read only an `awaiting_manual_acquisition` preparation and register a separately, manually acquired result.
+
+## Phase24-3 Manual Acquisition Result Registration / Quarantine Storage
+
+Phase24-3 reads Phase24-2 without modifying it and accepts only a unique `awaiting_manual_acquisition` preparation with an execution plan. A human may create a draft, paste or type content acquired separately, validate JSON, generate a SHA-256 content hash with Web Crypto, and save the record to a dedicated quarantine store. The Phase24-2 source record is retained as a snapshot.
+
+- Storage key: `hashimotoKeibaAi.phase24.manualAcquisitionResultQuarantine.v1`
+- States: `draft`, `quarantine`, `awaiting_manual_review`, `review_in_progress`, `needs_correction`, `rejected`, `cancelled`, `expired`
+- Every initial result registration and correction returns to `quarantine`. There is no `approved`, `verified`, `imported`, or `applied` state in Phase24-3.
+- Records contain the Phase24-2 reference, acquisition plan, target metadata, manually entered text/JSON, source URL as inert text, timestamps, record count, hash, revision, previous hash, source snapshot, safety flags, and append-only histories.
+- Backup contains `schemaVersion`, `exportedAt`, and `recordCount`. Restore validates structure and supports human-selected merge or strongly confirmed replace. Individual deletion, restoration, and full reset require explicit confirmation and remain auditable.
+- Invalid or corrupt localStorage fails closed to an empty in-memory view and is never treated as formal data. Save uses size limits, validation, read-back, and previous-value preservation on failure.
+- `contentHash` detects changes to normalized content; a matching hash alone does not prove source authenticity or correctness.
+
+This phase is `Private Local only`, `PLAN_ONLY`, `protectedMode`, and quarantine-only. It performs no external communication, HTTP/API call, scraping, browser automation, automatic acquisition, background processing, IPAT connection, purchase/betting, learning update, formal import, formal reflection, repair, rollback, GitHub Pages publication, or Public release. It does not modify Phase24-1, Phase24-2, Phase23, or Phase22 storage.
+
+Start with `start-local.bat` and open the Phase24-3 card from `private-local.html`. All progress requires an explicit human action. Run:
+
+```text
+node tests/phase24ManualAcquisitionResultQuarantine.test.js
+```

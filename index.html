@@ -1267,6 +1267,19 @@
         <div id="p242-message" class="phase242-message" role="status"></div><textarea id="p242-output" class="phase242-output" readonly></textarea>
       </section>
 
+      <section class="panel phase243-panel" id="phase24-3-manual-acquisition-result-quarantine" aria-label="Phase24-3 manual acquisition result quarantine">
+        <div class="section-heading"><div><p class="eyebrow">Phase24-3 / QUARANTINE ONLY</p><h2>手動取得結果登録・隔離一時保存</h2></div><span class="pill">NO FORMAL IMPORT</span></div>
+        <p class="console-menu-lead">Phase24-2で手動取得待ちになった計画だけを読取専用参照し、人間が別途取得した内容を正式データとは別の隔離領域へ登録します。</p>
+        <div class="phase243-boundary"><span>外部サイトへ接続しない</span><span>自動取得しない</span><span>正式データへ反映しない</span><span>隔離一時保存のみ</span></div>
+        <pre id="p243-summary" class="phase243-summary"></pre>
+        <div class="phase243-grid"><label>Phase24-2手動取得待ち記録<select id="p243-source"></select></label><label>Phase24-3記録<select id="p243-record"></select></label><label>操作担当者<input id="p243-operator"></label><label>変更理由<textarea id="p243-reason"></textarea></label><label>対象種別<select id="p243-target-type"><option>race_card</option><option>odds</option><option>race_result</option><option>payout</option><option>weather</option><option>track_condition</option><option>horse_weight</option><option>jockey_change</option><option>scratch</option><option>other</option></select></label><label>対象日<input id="p243-target-date" type="date"></label><label>競馬場<input id="p243-racecourse"></label><label>レース番号<input id="p243-race-number"></label><label>レース名<input id="p243-race-name"></label><label>取得元名<input id="p243-source-name"></label><label>取得元URL文字列<input id="p243-source-url"></label><label>取得日時<input id="p243-acquired-at" type="datetime-local"></label><label>取得者<input id="p243-acquired-by"></label><label>表示時刻<input id="p243-source-time"></label><label>データ有効時刻<input id="p243-effective-time"></label><label>件数<input id="p243-count" type="number" min="0"></label></div>
+        <div class="phase243-grid"><label>取得内容（text）<textarea id="p243-raw-text"></textarea></label><label>取得内容（JSON文字列）<textarea id="p243-raw-json"></textarea></label><label>メモ<textarea id="p243-memo"></textarea></label><label>contentHash<input id="p243-hash-value" readonly></label><label>修正要求<textarea id="p243-correction-request"></textarea></label></div>
+        <div class="phase243-buttons"><button id="p243-create" type="button">新規下書き</button><button id="p243-json-check" type="button">JSON構文確認</button><button id="p243-hash" type="button">contentHash生成</button><button id="p243-register" type="button">隔離保存</button><button id="p243-review" type="button">レビュー待ち</button><button id="p243-review-start" type="button">レビュー開始</button><button id="p243-correction" type="button">修正要求</button><button id="p243-reject" type="button">却下</button><button id="p243-cancel" type="button">取消</button><button id="p243-expire" type="button">期限切れ</button><button id="p243-delete" type="button">個別論理削除</button><button id="p243-restore" type="button">復元</button><button id="p243-print" type="button">印刷</button></div>
+        <div class="phase243-grid"><label>バックアップ／復元JSON<textarea id="p243-backup-text"></textarea></label><label>復元方式<select id="p243-restore-mode"><option value="merge">merge</option><option value="replace">replace</option></select></label></div>
+        <div class="phase243-buttons"><button id="p243-backup" type="button">JSONバックアップ</button><button id="p243-restore-backup" type="button">バックアップ復元</button><button id="p243-reset" type="button">Phase24-3全件リセット</button></div>
+        <div id="p243-message" class="phase243-message" role="status"></div><textarea id="p243-output" class="phase243-output" readonly></textarea>
+      </section>
+
       <section class="panel ai-overall-panel" aria-label="AI総合ダッシュボード">
         <div class="section-heading">
           <div>
@@ -7136,6 +7149,7 @@
     <script src="phase24-1-main-dashboard-integration.js"></script>
     <script src="phase24-manual-acquisition-execution-temporary-storage-gate.js"></script>
     <script src="phase24-2-main-dashboard-integration.js"></script>
+    <script src="phase24-3-manual-acquisition-result-registration-quarantine-storage.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
