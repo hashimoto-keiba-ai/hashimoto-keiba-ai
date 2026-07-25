@@ -4376,3 +4376,11 @@ Phase24-8 reads completed Phase24-7 correction plans and their manual-response e
 Revalidation cannot pass with unresolved critical/high failures. Warning passes require acknowledgment. Reaudit requires an explicit required/not-required decision. Next-step approval requires human confirmation and never starts rollback, re-import, reapproval, quarantine, or any other downstream process. SHA-256 revision hashes retain previous hashes; backup and validated merge/replace restore cover only Phase24-8 records and restored records are not treated as passed or approved.
 
 Private Local only, PLAN_ONLY, protectedMode. No automatic revalidation, reaudit, approval, import, rollback, next-step execution, Phase24-7-or-earlier modification, Phase22/23 reflection, external communication, GitHub Pages, or Public release. Open `private-local.html` and select Phase24-8. Run `node tests/phase24PostCorrectionRevalidationReauditNextStepCandidate.test.js`.
+
+## Phase24-9 Approved Next-step Manual Execution Status
+
+Phase24-9 accepts only Phase24-8 records in `approved_as_next_step_candidate`. It stores execution status in `hashimotoKeibaAi.phase24.nextStepExecutionStatus.v1` and evidence of human operations in `hashimotoKeibaAi.phase24.nextStepManualOperation.v1`; Phase24-8 and earlier stores remain read-only.
+
+Humans explicitly perform precheck, start, progress, observation, pause, resume, stop, abnormality/failure reporting, and completion recording. Progress is 0–100 and rollback requires a reason. Completion requires 100%, a manual-operation record, actor, reason, result, evidence, confirmation, and no unresolved critical/high abnormalities. Warning completion remains distinct. Candidate-specific work is only recorded as evidence: Phase24-9 does not execute correction, revalidation, reapproval, rollback, re-import, quarantine, rejection, or expiration.
+
+SHA-256 revision hashes retain previous execution and operation hashes. Backup/restore includes only Phase24-9 stores; restored executions return to `awaiting_manual_start`. Private Local only, PLAN_ONLY, protectedMode; no automatic start/execution/completion, external communication, Phase22/23 reflection, GitHub Pages, or Public release. Run `node tests/phase24ApprovedNextStepManualStartExecutionStatusManagement.test.js`.
