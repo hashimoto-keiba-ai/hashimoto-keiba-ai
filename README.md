@@ -4334,3 +4334,17 @@ Start with `start-local.bat` and open the Phase24-3 card from `private-local.htm
 ```text
 node tests/phase24ManualAcquisitionResultQuarantine.test.js
 ```
+
+## Phase24-4 Manual Verification / Import Candidate
+
+Phase24-4 reads eligible Phase24-3 quarantine/manual-review/correction records without updating their storage. Humans create a verification record, execute and save every required check, acknowledge warnings, record a decision, and explicitly approve only passed records as formal-import candidates. It does not execute a formal import.
+
+- Verification key: `hashimotoKeibaAi.phase24.manualAcquisitionVerification.v1`
+- Candidate key: `hashimotoKeibaAi.phase24.manualAcquisitionImportCandidate.v1`
+- Final reachable state: `approved_as_import_candidate`; no imported, applied, committed, or formal-reflected state exists.
+- Checks cover source/reference integrity, target identity, JSON syntax/structure, required fields, duplicates, recalculated content hash, timestamps, count, dangerous text, and size.
+- Candidate normalization extracts only known fields, rejects prototype-pollution keys, retains the complete source snapshot, and generates a separate SHA-256 candidate hash.
+- Passed-with-warnings requires explicit warning acknowledgement. Fatal failures block candidate creation. Duplicate candidates are never overwritten automatically.
+- Backup and merge/strongly-confirmed replace include only Phase24-4 verification and candidate records.
+
+This feature remains Private Local only, PLAN_ONLY, and protectedMode. It performs no automatic verification, approval, import, formal reflection, acquisition, HTTP/API access, scraping, background processing, IPAT connection, purchase, learning, repair, rollback, GitHub Pages, or Public publication. Start through `private-local.html`; run `node tests/phase24ManualAcquisitionVerificationImportCandidate.test.js`.
