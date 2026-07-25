@@ -4348,3 +4348,9 @@ Phase24-4 reads eligible Phase24-3 quarantine/manual-review/correction records w
 - Backup and merge/strongly-confirmed replace include only Phase24-4 verification and candidate records.
 
 This feature remains Private Local only, PLAN_ONLY, and protectedMode. It performs no automatic verification, approval, import, formal reflection, acquisition, HTTP/API access, scraping, background processing, IPAT connection, purchase, learning, repair, rollback, GitHub Pages, or Public publication. Start through `private-local.html`; run `node tests/phase24ManualAcquisitionVerificationImportCandidate.test.js`.
+
+## Phase24-5 Manual Formal Import Execution
+
+Phase24-5 accepts only Phase24-4 `approved_as_import_candidate` records. After human prechecks and explicit final confirmation, it copies only the normalized payload and immutable snapshots into the Phase24-5 store `hashimotoKeibaAi.phase24.manualFormalImport.v1`. It never writes Phase22 or Phase23 storage and never performs automatic or external import.
+
+States range from `awaiting_manual_import` through precheck/readiness/manual execution to `imported` or `imported_with_warnings`; failure, correction, cancellation, expiration, rollback request, and logical `rolled_back` are auditable. Rollback is logical and does not alter Phase24-4 or Phase24-3. Web Crypto SHA-256 generates a formal import hash, while hash equality alone is not proof of correctness. Private Local only, PLAN_ONLY, protectedMode, no external communication, purchase, learning, GitHub Pages, or Public release. Run `node tests/phase24ManualFormalImportExecution.test.js`.
