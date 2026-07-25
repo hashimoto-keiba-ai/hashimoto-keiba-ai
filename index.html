@@ -87,6 +87,12 @@
       </section>
       <section class="panel phase245-panel" id="phase24-5-manual-formal-import"><h2>Phase24-5 手動正式インポート実行</h2><p>自動インポートなし／人間の最終確認必須／外部通信なし／Phase22・23へ自動反映なし／PLAN_ONLY／protectedMode</p><div class="phase245-grid"><label>候補ID<input id="p245-candidate"></label><label>記録ID<input id="p245-record"></label><label>実行者<input id="p245-operator"></label><label>理由<textarea id="p245-reason"></textarea></label><label>事前確認名<input id="p245-check-name"></label><label>確認結果<select id="p245-check-result"><option>passed</option><option>failed</option><option>warning</option></select></label></div><div class="phase245-buttons"><button id="p245-create">事前確認記録作成</button><button id="p245-precheck">事前確認中へ</button><button id="p245-ready">実行準備完了</button><button id="p245-start">手動実行開始</button><button id="p245-execute">手動正式インポート実行</button><button id="p245-rollback">論理ロールバック要求</button></div><div id="p245-message"></div></section>
       <section class="panel phase246-panel" id="phase24-6-post-formal-import-audit"><h2>Phase24-6 正式インポート後の検証・監査・整合性確認</h2><p>自動監査・修復・rollback・Phase22/23反映・外部通信なし。人間の確認結果だけをPhase24-6専用領域へ保存します。</p></section>
+      <section class="panel phase247-panel" id="phase24-7-audit-correction-management">
+        <h2>Phase24-7 監査検出問題の是正計画・手動対応管理</h2>
+        <p>Phase24-6監査を読取専用で参照し、人間による計画・承認・対応証跡だけを管理します。自動修復・自動rollback・自動再インポート・Phase24-5以前の変更・外部通信は行いません。</p>
+        <div class="phase247-boundary">Private Local only / PLAN_ONLY / protectedMode / 人間の明示操作必須</div>
+        <p>操作はJavaScript API <code>HashimotoPhase247AuditCorrection</code>から行えます。critical/high問題、承認状態、期限超過、次工程候補を保存前に確認してください。</p>
+      </section>
 
 
       <section class="panel console-menu-panel" aria-label="競馬場選択メニュー">
@@ -7164,6 +7170,7 @@
     <script src="phase24-4-quarantine-result-manual-verification-approval-import-candidate.js"></script>
     <script src="phase24-5-manual-formal-import-execution.js"></script>
     <script src="phase24-6-post-formal-import-verification-audit-integrity.js"></script>
+    <script src="phase24-7-audit-issue-correction-plan-manual-response-management.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

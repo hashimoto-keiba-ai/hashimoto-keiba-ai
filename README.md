@@ -4358,3 +4358,13 @@ States range from `awaiting_manual_import` through precheck/readiness/manual exe
 ## Phase24-6 Post-formal-import Audit
 
 Phase24-6 reads Phase24-5 records and stores only manual verification, reference integrity, hash, duplicate, rollback-state, and recommendation records in `hashimotoKeibaAi.phase24.postFormalImportAudit.v1`. High/critical failures cannot pass. Audit SHA-256 revisions retain the previous hash. Recommendations never execute automatically. Private Local only, PLAN_ONLY, protectedMode; no repair, rollback, re-import, Phase22/23 reflection, external communication, GitHub Pages, or Public release. Run `node tests/phase24PostFormalImportVerificationAuditIntegrity.test.js`.
+
+## Phase24-7 Audit Issue Correction Plan / Manual Response
+
+Phase24-7 reads eligible Phase24-6 failed, warning, integrity, reference, duplicate, rollback-recommended, and correction-required audits without modifying them. It extracts correction issues and stores human-authored correction plans in `hashimotoKeibaAi.phase24.auditCorrectionPlan.v1` and manual-response evidence in `hashimotoKeibaAi.phase24.auditManualResponse.v1`. `audit_passed`, cancelled, and expired audits cannot start a plan.
+
+The explicit state flow is draft, manual review, approval, manual action, pause, and completion/failure/replanning/cancellation/expiration. Approval-required plans need an approver, reason, timestamp, and explicit confirmation; approval-not-required also needs an explicit human confirmation. Completion requires response evidence and resolved critical issues. Warning completion is distinct and requires acknowledgment. Revalidation, candidate reapproval, rollback review, rollback, re-import preparation, and re-import are next-step flags only and never start automatically.
+
+Web Crypto SHA-256 seals plans and response records while retaining previous hashes. Backup/restore contains only the two Phase24-7 stores; restore validates schema and never restores records as automatically approved or completed. Private Local only, PLAN_ONLY, protectedMode. There is no automatic repair, rollback, re-import, approval, execution, Phase24-5-or-earlier modification, Phase22/23 reflection, network communication, GitHub Pages, or Public release.
+
+Open `private-local.html`, then select the Phase24-7 card. Run the dedicated test with `node tests/phase24AuditIssueCorrectionPlanManualResponse.test.js`.
