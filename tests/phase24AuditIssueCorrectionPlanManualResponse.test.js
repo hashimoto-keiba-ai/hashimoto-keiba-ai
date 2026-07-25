@@ -1,0 +1,26 @@
+"use strict";
+const assert=require("assert"),{webcrypto}=require("crypto"),core=require("../phase24-7-audit-issue-correction-plan-manual-response-management.js");
+(async()=>{
+const audit={auditId:"a1",formalImportId:"f1",importCandidateId:"c1",auditStatus:"correction_required",auditHash:"h1",auditChecks:[{checkId:"ch1",result:"failed",severity:"critical",title:"hash",checkedAt:"2026-01-01T00:00:00Z",checkedBy:"auditor"},{checkId:"ch2",result:"warning",severity:"low",title:"warning"}]};
+assert.deepStrictEqual(core.eligibleAudits({audits:[audit,{auditId:"ok",auditStatus:"audit_passed"},{auditId:"x",auditStatus:"cancelled"}]}).map(x=>x.auditId),["a1"]);
+const issues=core.extractIssues(audit);assert.strictEqual(issues.length,2);assert.strictEqual(issues[0].severity,"critical");assert.ok(issues[0].issueId);
+const base={planTitle:"修正",planDescription:"手動確認",correctionPolicy:"manual_review",proposedAction:"確認する",affectedScope:"f1",riskAssessment:"medium",priority:"high",assignedTo:"person",dueAt:"2026-12-01",completionCriteria:"証跡確認",rollbackConsideration:"自動rollbackなし",operator:"owner",approvalRequired:true};
+let p=core.createPlan(core.defaultPlanStore(),{audits:[audit]},"a1",base);assert.ok(p.created,p.problems);let ps=p.store,rs=core.defaultResponseStore();
+assert.strictEqual(core.createPlan(ps,{audits:[audit]},"a1",base).problems.includes("duplicate_plan"),true);
+let t=core.transitionPlan(ps,rs,p.plan.correctionPlanId,"awaiting_manual_review",{operator:"owner",reason:"review"});ps=t.store;
+t=core.transitionPlan(ps,rs,p.plan.correctionPlanId,"plan_review_in_progress",{operator:"reviewer",reason:"start"});ps=t.store;
+t=core.transitionPlan(ps,rs,p.plan.correctionPlanId,"awaiting_manual_approval",{operator:"reviewer",reason:"approve"});ps=t.store;
+assert.strictEqual(core.transitionPlan(ps,rs,p.plan.correctionPlanId,"approved_for_manual_action",{operator:"x",reason:"x"}).transitioned,false);
+t=core.transitionPlan(ps,rs,p.plan.correctionPlanId,"approved_for_manual_action",{operator:"reviewer",reason:"approved",approvedBy:"approver",approvalReason:"safe",explicitConfirmation:true});assert(t.transitioned);ps=t.store;
+t=core.transitionPlan(ps,rs,p.plan.correctionPlanId,"manual_action_in_progress",{operator:"worker",reason:"manual"});assert(t.transitioned);ps=t.store;
+let r=core.recordResponse(rs,ps,p.plan.correctionPlanId,{actionType:"reviewed_only",actionDescription:"手動確認",performedBy:"worker",affectedRecordIds:["f1"],beforeSnapshot:{status:"before"},afterSnapshot:{status:"after"},evidence:"ticket-1",result:"success",nextStepFlags:["revalidation_required"]});assert(r.recorded);rs=r.store;
+assert.strictEqual(core.transitionPlan(ps,rs,p.plan.correctionPlanId,"correction_completed",{operator:"worker",reason:"done",completionEvidence:"ticket",explicitConfirmation:true,resolvedIssueIds:[]}).reason,"unresolved_critical_issue");
+t=core.transitionPlan(ps,rs,p.plan.correctionPlanId,"correction_completed_with_warnings",{operator:"worker",reason:"done",completionEvidence:"ticket",explicitConfirmation:true,resolvedIssueIds:[issues[0].issueId],warningAcknowledged:true});assert(t.transitioned);ps=t.store;
+let sealed=await core.sealPlan(ps,p.plan.correctionPlanId,webcrypto);assert(sealed.sealed);const h1=sealed.plan.correctionPlanHash;sealed=await core.sealPlan(sealed.store,p.plan.correctionPlanId,webcrypto);assert.strictEqual(sealed.plan.previousCorrectionPlanHash,h1);
+let sr=await core.sealResponse(rs,r.response.manualActionId,webcrypto);assert(sr.sealed);const rh=sr.response.manualResponseHash;sr=await core.sealResponse(sr.store,r.response.manualActionId,webcrypto);assert.strictEqual(sr.response.previousManualResponseHash,rh);
+const backup=core.exportBackup(sealed.store,sr.store);assert.strictEqual(core.restoreBackup("x",ps,rs,"merge",{operator:"x"}).restored,false);assert.strictEqual(core.restoreBackup(backup,ps,rs,"replace",{operator:"x"}).reason,"strong_confirmation_required");const restored=core.restoreBackup(backup,core.defaultPlanStore(),core.defaultResponseStore(),"replace",{operator:"x",strongConfirmation:true});assert(restored.restored);assert.strictEqual(restored.planStore.plans[0].status,"draft");
+const mem={v:{},getItem(k){return this.v[k]??null},setItem(k,v){this.v[k]=v},removeItem(k){delete this.v[k]}};assert(core.savePlanStore(ps,mem).saved);assert(core.saveResponseStore(rs,mem).saved);assert.deepStrictEqual(core.loadStores(mem).errors,[]);
+const corrupt={getItem(){return "{"}};assert(core.loadStores(corrupt).errors.length===2);
+for(const forbidden of["fetch(","XMLHttpRequest","WebSocket(","eval(","new Function"])assert(!require("fs").readFileSync(require.resolve("../phase24-7-audit-issue-correction-plan-manual-response-management.js"),"utf8").includes(forbidden));
+console.log("phase24AuditIssueCorrectionPlanManualResponse.test.js: PASS");
+})().catch(e=>{console.error(e);process.exitCode=1});
