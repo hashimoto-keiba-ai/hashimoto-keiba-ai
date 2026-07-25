@@ -77,6 +77,15 @@
         </article>
       </section>
 
+      <section class="panel phase244-panel" id="phase24-4-manual-verification-import-candidate" aria-label="Phase24-4 manual verification and import candidate">
+        <div class="section-heading"><div><p class="eyebrow">Phase24-4 / MANUAL VERIFICATION</p><h2>隔離取得結果の手動検証・承認・正式インポート候補化</h2></div><span class="pill">NO IMPORT</span></div>
+        <p>Phase24-3隔離記録を読取専用参照し、人間が検証・承認した記録だけを別領域の候補にします。</p><div class="phase244-boundary"><span>自動検証なし</span><span>自動承認なし</span><span>正式インポートなし</span><span>正式データ反映なし</span><span>外部通信なし</span></div>
+        <pre id="p244-summary" class="phase244-summary"></pre><div class="phase244-grid"><label>Phase24-3記録<select id="p244-source"></select></label><label>検証記録<select id="p244-verification"></select></label><label>担当者<input id="p244-operator"></label><label>理由<textarea id="p244-reason"></textarea></label><label>検証項目<select id="p244-check-name"><option>record_exists</option><option>status_allowed</option><option>phase24_2_reference</option><option>target_date</option><option>racecourse</option><option>race_number</option><option>target_type</option><option>json_syntax</option><option>json_structure</option><option>required_fields</option><option>duplicate</option><option>content_hash</option><option>acquired_at</option><option>source_displayed_time</option><option>data_effective_time</option><option>record_count</option><option>dangerous_text</option><option>size_limit</option></select></label><label>項目結果<select id="p244-check-result"><option>passed</option><option>passed_with_warnings</option><option>failed</option><option>needs_correction</option></select></label><label>severity<select id="p244-severity"><option>info</option><option>warning</option><option>error</option><option>fatal</option></select></label><label>message<textarea id="p244-check-message"></textarea></label><label>evidence<textarea id="p244-evidence"></textarea></label><label><input id="p244-override" type="checkbox">manual override</label><label>override理由<textarea id="p244-override-reason"></textarea></label><label>検証判断<select id="p244-decision"><option>passed</option><option>passed_with_warnings</option><option>failed</option><option>needs_correction</option><option>rejected</option><option>cancelled</option><option>expired</option></select></label><label><input id="p244-warning-ack" type="checkbox">警告を明示確認</label></div>
+        <div class="phase244-buttons"><button id="p244-start" type="button">検証開始</button><button id="p244-begin" type="button">検証中へ</button><button id="p244-check" type="button">個別チェック保存</button><button id="p244-decide" type="button">検証結果保存</button><button id="p244-approve" type="button">正式インポート候補化</button></div>
+        <div class="phase244-grid"><label>バックアップJSON<textarea id="p244-backup-text"></textarea></label><label>復元方式<select id="p244-restore-mode"><option>merge</option><option>replace</option></select></label></div><div class="phase244-buttons"><button id="p244-backup" type="button">バックアップ</button><button id="p244-restore" type="button">復元</button></div>
+        <div id="p244-message" class="phase244-message" role="status"></div><textarea id="p244-output" class="phase244-output" readonly></textarea>
+      </section>
+
 
       <section class="panel console-menu-panel" aria-label="競馬場選択メニュー">
         <div class="section-heading">
@@ -7150,6 +7159,7 @@
     <script src="phase24-manual-acquisition-execution-temporary-storage-gate.js"></script>
     <script src="phase24-2-main-dashboard-integration.js"></script>
     <script src="phase24-3-manual-acquisition-result-registration-quarantine-storage.js"></script>
+    <script src="phase24-4-quarantine-result-manual-verification-approval-import-candidate.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
