@@ -4368,3 +4368,11 @@ The explicit state flow is draft, manual review, approval, manual action, pause,
 Web Crypto SHA-256 seals plans and response records while retaining previous hashes. Backup/restore contains only the two Phase24-7 stores; restore validates schema and never restores records as automatically approved or completed. Private Local only, PLAN_ONLY, protectedMode. There is no automatic repair, rollback, re-import, approval, execution, Phase24-5-or-earlier modification, Phase22/23 reflection, network communication, GitHub Pages, or Public release.
 
 Open `private-local.html`, then select the Phase24-7 card. Run the dedicated test with `node tests/phase24AuditIssueCorrectionPlanManualResponse.test.js`.
+
+## Phase24-8 Post-correction Revalidation / Reaudit
+
+Phase24-8 reads completed Phase24-7 correction plans and their manual-response evidence without modifying them. Humans compare before/after snapshots, record revalidation checks, optionally conduct a manual reaudit, and create—but do not execute—next-step candidates. Records use `hashimotoKeibaAi.phase24.postCorrectionRevalidation.v1`, `hashimotoKeibaAi.phase24.postCorrectionReaudit.v1`, and `hashimotoKeibaAi.phase24.nextStepCandidate.v1`.
+
+Revalidation cannot pass with unresolved critical/high failures. Warning passes require acknowledgment. Reaudit requires an explicit required/not-required decision. Next-step approval requires human confirmation and never starts rollback, re-import, reapproval, quarantine, or any other downstream process. SHA-256 revision hashes retain previous hashes; backup and validated merge/replace restore cover only Phase24-8 records and restored records are not treated as passed or approved.
+
+Private Local only, PLAN_ONLY, protectedMode. No automatic revalidation, reaudit, approval, import, rollback, next-step execution, Phase24-7-or-earlier modification, Phase22/23 reflection, external communication, GitHub Pages, or Public release. Open `private-local.html` and select Phase24-8. Run `node tests/phase24PostCorrectionRevalidationReauditNextStepCandidate.test.js`.
