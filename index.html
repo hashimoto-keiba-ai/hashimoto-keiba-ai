@@ -96,6 +96,20 @@
       <section class="panel phase248-panel" id="phase24-8-post-correction-revalidation"><h2>Phase24-8 是正後の再検証・再監査・次工程候補管理</h2><p>Phase24-7完了記録を読取専用で参照し、人間が差分・証跡・hash・未解決問題を再確認します。自動再検証・自動再監査・自動rollback・自動再インポート・次工程の自動開始は行いません。</p><div class="phase248-boundary">Private Local only / PLAN_ONLY / protectedMode / 人間の明示確認・承認必須</div></section>
       <section class="panel phase249-panel" id="phase24-9-next-step-execution"><h2>Phase24-9 承認済み次工程候補の手動開始・実施状況管理</h2><p>Phase24-8の承認済み候補だけを読取専用で参照し、人間の開始、進捗、観察、停止、再開、異常、完了の証跡を管理します。実作業・rollback・再インポートを自動実行しません。</p><div class="phase249-boundary">Private Local only / PLAN_ONLY / protectedMode / 自動開始・自動実行・自動完了なし</div></section>
       <section class="panel phase2410-panel" id="phase24-10-final-completion-audit"><h2>Phase24-10 最終確認・完了監査・Phase24統合確認</h2><p>Phase24-9の手動実施結果を最終監査し、Phase24-1〜9の参照チェーン、保存領域、hash、安全境界、回帰結果を人間が統合確認します。自動完了・修復・rollback・再インポートは行いません。</p><div class="phase2410-boundary">Private Local only / PLAN_ONLY / protectedMode / 人間の最終確認必須</div></section>
+      <section class="panel phase251-panel" id="phase25-1-purpose-scope-safety-boundary" aria-label="Phase25-1 目的・範囲・安全境界の定義">
+        <div class="section-heading"><div><p class="eyebrow">Phase25-1 / DEFINITION ONLY</p><h2>目的・範囲・安全境界の定義</h2></div><span class="pill">NO ACQUISITION</span></div>
+        <p>Phase24までの手動取得・一時保存・検証・正式取込・監査の流れを前提に、将来の外部データ取得へ進むための安全な準備・設計・管理基盤を定義します。この段階では実際の外部サイトへの自動接続・自動取得を実行しません。</p>
+        <div class="phase251-alerts" aria-label="Phase25-1 重要な実行制限"><strong>外部取得実行は未許可</strong><strong>人間の明示承認・開始操作が必要</strong><strong>自動購入・自動投票は対象外</strong></div>
+        <div class="phase251-grid">
+          <article><h3>対象範囲</h3><ul><li>外部データ取得候補の分類（オッズ・出馬情報・結果情報など）</li><li>データ提供元候補・取得方式候補の管理</li><li>手動取得と自動取得の境界、取得前の安全確認</li><li>取得データの一時保存</li><li>検証前データと正式データの分離</li><li>監査記録・操作履歴</li><li>人間による承認・開始・停止・再開判断</li></ul></article>
+          <article><h3>対象外範囲</h3><ul><li>馬券の自動購入、IPAT等への自動ログイン、投票操作、購入金額の自動確定</li><li>規約無視、CAPTCHA・アクセス制限・認証の回避、非公開情報の取得</li><li>人間承認を省略した自動開始</li><li>取得データの自動正式反映、自動学習更新</li><li>Public公開、GitHub Pagesでの公開運用</li></ul></article>
+        </div>
+        <h3>安全境界</h3>
+        <dl class="phase251-boundary"><div><dt>privateLocalOnly</dt><dd>true</dd></div><div><dt>planOnly</dt><dd>true</dd></div><div><dt>protectedMode</dt><dd>true</dd></div><div><dt>publicAccessAllowed</dt><dd>false</dd></div><div><dt>githubPagesAllowed</dt><dd>false</dd></div><div><dt>automaticBettingAllowed</dt><dd>false</dd></div><div><dt>automaticLoginAllowed</dt><dd>false</dd></div><div><dt>automaticPurchaseAllowed</dt><dd>false</dd></div><div><dt>automaticApplicationAllowed</dt><dd>false</dd></div><div><dt>automaticLearningUpdateAllowed</dt><dd>false</dd></div><div><dt>externalAcquisitionExecutionAllowed</dt><dd>false</dd></div><div><dt>humanApprovalRequired</dt><dd>true</dd></div><div><dt>humanStartRequired</dt><dd>true</dd></div><div><dt>humanStopControlRequired</dt><dd>true</dd></div><div><dt>auditLogRequired</dt><dd>true</dd></div></dl>
+        <h3>外部取得段階（状態定義・表示のみ）</h3>
+        <ol class="phase251-stages"><li>definition</li><li>source_candidate_registration</li><li>acquisition_method_review</li><li>terms_and_safety_review</li><li>test_plan</li><li>manual_test_ready</li><li>manual_test_executed</li><li>result_review</li><li>limited_execution_candidate</li><li>suspended</li><li>rejected</li><li>closed</li></ol>
+        <div class="phase251-status"><p>現在の段階: <strong id="p251-current-stage">definition</strong></p><p>現在の実行許可状態: <strong id="p251-gate-status" data-available="true">定義表示利用可能（外部取得実行は未許可）</strong></p><p>安全ゲート: <span id="p251-gate-reasons">違反なし</span></p></div>
+      </section>
 
 
       <section class="panel console-menu-panel" aria-label="競馬場選択メニュー">
@@ -7177,6 +7191,7 @@
     <script src="phase24-8-post-correction-revalidation-reaudit-next-step-candidate.js"></script>
     <script src="phase24-9-approved-next-step-manual-start-execution-status-management.js"></script>
     <script src="phase24-10-final-manual-result-review-completion-audit-integration-check.js"></script>
+    <script src="phase25-1-purpose-scope-safety-boundary-definition.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
