@@ -4431,4 +4431,18 @@ This closure is a read-only operational record. It adds no business storage key,
 - no Pages/Public configuration
 - no Phase22/23 change
 
+## Phase25-1 Purpose, Scope, and Safety Boundary
+
+Phase25-1 defines the purpose, scope, exclusions, acquisition stages, and safety gate for Phase25. It builds on the Phase24 manual acquisition, temporary storage, validation, formal import, and audit flow. Phase25 may later consider external odds, race-card, and result data, but this phase implements definitions and display only. It does not connect to an external site, acquire data, or add network communication.
+
+In scope are classification of acquisition candidates, management of candidate sources and methods, the boundary between manual and automatic acquisition, pre-acquisition safety review, temporary storage, separation of unverified and formal data, audit/operation history, and human approval/start/stop/resume decisions.
+
+Out of scope are automatic betting or purchase, IPAT or other automatic login, voting, automatic purchase-amount decisions, terms violations, CAPTCHA/access-control/authentication bypass, acquisition of non-public data, starts without human approval, automatic formal reflection, automatic learning updates, Public publication, and GitHub Pages operation.
+
+The Phase25-1 boundary is `privateLocalOnly: true`, `planOnly: true`, `protectedMode: true`, `publicAccessAllowed: false`, `githubPagesAllowed: false`, `automaticBettingAllowed: false`, `automaticLoginAllowed: false`, `automaticPurchaseAllowed: false`, `automaticApplicationAllowed: false`, `automaticLearningUpdateAllowed: false`, `externalAcquisitionExecutionAllowed: false`, `humanApprovalRequired: true`, `humanStartRequired: true`, `humanStopControlRequired: true`, and `auditLogRequired: true`.
+
+Acquisition stages are defined as `definition`, `source_candidate_registration`, `acquisition_method_review`, `terms_and_safety_review`, `test_plan`, `manual_test_ready`, `manual_test_executed`, `result_review`, `limited_execution_candidate`, `suspended`, `rejected`, and `closed`. The current stage is `definition`. Moving to a later implementation requires human review. External acquisition remains unapproved, and automatic purchase or voting will not be implemented.
+
+Run `node tests/phase25PurposeScopeSafetyBoundaryDefinition.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。

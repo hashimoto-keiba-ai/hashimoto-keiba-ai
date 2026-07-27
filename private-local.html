@@ -455,6 +455,7 @@
         <div class="private-grid"><a class="local-card" href="index.html#phase24-8-post-correction-revalidation"><strong>Phase24-8 是正後の再検証・再監査</strong><span>Phase24-7完了記録の差分と証跡を人間が再確認し、次工程候補だけを管理。次工程の自動開始なし。</span></a></div>
         <div class="private-grid"><a class="local-card" href="index.html#phase24-9-next-step-execution"><strong>Phase24-9 次工程候補の手動開始・状況管理</strong><span>承認済み候補について、人間が行った開始・進捗・停止・完了を記録。実作業の自動実行なし。</span></a></div>
         <div class="private-grid"><a class="local-card" href="index.html#phase24-10-final-completion-audit"><strong>Phase24-10 最終完了監査・統合確認</strong><span>Phase24-1〜9の参照、保存、hash、安全境界を人間が最終確認。自動完了なし。</span></a></div>
+        <div class="private-grid"><a class="local-card" href="index.html#phase25-1-purpose-scope-safety-boundary"><strong>Phase25-1 目的・範囲・安全境界の定義</strong><span>外部取得候補、提供元・方式、手動／自動境界、一時保存、分離、監査、人間判断を定義。外部取得実行は未許可／人間の明示承認・開始操作が必要／自動購入・自動投票は対象外。</span></a></div>
       </section>
 
       <section class="private-section panel" id="phase24-final-operational-verification-completion-closure" aria-label="Phase24 最終完了クローズ">
@@ -472,6 +473,18 @@
           <article class="local-card"><strong>外部通信なし／自動処理なし</strong><span>Pages/Publicなし／Phase22/23非変更</span></article>
           <article class="local-card"><strong>Private Local only</strong><span>PLAN_ONLY／protectedMode</span></article>
         </div>
+      </section>
+
+      <section class="private-section panel phase251-panel" aria-label="Phase25-1 目的・範囲・安全境界">
+        <div class="section-heading"><div><p class="eyebrow">Phase25-1 / Definition Only</p><h2>目的・範囲・安全境界</h2></div><span class="pill">外部取得実行は未許可</span></div>
+        <p>Phase24の手動取得・一時保存・検証・正式取込・監査を前提に、オッズ・出馬情報・結果情報などの将来取得へ向けた安全な準備・設計・管理基盤を定義します。実際の外部接続・取得は行いません。</p>
+        <div class="phase251-alerts"><strong>外部取得実行は未許可</strong><strong>人間の明示承認・開始操作が必要</strong><strong>自動購入・自動投票は対象外</strong></div>
+        <div class="phase251-grid">
+          <article><h3>対象範囲</h3><p>候補分類、提供元・方式管理、手動／自動境界、取得前安全確認、一時保存、検証前／正式データ分離、監査・操作履歴、人間による承認・開始・停止・再開判断。</p></article>
+          <article><h3>対象外範囲</h3><p>自動購入・ログイン・投票・金額確定、規約無視、CAPTCHA・アクセス・認証回避、非公開情報、人間承認なしの開始、自動正式反映・学習更新、Public・GitHub Pages公開。</p></article>
+        </div>
+        <p><strong>安全境界:</strong> Private Local only / PLAN_ONLY / protectedMode / no Public / no GitHub Pages / no automatic betting, login, purchase, application, or learning update / human approval, start, stop control, and audit required.</p>
+        <p><strong>現在の実行許可状態:</strong> 定義表示のみ利用可能。現在段階は <code>definition</code>。外部取得処理とネットワーク通信は未実装です。</p>
       </section>
 
       <section class="private-section panel" aria-label="AI機能リンク">
