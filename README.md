@@ -4445,4 +4445,14 @@ Acquisition stages are defined as `definition`, `source_candidate_registration`,
 
 Run `node tests/phase25PurposeScopeSafetyBoundaryDefinition.test.js`.
 
+## Phase25-2 External Data Source Candidate Management
+
+Phase25-2 adds a Private Local registry for humans to classify, review, update, suspend, reject, prohibit, and archive candidate external data sources. Managed fields cover identity, source/provider description, one or more data categories, a reference-only URL, a candidate acquisition method, authentication requirements, terms/robots/access-restriction/usage-permission reviews, registration status, risk, notes, timestamps, and actors. Storage is isolated at `hashimotoKeibaAi.phase25.sourceCandidateManagement.v1` with `schemaVersion: 1`; no Phase24 or Phase25-1 key is overwritten.
+
+Candidate registration is not acquisition permission. URLs remain inert reference strings. No network communication, external acquisition, automatic login, API call, browser scraping, automatic review, or automatic approval is implemented. Terms, robots, access restrictions, and usage permission must be reviewed manually.
+
+`prohibited` source types, methods, registrations, or usage permissions; `unacceptable` reviews; and `critical`/`prohibited` risks close the safety gate. Even an `approved_for_method_review` candidate can only become eligible for the next human method-review stage. `externalAcquisitionExecutionAllowed` and `networkCommunicationAllowed` remain false.
+
+All manual registrations, updates, status/review/risk changes, prohibited markings, and safety-gate evaluations create Phase25-2 audit records. Sample values must be visibly marked `SAMPLE`, `DUMMY`, or `LOCAL ONLY` and are never treated as real connection targets. Run `node tests/phase25ExternalDataSourceCandidateManagement.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
