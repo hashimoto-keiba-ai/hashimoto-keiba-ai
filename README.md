@@ -4463,4 +4463,12 @@ Approval means only `approved_for_test_planning`: it never permits acquisition e
 
 No external communication, acquisition, automatic login, API call, browser automation, scraping, automatic review, approval, or decision is implemented. Every creation, update, status/risk/compatibility/safety change and gate evaluation has a Phase25-3 audit action. Run `node tests/phase25AcquisitionMethodReviewSafetyDecision.test.js`.
 
+## Phase25-4 External Acquisition Test Plan
+
+Phase25-4 reads eligible Phase25-3 reviews and stores human-authored test plans in `hashimotoKeibaAi.phase25.externalAcquisitionTestPlan.v1`. Plans snapshot Phase25-2/3 references and describe purpose, scope, environment, execution/transfer/authentication/browser/file handling, temporary storage and deletion, limits and duration, stop/abnormality/rollback conditions, evidence, audit, responsible people, approval, and pre-execution status without modifying earlier data.
+
+An approved plan is not execution permission. `ready_for_manual_execution_request` only permits a human to consider an execution request in a later phase. Missing approval evidence, stop/rollback/audit controls, invalid volume limits, prohibited modes, revoked/rejected approval, ineligible Phase25-3 reviews, or unsafe Phase25 boundaries close the gate. Credentials, passwords, API keys, tokens, cookies, and sessions are rejected rather than stored.
+
+No external communication or acquisition, automatic login or purchase, API call, browser automation, scraping, automatic download, automatic approval, start, or execution is implemented. Human approval, start, stop control, and audit remain mandatory. Run `node tests/phase25ExternalAcquisitionTestPlanPreExecutionGate.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。

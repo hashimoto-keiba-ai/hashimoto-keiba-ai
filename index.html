@@ -151,6 +151,28 @@
         <div class="phase253-actions"><button id="p253-create" type="button">レビューを手動作成</button><button id="p253-update" type="button">レビューを手動更新</button><button id="p253-gate" type="button">安全ゲートを表示</button></div>
         <div id="p253-message" class="phase253-message" role="status"></div><pre id="p253-list" class="phase253-list">レビューなし</pre>
       </section>
+      <section class="panel phase254-panel" id="phase25-4-external-acquisition-test-plan" aria-label="Phase25-4 外部取得テスト計画・承認・実行前ゲート">
+        <div class="section-heading"><div><p class="eyebrow">Phase25-4 / PLAN AND GATE ONLY</p><h2>外部取得テスト計画の作成・承認・実行前ゲート</h2></div><span class="pill">NO EXECUTION</span></div>
+        <p>Phase25-3で承認された方式レビューから、人間がテスト計画・承認・停止条件・証跡・監査・実行前ゲートを記録します。承認済みでも取得実行許可ではありません。</p>
+        <div class="phase254-boundary"><strong>外部取得未許可</strong><strong>ネットワーク通信なし</strong><strong>APIなし</strong><strong>自動ログイン・購入なし</strong><strong>ブラウザ自動操作・スクレイピングなし</strong><strong>ファイル自動取得なし</strong></div>
+        <div class="phase254-grid">
+          <label>testPlanId<input id="p254-id"></label><label>sourceCandidateId<input id="p254-source"></label><label>methodReviewId<input id="p254-review"></label>
+          <label>testPurpose<textarea id="p254-purpose"></textarea></label><label>testScope<textarea id="p254-scope"></textarea></label>
+          <label>executionEnvironment<select id="p254-environment"><option>private_local_only</option><option>isolated_local_test</option><option>local_file_only</option><option>manual_browser_only</option><option>prohibited</option></select></label>
+          <label>executionMode<select id="p254-mode"><option>plan_only</option><option>human_only</option><option>human_initiated_manual</option><option>human_initiated_assisted_candidate</option><option>local_processing_only</option><option>prohibited</option></select></label>
+          <label>authenticationHandlingPlan<select id="p254-auth"><option>no_authentication</option><option>public_access_only</option><option>human_login_only</option><option>local_reference_only</option><option>review_required</option><option>prohibited</option></select></label>
+          <label>browserInteractionPlan<select id="p254-browser"><option>none</option><option>manual_only</option><option>assisted_candidate_review_only</option><option>prohibited</option></select></label>
+          <label>fileHandlingPlan<select id="p254-file"><option>none</option><option>manual_download_only</option><option>manual_upload_only</option><option>local_file_read_only</option><option>temporary_local_storage_only</option><option>prohibited</option></select></label>
+          <label>requestVolumeLimit<input id="p254-volume" type="number" min="1"></label><label>requestIntervalPlan<input id="p254-interval"></label><label>testDurationPlan<input id="p254-duration"></label>
+          <label>stopConditions<textarea id="p254-stop"></textarea></label><label>abnormalityConditions<textarea id="p254-abnormality"></textarea></label><label>rollbackPlan<textarea id="p254-rollback"></textarea></label><label>evidenceCollectionPlan<textarea id="p254-evidence"></textarea></label><label>auditPlan<textarea id="p254-audit"></textarea></label>
+          <label>responsiblePerson<input id="p254-responsible"></label><label>approver<input id="p254-approver"></label><label>approvalReason<textarea id="p254-approval-reason"></textarea></label>
+          <label>planStatus<select id="p254-plan-status"><option>draft</option><option>under_review</option><option>pending_human_approval</option><option>approved_for_pre_execution_check</option><option>suspended</option><option>rejected</option><option>prohibited</option><option>archived</option></select></label>
+          <label>approvalStatus<select id="p254-approval-status"><option>not_requested</option><option>approval_required</option><option>pending</option><option>approved</option><option>conditionally_approved</option><option>rejected</option><option>revoked</option></select></label>
+          <label>preExecutionGateStatus<select id="p254-gate-status"><option>not_evaluated</option><option>blocked</option><option>conditionally_ready</option><option>ready_for_manual_execution_request</option><option>suspended</option><option>rejected</option><option>prohibited</option></select></label>
+        </div>
+        <p class="phase254-message">操作API: <code>HashimotoPhase254ExternalAcquisitionTestPlan</code>。作成・編集・承認・拒否・取消・停止・禁止・アーカイブ・ゲート評価はすべて人間操作と監査理由が必要です。</p>
+        <pre class="phase254-list">ready_for_manual_execution_request = 次段階で人間が実行申請を検討できる状態。通信・取得・実行は発生しません。</pre>
+      </section>
 
       <section class="panel console-menu-panel" aria-label="競馬場選択メニュー">
         <div class="section-heading">
@@ -7234,6 +7256,7 @@
     <script src="phase25-1-purpose-scope-safety-boundary-definition.js"></script>
     <script src="phase25-2-external-data-source-candidate-registration-management.js"></script>
     <script src="phase25-3-acquisition-method-candidate-review-classification-safety-decision.js"></script>
+    <script src="phase25-4-external-acquisition-test-plan-approval-pre-execution-gate.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
