@@ -133,6 +133,24 @@
         <p>prohibited候補は有効化できません。安全ゲートが開いても「次段階の取得方式レビュー候補」になるだけで、外部取得・ログイン・API・スクレイピング・通信は実行されません。</p>
       </section>
 
+      <section class="panel phase253-panel" id="phase25-3-acquisition-method-review" aria-label="Phase25-3 取得方式候補レビュー・分類・安全判定">
+        <div class="section-heading"><div><p class="eyebrow">Phase25-3 / HUMAN REVIEW ONLY</p><h2>取得方式候補のレビュー・分類・安全判定</h2></div><span class="pill">NO EXECUTION AUTHORITY</span></div>
+        <p>Phase25-2で方法レビュー候補として承認された提供元だけを、人間が取得方式・互換性・リスク・安全性についてレビューします。承認は次段階のテスト計画候補化に限られ、取得実行許可ではありません。</p>
+        <div class="phase253-boundary"><strong>外部取得未許可</strong><strong>通信なし</strong><strong>API呼出しなし</strong><strong>自動ログインなし</strong><strong>ブラウザ自動操作・スクレイピングなし</strong></div>
+        <div class="phase253-grid">
+          <label>Phase25-2候補<select id="p253-candidate"></select></label><label>methodReviewId<input id="p253-id"></label>
+          <label>methodCategory<select id="p253-category"><option>manual_reference</option><option>manual_download</option><option>manual_file_import</option><option>official_api_candidate</option><option>browser_assisted_candidate</option><option>local_file_only</option><option>mixed_manual_candidate</option><option>undecided</option><option>prohibited</option></select></label>
+          <label>executionModeCandidate<select id="p253-execution"><option>review_only</option><option>human_only</option><option>human_initiated_manual</option><option>human_initiated_assisted</option><option>local_processing_only</option><option>prohibited</option></select></label>
+          <label>dataTransferMode<select id="p253-transfer"><option>no_transfer</option><option>manual_copy</option><option>manual_download</option><option>local_file_read</option><option>manual_csv</option><option>manual_json</option><option>official_api_candidate</option><option>unknown</option><option>prohibited</option></select></label>
+          <label>authenticationMode<select id="p253-auth"><option>none</option><option>public_access_only</option><option>human_login_required</option><option>api_key_candidate</option><option>oauth_candidate</option><option>local_credential_reference_only</option><option>unknown</option><option>prohibited</option></select></label>
+          <label>securityRiskLevel<select id="p253-security"><option>unknown</option><option>low</option><option>medium</option><option>high</option><option>critical</option><option>prohibited</option></select></label><label>operationalRiskLevel<select id="p253-operational"><option>unknown</option><option>low</option><option>medium</option><option>high</option><option>critical</option><option>prohibited</option></select></label>
+          <label>reviewStatus<select id="p253-status"><option>draft</option><option>under_review</option><option>pending_human_decision</option><option>approved_for_test_planning</option><option>suspended</option><option>rejected</option><option>prohibited</option><option>archived</option></select></label>
+          <label>safetyDecision<select id="p253-decision"><option>pending</option><option>safe_for_test_planning</option><option>conditional_for_test_planning</option><option>unsafe</option><option>prohibited</option></select></label>
+          <label>reviewedBy<input id="p253-reviewer"></label><label>reviewedAt<input id="p253-reviewed-at" type="datetime-local"></label><label>decisionReason<textarea id="p253-reason"></textarea></label><label>reviewerNotes<textarea id="p253-notes"></textarea></label>
+        </div>
+        <div class="phase253-actions"><button id="p253-create" type="button">レビューを手動作成</button><button id="p253-update" type="button">レビューを手動更新</button><button id="p253-gate" type="button">安全ゲートを表示</button></div>
+        <div id="p253-message" class="phase253-message" role="status"></div><pre id="p253-list" class="phase253-list">レビューなし</pre>
+      </section>
 
       <section class="panel console-menu-panel" aria-label="競馬場選択メニュー">
         <div class="section-heading">
@@ -7215,6 +7233,7 @@
     <script src="phase24-10-final-manual-result-review-completion-audit-integration-check.js"></script>
     <script src="phase25-1-purpose-scope-safety-boundary-definition.js"></script>
     <script src="phase25-2-external-data-source-candidate-registration-management.js"></script>
+    <script src="phase25-3-acquisition-method-candidate-review-classification-safety-decision.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
