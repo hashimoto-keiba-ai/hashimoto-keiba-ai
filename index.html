@@ -173,6 +173,18 @@
         <p class="phase254-message">操作API: <code>HashimotoPhase254ExternalAcquisitionTestPlan</code>。作成・編集・承認・拒否・取消・停止・禁止・アーカイブ・ゲート評価はすべて人間操作と監査理由が必要です。</p>
         <pre class="phase254-list">ready_for_manual_execution_request = 次段階で人間が実行申請を検討できる状態。通信・取得・実行は発生しません。</pre>
       </section>
+      <section class="panel phase255-panel" id="phase25-5-manual-execution-pre-start" aria-label="Phase25-5 手動実行申請・承認・開始前記録">
+        <div class="section-heading"><div><p class="eyebrow">Phase25-5 / HUMAN RECORD ONLY</p><h2>手動実行申請・承認・開始前記録</h2></div><span class="pill">NO START / NO EXECUTION</span></div>
+        <p>Phase25-4実行前ゲート通過計画だけを対象に、人間の申請、別人承認、開始前安全確認を記録します。この画面は申請・承認・開始前記録のみで、取得処理を実行しません。</p>
+        <div class="phase255-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動開始なし</strong><strong>外部通信なし</strong><strong>認証情報保存なし</strong></div>
+        <div class="phase255-grid">
+          <article><h3>手動実行申請</h3><p>executionRequestId／testPlanId／申請者／操作者／観察者／予定開始／対象範囲／件数・時間・間隔を管理。</p><p>状態: draft・submitted・under_review・approved・conditionally_approved・rejected・withdrawn・expired・suspended・prohibited</p></article>
+          <article><h3>承認</h3><p>申請者本人による自己承認を拒否。承認者、理由、承認時刻を必須化し、拒否・取消・期限切れ・停止・禁止時は開始不可。</p><p>状態: not_requested・pending・approved・conditionally_approved・rejected・revoked</p></article>
+          <article><h3>開始前記録</h3><p>Private Local、保護、PLAN_ONLY、自動処理禁止、停止・rollback・監査・一時保存・削除・規約・実行枠・件数・間隔・異常条件を人間が全項目確認。</p><p>開始判断は次Phaseで人間が検討可能な状態の記録のみ。</p></article>
+        </div>
+        <div class="phase255-confirmations"><strong>必須確認: operator／observer／approver</strong><strong>停止条件・異常条件・rollback</strong><strong>監査ログ</strong><strong>外部取得実行許可=false</strong></div>
+        <p class="phase255-message">操作API: <code>HashimotoPhase255ManualExecutionPreStart</code>。申請作成・状態遷移・承認・開始前記録・ゲート評価には人間の実行者と理由が必要です。</p>
+      </section>
 
       <section class="panel console-menu-panel" aria-label="競馬場選択メニュー">
         <div class="section-heading">
@@ -7257,6 +7269,7 @@
     <script src="phase25-2-external-data-source-candidate-registration-management.js"></script>
     <script src="phase25-3-acquisition-method-candidate-review-classification-safety-decision.js"></script>
     <script src="phase25-4-external-acquisition-test-plan-approval-pre-execution-gate.js"></script>
+    <script src="phase25-5-manual-execution-request-approval-pre-start-record.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

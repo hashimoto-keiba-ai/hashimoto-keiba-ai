@@ -4471,4 +4471,12 @@ An approved plan is not execution permission. `ready_for_manual_execution_reques
 
 No external communication or acquisition, automatic login or purchase, API call, browser automation, scraping, automatic download, automatic approval, start, or execution is implemented. Human approval, start, stop control, and audit remain mandatory. Run `node tests/phase25ExternalAcquisitionTestPlanPreExecutionGate.test.js`.
 
+## Phase25-5 Manual Execution Request
+
+Phase25-5 accepts only Phase25-4 plans whose pre-execution gate remains eligible. It stores human-created execution requests, approval records, and pre-start confirmations in `hashimotoKeibaAi.phase25.manualExecutionRequestPreStart.v1` without modifying Phase25-1 through Phase25-4.
+
+The requester and approver are separated; self-approval is rejected. Approval requires an approver, reason, and timestamp. Before a human may consider a later manual start, operator, observer, approver, Private Local, protectedMode, PLAN_ONLY, no automatic login/purchase/start/background work, disabled network execution, stop control, rollback, audit, temporary storage/deletion, credentials, source terms, execution window, volume, interval, abnormalities, and stop conditions must all be explicitly confirmed.
+
+Even when `eligibleForHumanManualStart` is true, this phase records readiness only. It does not start acquisition, communicate externally, log in, purchase, run in the background, or execute unattended. All state changes are audited and storage remains localStorage-only. Run `node tests/phase25ManualExecutionRequestApprovalPreStartRecord.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
