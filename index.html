@@ -173,6 +173,19 @@
         <p class="phase254-message">操作API: <code>HashimotoPhase254ExternalAcquisitionTestPlan</code>。作成・編集・承認・拒否・取消・停止・禁止・アーカイブ・ゲート評価はすべて人間操作と監査理由が必要です。</p>
         <pre class="phase254-list">ready_for_manual_execution_request = 次段階で人間が実行申請を検討できる状態。通信・取得・実行は発生しません。</pre>
       </section>
+      <section class="panel phase255-panel" id="phase25-6-manual-execution-lifecycle" aria-label="Phase25-6 手動実行開始・実施状況・停止終了記録">
+        <div class="section-heading"><div><p class="eyebrow">Phase25-6 / HUMAN LIFECYCLE RECORD ONLY</p><h2>手動実行開始・実施状況・停止終了記録</h2></div><span class="pill">NO AUTOMATION / NO ACQUISITION</span></div>
+        <p>Phase25-5開始前ゲート通過済み記録のみ対象です。この画面は人間による開始・観測・停止・完了の記録のみで、外部取得処理を実行しません。</p>
+        <div class="phase255-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>手動開始のみ</strong><strong>自動開始・自動停止なし</strong><strong>外部通信・実取得なし</strong></div>
+        <div class="phase255-grid">
+          <article><h3>実行・完了状態</h3><p><strong>executionStatus:</strong> awaiting_manual_start / manually_started / observing / paused / stop_requested / manually_stopped / completed / abnormality_detected / failed / cancelled / expired / prohibited</p><p><strong>completionStatus:</strong> not_started / in_progress / pending_completion_review / completed_successfully / completed_with_conditions / stopped_without_completion / failed / cancelled / expired / prohibited</p></article>
+          <article><h3>停止・データ処分</h3><p><strong>stopDecision:</strong> not_requested / manual_stop_requested / manual_stop_confirmed / emergency_stop_recorded / stop_not_required / cancelled / prohibited</p><p><strong>dataDispositionStatus:</strong> not_applicable / temporary_local_data_exists / deletion_pending / deleted / retained_by_manual_approval / quarantine_required / prohibited</p></article>
+          <article><h3>観測と人間判断</h3><p>観測ログ: manual_start / routine_observation / progress_update / pause / resume / stop_request / manual_stop / abnormality / failure / completion_review / rollback / temporary_data_review / deletion_confirmation / cancellation / expiration / prohibition</p><p>一時停止・再開、停止要求・手動停止には担当者、理由、時刻が必須です。異常時も自動停止せず、人間が判断します。</p></article>
+          <article><h3>完了条件</h3><p>件数上限、停止条件・異常条件、未解決異常、ロールバック、一時データ処分を再確認します。ロールバックとデータ削除は実行せず、人間が別途行った結果の確認記録だけを保存します。</p></article>
+        </div>
+        <div class="phase255-confirmations"><strong>監査: 開始・観測・進捗</strong><strong>監査: 一時停止・再開・手動停止</strong><strong>監査: 完了・rollback・データ処分</strong><strong>localStorage only</strong></div>
+        <p class="phase255-message">操作 API: <code>HashimotoPhase256ManualExecutionLifecycle</code>。自動ログイン、自動購入、自動開始、自動停止、バックグラウンド実行、外部通信は常に不許可です。</p>
+      </section>
       <section class="panel phase255-panel" id="phase25-5-manual-execution-pre-start" aria-label="Phase25-5 手動実行申請・承認・開始前記録">
         <div class="section-heading"><div><p class="eyebrow">Phase25-5 / HUMAN RECORD ONLY</p><h2>手動実行申請・承認・開始前記録</h2></div><span class="pill">NO START / NO EXECUTION</span></div>
         <p>Phase25-4実行前ゲート通過計画だけを対象に、人間の申請、別人承認、開始前安全確認を記録します。この画面は申請・承認・開始前記録のみで、取得処理を実行しません。</p>
@@ -7270,6 +7283,7 @@
     <script src="phase25-3-acquisition-method-candidate-review-classification-safety-decision.js"></script>
     <script src="phase25-4-external-acquisition-test-plan-approval-pre-execution-gate.js"></script>
     <script src="phase25-5-manual-execution-request-approval-pre-start-record.js"></script>
+    <script src="phase25-6-manual-execution-start-status-stop-completion-record.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>

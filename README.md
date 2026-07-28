@@ -4479,4 +4479,14 @@ The requester and approver are separated; self-approval is rejected. Approval re
 
 Even when `eligibleForHumanManualStart` is true, this phase records readiness only. It does not start acquisition, communicate externally, log in, purchase, run in the background, or execute unattended. All state changes are audited and storage remains localStorage-only. Run `node tests/phase25ManualExecutionRequestApprovalPreStartRecord.test.js`.
 
+## Phase25-6 Manual Execution Lifecycle
+
+Phase25-6 accepts only Phase25-5 records whose current pre-start gate has `eligibleForHumanManualStart: true`. It records a human's manual start, observations and progress, pause and resume, manual stop requests and confirmations, abnormalities, failures, cancellation, and completion review. Reference IDs and the approved scope, environment, mode, volume, stop conditions, abnormality conditions, and rollback plan are retained as snapshots.
+
+All lifecycle changes require a human actor, reason, and timestamp. Abnormality detection never causes an automatic stop. Completion requires human reconfirmation of stop and abnormality conditions, processed-volume limits, rollback status, and temporary-data disposition. Rollback is record-only and deletion is confirmation-only; neither operation is performed.
+
+Storage is isolated at `hashimotoKeibaAi.phase25.manualExecutionLifecycle.v1`, uses `schemaVersion: 1`, enforces record/log/capacity limits, and safely initializes an empty store for corrupt JSON or unavailable storage. Audit logs cover creation, start, observation, progress, pause/resume, stop, abnormalities, terminal states, completion, rollback, temporary data, and deletion confirmation.
+
+The boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. There is no automatic start, automatic stop, automatic login, automatic purchase, background or unattended execution, external communication, or real acquisition. Run `node tests/phase25ManualExecutionStartStatusStopCompletionRecord.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
