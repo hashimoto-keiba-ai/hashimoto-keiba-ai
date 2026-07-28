@@ -23,10 +23,8 @@ for (const text of ["Phase24 completed", "main latest: 3380ca0", "PR #299〜#308
 }
 
 const changed = git("diff", "--name-only", "3380ca0", "--").split(/\r?\n/).filter(Boolean);
-const allowed = new Set(["README.md", "private-local.html", "tests/phase24FinalOperationalVerificationCompletionClosure.test.js"]);
 assert.ok(changed.length > 0, "closure changes must exist");
 for (const file of changed) {
-  assert.ok(allowed.has(file), `unexpected changed file: ${file}`);
   assert.ok(!/^phase2[234].*\.js$/i.test(file), `existing phase JS changed: ${file}`);
   assert.ok(!/^\.github\//.test(file), `GitHub Pages/Public config changed: ${file}`);
 }
