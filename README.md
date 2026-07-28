@@ -4455,4 +4455,12 @@ Candidate registration is not acquisition permission. URLs remain inert referenc
 
 All manual registrations, updates, status/review/risk changes, prohibited markings, and safety-gate evaluations create Phase25-2 audit records. Sample values must be visibly marked `SAMPLE`, `DUMMY`, or `LOCAL ONLY` and are never treated as real connection targets. Run `node tests/phase25ExternalDataSourceCandidateManagement.test.js`.
 
+## Phase25-3 Acquisition Method Candidate Review
+
+Phase25-3 reads eligible Phase25-2 source candidates and stores human-created acquisition-method reviews in `hashimotoKeibaAi.phase25.acquisitionMethodReview.v1`. Reviews snapshot the candidate ID, name, and method without modifying Phase25-2. They classify method/execution/transfer/authentication modes, browser and file requirements, compatibility, credential and personal-data handling, legal/technical feasibility, security and operational risk, review status, safety decision, reviewer, time, and reason.
+
+Approval means only `approved_for_test_planning`: it never permits acquisition execution. Prohibited modes, incompatible or unacceptable reviews, unsafe credentials, restricted personal data, infeasible methods, critical risks, missing human decision evidence, or an invalid Phase25-1/25-2 boundary close the gate. Credentials, passwords, API keys, tokens, cookies, and sessions are rejected rather than stored.
+
+No external communication, acquisition, automatic login, API call, browser automation, scraping, automatic review, approval, or decision is implemented. Every creation, update, status/risk/compatibility/safety change and gate evaluation has a Phase25-3 audit action. Run `node tests/phase25AcquisitionMethodReviewSafetyDecision.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
