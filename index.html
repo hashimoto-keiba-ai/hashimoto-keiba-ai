@@ -110,6 +110,28 @@
         <ol class="phase251-stages"><li>definition</li><li>source_candidate_registration</li><li>acquisition_method_review</li><li>terms_and_safety_review</li><li>test_plan</li><li>manual_test_ready</li><li>manual_test_executed</li><li>result_review</li><li>limited_execution_candidate</li><li>suspended</li><li>rejected</li><li>closed</li></ol>
         <div class="phase251-status"><p>現在の段階: <strong id="p251-current-stage">definition</strong></p><p>現在の実行許可状態: <strong id="p251-gate-status" data-available="true">定義表示利用可能（外部取得実行は未許可）</strong></p><p>安全ゲート: <span id="p251-gate-reasons">違反なし</span></p></div>
       </section>
+      <section class="panel phase252-panel" id="phase25-2-source-candidate-management" aria-label="Phase25-2 外部データ提供元候補の登録・分類・管理">
+        <div class="section-heading"><div><p class="eyebrow">Phase25-2 / MANUAL REGISTRY ONLY</p><h2>外部データ提供元候補の登録・分類・管理</h2></div><span class="pill">NO NETWORK / NO ACQUISITION</span></div>
+        <p>将来の外部データ取得に使用する提供元候補を、人間が手動で登録・分類・確認・無効化する管理基盤です。候補登録は取得許可ではなく、URLは参照文字列としてのみ保存します。</p>
+        <div class="phase252-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>外部取得実行は未許可</strong><strong>人間の明示操作・監査必須</strong></div>
+        <div class="phase252-grid">
+          <label>候補ID<input id="p252-id" placeholder="SAMPLE-001"></label><label>提供元名<input id="p252-name" placeholder="SAMPLE LOCAL ONLY"></label>
+          <label>提供元種別<select id="p252-type"><option>official_public_site</option><option>official_api_candidate</option><option>licensed_data_provider</option><option>public_reference_site</option><option>manual_download_source</option><option>local_file_source</option><option>unknown</option><option>prohibited</option></select></label>
+          <label>データカテゴリ<select id="p252-category"><option>race_entry</option><option>odds</option><option>race_result</option><option>payout</option><option>jockey</option><option>trainer</option><option>horse_profile</option><option>track_condition</option><option>weather</option><option>schedule</option><option>historical_result</option><option>other</option></select></label>
+          <label>取得方式候補<select id="p252-method"><option>manual_browser_reference</option><option>manual_download</option><option>manual_csv_import</option><option>manual_json_import</option><option>official_api_review_candidate</option><option>browser_assisted_candidate</option><option>local_file_only</option><option>undecided</option><option>prohibited</option></select></label>
+          <label>参照URL<input id="p252-url" placeholder="参照文字列のみ・通信しません"></label><label>提供者名<input id="p252-provider"></label><label>説明<textarea id="p252-description"></textarea></label><label>認証要否<input id="p252-auth"></label>
+          <label>規約確認<select id="p252-terms"><option>not_reviewed</option><option>review_required</option><option>under_review</option><option>acceptable</option><option>unacceptable</option><option>unknown</option></select></label>
+          <label>robots確認<select id="p252-robots"><option>not_reviewed</option><option>review_required</option><option>under_review</option><option>acceptable</option><option>unacceptable</option><option>not_applicable</option><option>unknown</option></select></label>
+          <label>アクセス制限確認<select id="p252-access"><option>not_reviewed</option><option>review_required</option><option>under_review</option><option>acceptable</option><option>unacceptable</option><option>unknown</option></select></label>
+          <label>利用許可確認<select id="p252-usage"><option>not_confirmed</option><option>confirmation_required</option><option>under_review</option><option>confirmed_manual_use_only</option><option>confirmed_limited_use</option><option>prohibited</option><option>unknown</option></select></label>
+          <label>リスク<select id="p252-risk"><option>unknown</option><option>low</option><option>medium</option><option>high</option><option>critical</option><option>prohibited</option></select></label>
+          <label>登録状態<select id="p252-status"><option>draft</option><option>registered</option><option>under_review</option><option>approved_for_method_review</option><option>suspended</option><option>rejected</option><option>prohibited</option><option>archived</option></select></label>
+          <label>操作者<input id="p252-actor"></label><label>理由<textarea id="p252-reason"></textarea></label>
+        </div>
+        <div class="phase252-actions"><button id="p252-register" type="button">新規候補を手動登録</button><button id="p252-update" type="button">既存候補を手動更新</button><button id="p252-evaluate" type="button">安全ゲートを手動評価・監査記録</button></div>
+        <div id="p252-message" class="phase252-message" role="status"></div><pre id="p252-list" class="phase252-list">登録候補なし</pre>
+        <p>prohibited候補は有効化できません。安全ゲートが開いても「次段階の取得方式レビュー候補」になるだけで、外部取得・ログイン・API・スクレイピング・通信は実行されません。</p>
+      </section>
 
 
       <section class="panel console-menu-panel" aria-label="競馬場選択メニュー">
@@ -7192,6 +7214,7 @@
     <script src="phase24-9-approved-next-step-manual-start-execution-status-management.js"></script>
     <script src="phase24-10-final-manual-result-review-completion-audit-integration-check.js"></script>
     <script src="phase25-1-purpose-scope-safety-boundary-definition.js"></script>
+    <script src="phase25-2-external-data-source-candidate-registration-management.js"></script>
     <script src="win5-phase95.js"></script>
     <script src="trifecta-phase101.js"></script>
   </body>
