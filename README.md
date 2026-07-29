@@ -4489,4 +4489,14 @@ Storage is isolated at `hashimotoKeibaAi.phase25.manualExecutionLifecycle.v1`, u
 
 The boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. There is no automatic start, automatic stop, automatic login, automatic purchase, background or unattended execution, external communication, or real acquisition. Run `node tests/phase25ManualExecutionStartStatusStopCompletionRecord.test.js`.
 
+## Phase25-7 Execution Result Review
+
+Phase25-7 accepts only Phase25-6 end-state records and stores a human result review and safety audit. Humans review completion, stops, abnormalities and failures, evidence, observation and audit logs, rollback records, and temporary-data disposition. Reference IDs and the Phase25-6 result are retained as an immutable snapshot.
+
+The audit reconfirms the Phase25 safety boundary, approved scope, human start and stop, volume/interval/duration compliance, stop and abnormality handling, evidence integrity, credential non-storage, and absence of prohibited execution or communication primitives. Missing evidence, unresolved issues, unverified rollback, or unverified temporary-data disposition prevents eligibility.
+
+Re-execution eligibility requires a separate approver; self-approval is rejected. Full eligibility requires a passed audit, complete evidence, no open improvement or evidence items, and no unresolved issues. Conditional eligibility requires a passed-with-conditions audit and explicit re-execution conditions. Prohibited, rejected, failed-audit, incomplete/inconsistent-evidence, and unresolved-issue records remain ineligible.
+
+This phase records only whether a later human may create a manual re-execution request. It performs no re-execution, acquisition, rollback, deletion, automatic approval, automatic decision application, or learning update. Storage is isolated at `hashimotoKeibaAi.phase25.executionResultReview.v1` with audit logs and remains `Private Local only`, `PLAN_ONLY`, `protectedMode`, localStorage-only, with no external communication or real acquisition. Run `node tests/phase25ExecutionResultReviewSafetyAuditReexecutionEligibilityDecision.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
