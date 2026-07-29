@@ -4499,4 +4499,14 @@ Re-execution eligibility requires a separate approver; self-approval is rejected
 
 This phase records only whether a later human may create a manual re-execution request. It performs no re-execution, acquisition, rollback, deletion, automatic approval, automatic decision application, or learning update. Storage is isolated at `hashimotoKeibaAi.phase25.executionResultReview.v1` with audit logs and remains `Private Local only`, `PLAN_ONLY`, `protectedMode`, localStorage-only, with no external communication or real acquisition. Run `node tests/phase25ExecutionResultReviewSafetyAuditReexecutionEligibilityDecision.test.js`.
 
+## Phase25-8 Manual Re-Execution Request Approval Pre-Restart Check
+
+Phase25-8 accepts only currently valid Phase25-7 records marked eligible or conditionally eligible for a manual re-execution request. A human creates the request, a different human approves or rejects it, and the immutable Phase25-7 references and snapshot preserve the decision, safety audit, evidence, unresolved issues, required improvements, additional evidence, and inherited conditions. Self-approval is forbidden.
+
+Approval requires human verification of required improvements and additional evidence, an active Phase25-7 decision, an in-range volume, approved environment and mode, and explicit stop conditions, abnormality conditions, and rollback plan. Conditional eligibility and conditional approval retain the inherited conditions and require restart conditions. Rejected, revoked, suspended, expired, prohibited, incomplete, inconsistent, insufficient, and unresolved records cannot pass the pre-restart gate.
+
+The pre-restart check reconfirms `Private Local only`, `PLAN_ONLY`, `protectedMode`, the operator, observer, approver, scope, volume, interval, duration, source terms, evidence, improvements, failure and abnormality responses, rollback, temporary-data disposition, audit procedure, human start and stop control, and absence of credentials and prohibited automation. An eligible result only records that a human may perform the next phase's manual restart; it never starts re-execution.
+
+There is no automatic approval, automatic re-execution, automatic login, purchase, start, stop, background execution, external communication, or real acquisition. The independent localStorage key is `hashimotoKeibaAi.phase25.manualReexecutionPreRestart.v1`, with schema, record, audit-log, and capacity limits plus safe corrupt-JSON and unavailable-storage handling. Important actions are audit logged. Run `node tests/phase25ManualReexecutionRequestApprovalPreRestartCheck.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
