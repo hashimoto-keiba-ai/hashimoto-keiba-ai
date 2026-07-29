@@ -4529,4 +4529,12 @@ Normal Phase25 completion requires a passed audit, an improved or unchanged comp
 
 Completion is record-only. It starts no automatic completion, re-execution, acquisition, learning update, application, rollback, deletion, or external communication. Storage is isolated at `hashimotoKeibaAi.phase25.finalSafetyAuditCompletion.v1`, uses schema, review, audit-log, and capacity limits, and safely handles corrupt JSON and unavailable localStorage. The boundary remains `Private Local only`, `PLAN_ONLY`, `protectedMode`, localStorage-only. Run `node tests/phase25ReexecutionResultReviewFinalSafetyAuditCompletionDecision.test.js`.
 
+## Phase25 Final Integration Completion Closure
+
+Phase25-1 through Phase25-10 are complete and are covered by a final Private Local integration closure. The closure verifies the full reference chain from `sourceCandidateId` through `finalReviewId`, all Phase25 tests, the Phase24 regression suite, JavaScript syntax, prohibited primitives, storage isolation, schemas and capacity limits, safe storage failure behavior, audit logs, dashboard sections, the Private Local menu, and README coverage.
+
+The storage-producing Phase25 modules use independent localStorage keys, and the closure has its own key: `hashimotoKeibaAi.phase25.finalIntegrationClosure.v1`. Closure records and audit logs have schema and capacity limits and safely return an empty store for corrupt JSON or unavailable storage. Completion and conditional completion require approval by someone other than the verifier; self-approval is rejected.
+
+The completed boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. There is no external communication or real acquisition, automatic login, purchase, start, stop, re-execution, completion, learning update, or application. The closure records verification and human approval only. Run `node tests/phase25FinalIntegrationVerificationCompletionClosure.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
