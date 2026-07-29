@@ -4519,4 +4519,14 @@ Rollback is record-only and is never executed. Data deletion is also confirmatio
 
 Storage is isolated at `hashimotoKeibaAi.phase25.manualReexecutionLifecycle.v1`, uses `schemaVersion: 1`, and enforces record, observation, audit-log, and capacity limits with safe corrupt-JSON and unavailable-storage behavior. The boundary remains `Private Local only`, `PLAN_ONLY`, `protectedMode`, localStorage-only, with no automatic re-execution, automatic stop, login, purchase, background execution, external communication, or real acquisition. Run `node tests/phase25ManualReexecutionStartStatusStopCompletionRecord.test.js`.
 
+## Phase25-10 Final Safety Audit and Completion Decision
+
+Phase25-10 accepts only Phase25-9 terminal or reviewable end-state records. A human compares the initial execution and re-execution, verifies required improvements and inherited or restart conditions, and reviews stopping, abnormalities, failures, rollback, temporary-data disposition, evidence, observation logs, audit logs, and safety-boundary compliance. Phase25-9 and Phase25-7 references are retained as immutable snapshots.
+
+The final safety audit verifies the complete Phase25 chain from source candidate through the manual re-execution record. Missing references, evidence, observations, audit logs, rollback confirmation, or data disposition block closure. Prohibited records may be reviewed but can never be completed. Regressed or inconclusive comparisons, failed audits, unresolved issues, and outstanding evidence also prevent completion.
+
+Normal Phase25 completion requires a passed audit, an improved or unchanged comparison, closure readiness, all safety confirmations, no unresolved work, and approval by someone other than the reviewer. Conditional completion requires a passed-with-conditions audit, explicit completion conditions, remaining risks and final actions, and separate approval. Self-approval is forbidden. Additional-action and additional-evidence states remain blocked until a human returns them to review.
+
+Completion is record-only. It starts no automatic completion, re-execution, acquisition, learning update, application, rollback, deletion, or external communication. Storage is isolated at `hashimotoKeibaAi.phase25.finalSafetyAuditCompletion.v1`, uses schema, review, audit-log, and capacity limits, and safely handles corrupt JSON and unavailable localStorage. The boundary remains `Private Local only`, `PLAN_ONLY`, `protectedMode`, localStorage-only. Run `node tests/phase25ReexecutionResultReviewFinalSafetyAuditCompletionDecision.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。

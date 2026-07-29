@@ -173,6 +173,19 @@
         <p class="phase254-message">操作API: <code>HashimotoPhase254ExternalAcquisitionTestPlan</code>。作成・編集・承認・拒否・取消・停止・禁止・アーカイブ・ゲート評価はすべて人間操作と監査理由が必要です。</p>
         <pre class="phase254-list">ready_for_manual_execution_request = 次段階で人間が実行申請を検討できる状態。通信・取得・実行は発生しません。</pre>
       </section>
+      <section class="panel phase255-panel" id="phase25-10-final-safety-audit-completion" aria-label="Phase25-10 再実行結果レビュー・最終安全監査・Phase25完了判定">
+        <div class="section-heading"><div><p class="eyebrow">Phase25-10 / FINAL HUMAN REVIEW ONLY</p><h2>再実行結果レビュー・最終安全監査・Phase25完了判定</h2></div><span class="pill">NO AUTOMATION / NO ACQUISITION</span></div>
+        <p>Phase25-9終了記録だけを対象に、初回実行と再実行、改善事項、条件、停止・異常・失敗、ロールバック、一時データ、証跡・観測・監査ログを人間が最終確認します。この画面は最終レビュー・監査・完了判定の記録のみで、外部取得、自動処理、学習更新、適用は行いません。</p>
+        <div class="phase255-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自己承認禁止</strong><strong>自動完了・自動再実行なし</strong><strong>外部通信・実取得なし</strong></div>
+        <div class="phase255-grid">
+          <article><h3>最終レビュー・監査</h3><p><strong>finalReviewStatus:</strong> pending_final_review / under_final_review / phase25_completed / phase25_conditionally_completed / additional_action_required / additional_evidence_required / suspended / rejected / prohibited / archived</p><p><strong>finalSafetyAuditStatus:</strong> not_started / in_progress / passed / passed_with_conditions / failed / additional_evidence_required / suspended / prohibited</p></article>
+          <article><h3>比較・完了判断</h3><p><strong>comparisonStatus:</strong> not_compared / improved / partially_improved / unchanged / regressed / inconclusive / prohibited</p><p><strong>completionDecision:</strong> not_decided / phase25_completion_approved / phase25_conditional_completion_approved / additional_action_required / additional_evidence_required / completion_rejected / suspended / prohibited</p></article>
+          <article><h3>クローズ状態</h3><p><strong>closureStatus:</strong> open / ready_for_closure / conditionally_ready_for_closure / blocked / closed / archived / prohibited</p><p>通常完了は監査passed、比較improved/unchanged、未解決・追加対応・追加証跡なし、全確認true、別人承認を必須とします。</p></article>
+          <article><h3>条件付き・禁止条件</h3><p>条件付き完了は条件、残存リスク、最終対応を明記します。追加対応・追加証跡はblockedとし、人間が再レビューします。</p><p>prohibited、rejected、監査failed、regressed、証跡不足、rollback・一時データ未確認、Phase25チェーン不整合は完了禁止です。</p></article>
+        </div>
+        <div class="phase255-confirmations"><strong>初回・再実行比較</strong><strong>改善・継承条件確認</strong><strong>rollback・データ処分確認</strong><strong>証跡・観測・監査・チェーン整合性</strong></div>
+        <p class="phase255-message">操作 API: <code>HashimotoPhase2510FinalSafetyAuditCompletion</code>。記録上のPhase25完了のみで、自動完了、自動学習更新、自動適用、外部通信はありません。</p>
+      </section>
       <section class="panel phase255-panel" id="phase25-9-manual-reexecution-lifecycle" aria-label="Phase25-9 手動再実行開始・再実施状況・停止完了記録">
         <div class="section-heading"><div><p class="eyebrow">Phase25-9 / HUMAN LIFECYCLE RECORD ONLY</p><h2>手動再実行開始・再実施状況・停止完了記録</h2></div><span class="pill">NO AUTOMATION / NO ACQUISITION</span></div>
         <p>Phase25-8再開始前ゲート通過済み記録だけを対象に、人間による手動再開始、観測、進捗、一時停止、再開、停止、異常、失敗、取消、完了を記録します。この画面は人間による再開始・観測・停止・完了の記録のみで、外部取得処理を実行しません。</p>
@@ -7323,6 +7336,7 @@
     <script src="phase25-4-external-acquisition-test-plan-approval-pre-execution-gate.js"></script>
     <script src="phase25-5-manual-execution-request-approval-pre-start-record.js"></script>
     <script src="phase25-6-manual-execution-start-status-stop-completion-record.js"></script>
+    <script src="phase25-10-reexecution-result-review-final-safety-audit-completion-decision.js"></script>
     <script src="phase25-9-manual-reexecution-start-status-stop-completion-record.js"></script>
     <script src="phase25-8-manual-reexecution-request-approval-pre-restart-check.js"></script>
     <script src="phase25-7-execution-result-review-safety-audit-reexecution-eligibility-decision.js"></script>
