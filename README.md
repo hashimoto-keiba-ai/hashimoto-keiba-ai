@@ -4509,4 +4509,14 @@ The pre-restart check reconfirms `Private Local only`, `PLAN_ONLY`, `protectedMo
 
 There is no automatic approval, automatic re-execution, automatic login, purchase, start, stop, background execution, external communication, or real acquisition. The independent localStorage key is `hashimotoKeibaAi.phase25.manualReexecutionPreRestart.v1`, with schema, record, audit-log, and capacity limits plus safe corrupt-JSON and unavailable-storage handling. Important actions are audit logged. Run `node tests/phase25ManualReexecutionRequestApprovalPreRestartCheck.test.js`.
 
+## Phase25-9 Manual Re-Execution Lifecycle
+
+Phase25-9 accepts only Phase25-8 requests whose current pre-restart gate is eligible for a human manual restart. It records a human's manual restart, observations and progress, pause and resume, manual stop requests and confirmations, abnormalities, failures, cancellation, expiration, prohibition, and completion review. Phase25-8 references, approved scope, environment, mode, volume, inherited conditions, restart conditions, stop conditions, abnormality conditions, and rollback plan are retained as immutable snapshots.
+
+Every lifecycle change requires a human actor, reason, and timestamp. Processed counts cannot decrease or exceed the approved volume. Pause and resume are explicit human records, abnormalities never trigger automatic stopping, and stopped or terminal records reject further progress. Completion requires human reconfirmation of inherited and restart conditions, stop and abnormality conditions, evidence, processed volume, rollback status, and temporary-data disposition.
+
+Rollback is record-only and is never executed. Data deletion is also confirmation-only: the phase records that a human separately performed it. Conditional completion is required when a required rollback has not yet been recorded, and successful completion of temporary-data work requires deleted, retained-by-manual-approval, or quarantine disposition.
+
+Storage is isolated at `hashimotoKeibaAi.phase25.manualReexecutionLifecycle.v1`, uses `schemaVersion: 1`, and enforces record, observation, audit-log, and capacity limits with safe corrupt-JSON and unavailable-storage behavior. The boundary remains `Private Local only`, `PLAN_ONLY`, `protectedMode`, localStorage-only, with no automatic re-execution, automatic stop, login, purchase, background execution, external communication, or real acquisition. Run `node tests/phase25ManualReexecutionStartStatusStopCompletionRecord.test.js`.
+
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
