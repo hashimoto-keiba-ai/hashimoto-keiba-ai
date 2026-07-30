@@ -101,11 +101,11 @@
     acquisitionCompleted: false
   });
   const SNAPSHOT_FIELDS = deepFreeze([
-    "requestId", "createdAt", "createdBy", "acquisitionMethod", "sourceTrustLevel", "sourceName",
+    "requestId", "createdAt", "createdBy", "requestStatus", "acquisitionMethod", "sourceTrustLevel", "sourceName",
     "sourceDescription", "sourceUrlReference", "meetingDate", "racecourse", "raceNumber", "raceName",
     "scheduledPostTime", "targetDataTypes", "dataTimepoint", "expectedRecordCount", "purpose",
     "operatorNote", "consentConfirmed", "termsCheckConfirmed", "accessRestrictionCheckConfirmed",
-    "validationResult"
+    "credentialsRequired", "validationResult", "blockingReasons"
   ]);
   const REQUEST_REQUIRED_SAFE_FLAGS = deepFreeze({ ...phase262.SAFE_FLAGS });
   const RESERVED_APPROVERS = deepFreeze(["system", "auto", "bot", "automation"]);
@@ -120,7 +120,9 @@
     const source = request || {};
     const snapshot = {};
     SNAPSHOT_FIELDS.forEach(key => {
-      if (key === "targetDataTypes") snapshot[key] = unique(source[key]).filter(item => typeof item === "string");
+      if (key === "targetDataTypes" || key === "blockingReasons") {
+        snapshot[key] = unique(source[key]).filter(item => typeof item === "string");
+      }
       else if (typeof source[key] === "boolean" || typeof source[key] === "number") snapshot[key] = source[key];
       else snapshot[key] = text(source[key]);
     });
