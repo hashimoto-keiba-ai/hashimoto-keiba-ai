@@ -4538,3 +4538,21 @@ The storage-producing Phase25 modules use independent localStorage keys, and the
 The completed boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. There is no external communication or real acquisition, automatic login, purchase, start, stop, re-execution, completion, learning update, or application. The closure records verification and human approval only. Run `node tests/phase25FinalIntegrationVerificationCompletionClosure.test.js`.
 
 Phase24は正式完了し、次はPhase25です。Phase25開始前に目的・範囲・安全境界を定義します。現状は引き続き `Private Local only` / `PLAN_ONLY` / `protectedMode` とし、このクローズではPhase25実装を開始しません。
+
+## Phase26-1 External Data Acquisition Purpose, Scope, and Safety Boundary
+
+Phase26-1 defines and displays the purpose, target data, candidate acquisition methods, safety boundary, data states, source trust levels, data timepoints, and review decisions for future external data acquisition. Its purpose is to reduce manual prediction-input work and input errors, standardize data, keep prediction-time data separate from final result data, and support later human review. Automatic purchase and automatic decision-making are explicitly not purposes.
+
+Target data covers meeting and race details, racecourse, race number and post time, race name, course and distance, track condition and weather, race cards, gate and horse numbers, horse details, assigned weight, jockey and trainer, win odds and popularity, body weight and change, results, placing, time, margin, closing section, running positions, and payouts.
+
+Candidate methods are manual entry, human-selected CSV or JSON, pasted text, a future one-shot acquisition started only by a human button press, a future official API, and future Web acquisition. Scheduled and unattended acquisition are prohibited. Phase26-1 does not select files, parse pasted data, communicate with an external site, call an API, scrape, download, update, schedule, run in the background, or start even a simulated acquisition.
+
+The boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. `externalCommunicationEnabled`, `automaticAcquisitionEnabled`, `scheduledAcquisitionEnabled`, `unattendedAcquisitionEnabled`, `automaticPurchaseEnabled`, `automaticApplicationEnabled`, and `automaticLearningUpdateEnabled` are false. `manualApprovalRequired`, `manualStartRequired`, `previewRequired`, pre-acquisition disclosure, and fail-closed handling are true. A future acquisition must show its source, target, time, and expected count before starting; show a preview afterward; and wait for human approval before any staging or formal reflection. Acquired data must never flow automatically to predictions, learning, or purchase processing. Credentials must not be stored in source code, and cookies, passwords, and API keys must not be shown in plaintext in the UI or logs. Terms and access restrictions must be respected.
+
+Defined states are `not_configured`, `disabled`, `awaiting_manual_selection`, `awaiting_manual_start`, `acquisition_requested`, `preview_only`, `validation_required`, `approved_for_staging`, `rejected`, `failed`, `cancelled`, and `expired`. They are definitions only; Phase26-1 performs no state transition.
+
+Source trust levels are `official_source`, `licensed_provider`, `user_supplied_file`, `user_pasted_text`, `manually_entered`, and `unknown_source`. An `unknown_source` is never eligible for formal reflection. Data timepoints are `preliminary`, `pre_race`, `near_post_time`, `final`, `corrected`, and `unknown`, so data used for a prediction is not confused with final post-race data.
+
+Review decisions are `allowed_for_manual_review`, `allowed_for_preview_only`, `blocked_by_safety_policy`, `blocked_by_missing_source`, `blocked_by_missing_consent`, `blocked_by_invalid_format`, and `blocked_by_unknown_timestamp`. The Private Local screen displays all definitions with the warning that it is for design review only and does not execute acquisition.
+
+Run `node tests/phase26ExternalDataAcquisitionBoundary.test.js`.

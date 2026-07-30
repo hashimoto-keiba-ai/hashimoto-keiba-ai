@@ -497,6 +497,45 @@
         <p><strong>現在の実行許可状態:</strong> 定義表示のみ利用可能。現在段階は <code>definition</code>。外部取得処理とネットワーク通信は未実装です。</p>
       </section>
 
+      <section class="private-section panel phase261-panel" id="phase26-1-external-data-acquisition-boundary" aria-label="Phase26-1 外部データ取得の目的・対象・安全境界定義">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase26-1 / DESIGN REVIEW ONLY</p><h2>外部データ取得の目的・対象・安全境界定義</h2></div>
+          <span class="pill">NO ACQUISITION</span>
+        </div>
+        <p class="phase261-warning"><strong>これは設計確認専用であり、取得は実行されません</strong></p>
+        <p>予想入力作業の省力化、入力ミスの削減、取得データの標準化、予想時点データと確定結果データの分離、後続の手動レビュー支援を目的とします。自動購入や自動意思決定は目的に含みません。</p>
+        <div class="phase261-status-grid" aria-label="Phase26-1 現在の安全モード">
+          <article><h3>現在の安全モード</h3><p id="phase261-safety-mode">PLAN_ONLY / protectedMode / Private Local only</p></article>
+          <article><h3>外部通信</h3><p id="phase261-external-communication">無効（通信処理は未実装）</p></article>
+          <article><h3>自動取得</h3><p id="phase261-automatic-acquisition">無効（自動・定期・無人取得なし）</p></article>
+          <article><h3>購入との分離</h3><p>取得データは自動購入処理へ送られません</p></article>
+        </div>
+
+        <details open><summary>対象データ一覧</summary><p class="phase261-token-list">開催情報 / 競馬場 / レース番号 / 発走時刻 / レース名 / コース種別 / 距離 / 馬場状態 / 天候 / 出馬表 / 枠番 / 馬番 / 馬名 / 性齢 / 斤量 / 騎手 / 調教師 / 単勝オッズ / 人気順位 / 馬体重 / 馬体重増減 / レース結果 / 着順 / タイム / 着差 / 上がり / 通過順位 / 払戻情報</p></details>
+        <details><summary>取得方式候補</summary>
+          <ul>
+            <li>人間が手動で入力</li><li>人間がCSVまたはJSONファイルを選択</li><li>人間がコピーしたテキストを貼り付け</li>
+            <li>人間が開始ボタンを押した場合だけ単発取得（将来候補）</li><li>公式API（将来検討用）</li><li>Web取得（将来検討用）</li>
+            <li><strong>定期自動取得は禁止</strong></li><li><strong>無人自動取得は禁止</strong></li>
+          </ul>
+        </details>
+        <details><summary>安全境界</summary>
+          <ul>
+            <li>外部取得機能は初期状態で無効。明示的な手動操作なしでは開始しない</li>
+            <li>取得前に取得元・対象・日時・件数を表示し、取得後にプレビューを表示する</li>
+            <li>人間の承認前に正式データへ反映しない。予想結果・学習データ・購入処理へ自動適用しない</li>
+            <li>認証情報をソースコードへ保存せず、Cookie・パスワード・APIキーを画面やログへ平文表示しない</li>
+            <li>利用規約やアクセス制限を無視せず、エラー時は安全側で停止する</li>
+          </ul>
+        </details>
+        <div class="phase261-definition-grid">
+          <article><h3>状態定義（表示のみ）</h3><p><code>not_configured</code> / <code>disabled</code> / <code>awaiting_manual_selection</code> / <code>awaiting_manual_start</code> / <code>acquisition_requested</code> / <code>preview_only</code> / <code>validation_required</code> / <code>approved_for_staging</code> / <code>rejected</code> / <code>failed</code> / <code>cancelled</code> / <code>expired</code></p><p>Phase26-1では状態遷移を実行しません。</p></article>
+          <article><h3>取得元の信頼区分</h3><p><code>official_source</code> / <code>licensed_provider</code> / <code>user_supplied_file</code> / <code>user_pasted_text</code> / <code>manually_entered</code> / <code>unknown_source</code></p><p><strong>unknown_sourceは正式反映候補にできません。</strong></p></article>
+          <article><h3>データ時点区分</h3><p><code>preliminary</code> / <code>pre_race</code> / <code>near_post_time</code> / <code>final</code> / <code>corrected</code> / <code>unknown</code></p><p>予想に使用した時点とレース終了後の確定データを分離します。</p></article>
+          <article><h3>判定結果の例</h3><p><code>allowed_for_manual_review</code> / <code>allowed_for_preview_only</code> / <code>blocked_by_safety_policy</code> / <code>blocked_by_missing_source</code> / <code>blocked_by_missing_consent</code> / <code>blocked_by_invalid_format</code> / <code>blocked_by_unknown_timestamp</code></p></article>
+        </div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -553,5 +592,6 @@
     <script src="phase22-19-manual-retrial-entry-start-approval-record-core.js"></script>
     <script src="phase22-20-retrial-start-execution-status-management-core.js"></script>
     <script src="phase22-21-retrial-result-comparison-final-evaluation-core.js"></script>
+    <script src="phase26-1-external-data-acquisition-boundary.js"></script>
   </body>
 </html>
