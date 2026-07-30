@@ -4600,3 +4600,17 @@ The 36-item final checklist reconfirms approval/request snapshots, approval evid
 The boundary stays `Private Local only`, `PLAN_ONLY`, and `protectedMode`. Communication, automatic/scheduled/unattended acquisition, automatic purchase/application/learning update, credential source storage, acquisition lifecycle flags, `startAuthorized`, and `executionAuthorized` remain false regardless of input. `ready_for_manual_execution_request` is a record-review result only; it is not acquisition start or execution authorization. No data is stored, acquired, generated, or formally applied.
 
 Run `node tests/phase26ManualAcquisitionStartRequestFinalCheckCore.test.js`.
+
+## Phase26-5 Manual Acquisition Execution Request and Final Approval Record Core
+
+Phase26-5 directly references Phase26-1 through Phase26-4. Only a Phase26-4 record currently inside its validation-only execution window, with `ready_for_manual_execution_request` state/result, no final blocking reasons, complete snapshots/checklist, valid expiration, and unchanged false safety, lifecycle, and authorization flags can become a manual execution-request candidate.
+
+The record contains execution/start/approval/request IDs and whitelisted snapshots, state, human requester and approver evidence, self-approval marker, the execution-preflight checklist, result and multiple blocking reasons, target/count/window/stop/cancellation/expiration metadata, versioning, and fixed safety flags. Snapshot whitelists exclude credentials, sessions, acquired/formal data, external responses, and communication logs.
+
+States are `awaiting_manual_execution_request`, `execution_request_blocked`, `execution_request_recorded`, `awaiting_manual_execution_approval`, `execution_approval_blocked`, `execution_approval_recorded`, `execution_preflight_in_progress`, `execution_preflight_blocked`, `ready_for_manual_execution_record`, `rejected`, `cancelled`, and `expired`. Request, approval, and preflight completion are separate identified human operations. Reserved automatic identities are prohibited; approval must follow the request, occur no later than the current time, and remain within the execution window.
+
+The 45-item preflight checklist reconfirms every upstream snapshot and human record, source/target/timepoint/count/purpose, consent/terms/access restrictions, absence of credentials and prior external communication/request/response, all no-automation boundaries, preview/manual approval, untouched lifecycle and authorization flags, execution window, stop/cancellation conditions, operator responsibility, and final human execution confirmation.
+
+The boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. Communication, automatic/scheduled/unattended acquisition, automatic purchase/application/learning, lifecycle flags, `startAuthorized`, `executionAuthorized`, `externalRequestDispatched`, and `externalResponseReceived` remain false regardless of input. `ready_for_manual_execution_record` is only a completed record-review status; it is not acquisition start or execution authorization. Nothing is saved, dispatched, received, acquired, executed, generated, or formally applied.
+
+Run `node tests/phase26ManualAcquisitionExecutionRequestApprovalCore.test.js`.
