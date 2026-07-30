@@ -4614,3 +4614,17 @@ The 45-item preflight checklist reconfirms every upstream snapshot and human rec
 The boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. Communication, automatic/scheduled/unattended acquisition, automatic purchase/application/learning, lifecycle flags, `startAuthorized`, `executionAuthorized`, `externalRequestDispatched`, and `externalResponseReceived` remain false regardless of input. `ready_for_manual_execution_record` is only a completed record-review status; it is not acquisition start or execution authorization. Nothing is saved, dispatched, received, acquired, executed, generated, or formally applied.
 
 Run `node tests/phase26ManualAcquisitionExecutionRequestApprovalCore.test.js`.
+
+## Phase26-6 Manual Execution Record and Result Intake Preparation Core
+
+Phase26-6 directly references Phase26-1 through Phase26-5. It accepts only an unexpired Phase26-5 record with `ready_for_manual_execution_record` state/result, empty blocking reasons, complete upstream snapshots/checklist, and unchanged safety flags. It never performs acquisition; it records a human's after-the-fact claim that work occurred by separate means.
+
+The record keeps whitelisted upstream snapshots, recorder and actual-operator evidence, observed method/source/trust/target/timepoint, expected and observed counts with an automatically calculated difference, outcome, abnormalities/interruption/stop/cancellation claims, credential and external communication/request/response claims, result-receipt status, intake checklist/result/reasons, timestamps/version, and fixed safety flags. Claims are not treated as system execution facts. No credentials, acquired/formal data, response body, communication log, file content, or pasted body is retained.
+
+States are `awaiting_manual_execution_record`, `execution_record_blocked`, `execution_record_draft`, `execution_recorded`, `intake_preparation_in_progress`, `intake_preparation_blocked`, `ready_for_manual_result_preview`, `rejected`, `cancelled`, and `expired`. Identified human operations are required. A count difference requires a review reason, unknown source/timepoint/outcome is blocked, credential use is blocked, and abnormal/interruption/stop/cancellation claims require details.
+
+The 37-item intake checklist reconfirms all upstream snapshots, recorder and observed execution evidence, count difference, outcome and exceptions, credential non-recording, communication claims, result receipt status, no storage/import/application/learning, preview/manual approval, operator responsibility, and final human confirmation.
+
+The boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. System communication/acquisition/authorization flags and result storage/import/application/learning flags stay false. `resultPreviewReady` and `intakeReady` stay false even at `ready_for_manual_result_preview`. That status means only that the human record is ready for a later manual preview step; it does not read, parse, save, or formally import result data. No localStorage or file/paste input is implemented.
+
+Run `node tests/phase26ManualExecutionRecordIntakePreparationCore.test.js`.
