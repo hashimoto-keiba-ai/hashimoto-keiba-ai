@@ -4628,3 +4628,19 @@ The 37-item intake checklist reconfirms all upstream snapshots, recorder and obs
 The boundary remains `Private Local only`, `PLAN_ONLY`, and `protectedMode`. System communication/acquisition/authorization flags and result storage/import/application/learning flags stay false. `resultPreviewReady` and `intakeReady` stay false even at `ready_for_manual_result_preview`. That status means only that the human record is ready for a later manual preview step; it does not read, parse, save, or formally import result data. No localStorage or file/paste input is implemented.
 
 Run `node tests/phase26ManualExecutionRecordIntakePreparationCore.test.js`.
+
+## Phase26-7 Manual Result Preview Request and Pre-Intake Validation Core
+
+Phase26-7 accepts only a Phase26-6 `ready_for_manual_result_preview` record whose human after-the-fact execution metadata and intake checklist are complete and whose result storage/import/application/learning and readiness flags remain false. A human can record a metadata-only preview request and validate declared format, counts, source, method, trust, target, and reference timepoint before a later preview phase.
+
+No result file or result data is selected, uploaded, read, pasted, parsed, inferred, saved, imported, applied, or learned. No preview is created. Declared CSV, JSON, or delimited-text metadata is validated only as human-supplied expectations. The Phase26-6 snapshot is whitelist-only and excludes credentials, file contents, result bodies, and parsed records.
+
+States are `awaiting_manual_result_preview_request`, `result_preview_request_recorded`, `validating_pre_intake_conditions`, `pre_intake_validation_passed`, `pre_intake_validation_failed`, `pre_intake_validation_on_hold`, `pre_intake_validation_cancelled`, and `ready_for_manual_result_preview_creation`. Every transition requires an identified human, reason, and explicit confirmation. Invalid transitions, progress after cancellation, and automatic transitions are rejected.
+
+Count comparison records exact match, human-defined tolerance, review, mismatch, or non-comparability. Tolerance is never selected automatically. Source, method, trust, target, and timepoint comparisons retain observed and expected values, differences and reasons, human result, confirmer, and time. Trust downgrade, ambiguous target scope, duplicate/missing/contamination possibility, timepoint risk, unresolved exceptions, and pending issues block readiness.
+
+The 46-item pre-intake checklist stores ID, label, category, required flag, status, checker, time, and note. Required `failed`, `unchecked`, or `needs_review` items block readiness. Only complete request/format/count/comparison evidence, resolved Phase26-6 exception claims, an accepted checklist, and a human final confirmer/time/reason allow `ready_for_manual_result_preview_creation`.
+
+All safety flags remain false: result selection/read/parse/store/import/apply/learn, preview creation/readiness, intake readiness, automatic execution, and external connection. Private Local only, PLAN_ONLY, and protectedMode remain in force. The next phase may separately consider manual preview creation; Phase26-7 grants no data-access or import permission.
+
+Run `node tests/phase26ManualResultPreviewPreIntakeValidationCore.test.js`.

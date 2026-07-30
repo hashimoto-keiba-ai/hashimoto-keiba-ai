@@ -700,6 +700,33 @@
         <div class="phase266-output-grid"><article><h3>intakePreparationBlockingReasons</h3><p>未確認</p></article><article><h3>実行事後記録サマリー</h3><pre id="phase266-execution-summary">未作成</pre></article><article><h3>結果入力準備サマリー</h3><pre>未作成</pre></article></div>
       </section>
 
+      <section class="private-section panel phase267-panel" id="phase26-7-manual-result-preview-pre-intake-validation" aria-label="Phase26-7 手動結果プレビュー要求・受入前検証コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-7 / METADATA VALIDATION ONLY</p><h2>手動結果プレビュー要求・受入前検証コア</h2></div><span class="pill">NO FILE / NO PREVIEW</span></div>
+        <p>Phase26-6の<code>ready_for_manual_result_preview</code>記録だけを対象に、人間がプレビュー要求と受入前条件を記録します。実データは読み込まず、結果プレビューもまだ作成しません。</p>
+        <div class="phase267-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動取得なし</strong><strong>ファイル読込なし</strong><strong>保存・取込・適用・学習なし</strong></div>
+        <p class="phase267-warning"><strong>要求記録と受入前検証専用です。外部接続、ファイル選択・解析・保存、正式インポートは行いません。</strong></p>
+        <div class="phase267-grid">
+          <article><h3>対象となるPhase26-6記録</h3><p>ready記録ID、操作者、実行日・時刻、観測方式・取得元・信頼区分・対象・時点、予定・観測件数を参照表示します。</p></article>
+          <article><h3>現在状態</h3><p><code>awaiting_manual_result_preview_request</code></p></article>
+        </div>
+        <form id="phase267-preview-request-form" class="phase267-form">
+          <fieldset><legend>プレビュー要求記録フォーム</legend><label>プレビュー要求ID<input name="previewRequestId" required autocomplete="off"></label><label>Phase26-6記録ID<input name="phase266ExecutionRecordId" required autocomplete="off"></label><label>要求者<input name="requestedBy" required autocomplete="off"></label><label>要求日<input type="date" name="requestDate" required></label><label>要求時刻<input type="time" name="requestTime" required></label><label>要求理由<textarea name="requestReason" required></textarea></label><label>想定結果データ形式<select name="expectedResultFormat"><option value="csv_declared">CSV（申告のみ）</option><option value="json_declared">JSON（申告のみ）</option><option value="text_delimited_declared">区切りテキスト（申告のみ）</option></select></label><label>想定ファイル種別<select name="expectedFileType"><option>csv</option><option>json</option><option>txt</option></select></label><label>想定文字コード<select name="expectedEncoding"><option>utf-8</option><option>utf-8-bom</option><option>shift_jis</option></select></label><label>想定区切り文字<select name="expectedDelimiter"><option value="comma">comma</option><option value="tab">tab</option><option value="semicolon">semicolon</option><option value="not_applicable">not_applicable</option></select></label><label>想定ヘッダー有無<select name="expectedHeaderPresent"><option value="true">あり</option><option value="false">なし</option></select></label><label>想定レコード単位<input name="expectedRecordUnit" required autocomplete="off"></label><label>想定対象期間<input name="expectedTargetPeriod" required autocomplete="off"></label><label>想定基準時点<input name="expectedReferenceTimepoint" required autocomplete="off"></label><label>想定取得元<input name="expectedSource" required autocomplete="off"></label><label>想定取得方式<input name="expectedMethod" required autocomplete="off"></label><label>想定信頼区分<input name="expectedSourceTrust" required autocomplete="off"></label><label>想定対象<input name="expectedTarget" required autocomplete="off"></label><label>想定件数<input type="number" name="expectedCount" min="0" required></label><label>必須列の想定<input name="expectedRequiredColumns" required autocomplete="off"></label><label>一意識別子の想定<input name="expectedUniqueIdentifier" required autocomplete="off"></label><label>日付・時点列の想定<input name="expectedDateTimeColumn" required autocomplete="off"></label><label>対象識別列の想定<input name="expectedTargetIdentifierColumn" required autocomplete="off"></label><label>備考<textarea name="note"></textarea></label></fieldset>
+        </form>
+        <div class="phase267-comparisons">
+          <article><h3>形式確認結果</h3><p>許可形式・種別・文字コード・区切り・ヘッダー・レコード単位・想定列を申告情報だけで確認。</p></article>
+          <article><h3>件数比較結果</h3><p>Phase26-6予定件数・観測件数・件数差と想定件数を比較。許容条件と判断理由は人間が記録。</p></article>
+          <article><h3>取得元比較結果</h3><p>一致判定、相違内容・理由、確認者・日時、人間の確認結果。</p></article>
+          <article><h3>取得方式比較結果</h3><p>観測方式と想定方式の一致・相違、人間の確認結果。</p></article>
+          <article><h3>信頼区分比較結果</h3><p>信頼低下、追加確認、人間による受入可否と理由。</p></article>
+          <article><h3>対象比較結果</h3><p>対象範囲・識別条件・除外対象、重複・欠落・別対象混入可能性。</p></article>
+          <article><h3>時点比較結果</h3><p>基準時点・対象期間・時点差、過去／将来／更新途中データ可能性。</p></article>
+        </div>
+        <section class="phase267-check-section"><h3>受入前検証チェックリスト（46項目）</h3><div id="phase267-checklist" class="phase267-checklist"></div></section>
+        <div class="phase267-grid"><article><h3>未解決事項</h3><p>異常・中断・停止・取消、相違、要確認を人間が記録します。</p></article><article><h3>人間による最終確認欄</h3><p>最終確認者・日時・最終判断理由が必須です。</p></article></div>
+        <div class="phase267-state-actions" aria-label="状態遷移ボタン"><button type="button" disabled>検証開始（対象記録連携後）</button><button type="button" disabled>検証合格（全条件確認後）</button><button type="button" disabled>readyへ進む（人間の明示操作のみ）</button><button type="button" disabled>取消（対象記録連携後）</button></div>
+        <div class="phase267-grid"><article><h3>安全フラグ一覧</h3><p><code>resultDataSelected/read/parsed/stored/imported/applied/learned</code>、<code>resultPreviewCreated/resultPreviewReady</code>、<code>intakeReady</code>、<code>autoExecutionEnabled</code>、<code>externalConnectionEnabled</code> はすべてfalse固定。</p></article><article><h3>禁止処理一覧</h3><p>ファイル選択・アップロード・読込・ドラッグ＆ドロップ・貼り付け解析・CSV/JSON/Excel/PDF解析・自動推定・プレビュー生成・保存・正式取込・適用・学習・外部API・スクレイピング・自動状態遷移・自動実行。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -762,5 +789,6 @@
     <script src="phase26-4-manual-acquisition-start-request-final-check-core.js"></script>
     <script src="phase26-5-manual-acquisition-execution-request-approval-core.js"></script>
     <script src="phase26-6-manual-execution-record-intake-preparation-core.js"></script>
+    <script src="phase26-7-manual-result-preview-pre-intake-validation-core.js"></script>
   </body>
 </html>
