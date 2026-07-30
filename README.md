@@ -4570,3 +4570,19 @@ Safety flags are normalized to `Private Local only`, `PLAN_ONLY`, and `protected
 The Private Local panel is an input and confirmation UI only. A URL is retained only as inert reference text. Phase26-2 performs no external communication, API access, scraping, file reading, paste parsing, download, login, background or scheduled task, simulated acquisition, acquired-data generation, formal application, learning update, or purchase connection.
 
 Run `node tests/phase26ManualAcquisitionRequestPrecheckCore.test.js`.
+
+## Phase26-3 Manual Acquisition Request Approval and Prestart Record Core
+
+Phase26-3 directly references the Phase26-1 boundary and Phase26-2 request core. Only a Phase26-2 request whose status and validation result are both `ready_for_manual_request`, whose blocking-reason list is empty, and whose identity, source, target, timepoint, count, purpose, consent, terms/access checks, credential rule, and fixed safety flags remain valid may be considered for approval.
+
+An approval record contains `approvalRecordId`, the Phase26-2 `requestId`, a whitelisted immutable request snapshot, approval state, approver, time, reason, note, reviewer role, self-approval marker, the complete prestart checklist, validation result and multiple blocking reasons, cancellation conditions, expiration, creation/update time, record version, fixed safety flags, and fixed false acquisition lifecycle flags. The snapshot contains request metadata only; API keys, cookies, passwords, tokens, sessions, acquired data, and formal import data are not copied.
+
+Approval states are `awaiting_manual_approval`, `approval_blocked`, `approved_for_prestart_record`, `prestart_record_in_progress`, `prestart_record_blocked`, `ready_for_manual_start_request`, `rejected`, `cancelled`, and `expired`. Approval and beginning/completing the prestart record require separate identified human operations with reasons and explicit confirmation. Approved records are immutable through the draft-update function, expired records cannot be re-approved, blocked records cannot be forced ready, and no acquisition-start, running, execution, or completion state exists.
+
+The required checklist confirms request identity and snapshot, source and trust, target race and data, timepoint and expected count, purpose, consent, terms and access restrictions, no stored credentials, no prior external communication, no automatic/scheduled/unattended acquisition, no automatic purchase/application/learning update, preview and manual approval requirements, operator responsibility, cancellation conditions, and final human confirmation. Every item must be true before `ready_for_manual_start_request`; that status is readiness for a future manual start request only and never means acquisition has started.
+
+Approvers need a name, valid non-future timestamp, reason, and role. Reserved automatic identities such as `system`, `auto`, and `bot` are blocked. The request creator may approve, but self-approval is explicitly recorded.
+
+The safety boundary stays `Private Local only`, `PLAN_ONLY`, and `protectedMode`. External communication, automatic/scheduled/unattended acquisition, automatic purchase, application, and learning updates remain false. Preview and manual approval remain required; source-code credential storage, `acquisitionStarted`, `acquisitionExecuted`, and `acquisitionCompleted` remain false regardless of input. The UI stores nothing and performs no communication, API use, scraping, file operation, background work, automatic approval, acquisition start, execution, or acquired-data generation.
+
+Run `node tests/phase26ManualAcquisitionApprovalPrestartRecordCore.test.js`.
