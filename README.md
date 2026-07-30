@@ -4586,3 +4586,17 @@ Approvers need a name, valid non-future timestamp, reason, and role. Reserved au
 The safety boundary stays `Private Local only`, `PLAN_ONLY`, and `protectedMode`. External communication, automatic/scheduled/unattended acquisition, automatic purchase, application, and learning updates remain false. Preview and manual approval remain required; source-code credential storage, `acquisitionStarted`, `acquisitionExecuted`, and `acquisitionCompleted` remain false regardless of input. The UI stores nothing and performs no communication, API use, scraping, file operation, background work, automatic approval, acquisition start, execution, or acquired-data generation.
 
 Run `node tests/phase26ManualAcquisitionApprovalPrestartRecordCore.test.js`.
+
+## Phase26-4 Manual Acquisition Start Request and Final Preexecution Check Core
+
+Phase26-4 directly references the Phase26-1, Phase26-2, and Phase26-3 definitions. Only an unexpired Phase26-3 record whose approval state and validation result are `ready_for_manual_start_request`, whose blocking reasons are empty, whose approval/request snapshots and complete prestart checklist remain valid, and whose safety and acquisition lifecycle flags remain unchanged can become a manual start-request candidate.
+
+The start-request record holds IDs, whitelisted approval and request snapshots, state, requester identity/time/reason/role/note, self-request marker, final checklist, result and multiple blocking reasons, stop/cancellation conditions, a validation-only execution window, expiration, timestamps/version, and fixed safety/authorization flags. Snapshot whitelists exclude API keys, cookies, passwords, tokens, sessions, acquired/formal data, and external responses. Phase26-3 snapshots now retain only the additional downstream validation metadata `requestStatus`, `blockingReasons`, and `credentialsRequired`.
+
+States are `awaiting_manual_start_request`, `start_request_blocked`, `start_request_recorded`, `final_check_in_progress`, `final_check_blocked`, `ready_for_manual_execution_request`, `rejected`, `cancelled`, and `expired`. Identified human operations with reasons and explicit confirmation are required. Blocked records cannot be forced ready, completed records are immutable, expired records cannot be reused, and no acquisition-start, running, execution, or completion state exists.
+
+The 36-item final checklist reconfirms approval/request snapshots, approval evidence, source and target, timepoint/count/purpose, consent/terms/access restrictions, credential absence, all no-automation boundaries, preview/manual approval, untouched acquisition lifecycle flags, execution window, stop/cancellation conditions, operator responsibility, and final human confirmation. The window must have valid ordered endpoints, cannot be past-only or exceed expiration, and a request substantially outside it is blocked. It never schedules execution.
+
+The boundary stays `Private Local only`, `PLAN_ONLY`, and `protectedMode`. Communication, automatic/scheduled/unattended acquisition, automatic purchase/application/learning update, credential source storage, acquisition lifecycle flags, `startAuthorized`, and `executionAuthorized` remain false regardless of input. `ready_for_manual_execution_request` is a record-review result only; it is not acquisition start or execution authorization. No data is stored, acquired, generated, or formally applied.
+
+Run `node tests/phase26ManualAcquisitionStartRequestFinalCheckCore.test.js`.
