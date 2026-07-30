@@ -3420,9 +3420,10 @@
     };
     const totalInvestment = records.reduce((sum, record) => sum + toNumber(record.investment, 0), 0);
     const totalPayout = records.reduce((sum, record) => sum + toNumber(record.payout, 0), 0);
+    const generatedAt = new Date().toISOString();
     const report = {
-      id: `weakness-analysis-${new Date().toISOString().replace(/[:.]/g, "-")}`,
-      generatedAt: new Date().toISOString(),
+      id: `weakness-analysis-${generatedAt.replace(/[:.]/g, "-")}-${Math.random().toString(36).slice(2, 8)}`,
+      generatedAt,
       storageKey: STORAGE_KEY,
       sourceStorageKeys: SOURCE_KEYS,
       sourceCounts: {
