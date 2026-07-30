@@ -4556,3 +4556,17 @@ Source trust levels are `official_source`, `licensed_provider`, `user_supplied_f
 Review decisions are `allowed_for_manual_review`, `allowed_for_preview_only`, `blocked_by_safety_policy`, `blocked_by_missing_source`, `blocked_by_missing_consent`, `blocked_by_invalid_format`, and `blocked_by_unknown_timestamp`. The Private Local screen displays all definitions with the warning that it is for design review only and does not execute acquisition.
 
 Run `node tests/phase26ExternalDataAcquisitionBoundary.test.js`.
+
+## Phase26-2 Manual Acquisition Request, Source Selection, and Precheck Core
+
+Phase26-2 references the Phase26-1 definition directly and lets a human create and review an acquisition-request draft before any future acquisition is considered. The request records its ID, creator and time, status, acquisition method, source classification and reference-only description/URL, meeting and race target, selected Phase26-1 target data, data timepoint, expected count, allowed purpose, operator note, consent and terms/access checks, credential requirement, fixed safety flags, validation result, and multiple blocking reasons.
+
+Request states are `draft`, `awaiting_source_selection`, `awaiting_target_selection`, `awaiting_precheck`, `precheck_blocked`, `ready_for_manual_request`, `manually_requested`, `cancelled`, and `expired`. State changes require an identified human, reason, and explicit confirmation. A blocked request cannot be forced to ready, and no acquisition-start or execution state exists. `ready_for_manual_request` means only that the request draft passed its manual precheck.
+
+The precheck blocks missing or unknown sources, empty source names, invalid or prohibited methods, credential-requiring sources, missing race targets, counts below one, empty or out-of-scope target data, unknown timepoints, prediction/final-data mixing, missing consent, unconfirmed terms or access restrictions, prohibited purposes, and missing manual confirmation. Allowed purposes are prediction input support, manual-input reduction, input-error reduction, standardization, pre-race review, result verification, and audit reference. Automatic purchase, automatic decisions, automatic learning updates, and unattended operation are prohibited purposes.
+
+Safety flags are normalized to `Private Local only`, `PLAN_ONLY`, and `protectedMode`; all external communication, automatic/scheduled/unattended acquisition, automatic purchase, application, and learning updates remain disabled. Preview and manual approval remain mandatory, and source-code credential storage remains false regardless of input. The UI has no API-key, cookie, password, or token field and stores no request in localStorage.
+
+The Private Local panel is an input and confirmation UI only. A URL is retained only as inert reference text. Phase26-2 performs no external communication, API access, scraping, file reading, paste parsing, download, login, background or scheduled task, simulated acquisition, acquired-data generation, formal application, learning update, or purchase connection.
+
+Run `node tests/phase26ManualAcquisitionRequestPrecheckCore.test.js`.
