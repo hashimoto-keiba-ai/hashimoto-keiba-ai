@@ -536,6 +536,59 @@
         </div>
       </section>
 
+      <section class="private-section panel phase262-panel" id="phase26-2-manual-acquisition-request-precheck" aria-label="Phase26-2 手動取得要求・取得元選択・事前確認コア">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase26-2 / MANUAL PRECHECK ONLY</p><h2>手動取得要求・取得元選択・事前確認コア</h2></div>
+          <span class="pill">PLAN_ONLY / protectedMode</span>
+        </div>
+        <p>人間が取得要求ドラフトを作り、取得元・対象レース・対象データ・時点・予定件数・目的と安全確認を、取得開始前に検証します。取得要求は手動作成のみで、外部通信は実行されません。</p>
+        <p class="phase262-warning"><strong>準備完了は取得実行を意味しません</strong></p>
+        <div class="phase262-boundary" aria-label="Phase26-2 現在の安全モード">
+          <strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong>
+          <strong>外部通信なし</strong><strong>自動・定期・無人取得なし</strong><strong>自動購入・適用・学習更新なし</strong>
+        </div>
+        <form id="phase262-request-form" class="phase262-form">
+          <fieldset>
+            <legend>取得元選択欄</legend>
+            <label>作成者<input name="createdBy" required autocomplete="off"></label>
+            <label>取得方式<select name="acquisitionMethod" required><option value="">未選択</option><option value="manual_entry">人間が手動で入力</option><option value="manual_file_selection">人間がCSVまたはJSONファイルを選択</option><option value="manual_paste">人間がコピーしたテキストを貼り付け</option><option value="manual_single_acquisition">人間が開始する将来の単発取得</option><option value="official_api">将来検討用の公式API</option><option value="web_acquisition">将来検討用のWeb取得</option></select></label>
+            <label>信頼区分<select name="sourceTrustLevel" required><option value="">未選択</option><option value="official_source">official_source</option><option value="licensed_provider">licensed_provider</option><option value="user_supplied_file">user_supplied_file</option><option value="user_pasted_text">user_pasted_text</option><option value="manually_entered">manually_entered</option><option value="unknown_source">unknown_source（必ずブロック）</option></select></label>
+            <label>取得元名称<input name="sourceName" required autocomplete="off"></label>
+            <label>取得元説明<textarea name="sourceDescription"></textarea></label>
+            <label>参照URL（表示・記録専用。アクセスしません）<input name="sourceUrlReference" inputmode="url" autocomplete="off"></label>
+            <label class="phase262-check"><input type="checkbox" name="credentialsRequired">認証情報を要求する取得元（Phase26-2ではブロック）</label>
+          </fieldset>
+          <fieldset>
+            <legend>取得対象レース欄</legend>
+            <label>開催日<input type="date" name="meetingDate" required></label>
+            <label>競馬場<input name="racecourse" required autocomplete="off"></label>
+            <label>レース番号<input type="number" name="raceNumber" min="1" required></label>
+            <label>レース名<input name="raceName" autocomplete="off"></label>
+            <label>発走予定時刻<input type="time" name="scheduledPostTime"></label>
+            <label>データ時点区分<select name="dataTimepoint" required><option value="">未選択</option><option value="preliminary">preliminary</option><option value="pre_race">pre_race</option><option value="near_post_time">near_post_time</option><option value="final">final</option><option value="corrected">corrected</option><option value="unknown">unknown（ブロック）</option></select></label>
+            <label>予定件数<input type="number" name="expectedRecordCount" min="1" required></label>
+          </fieldset>
+          <fieldset class="phase262-targets">
+            <legend>対象データ選択欄</legend>
+            <label><input type="checkbox" name="targetDataTypes" value="開催情報">開催情報</label><label><input type="checkbox" name="targetDataTypes" value="競馬場">競馬場</label><label><input type="checkbox" name="targetDataTypes" value="レース番号">レース番号</label><label><input type="checkbox" name="targetDataTypes" value="発走時刻">発走時刻</label><label><input type="checkbox" name="targetDataTypes" value="レース名">レース名</label><label><input type="checkbox" name="targetDataTypes" value="コース種別">コース種別</label><label><input type="checkbox" name="targetDataTypes" value="距離">距離</label><label><input type="checkbox" name="targetDataTypes" value="馬場状態">馬場状態</label><label><input type="checkbox" name="targetDataTypes" value="天候">天候</label><label><input type="checkbox" name="targetDataTypes" value="出馬表">出馬表</label><label><input type="checkbox" name="targetDataTypes" value="枠番">枠番</label><label><input type="checkbox" name="targetDataTypes" value="馬番">馬番</label><label><input type="checkbox" name="targetDataTypes" value="馬名">馬名</label><label><input type="checkbox" name="targetDataTypes" value="性齢">性齢</label><label><input type="checkbox" name="targetDataTypes" value="斤量">斤量</label><label><input type="checkbox" name="targetDataTypes" value="騎手">騎手</label><label><input type="checkbox" name="targetDataTypes" value="調教師">調教師</label><label><input type="checkbox" name="targetDataTypes" value="単勝オッズ">単勝オッズ</label><label><input type="checkbox" name="targetDataTypes" value="人気順位">人気順位</label><label><input type="checkbox" name="targetDataTypes" value="馬体重">馬体重</label><label><input type="checkbox" name="targetDataTypes" value="馬体重増減">馬体重増減</label><label><input type="checkbox" name="targetDataTypes" value="レース結果">レース結果</label><label><input type="checkbox" name="targetDataTypes" value="着順">着順</label><label><input type="checkbox" name="targetDataTypes" value="タイム">タイム</label><label><input type="checkbox" name="targetDataTypes" value="着差">着差</label><label><input type="checkbox" name="targetDataTypes" value="上がり">上がり</label><label><input type="checkbox" name="targetDataTypes" value="通過順位">通過順位</label><label><input type="checkbox" name="targetDataTypes" value="払戻情報">払戻情報</label>
+          </fieldset>
+          <fieldset>
+            <legend>利用目的・事前確認</legend>
+            <label>利用目的<select name="purpose" required><option value="">未選択</option><option value="prediction_input_support">prediction_input_support</option><option value="manual_input_reduction">manual_input_reduction</option><option value="input_error_reduction">input_error_reduction</option><option value="data_standardization">data_standardization</option><option value="pre_race_review">pre_race_review</option><option value="result_verification">result_verification</option><option value="audit_reference">audit_reference</option><option value="automatic_purchase">automatic_purchase（禁止）</option><option value="automatic_decision">automatic_decision（禁止）</option><option value="automatic_learning_update">automatic_learning_update（禁止）</option><option value="unattended_operation">unattended_operation（禁止）</option></select></label>
+            <label>運用メモ<textarea name="operatorNote"></textarea></label>
+            <label class="phase262-check"><input type="checkbox" name="consentConfirmed">同意確認</label>
+            <label class="phase262-check"><input type="checkbox" name="termsCheckConfirmed">利用規約確認</label>
+            <label class="phase262-check"><input type="checkbox" name="accessRestrictionCheckConfirmed">アクセス制限確認</label>
+          </fieldset>
+          <button type="submit">手動で要求ドラフトを作成し事前確認する</button>
+        </form>
+        <div class="phase262-output-grid">
+          <article><h3>事前確認結果</h3><p id="phase262-precheck-result">incomplete</p></article>
+          <article><h3>blockingReasons</h3><p id="phase262-blocking-reasons">未確認</p></article>
+          <article><h3>要求サマリー</h3><pre id="phase262-request-summary">未作成</pre></article>
+        </div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -593,5 +646,6 @@
     <script src="phase22-20-retrial-start-execution-status-management-core.js"></script>
     <script src="phase22-21-retrial-result-comparison-final-evaluation-core.js"></script>
     <script src="phase26-1-external-data-acquisition-boundary.js"></script>
+    <script src="phase26-2-manual-acquisition-request-precheck-core.js"></script>
   </body>
 </html>
