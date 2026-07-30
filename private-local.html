@@ -589,6 +589,50 @@
         </div>
       </section>
 
+      <section class="private-section panel phase263-panel" id="phase26-3-manual-acquisition-approval-prestart-record" aria-label="Phase26-3 手動取得要求承認・取得開始前記録コア">
+        <div class="section-heading">
+          <div><p class="eyebrow">Phase26-3 / APPROVAL RECORD ONLY</p><h2>手動取得要求承認・取得開始前記録コア</h2></div>
+          <span class="pill">NO ACQUISITION START</span>
+        </div>
+        <p>Phase26-2で<code>ready_for_manual_request</code>となった要求だけを対象に、人間の承認と取得開始前チェックを記録します。外部通信、取得開始、取得実行は行われません。</p>
+        <p class="phase263-warning"><strong>ready_for_manual_start_requestは取得開始を意味しません</strong></p>
+        <div class="phase263-boundary" aria-label="Phase26-3 現在の安全モード"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>外部通信なし</strong><strong>acquisitionStarted = false</strong><strong>acquisitionExecuted = false</strong></div>
+        <form id="phase263-approval-form" class="phase263-form">
+          <fieldset>
+            <legend>Phase26-2取得要求サマリー</legend>
+            <label>requestId<input name="requestId" required autocomplete="off"></label>
+            <label>要求作成者<input name="createdBy" required autocomplete="off"></label>
+            <label>信頼区分<select name="sourceTrustLevel" required><option value="">未選択</option><option value="official_source">official_source</option><option value="licensed_provider">licensed_provider</option><option value="user_supplied_file">user_supplied_file</option><option value="user_pasted_text">user_pasted_text</option><option value="manually_entered">manually_entered</option><option value="unknown_source">unknown_source（承認不可）</option></select></label>
+            <label>取得元名称<input name="sourceName" required autocomplete="off"></label>
+            <label>開催日<input type="date" name="meetingDate" required></label>
+            <label>競馬場<input name="racecourse" required autocomplete="off"></label>
+            <label>レース番号<input type="number" name="raceNumber" min="1" required></label>
+          </fieldset>
+          <fieldset>
+            <legend>承認記録</legend>
+            <label>承認者<input name="approvedBy" required autocomplete="off"></label>
+            <label>承認日時<input type="datetime-local" name="approvedAt" required></label>
+            <label>承認理由<textarea name="approvalReason" required></textarea></label>
+            <label>承認メモ<textarea name="approvalNote"></textarea></label>
+            <label>承認者役割<input name="reviewerRole" required autocomplete="off"></label>
+            <label>取消条件<textarea name="cancellationConditions" required></textarea></label>
+            <label>有効期限<input type="datetime-local" name="expirationAt"></label>
+            <p>自己承認かどうかは要求作成者と承認者から記録します。<code>system</code>、<code>auto</code>、<code>bot</code>承認者は禁止です。</p>
+          </fieldset>
+          <fieldset class="phase263-checklist">
+            <legend>取得開始前チェックリスト</legend>
+            <label><input type="checkbox" name="requestIdentityConfirmed">要求識別確認</label><label><input type="checkbox" name="requestSnapshotConfirmed">requestSnapshot確認</label><label><input type="checkbox" name="sourceConfirmed">取得元確認</label><label><input type="checkbox" name="sourceTrustConfirmed">信頼区分確認</label><label><input type="checkbox" name="targetRaceConfirmed">対象レース確認</label><label><input type="checkbox" name="targetDataConfirmed">対象データ確認</label><label><input type="checkbox" name="dataTimepointConfirmed">データ時点確認</label><label><input type="checkbox" name="expectedRecordCountConfirmed">予定件数確認</label><label><input type="checkbox" name="purposeConfirmed">利用目的確認</label><label><input type="checkbox" name="consentConfirmed">同意確認</label><label><input type="checkbox" name="termsConfirmed">利用規約確認</label><label><input type="checkbox" name="accessRestrictionConfirmed">アクセス制限確認</label><label><input type="checkbox" name="noCredentialsStoredConfirmed">認証情報非保存確認</label><label><input type="checkbox" name="noExternalCommunicationYetConfirmed">外部通信未実行確認</label><label><input type="checkbox" name="noAutomaticAcquisitionConfirmed">自動取得なし確認</label><label><input type="checkbox" name="noScheduledAcquisitionConfirmed">定期取得なし確認</label><label><input type="checkbox" name="noUnattendedAcquisitionConfirmed">無人取得なし確認</label><label><input type="checkbox" name="noAutomaticPurchaseConfirmed">自動購入なし確認</label><label><input type="checkbox" name="noAutomaticApplicationConfirmed">自動適用なし確認</label><label><input type="checkbox" name="noAutomaticLearningUpdateConfirmed">自動学習更新なし確認</label><label><input type="checkbox" name="previewRequirementConfirmed">プレビュー必須確認</label><label><input type="checkbox" name="manualApprovalRequirementConfirmed">手動承認必須確認</label><label><input type="checkbox" name="operatorResponsibilityConfirmed">操作者責任確認</label><label><input type="checkbox" name="cancellationConditionsConfirmed">取消条件確認</label><label><input type="checkbox" name="finalHumanConfirmation">人間の最終確認</label>
+          </fieldset>
+          <button type="submit">人間の操作で承認・開始前記録を検証する</button>
+        </form>
+        <div class="phase263-output-grid">
+          <article><h3>承認判定結果</h3><p id="phase263-approval-result">incomplete</p></article>
+          <article><h3>preStartBlockingReasons</h3><p id="phase263-blocking-reasons">未確認</p></article>
+          <article><h3>承認・開始前記録サマリー</h3><pre id="phase263-approval-summary">未作成</pre></article>
+          <article><h3>requestSnapshot</h3><pre id="phase263-request-snapshot">未作成</pre></article>
+        </div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -647,5 +691,6 @@
     <script src="phase22-21-retrial-result-comparison-final-evaluation-core.js"></script>
     <script src="phase26-1-external-data-acquisition-boundary.js"></script>
     <script src="phase26-2-manual-acquisition-request-precheck-core.js"></script>
+    <script src="phase26-3-manual-acquisition-approval-prestart-record-core.js"></script>
   </body>
 </html>
