@@ -727,6 +727,22 @@
         <div class="phase267-grid"><article><h3>安全フラグ一覧</h3><p><code>resultDataSelected/read/parsed/stored/imported/applied/learned</code>、<code>resultPreviewCreated/resultPreviewReady</code>、<code>intakeReady</code>、<code>autoExecutionEnabled</code>、<code>externalConnectionEnabled</code> はすべてfalse固定。</p></article><article><h3>禁止処理一覧</h3><p>ファイル選択・アップロード・読込・ドラッグ＆ドロップ・貼り付け解析・CSV/JSON/Excel/PDF解析・自動推定・プレビュー生成・保存・正式取込・適用・学習・外部API・スクレイピング・自動状態遷移・自動実行。</p></article></div>
       </section>
 
+      <section class="private-section panel phase268-panel" id="phase26-8-manual-result-data-selection-pre-read-approval" aria-label="Phase26-8 手動結果データ選択・読込前承認コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-8 / FILE METADATA ONLY</p><h2>手動結果データ選択・読込前承認コア</h2></div><span class="pill">NO FILE CONTENT READ</span></div>
+        <p>Phase26-7の<code>ready_for_manual_result_preview_creation</code>記録だけを対象に、人間が候補ファイルを選択し、内容を読む前にメタデータと承認条件を確認します。</p>
+        <div class="phase268-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>ファイル内容未読込</strong><strong>ファイル内容未解析</strong><strong>保存・取込・適用・学習なし</strong></div>
+        <p class="phase268-warning"><strong>ファイル名・サイズ・種類・更新日時だけを参照します。読込、解析、プレビュー、保存、アップロード、外部送信は行いません。</strong></p>
+        <div class="phase268-grid"><article><h3>対象となるPhase26-7記録</h3><p><code>ready_for_manual_result_preview_creation</code>の検証済み記録を参照します。</p></article><article><h3>現在状態</h3><p><code>awaiting_manual_result_data_selection</code></p></article></div>
+        <form id="phase268-selection-form" class="phase268-form">
+          <fieldset><legend>ファイル選択または候補メタデータ入力領域</legend><label>候補ファイル（内容は読みません）<input id="phase268-file-input" type = "file" accept=".csv,.json,.txt"></label><label>選択記録ID<input name="selectionRecordId" required autocomplete="off"></label><label>選択者<input name="selectedBy" required autocomplete="off"></label><label>選択日<input type="date" name="selectionDate" required></label><label>選択時刻<input type="time" name="selectionTime" required></label><label>選択理由<textarea name="selectionReason" required></textarea></label><label>ファイル表示名<input name="fileDisplayName" autocomplete="off"></label><label>ファイル名<output data-phase268-file-metadata="fileName">未選択</output></label><label>拡張子<output data-phase268-file-metadata="extension">未選択</output></label><label>MIME type<output data-phase268-file-metadata="mimeType">未選択</output></label><label>ファイルサイズ<output data-phase268-file-metadata="fileSize">未選択</output></label><label>最終更新日時<output data-phase268-file-metadata="lastModifiedAt">未選択</output></label><label>想定形式<input name="expectedDataFormat" autocomplete="off"></label><label>想定文字コード<input name="expectedEncoding" autocomplete="off"></label><label>想定区切り文字<input name="expectedDelimiter" autocomplete="off"></label><label>想定対象<input name="expectedTarget" autocomplete="off"></label><label>想定対象期間<input name="expectedTargetPeriod" autocomplete="off"></label><label>想定基準時点<input name="expectedReferenceTimepoint" autocomplete="off"></label><label>想定取得元<input name="expectedSource" autocomplete="off"></label><label>想定取得方式<input name="expectedMethod" autocomplete="off"></label><label>想定信頼区分<input name="expectedSourceTrust" autocomplete="off"></label><label>想定件数<input type="number" min="0" name="declaredCount"></label><label>ファイル保管場所の説明<textarea name="storageLocationDescription"></textarea></label><label>原本・複製<input name="originalOrCopy" autocomplete="off"></label><label>編集状態<input name="editStatus" autocomplete="off"></label><label>作成元の説明<textarea name="creatorDescription"></textarea></label></fieldset>
+        </form>
+        <div class="phase268-grid"><article><h3>想定形式との比較結果</h3><p>拡張子・MIME type・想定形式をメタデータだけで確認。</p></article><article><h3>サイズ確認結果</h3><p>人間が指定した下限・上限、0バイト、大小可能性を確認。</p></article><article><h3>ファイル名確認結果</h3><p>命名規則、対象・日時・版、一時・バックアップ・不審文字を確認。</p></article><article><h3>更新日時確認結果</h3><p>対象時点・期間、古さ・将来日時・更新途中・タイムゾーンを確認。</p></article><article><h3>取得元・作成元確認結果</h3><p>原本・複製、編集、中間加工、改変可能性を人間が確認。</p></article><article><h3>対象整合性確認結果</h3><p>対象範囲・期間・識別条件・混入・欠落・重複可能性を確認。</p></article><article><h3>件数見込み比較結果</h3><p>申告件数のみをPhase26-6・26-7件数と比較。行数は実測しません。</p></article><article><h3>重複候補確認結果</h3><p>同一記録のファイル名・サイズ・更新日時だけを比較。ハッシュは計算しません。</p></article></div>
+        <div class="phase268-grid"><article><h3>読込実行予定者</h3><p>予定者・役割・使用端末・使用画面と安全手順を記録。</p></article><article><h3>読込予定日時</h3><p>予定日・予定時刻を記録。自動実行は行いません。</p></article><article><h3>読込前承認記録</h3><p>承認者・日時・判断・理由・条件・承認対象メタデータを固定記録。</p></article><article><h3>未解決事項</h3><p>異常・中断・停止・取消・再確認事項を人間が管理。</p></article></div>
+        <section class="phase268-check-section"><h3>読込前チェックリスト（54項目）</h3><div id="phase268-checklist" class="phase268-checklist"></div></section>
+        <div class="phase268-state-actions" aria-label="状態遷移履歴と操作"><button type="button" disabled>メタデータ検証開始（人間の明示操作のみ）</button><button type="button" disabled>読込前承認を記録（全条件確認後）</button><button type="button" disabled>取消（対象記録連携後）</button></div>
+        <div class="phase268-grid"><article><h3>状態遷移履歴</h3><p>変更者・日時・変更前後状態・理由を追記型で保持します。</p></article><article><h3>安全フラグ一覧</h3><p>内容読込・解析・保存・アップロード・外部送信・インポート・適用・学習・自動実行・外部接続はfalse固定。候補選択とメタデータ記録だけが候補記録の存在時にtrueです。</p></article><article><h3>禁止処理一覧</h3><p>FileReader、内容読込、CSV/JSON/Excel/PDF解析、行数・列名実測、ハッシュ、コピー、保存、アップロード、外部送信、正式取込、適用、学習、API、スクレイピング、自動処理。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -790,5 +806,6 @@
     <script src="phase26-5-manual-acquisition-execution-request-approval-core.js"></script>
     <script src="phase26-6-manual-execution-record-intake-preparation-core.js"></script>
     <script src="phase26-7-manual-result-preview-pre-intake-validation-core.js"></script>
+    <script src="phase26-8-manual-result-data-selection-pre-read-approval-core.js"></script>
   </body>
 </html>

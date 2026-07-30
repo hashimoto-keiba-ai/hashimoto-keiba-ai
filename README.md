@@ -4644,3 +4644,21 @@ The 46-item pre-intake checklist stores ID, label, category, required flag, stat
 All safety flags remain false: result selection/read/parse/store/import/apply/learn, preview creation/readiness, intake readiness, automatic execution, and external connection. Private Local only, PLAN_ONLY, and protectedMode remain in force. The next phase may separately consider manual preview creation; Phase26-7 grants no data-access or import permission.
 
 Run `node tests/phase26ManualResultPreviewPreIntakeValidationCore.test.js`.
+
+## Phase26-8 Manual Result Data Selection and Pre-Read Approval Core
+
+Phase26-8 accepts only a Phase26-7 `ready_for_manual_result_preview_creation` record with completed human validation, no unresolved issues, and all result-processing safety flags false. A human explicitly records a candidate result file and completes metadata review, planned-reader safety checks, a 54-item pre-read checklist, and approval before the record can become `ready_for_manual_result_data_read`.
+
+The states are `awaiting_manual_result_data_selection`, `result_data_candidate_recorded`, `validating_file_metadata`, `awaiting_manual_pre_read_review`, `pre_read_review_on_hold`, `pre_read_review_rejected`, `pre_read_approval_recorded`, `ready_for_manual_result_data_read`, and `selection_cancelled`. Every transition requires an identified human, reason, and explicit confirmation. Cancellation is terminal, and no automatic selection, approval, transition, or execution occurs.
+
+File selection is metadata-only. The implementation may inspect only the file name, size, MIME type, and last-modified timestamp exposed by the browser, plus the extension derived from the name. Phase26-8 does not read file contents and does not use FileReader or file/blob content-reading methods. It performs no CSV, JSON, Excel, PDF, ZIP, encoding, delimiter, header, column, row-count, record-count, or hash processing.
+
+Format, size, file-name, timestamp, provenance, target, declared-count, and duplicate-candidate reviews are human-recorded. Size limits and count tolerance are never chosen automatically. Duplicate detection compares only the Phase26-7 reference, name, size, and last-modified timestamp. A zero-byte file, incomplete review, unresolved risk, incomplete planned-reader procedure, or required checklist item that is failed, unchecked, or needs review blocks readiness.
+
+Pre-read approval fixes the approved file name, size, last-modified timestamp, Phase26-7 reference, and selection record ID. Approval must be `approved` or `approved_with_conditions`; conditional approval requires explicit conditions. Whether selector and approver are the same person is explicitly recorded. Changing any approved file metadata invalidates approval and requires rechecking.
+
+Content access, parsing, storage, upload, external transmission, import, application, learning, automatic read/import/execution, preview readiness, intake readiness, and external connection flags remain false. Candidate-selected and metadata-recorded flags may become true only when candidate metadata exists; they do not mean the file was read. No file content, binary, Base64 value, parsed record, row, column, preview, or external-send payload is retained.
+
+The Phase26-8 boundary remains Private Local only, PLAN_ONLY, and protectedMode. It does not save, upload, externally transmit, formally import, apply, or learn from the file. Actual manual content reading belongs to a separately reviewed Phase26-9.
+
+Run `node tests/phase26ManualResultDataSelectionPreReadApprovalCore.test.js`.
