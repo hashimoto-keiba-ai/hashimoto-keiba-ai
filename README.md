@@ -4738,3 +4738,21 @@ Persistable records contain IDs, scope and exclusion plans, count/review summari
 Phase26-13 separately handles human formal-import execution. Phase26-12 provides no import or write authority.
 
 Run `node tests/phase26FormalImportCandidatePreImportApprovalCore.test.js`.
+
+## Phase26-13 Manual Formal Import Execution Core
+
+Phase26-13 is the first phase authorized to write approved records to a formal Private Local destination. It accepts only Phase26-12 `ready_for_manual_formal_import_execution` candidates with valid approval, positive planned count, destination and executor plan, PLAN_ONLY and protectedMode safety. Reading the page, selecting a candidate, or having approval never starts import.
+
+Execution requires an identified human, explicit confirmation flags, and the exact phrase `正式インポートを手動実行します`. The caller must supply a synchronous or asynchronous Private Local destination adapter with explicit `count` and `insert` methods; no default external, database, filesystem, network, or background adapter exists.
+
+Each start creates `manual-formal-import-batch-YYYYMMDDHHMMSS-xxxxx`, associated with candidate, approval, source data ID/hash, executor, destination, counts, mappings, errors, rollback candidate, safety evidence, and next state. Duplicate protection covers active/completed candidate IDs, active source IDs, source hashes, record keys, and batch IDs.
+
+Counts record destination before/after, planned, excluded, attempted, successful, failed, and skipped values. A normal success requires `attempted = successful + failed + skipped`, every planned row successful, and zero failures/skips. Successful execution moves to `ready_for_manual_post_import_verification`; post-import verification is not automatically completed.
+
+Import stops at the first failed or duplicate-skipped record. Partial success is never normal completion and creates an in-memory rollback-review candidate for successfully inserted destination IDs. Failures and interruptions never retry automatically. Rollback candidates prohibit automatic execution and require later human review.
+
+Each source row records source record/data ID, row number/hash, candidate and batch IDs, destination record ID/type, result, timestamps, failure/skip reason, rollback eligibility, and pending verification status. Source data is never modified or overwritten.
+
+Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-13 performs no automatic application, learning update, retry, rollback, external transmission, public publication, GitHub Pages deployment, or background execution.
+
+Run `node tests/phase26ManualFormalImportExecutionCore.test.js`.
