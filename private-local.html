@@ -775,6 +775,20 @@
         <div class="phase2610-grid"><article><h3>Phase26-11引渡し確認欄</h3><p>解析結果・プレビューの人間確認、可否、確認者・日時・理由を記録。</p></article><article><h3>状態遷移履歴</h3><p>人間の明示操作と解析結果状態を追記。</p></article><article><h3>監査履歴</h3><p>設定、実行、失敗、中断、取消、生成、破棄、引渡しを追記。</p></article><article><h3>安全フラグ一覧</h3><p>正式保存・取込・適用・学習・外部送信・自動処理はfalse固定。</p></article><article><h3>禁止処理一覧</h3><p>自動推定・修正・変換、JSON/Excel/PDF/XML/ZIP、永続保存、ダウンロード、アップロード、外部通信、正式処理。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2611-panel" id="phase26-11-manual-result-preview-validation-intake-decision" aria-label="Phase26-11 手動結果プレビュー検証・受入可否判定コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-11 / HUMAN VALIDATION ONLY</p><h2>手動結果プレビュー検証・受入可否判定コア</h2></div><span class="pill">NO AUTO ACCEPTANCE</span></div>
+        <p>Phase26-10の<code>ready_for_manual_result_preview_review</code>記録とメモリ上のプレビューを、人間が検証して次工程可否を判定します。</p>
+        <div class="phase2611-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>正式保存なし</strong><strong>正式取込なし</strong><strong>適用・学習なし</strong></div>
+        <p class="phase2611-warning"><strong>確認と判定記録専用です。値、列名、欠損、重複、異常行を自動変更・補完・削除しません。</strong></p>
+        <div class="phase2611-grid"><article><h3>対象となるPhase26-10記録</h3><p>ready状態、heldプレビュー、成功解析を参照。</p></article><article><h3>現在状態</h3><p><code>awaiting_manual_preview_validation</code></p></article><article><h3>previewDataId・プレビュー状態</h3><p>未連携 / held必須</p></article><article><h3>元ファイル情報</h3><p>Phase26-8～10のメタデータのみ。</p></article><article><h3>解析設定概要・解析結果概要</h3><p>形式、区切り、ヘッダー、行列数、警告を参照。</p></article></div>
+        <section class="phase2611-preview-section"><h3>ヘッダー一覧・プレビュー表（安全なテキスト表示）</h3><div id="phase2611-preview"></div></section>
+        <form id="phase2611-validation-form" class="phase2611-form"><fieldset><legend>検証記録</legend><label>検証記録ID<input name="validationRecordId"></label><label>検証者<input name="validator"></label><label>検証日<input type="date" name="validationDate"></label><label>検証開始時刻<input type="time" name="validationStartTime"></label><label>検証終了時刻<input type="time" name="validationEndTime"></label><label>検証目的<textarea name="validationPurpose"></textarea></label><label>検証対象範囲<input name="validationScope"></label><label>使用プレビュー行範囲<input name="previewRowRange"></label><label>使用列範囲<input name="columnRange"></label><label>検証結果概要<textarea name="validationSummary"></textarea></label></fieldset></form>
+        <div class="phase2611-grid"><article><h3>必須列定義・確認結果</h3><p>論理名、想定名、許容別名、必須性、一意性、空値、型、用途を人間が定義。</p></article><article><h3>識別子確認結果</h3><p>候補列、複合列、空・重複・形式を人間が確認。</p></article><article><h3>日付・時点確認結果</h3><p>列、形式、期間、将来・過去、タイムゾーンを確認。</p></article><article><h3>対象整合性確認結果</h3><p>Phase26-7～11の対象、混入、欠落、重複候補を確認。</p></article><article><h3>件数比較結果</h3><p>Phase26-6～10の申告・解析件数と受入候補件数を比較。</p></article><article><h3>欠損候補確認結果</h3><p>許容条件と人間判断のみ。自動補完なし。</p></article><article><h3>重複候補確認結果</h3><p>完全一致・識別子重複候補を確認。自動削除・統合なし。</p></article><article><h3>異常行確認結果</h3><p>列数、引用符、制御文字、NULL、長大セル、空行を確認。</p></article><article><h3>Formula Injection候補確認結果</h3><p>=、+、-、@候補を確認。値は変更しません。</p></article><article><h3>出所・信頼区分確認結果</h3><p>取得元、作成元、編集、中間加工、信頼低下を再確認。</p></article></div>
+        <div class="phase2611-grid"><article><h3>修正指示欄</h3><p>指示者、対象、問題、必要作業、期限を記録。修正処理なし。</p></article><article><h3>差戻し先選択</h3><p>Phase26-8 / Phase26-9 / Phase26-10から明示選択。</p></article><article><h3>受入可否判定欄</h3><p>accepted / accepted_with_conditions / on_hold / returned_for_reparse / rejected / cancelled</p></article><article><h3>条件付き受入条件</h3><p>条件付き受入時は必須。</p></article><article><h3>未解決事項</h3><p>重大異常、中断、取消、再確認事項を記録。</p></article></div>
+        <section class="phase2611-check-section"><h3>プレビュー検証チェックリスト（73項目）</h3><div id="phase2611-checklist" class="phase2611-checklist"></div></section>
+        <div class="phase2611-grid"><article><h3>次工程引渡し確認欄</h3><p>人間がapprovedを明示した場合のみ。</p></article><article><h3>状態遷移履歴</h3><p>変更者・日時・変更前後・理由を追記。</p></article><article><h3>監査履歴</h3><p>検証、各確認、指示、差戻し、判定、第二確認、引渡しを追記。</p></article><article><h3>安全フラグ一覧</h3><p>正式保存・取込・適用・学習・外部送信・自動検証・自動受入はfalse固定。</p></article><article><h3>禁止処理一覧</h3><p>自動修正・補完・削除・除外・変換・推定・受入・差戻し・却下、永続保存、外部通信、正式処理。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -841,5 +855,6 @@
     <script src="phase26-8-manual-result-data-selection-pre-read-approval-core.js"></script>
     <script src="phase26-9-manual-result-data-read-temporary-holding-core.js"></script>
     <script src="phase26-10-manual-result-data-parse-preview-generation-core.js"></script>
+    <script src="phase26-11-manual-result-preview-validation-intake-decision-core.js"></script>
   </body>
 </html>

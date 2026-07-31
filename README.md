@@ -4702,3 +4702,21 @@ States run from `awaiting_manual_parse_configuration` through explicit configura
 Nothing is written to localStorage, IndexedDB, files, downloads, servers, clouds, external APIs, or a formal data area. Phase26-10 performs no formal import, application, or learning update. Phase26-11 separately handles human preview validation and acceptance.
 
 Run `node tests/phase26ManualResultDataParsePreviewGenerationCore.test.js`.
+
+## Phase26-11 Manual Result Preview Validation and Intake Decision Core
+
+Phase26-11 performs human validation of the Phase26-10 held preview and metadata only. It accepts only `ready_for_manual_result_preview_review` records whose preview remains available in memory and whose read/parse flags are valid. It never automatically validates, accepts, returns, rejects, or advances a record.
+
+The human records required-column definitions and reviews structure, identifiers, date/timepoint declarations, target scope, count consistency, missing candidates, exact-row and identifier duplicate candidates, anomalous rows, formula-injection candidates, provenance, and trust. These reviews store definitions, counts, summaries, reasons, reviewer identity, and timestamps—not raw text, all parsed rows, all preview cells, or formal data.
+
+No column name or cell is changed. Missing values are not filled; duplicates and anomalous or out-of-scope rows are not deleted, merged, or excluded; dates, numbers, identifiers, and primary keys are not converted or inferred. Formula candidates beginning with `=`, `+`, `-`, or `@` remain unchanged and are reviewed as warnings.
+
+Decisions are `accepted`, `accepted_with_conditions`, `on_hold`, `returned_for_reparse`, `rejected`, or `cancelled`. Conditional acceptance requires explicit conditions. Validator/decision-maker identity and whether the same person was used are recorded; a configured separation requirement requires an accepted second review. Returning requires an explicit target of Phase26-8, Phase26-9, or Phase26-10, plus reason, required work, and human confirmer.
+
+The state machine ends at `ready_for_manual_formal_import_candidate_creation` only after all human reviews, the 73-item checklist, an accepted decision, and an approved handoff are complete. Negative decisions and cancellation keep preview-readiness and formal-import-candidate-preparation flags false.
+
+Records may persist IDs, definitions, review summaries, correction instructions, return and intake decisions, checklist results, state history, and audit metadata. They never persist raw text, all parsed rows, the full preview, all cell values, Base64, formal data, or external-send payloads. No formal storage, import, application, learning, upload, external transmission, API connection, or scraping is implemented.
+
+Phase26-12 separately handles formal-import candidate creation and pre-import approval. Phase26-11 grants no authority to save or import data.
+
+Run `node tests/phase26ManualResultPreviewValidationIntakeDecisionCore.test.js`.
