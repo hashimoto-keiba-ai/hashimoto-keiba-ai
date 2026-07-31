@@ -789,6 +789,19 @@
         <div class="phase2611-grid"><article><h3>次工程引渡し確認欄</h3><p>人間がapprovedを明示した場合のみ。</p></article><article><h3>状態遷移履歴</h3><p>変更者・日時・変更前後・理由を追記。</p></article><article><h3>監査履歴</h3><p>検証、各確認、指示、差戻し、判定、第二確認、引渡しを追記。</p></article><article><h3>安全フラグ一覧</h3><p>正式保存・取込・適用・学習・外部送信・自動検証・自動受入はfalse固定。</p></article><article><h3>禁止処理一覧</h3><p>自動修正・補完・削除・除外・変換・推定・受入・差戻し・却下、永続保存、外部通信、正式処理。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2612-panel" id="phase26-12-formal-import-candidate-pre-import-approval" aria-label="Phase26-12 正式インポート候補作成・取込前承認コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-12 / PLAN AND APPROVAL ONLY</p><h2>正式インポート候補作成・取込前承認コア</h2></div><span class="pill">NO IMPORT EXECUTION</span></div>
+        <p>Phase26-11の<code>ready_for_manual_formal_import_candidate_creation</code>記録だけを対象に、候補範囲・計画・取込前承認を人間が記録します。</p>
+        <div class="phase2612-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>正式インポート未実行</strong><strong>正式保存なし</strong><strong>適用・学習なし</strong></div>
+        <p class="phase2612-warning"><strong>候補と計画の記録専用です。行の選択・除外、保存、インポート、適用、ロールバックは実行しません。</strong></p>
+        <div class="phase2612-grid"><article><h3>対象となるPhase26-11記録</h3><p>accepted系、approved引渡し、heldプレビューのready記録。</p></article><article><h3>現在状態</h3><p><code>awaiting_manual_formal_import_candidate_creation</code></p></article><article><h3>Phase26-11受入判定</h3><p>判定ID、結果、理由を参照。</p></article><article><h3>条件付き受入条件</h3><p>accepted_with_conditions時は確認記録必須。</p></article><article><h3>previewDataId</h3><p>未連携</p></article></div>
+        <form id="phase2612-candidate-form" class="phase2612-form"><fieldset><legend>正式インポート候補記録</legend><label>正式インポート候補ID<input name="formalImportCandidateId"></label><label>候補作成者<input name="createdBy"></label><label>候補作成日<input type="date" name="creationDate"></label><label>候補作成時刻<input type="time" name="creationTime"></label><label>候補作成理由<textarea name="creationReason"></textarea></label><label>対象行範囲<input name="targetRowRange"></label><label>対象列<input name="targetColumns"></label><label>対象件数<input type="number" min="0" name="targetCount"></label><label>除外行範囲<input name="excludedRowRange"></label><label>除外件数<input type="number" min="0" name="excludedCount"></label><label>除外理由<textarea name="exclusionReason"></textarea></label><label>想定取込先<input name="destination"></label></fieldset></form>
+        <div class="phase2612-grid"><article><h3>件数比較結果</h3><p>Phase26-6～11と候補・除外件数を人間が比較。</p></article><article><h3>必須列最終確認</h3><p>不足列、条件付き列を含め人間が最終確認。</p></article><article><h3>識別子最終確認</h3><p>空・重複候補を確認。生成なし。</p></article><article><h3>日付・時点最終確認</h3><p>変換・補正なし。</p></article><article><h3>対象列最終確認</h3><p>対象期間・範囲を確認。</p></article><article><h3>重複リスク確認</h3><p>既存正式データを自動照合しません。</p></article><article><h3>条件付き受入条件確認</h3><p>必須条件未解決時は進行不可。</p></article></div>
+        <div class="phase2612-grid"><article><h3>正式取込実行計画</h3><p>実行予定者、日時、端末、画面、手順を記録。</p></article><article><h3>実行予定者・取込予定日時</h3><p>自動スケジュール・開始なし。</p></article><article><h3>中断・取消・失敗時対応計画</h3><p>再開・再実行・二重取込防止を事前記録。</p></article><article><h3>ロールバック方針</h3><p>対象、単位、判断条件、担当、期限、証跡方針を記録。実行なし。</p></article><article><h3>取込前承認記録・第二確認欄</h3><p>承認対象候補のスナップショットと人間関係を記録。</p></article><article><h3>未解決事項</h3><p>重大異常、中断、取消、必須条件を管理。</p></article></div>
+        <section class="phase2612-check-section"><h3>取込前チェックリスト（75項目）</h3><div id="phase2612-checklist" class="phase2612-checklist"></div></section>
+        <div class="phase2612-grid"><article><h3>状態遷移履歴</h3><p>変更者・日時・変更前後・理由を追記。</p></article><article><h3>監査履歴</h3><p>候補、範囲、除外、件数、計画、承認、無効化を追記。</p></article><article><h3>安全フラグ一覧</h3><p>保存・取込・適用・学習・自動候補・自動承認・自動実行はfalse固定。</p></article><article><h3>禁止処理一覧</h3><p>DB・ファイル書込、追加・更新・削除、行自動選択・除外、変換、正式処理、外部送信、ロールバック実行。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -856,5 +869,6 @@
     <script src="phase26-9-manual-result-data-read-temporary-holding-core.js"></script>
     <script src="phase26-10-manual-result-data-parse-preview-generation-core.js"></script>
     <script src="phase26-11-manual-result-preview-validation-intake-decision-core.js"></script>
+    <script src="phase26-12-formal-import-candidate-pre-import-approval-core.js"></script>
   </body>
 </html>
