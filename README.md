@@ -4756,3 +4756,19 @@ Each source row records source record/data ID, row number/hash, candidate and ba
 Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-13 performs no automatic application, learning update, retry, rollback, external transmission, public publication, GitHub Pages deployment, or background execution.
 
 Run `node tests/phase26ManualFormalImportExecutionCore.test.js`.
+
+## Phase26-14 Manual Post-Import Verification Core
+
+Phase26-14 manually verifies only Phase26-13 records in `ready_for_manual_post_import_verification`. A Phase26-13 execution record, batch/candidate IDs, executor, all import counts, record mappings, PLAN_ONLY, and protectedMode are mandatory. Page display, selection, and detail inspection do not start or finalize verification.
+
+An identified human must reconfirm the import batch and explicitly confirm manual start and the no-automatic-correction, rollback, and learning boundaries. Start issues `manual-post-import-verification-YYYYMMDDHHMMSS-xxxxx`; one in-memory verification-history entry per `importBatchId` prevents concurrent or repeated verification, including automatic retry after interruption or cancellation.
+
+Count verification checks `attempted = successful + failed + skipped` and normally `post-import = pre-import + successful`. A documented, human-approved destination count exception may be recorded, but unexplained inconsistency can never pass. Verification also records duplicates across candidate, batch, source/hash, source/destination record and business keys; missing source, destination, identifiers, required fields, hashes, and mappings; and Phase26-13 source-to-destination mappings.
+
+Major field comparisons distinguish `exact_match`, `normalized_match`, `warning_difference`, `critical_difference`, and unavailable comparison. Issues preserve type, severity, identifiers, expected/actual values, description, detector, human comment, and resolution requirement. Critical/error issues, serious duplicates or missing data, and count inconsistency fail verification.
+
+Clean results move through `manual_post_import_verification_passed` to `ready_for_manual_post_import_verification_decision`. Minor documented warnings use `manual_post_import_verification_passed_with_warnings`. Failed results require the human to choose `manual_post_import_reconciliation_required` or `manual_post_import_rollback_review_required`. Interruption and cancellation preserve reasons. Phase26-13 rollback candidates are displayed and linked, but never executed automatically.
+
+Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-14 performs no automatic correction, deletion, reimport, retry, rollback, application, learning update, external transmission, background execution, GitHub Pages deployment, or public publication.
+
+Run `node tests/phase26ManualPostImportVerificationCore.test.js`.

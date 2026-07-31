@@ -814,6 +814,20 @@
         <div class="phase2613-actions"><button type="button" disabled>実行証跡を確認</button><button type="button" disabled>元データ対応を確認</button><button type="button" disabled>ロールバック候補を確認</button></div>
       </section>
 
+      <section class="private-section panel phase2614-panel" id="phase26-14-manual-post-import-verification" aria-label="Phase26-14 手動インポート後検証コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-14 / MANUAL POST-IMPORT VERIFICATION</p><h2>手動インポート後検証コア</h2></div><span class="pill warning">HUMAN VERIFICATION ONLY</span></div>
+        <p>Phase26-13で<code>ready_for_manual_post_import_verification</code>となった正式インポート結果だけを、人間が件数・重複・欠損・対応関係・内容差異まで検証します。</p>
+        <div class="phase2614-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動修正なし</strong><strong>自動削除なし</strong><strong>自動再取込なし</strong><strong>自動再試行なし</strong><strong>自動ロールバックなし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong></div>
+        <p class="phase2614-warning"><strong>検証結果の記録専用です。画面表示や対象選択だけでは開始・確定せず、データの修正、削除、再取込、ロールバック、適用、学習更新は実行しません。</strong></p>
+        <div class="phase2614-grid"><article><h3>Phase26-13検証対象一覧</h3><p>importBatchId、candidateId、承認、元データ、取込先、実行者、日時、件数、結果、rollbackCandidateId、開始可否・理由。</p></article><article><h3>取込バッチ詳細</h3><p>取込前・予定・試行・成功・失敗・スキップ・取込後件数とrecordMappingsを再確認。</p></article><article><h3>現在状態・次状態表示</h3><p id="phase2614-current-status">ready_for_manual_post_import_verification</p><p>正常時：ready_for_manual_post_import_verification_decision</p></article></div>
+        <form id="phase2614-verification-form" class="phase2614-form"><fieldset><legend>検証前再確認</legend><label>importBatchId再確認<input name="confirmImportBatchId"></label><label>検証者入力（名前またはID）<input name="verifierName" required></label><label><input type="checkbox" name="verificationStartConfirmed">検証対象と手動開始を明示確認</label><label><input type="checkbox" name="noAutomaticCorrectionConfirmed">自動修正されないことを確認</label><label><input type="checkbox" name="noAutomaticRollbackConfirmed">自動ロールバックされないことを確認</label><label><input type="checkbox" name="noAutomaticLearningUpdateConfirmed">自動学習更新されないことを確認</label></fieldset></form>
+        <div class="phase2614-actions"><button type="button" disabled>インポート後検証内容を確認</button><button type="button" class="warning" disabled>手動検証を開始</button><button type="button" disabled>件数整合性を確認</button><button type="button" disabled>重複結果を確認</button><button type="button" disabled>欠損結果を確認</button><button type="button" disabled>元データ対応を確認</button></div>
+        <div class="phase2614-grid"><article><h3>件数整合性確認</h3><p>試行＝成功＋失敗＋スキップ、取込後＝取込前＋成功を確認。例外理由を記録。</p></article><article><h3>重複確認</h3><p>candidate、batch、source、hash、record、destination、業務キーの重複を記録。</p></article><article><h3>欠損確認</h3><p>元データ、取込先、識別子、必須フィールド、hash、mappingの欠損を記録。</p></article><article><h3>元データと取込結果の対応一覧</h3><p>matched / warning / source_only / destination_only / duplicate / missing / invalid。</p></article><article><h3>主要フィールド比較</h3><p>exact、normalized、warning、critical、比較不能を区別。</p></article><article><h3>警告・不整合一覧</h3><p>issueId、種別、severity、期待値・実値、説明、コメント、対応要否。</p></article><article><h3>ロールバック候補表示</h3><p>候補ID、理由、対象、状態、検証結果との関係を表示。自動実行は禁止。</p></article></div>
+        <form class="phase2614-form"><fieldset><legend>検証結果入力</legend><label>検証者コメント<textarea name="verifierComment"></textarea></label><label>不合格時の次状態<select name="failureNextState"><option>manual_post_import_reconciliation_required</option><option>manual_post_import_rollback_review_required</option></select></label></fieldset></form>
+        <div class="phase2614-actions"><button type="button" class="warning" disabled>検証結果を確定</button><button type="button" disabled>検証を中断</button><button type="button" disabled>検証を取り消す</button><button type="button" disabled>ロールバック候補を確認</button><button type="button" disabled>検証証跡を確認</button></div>
+        <div class="phase2614-grid"><article><h3>検証証跡一覧</h3><p>verificationRecordId、対象、検証者、日時、結果、件数、issue、コメント、安全フラグ、次状態を保持。</p></article><article><h3>判定</h3><p>正常、警告付き正常、不合格、中断、取消を明示し、重大問題を通常表示と区別。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -883,5 +897,6 @@
     <script src="phase26-11-manual-result-preview-validation-intake-decision-core.js"></script>
     <script src="phase26-12-formal-import-candidate-pre-import-approval-core.js"></script>
     <script src="phase26-13-manual-formal-import-execution-core.js"></script>
+    <script src="phase26-14-manual-post-import-verification-core.js"></script>
   </body>
 </html>
