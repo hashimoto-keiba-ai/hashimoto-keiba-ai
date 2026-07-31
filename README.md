@@ -4836,3 +4836,19 @@ Completed and conditionally completed records proceed only to `ready_for_manual_
 Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-18 performs no formal registration, operation reflection, correction, deletion, reimport, retry, rollback, application, learning update, external transmission, background execution, automatic scheduling/notification, GitHub Pages deployment, or public publication.
 
 Run `node tests/phase26ManualPostImportFormalRegistrationPreparationCore.test.js`.
+
+## Phase26-19 Manual Post-Import Formal Registration Execution Approval Core
+
+Phase26-19 lets an identified human approve execution only for Phase26-18 `prepared` or `prepared_with_conditions` records in `ready_for_manual_post_import_formal_registration_execution_approval`. Complete preparation and upstream IDs, scope/counts, destination, manual-only mode, executor authority, documents, checks, issues, PLAN_ONLY, and protectedMode are required.
+
+Start requires exact preparation and batch ID reconfirmation plus explicit review of scope, counts, destination, executor authority, documents, pre-execution checks, warnings, unresolved issues, and no-execution boundaries. It creates `manual-post-import-formal-registration-execution-approval-YYYYMMDDHHMMSS-xxxxx`; the same preparation cannot be approved twice, including after interruption or cancellation.
+
+Prepared records may receive `approve_execution`; conditioned preparation cannot receive unconditional approval. Conditional execution approval requires inherited and incomplete conditions, accepted risk, issue handling, follow-up owner/action, required documents/additional review, prohibited actions, blockers, and approver comment. Critical/error findings block both approval types.
+
+Normal approval rechecks count consistency, destination, manual-only registration mode, executor candidate, authority, separation of duties, required documents, backup, duplicate prevention, rollback plan, final review, and absence of blockers. Return and recheck records only revision/review targets without editing Phase26-18 or automatically moving backward. Deferral, interruption, and cancellation never auto-resume.
+
+Execution approval and conditional execution approval proceed only to `ready_for_manual_post_import_formal_registration_execution`; return proceeds to `ready_for_manual_post_import_formal_registration_preparation_revision`; recheck proceeds to `ready_for_manual_post_import_formal_registration_preparation_recheck`.
+
+Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-19 performs no formal registration or start, operation reflection, correction, deletion, reimport, retry, rollback, application, learning update, scheduling, notification, external transmission, background execution, GitHub Pages deployment, or public publication.
+
+Run `node tests/phase26ManualPostImportFormalRegistrationExecutionApprovalCore.test.js`.
