@@ -4804,3 +4804,19 @@ Normal and warning acceptance records proceed only to `ready_for_manual_post_imp
 Private Local only, PLAN_ONLY, and protectedMode remain enabled. No external transmission, background execution, GitHub Pages deployment, or public publication is added.
 
 Run `node tests/phase26ManualPostImportAcceptanceRecordCore.test.js`.
+
+## Phase26-17 Manual Post-Import Acceptance Approval Core
+
+Phase26-17 lets an identified human approve only Phase26-16 `accepted` or `accepted_with_warnings` records in `ready_for_manual_post_import_acceptance_approval`. Complete acceptance, decision, verification, batch and candidate IDs, recorder/timestamps, scope/counts, issues, risk, handoff conditions, PLAN_ONLY, and protectedMode are mandatory.
+
+Start requires exact acceptance record and import batch ID reconfirmation plus explicit review of the record, warnings, unresolved issues, handoff conditions, and all no-automatic-action boundaries. It creates `manual-post-import-acceptance-approval-YYYYMMDDHHMMSS-xxxxx`. An in-memory registry prevents another approval for the same acceptance record after start, interruption, or cancellation.
+
+Acceptance consistency prevents warning acceptance from receiving unconditional approval. A plain accepted record may be conditionally approved only when a newly detected issue and reason are documented. Critical or error findings block both approval types. Conditional approval requires conditions, accepted risk and warning issues, follow-up owner/action, prohibited actions, and approver comment.
+
+Return-for-revision records issue-linked correction targets and evidence needs without editing Phase26-16. Recheck records only target review areas and a recommended human review phase without automatic backward transition. Deferred, interrupted, and cancelled records retain reasons and partial input without automatic resume.
+
+Approval and conditional approval proceed only to `ready_for_manual_post_import_formal_registration_preparation`; return proceeds to `ready_for_manual_post_import_acceptance_record_revision`; recheck proceeds to `ready_for_manual_post_import_acceptance_recheck`.
+
+Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-17 performs no formal registration, operation reflection, correction, deletion, reimport, retry, rollback, application, learning update, external transmission, background execution, GitHub Pages deployment, or public publication.
+
+Run `node tests/phase26ManualPostImportAcceptanceApprovalCore.test.js`.
