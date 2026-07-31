@@ -4820,3 +4820,19 @@ Approval and conditional approval proceed only to `ready_for_manual_post_import_
 Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-17 performs no formal registration, operation reflection, correction, deletion, reimport, retry, rollback, application, learning update, external transmission, background execution, GitHub Pages deployment, or public publication.
 
 Run `node tests/phase26ManualPostImportAcceptanceApprovalCore.test.js`.
+
+## Phase26-18 Manual Post-Import Formal Registration Preparation Core
+
+Phase26-18 prepares an audit record only for Phase26-17 `approve` or `conditional_approve` records in `ready_for_manual_post_import_formal_registration_preparation`. Complete approval/acceptance/decision/verification/import IDs, approval metadata, accepted/excluded counts, issues, risk, handoff conditions, PLAN_ONLY, and protectedMode are mandatory.
+
+An identified human must reconfirm approval and batch IDs and explicitly review approval, scope, warnings, unresolved issues, conditions, and no-execution boundaries. Start creates `manual-post-import-formal-registration-preparation-YYYYMMDDHHMMSS-xxxxx`; the same approval cannot be prepared twice, including after interruption or cancellation.
+
+Preparation records registration and exclusion scope/IDs, count reconciliation, destination, method, manual-only mode, duplicate/conflict/existing-record policies, executor candidate, authority evidence, separation of duties, documents/evidence, all pre-execution checks, and execution date/time candidates. Candidate scheduling never creates an automatic schedule, notification, or execution.
+
+An approved record may be `prepared`; conditional approval requires `prepared_with_conditions` with inherited conditions, incomplete condition IDs, unresolved-issue handling, follow-up, prohibited actions, documents, additional review, and human comment. Critical/error findings block completion. Missing authority/documents/checks block normal preparation. Recheck and deferred records preserve reasons without automatic backward transition or resume.
+
+Completed and conditionally completed records proceed only to `ready_for_manual_post_import_formal_registration_execution_approval`; recheck proceeds to `ready_for_manual_post_import_acceptance_approval_recheck`.
+
+Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-18 performs no formal registration, operation reflection, correction, deletion, reimport, retry, rollback, application, learning update, external transmission, background execution, automatic scheduling/notification, GitHub Pages deployment, or public publication.
+
+Run `node tests/phase26ManualPostImportFormalRegistrationPreparationCore.test.js`.
