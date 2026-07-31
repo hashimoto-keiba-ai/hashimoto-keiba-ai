@@ -4720,3 +4720,21 @@ Records may persist IDs, definitions, review summaries, correction instructions,
 Phase26-12 separately handles formal-import candidate creation and pre-import approval. Phase26-11 grants no authority to save or import data.
 
 Run `node tests/phase26ManualResultPreviewValidationIntakeDecisionCore.test.js`.
+
+## Phase26-12 Formal Import Candidate and Pre-Import Approval Core
+
+Phase26-12 creates only a formal-import candidate plan and a human pre-import approval record. It accepts Phase26-11 `ready_for_manual_formal_import_candidate_creation` records with an accepted or conditionally accepted decision, approved handoff, held preview metadata, and all formal-processing flags false.
+
+Humans explicitly record candidate rows and columns, planned exclusions, counts, known warnings, conditional-acceptance requirements, final structure review, duplicate risk, destination metadata, executor and schedule, execution procedures, interruption/cancellation/failure response, and rollback policy. Row selection and exclusion are plans only: no source data is filtered, deleted, changed, copied, or written.
+
+The 12-state machine advances only through explicit human operations. The 75-item pre-import checklist and all reviews must be complete before readiness. Count differences and duplicate risks are never automatically accepted. Conditions marked required before import must be resolved.
+
+Approval is fixed to the candidate ID, preview ID, target count, exclusion count, row range, destination, and planned executor. Changing candidate scope, execution plan, destination, conditional requirements, or rollback plan invalidates approval and sets recheck required. Conditional approval requires explicit conditions. On-hold, rejected, and cancelled states never enable execution readiness.
+
+The destination and rollback sections are documentation only. Phase26-12 does not connect to storage, create tables, add/update/delete records, write files, run imports, apply data, update learning, execute rollback, schedule jobs, retry, or contact external systems.
+
+Persistable records contain IDs, scope and exclusion plans, count/review summaries, destination and execution metadata, rollback/failure plans, checklist, approval, state history, and audit metadata. They never contain raw text, buffers, all parsed rows, the full preview, all cells, formal data, import payloads, Base64, or external-send payloads.
+
+Phase26-13 separately handles human formal-import execution. Phase26-12 provides no import or write authority.
+
+Run `node tests/phase26FormalImportCandidatePreImportApprovalCore.test.js`.
