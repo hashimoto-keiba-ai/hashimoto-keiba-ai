@@ -843,6 +843,21 @@
         <div class="phase2615-grid"><article><h3>判定証跡一覧</h3><p>decisionRecordId、判定者、日時、種別、理由、risk、issue、影響、安全フラグ、次状態を保持。</p></article><article><h3>重大問題表示</h3><p>critical・rollback review・未解決issueを通常表示から明確に区別。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2616-panel" id="phase26-16-manual-post-import-acceptance-record" aria-label="Phase26-16 手動インポート受理記録コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-16 / MANUAL ACCEPTANCE RECORD</p><h2>手動インポート受理記録コア</h2></div><span class="pill warning">AUDIT RECORD ONLY</span></div>
+        <p>Phase26-15で<code>ready_for_manual_post_import_acceptance_record</code>となったaccept／accept_with_warnings判定だけを、人間が正式な受理証跡として確定します。</p>
+        <div class="phase2616-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動正式登録なし</strong><strong>自動運用反映なし</strong><strong>自動修正なし</strong><strong>自動削除なし</strong><strong>自動再取込なし</strong><strong>自動再試行なし</strong><strong>自動ロールバックなし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong></div>
+        <p class="phase2616-warning"><strong>受理記録と引継ぎ条件の作成専用です。次フェーズの人間承認なしでは、正式登録、運用反映、修正、削除、再取込、ロールバック、適用、学習更新を行いません。</strong></p>
+        <div class="phase2616-grid"><article><h3>Phase26-15受理対象一覧</h3><p>decision、verification、batch、candidate、判定種別・理由、risk、issue、件数、開始可否・理由。</p></article><article><h3>判定記録詳細</h3><p>元データ、取込先、実行・検証・判定記録、警告、未解決issue、影響範囲を再確認。</p></article><article><h3>現在状態・次状態表示</h3><p id="phase2616-current-status">ready_for_manual_post_import_acceptance_record</p><p>確定後：ready_for_manual_post_import_acceptance_approval</p></article></div>
+        <form id="phase2616-acceptance-form" class="phase2616-form"><fieldset><legend>受理記録前再確認</legend><label>decisionRecordId再確認<input name="confirmDecisionRecordId"></label><label>importBatchId再確認<input name="confirmImportBatchId"></label><label>受理記録作成者入力（名前またはID）<input name="recorderName" required></label><label><input type="checkbox" name="acceptanceContentConfirmed">受理内容を明示確認</label><label><input type="checkbox" name="warningsConfirmed">警告を明示確認</label><label><input type="checkbox" name="unresolvedIssuesConfirmed">未解決issueを明示確認</label><label><input type="checkbox" name="noAutomaticFormalRegistrationConfirmed">自動正式登録されないことを確認</label><label><input type="checkbox" name="noAutomaticApplicationConfirmed">自動適用されないことを確認</label><label><input type="checkbox" name="noAutomaticLearningUpdateConfirmed">自動学習更新されないことを確認</label><label><input type="checkbox" name="noAutomaticRollbackConfirmed">自動ロールバックされないことを確認</label></fieldset></form>
+        <div class="phase2616-actions"><button type="button" disabled>受理内容を確認</button><button type="button" class="warning" disabled>手動受理記録を開始</button></div>
+        <div class="phase2616-grid"><article><h3>warning一覧</h3><p>warning件数、内容、影響、受理理由と注意事項。</p></article><article><h3>acceptedWarning一覧</h3><p>既知問題として受理するissue IDと条件を追跡。</p></article><article><h3>unresolvedIssue一覧</h3><p>状態、影響、既知問題扱い、follow-up、担当・期限候補を記録。</p></article><article><h3>影響範囲表示</h3><p>対象件数、source/destination ID、業務キー、business/data impact。</p></article><article><h3>riskLevel表示</h3><p>Phase26-15のriskを引継ぎ、critical/error時の確定を拒否。</p></article></div>
+        <form class="phase2616-form"><fieldset><legend>受理記録入力</legend><label>受理範囲入力<textarea name="acceptanceScope"></textarea></label><label>除外範囲入力<textarea name="exclusionScope"></textarea></label><label>除外理由<textarea name="exclusionReasons"></textarea></label><label>引継ぎ条件入力<textarea name="handoffConditions"></textarea></label><label>引継ぎ先<input name="handoffTarget"></label><label>人間承認必須<input type="checkbox" name="requiredManualApproval"></label></fieldset></form>
+        <div class="phase2616-grid"><article><h3>再確認必要内容</h3><p>理由、新規issue、矛盾、影響、推奨review phase、人間reviewerを記録。自動的に前工程へ戻しません。</p></article><article><h3>保留内容</h3><p>理由、不足情報、確認待ち、再開条件、期限候補、緊急度を記録。自動再開なし。</p></article><article><h3>引継ぎ条件</h3><p>目的、条件、文書、issue follow-up、禁止自動処理、次担当・actionを記録。</p></article></div>
+        <div class="phase2616-actions"><button type="button" disabled>正常受理として記録</button><button type="button" disabled>警告付き受理として記録</button><button type="button" disabled>再確認が必要</button><button type="button" disabled>受理記録を保留</button><button type="button" class="warning" disabled>受理記録を確定</button><button type="button" disabled>受理記録を中断</button><button type="button" disabled>受理記録を取り消す</button><button type="button" disabled>受理記録証跡を確認</button><button type="button" disabled>引継ぎ条件を確認</button></div>
+        <div class="phase2616-grid"><article><h3>受理記録証跡一覧</h3><p>acceptanceRecordId、作成者、日時、範囲、除外、warning、未解決issue、handoff、安全フラグ、次状態。</p></article><article><h3>重大問題表示</h3><p>未解決issue・警告付き受理・再確認必要を通常表示から明確に区別。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -914,5 +929,6 @@
     <script src="phase26-13-manual-formal-import-execution-core.js"></script>
     <script src="phase26-14-manual-post-import-verification-core.js"></script>
     <script src="phase26-15-manual-post-import-verification-decision-core.js"></script>
+    <script src="phase26-16-manual-post-import-acceptance-record-core.js"></script>
   </body>
 </html>
