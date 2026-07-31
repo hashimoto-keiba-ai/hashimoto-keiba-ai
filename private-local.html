@@ -760,6 +760,21 @@
         <div class="phase269-grid"><article><h3>次工程引渡し確認欄</h3><p>人間の結果確認、引渡し判断、確認者・日時・理由を記録。</p></article><article><h3>状態遷移履歴</h3><p>変更者・日時・変更前後・理由を追記型で保持。</p></article><article><h3>監査履歴</h3><p>選択、比較、読込、失敗・中断・取消、保持・破棄、引渡し確認を追記。</p></article><article><h3>安全フラグ一覧</h3><p>解析・正式保存・正式取込・適用・学習・アップロード・外部送信・自動処理はfalse固定。読込成功履歴と現在の一時保持だけを区別して管理。</p></article><article><h3>禁止処理一覧</h3><p>自動読込、複数・フォルダ読込、外部取得、CSV/JSON/Excel/PDF/XML/ZIP解析、行列分割、推定、ハッシュ、localStorage・IndexedDB・ファイル・サーバー保存、正式処理。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2610-panel" id="phase26-10-manual-result-data-parse-preview-generation" aria-label="Phase26-10 手動結果データ解析・プレビュー生成コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-10 / MANUAL DELIMITED PARSE</p><h2>手動結果データ解析・プレビュー生成コア</h2></div><span class="pill">TEMPORARY PREVIEW ONLY</span></div>
+        <p>Phase26-9の<code>ready_for_manual_result_data_parse_preview</code>記録とメモリ上のrawTextだけを、人間が指定した条件で解析します。</p>
+        <div class="phase2610-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>正式保存なし</strong><strong>正式取込なし</strong><strong>適用・学習なし</strong></div>
+        <p class="phase2610-warning"><strong>CSV・TSV・明示区切りテキスト限定です。JSON、Excel、PDF等は解析せず、値を自動修正しません。</strong></p>
+        <div class="phase2610-grid"><article><h3>対象となるPhase26-9記録</h3><p>ready記録、held一時データ、成功読込、rawTextメモリ存在を確認。</p></article><article><h3>現在状態</h3><p><code>awaiting_manual_parse_configuration</code></p></article><article><h3>一時保持データ情報</h3><p>temporaryDataId・保持状態・読込長を参照。</p></article><article><h3>元ファイル情報</h3><p>名前・サイズ・MIME type・更新日時のみ。</p></article></div>
+        <form id="phase2610-configuration-form" class="phase2610-form"><fieldset><legend>解析設定フォーム</legend><label>解析設定ID<input name="parseConfigurationId" required></label><label>設定者<input name="configuredBy" required></label><label>設定日<input type="date" name="configurationDate"></label><label>設定時刻<input type="time" name="configurationTime"></label><label>解析対象形式<select name="parseFormat"><option value="csv">CSV</option><option value="tsv">TSV</option><option value="delimited_text">明示区切りテキスト</option></select></label><label>文字コード申告<input name="declaredEncoding"></label><label>区切り文字設定<input name="delimiter" maxlength="1"></label><label>引用符設定<input name="quote" maxlength="1" value='"'></label><label>エスケープ文字<input name="escapeCharacter" maxlength="1"></label><label>改行形式<input name="newlineMode"></label><label>ヘッダー設定<select name="headerPresent"><option value="true">あり</option><option value="false">なし</option></select></label><label>ヘッダー行番号<input type="number" min="1" value="1"></label><label>データ開始行番号<input type="number" min="1" value="2"></label><label>最大解析文字数<input type="number" value="5000000"></label><label>最大解析行数<input type="number" value="100000"></label><label>最大列数<input type="number" value="200"></label><label>最大プレビュー行数<input type="number" value="100"></label><label>セル最大表示文字数<input type="number" value="500"></label><label>解析実行者<input name="executedBy"></label></fieldset></form>
+        <div class="phase2610-grid"><article><h3>想定形式との比較結果</h3><p>Phase26-7/8の形式・文字コード・区切り・ヘッダー申告と比較。</p></article><article><h3>解析上限設定</h3><p>5,000,000文字・100,000行・200列・100プレビュー行・500文字/セル。</p></article><article><h3>解析中状態</h3><p>重複解析、自動再解析、自動再試行なし。</p></article><article><h3>解析成功・失敗・中断・取消結果</h3><p>部分結果は失敗・中断・取消時に保持しません。</p></article></div>
+        <div class="phase2610-actions"><button id="phase2610-parse-start" type="button" disabled>解析開始（設定・差異確認後）</button><button id="phase2610-preview-discard" type="button" disabled>プレビューを破棄</button></div>
+        <div class="phase2610-grid"><article><h3>解析時間・解析文字数</h3><p>未実行</p></article><article><h3>解析行数・解析列数</h3><p>未実行</p></article><article><h3>ヘッダー一覧</h3><p>未生成</p></article><article><h3>空行数・不規則行数</h3><p>未生成</p></article><article><h3>列数不足・超過行</h3><p>未生成</p></article><article><h3>欠損候補集計</h3><p>候補のみ。自動確定・補完なし。</p></article><article><h3>重複行候補集計</h3><p>完全一致行のみ。自動削除なし。</p></article><article><h3>形式異常一覧</h3><p>引用符、制御文字、NULL、ヘッダー、上限到達を警告。</p></article><article><h3>Formula Injection候補</h3><p>=、+、-、@で始まるセルを警告し、値は変更しません。</p></article><article><h3>プレビューID・プレビュー状態</h3><p>未生成 / none</p></article></div>
+        <section class="phase2610-preview-section"><h3>サンプル行プレビュー（安全なテキスト表示）</h3><div id="phase2610-preview"></div></section>
+        <section class="phase2610-check-section"><h3>プレビュー生成後チェックリスト（58項目）</h3><div id="phase2610-checklist" class="phase2610-checklist"></div></section>
+        <div class="phase2610-grid"><article><h3>Phase26-11引渡し確認欄</h3><p>解析結果・プレビューの人間確認、可否、確認者・日時・理由を記録。</p></article><article><h3>状態遷移履歴</h3><p>人間の明示操作と解析結果状態を追記。</p></article><article><h3>監査履歴</h3><p>設定、実行、失敗、中断、取消、生成、破棄、引渡しを追記。</p></article><article><h3>安全フラグ一覧</h3><p>正式保存・取込・適用・学習・外部送信・自動処理はfalse固定。</p></article><article><h3>禁止処理一覧</h3><p>自動推定・修正・変換、JSON/Excel/PDF/XML/ZIP、永続保存、ダウンロード、アップロード、外部通信、正式処理。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -825,5 +840,6 @@
     <script src="phase26-7-manual-result-preview-pre-intake-validation-core.js"></script>
     <script src="phase26-8-manual-result-data-selection-pre-read-approval-core.js"></script>
     <script src="phase26-9-manual-result-data-read-temporary-holding-core.js"></script>
+    <script src="phase26-10-manual-result-data-parse-preview-generation-core.js"></script>
   </body>
 </html>
