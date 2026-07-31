@@ -4772,3 +4772,19 @@ Clean results move through `manual_post_import_verification_passed` to `ready_fo
 Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-14 performs no automatic correction, deletion, reimport, retry, rollback, application, learning update, external transmission, background execution, GitHub Pages deployment, or public publication.
 
 Run `node tests/phase26ManualPostImportVerificationCore.test.js`.
+
+## Phase26-15 Manual Post-Import Verification Decision Core
+
+Phase26-15 lets an identified human decide how to handle only Phase26-14 records in `ready_for_manual_post_import_verification_decision`. A complete Phase26-14 verification record, IDs, verifier/timestamps, count, duplicate, missing and mapping results, issue counts/list, PLAN_ONLY, and protectedMode are required.
+
+Starting requires exact verification and import batch ID reconfirmation plus explicit confirmations that no automatic correction, reimport, rollback, application, or learning update occurs. Start creates `manual-post-import-verification-decision-YYYYMMDDHHMMSS-xxxxx`. An in-memory registry blocks another decision for the same verification record after start, interruption, or cancellation.
+
+Decision validation keeps the Phase26-14 result consistent with `accept`, `accept_with_warnings`, `reconciliation_required`, `rollback_review_required`, or `defer`. Passed results may be accepted; warning results cannot use plain accept and require accepted warning issue IDs, a reason, and human comment. Critical/error results cannot be accepted. Reconciliation records only issue-linked planning candidates, while rollback review records only the candidate and review scope—neither action is executed.
+
+Every decision preserves reason and summary, risk level, reviewed/accepted/unresolved issue IDs, affected records and destination IDs, business/data impact, follow-up requirement, safety evidence, and state history. Deferral requires a reason and missing information; interruption and cancellation retain reasons and partial input without automatic restart.
+
+Accepted and warning-accepted results proceed to `ready_for_manual_post_import_acceptance_record`; reconciliation proceeds to `ready_for_manual_post_import_reconciliation_planning`; rollback review proceeds to `ready_for_manual_post_import_rollback_review`.
+
+Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-15 performs no automatic correction, deletion, reimport, retry, rollback, application, learning update, external transmission, background execution, GitHub Pages deployment, or public publication.
+
+Run `node tests/phase26ManualPostImportVerificationDecisionCore.test.js`.

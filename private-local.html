@@ -828,6 +828,21 @@
         <div class="phase2614-grid"><article><h3>検証証跡一覧</h3><p>verificationRecordId、対象、検証者、日時、結果、件数、issue、コメント、安全フラグ、次状態を保持。</p></article><article><h3>判定</h3><p>正常、警告付き正常、不合格、中断、取消を明示し、重大問題を通常表示と区別。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2615-panel" id="phase26-15-manual-post-import-verification-decision" aria-label="Phase26-15 手動インポート後検証判定コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-15 / MANUAL VERIFICATION DECISION</p><h2>手動インポート後検証判定コア</h2></div><span class="pill warning">HUMAN DECISION ONLY</span></div>
+        <p>Phase26-14で<code>ready_for_manual_post_import_verification_decision</code>となった検証記録だけを、人間が再確認して最終的な扱いを判定します。</p>
+        <div class="phase2615-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動修正なし</strong><strong>自動削除なし</strong><strong>自動再取込なし</strong><strong>自動再試行なし</strong><strong>自動ロールバックなし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong></div>
+        <p class="phase2615-warning"><strong>判定と証跡記録専用です。判定後も人間の次フェーズ承認なしでは、正式登録、修正、削除、再取込、ロールバック、適用、学習更新を実行しません。</strong></p>
+        <div class="phase2615-grid"><article><h3>Phase26-14判定対象一覧</h3><p>verificationRecordId、batch、candidate、検証結果、件数、issues、rollbackCandidate、開始可否・理由。</p></article><article><h3>検証記録詳細</h3><p>検証者、日時、件数整合性、重複、欠損、対応不明、warning、error、criticalを表示。</p></article><article><h3>現在状態・次状態表示</h3><p id="phase2615-current-status">ready_for_manual_post_import_verification_decision</p><p>受理、調整計画、rollback reviewの各次状態を明示。</p></article></div>
+        <form id="phase2615-decision-form" class="phase2615-form"><fieldset><legend>判定前再確認</legend><label>verificationRecordId再確認<input name="confirmVerificationRecordId"></label><label>importBatchId再確認<input name="confirmImportBatchId"></label><label>判定者入力（名前またはID）<input name="deciderName" required></label><label><input type="checkbox" name="decisionStartConfirmed">判定対象と手動開始を明示確認</label><label><input type="checkbox" name="noAutomaticCorrectionConfirmed">自動修正されないことを確認</label><label><input type="checkbox" name="noAutomaticReimportConfirmed">自動再取込されないことを確認</label><label><input type="checkbox" name="noAutomaticRollbackConfirmed">自動ロールバックされないことを確認</label><label><input type="checkbox" name="noAutomaticApplicationConfirmed">自動適用されないことを確認</label><label><input type="checkbox" name="noAutomaticLearningUpdateConfirmed">自動学習更新されないことを確認</label></fieldset></form>
+        <div class="phase2615-actions"><button type="button" disabled>検証判定内容を確認</button><button type="button" class="warning" disabled>手動判定を開始</button></div>
+        <div class="phase2615-grid"><article><h3>検証結果概要</h3><p>Phase26-14の結果と判定種別の矛盾を拒否。</p></article><article><h3>warning一覧</h3><p>警告付き受理ではissueと受理理由を必須記録。</p></article><article><h3>error一覧</h3><p>重大errorがある受理を禁止。</p></article><article><h3>critical一覧</h3><p>criticalがある正常・警告付き受理を禁止。</p></article><article><h3>重複・欠損・対応不明一覧</h3><p>件数と影響範囲を判定証跡へ関連付け。</p></article><article><h3>rollbackCandidate表示</h3><p>候補IDを表示しレビューを推奨。自動選択・自動実行なし。</p></article></div>
+        <form class="phase2615-form"><fieldset><legend>判定入力</legend><label>判定種別選択<select name="decisionType"><option>accept</option><option>accept_with_warnings</option><option>reconciliation_required</option><option>rollback_review_required</option><option>defer</option></select></label><label>判定理由入力<textarea name="decisionReason"></textarea></label><label>riskLevel選択<select name="riskLevel"><option>none</option><option>low</option><option>medium</option><option>high</option><option>critical</option></select></label><label>判定者コメント<textarea name="humanComment"></textarea></label></fieldset></form>
+        <div class="phase2615-grid"><article><h3>警告付き受理内容</h3><p>warning issue、影響、受理理由、注意事項、将来確認を記録。</p></article><article><h3>手動調整必要内容</h3><p>対象issue・レコード、理由、影響、調整・修正・再取込候補のみ記録。</p></article><article><h3>ロールバックレビュー必要内容</h3><p>理由、候補ID、対象、重大度、検討範囲のみ記録。</p></article><article><h3>判定保留内容</h3><p>理由、不足情報、追加確認、再開条件、期限候補、緊急度を記録。</p></article></div>
+        <div class="phase2615-actions"><button type="button" disabled>正常として受理</button><button type="button" disabled>警告付きで受理</button><button type="button" disabled>手動調整が必要</button><button type="button" disabled>ロールバックレビューが必要</button><button type="button" disabled>判定を保留</button><button type="button" class="warning" disabled>判定を確定</button><button type="button" disabled>判定を中断</button><button type="button" disabled>判定を取り消す</button><button type="button" disabled>判定証跡を確認</button></div>
+        <div class="phase2615-grid"><article><h3>判定証跡一覧</h3><p>decisionRecordId、判定者、日時、種別、理由、risk、issue、影響、安全フラグ、次状態を保持。</p></article><article><h3>重大問題表示</h3><p>critical・rollback review・未解決issueを通常表示から明確に区別。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -898,5 +913,6 @@
     <script src="phase26-12-formal-import-candidate-pre-import-approval-core.js"></script>
     <script src="phase26-13-manual-formal-import-execution-core.js"></script>
     <script src="phase26-14-manual-post-import-verification-core.js"></script>
+    <script src="phase26-15-manual-post-import-verification-decision-core.js"></script>
   </body>
 </html>
