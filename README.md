@@ -4682,3 +4682,23 @@ Phase26-9 performs no CSV, JSON, Excel, PDF, XML, or ZIP parsing. It does not sp
 All parsing, storage, import, application, learning, preview, upload, external-transmission, automation, and external-connection flags remain false. `resultDataRead` and `fileContentAccessed` become true only after a successful non-empty read. `temporaryDataHeld` is true only while an in-memory value is held. Phase26-10 separately handles human-controlled parsing and preview generation.
 
 Run `node tests/phase26ManualResultDataReadTemporaryHoldingCore.test.js`.
+
+## Phase26-10 Manual Result Data Parse and Preview Generation Core
+
+Phase26-10 is the first phase that parses the raw text held in Phase26-9 memory. It accepts only a `ready_for_manual_result_data_parse_preview` record whose temporary data remains held and accessible. A human explicitly defines and confirms every parse condition, then starts parsing manually.
+
+Initial support is limited to CSV, TSV, and text with one human-declared delimiter. A dependency-free state-machine parser handles quoted values, delimiters and newlines inside quotes, doubled-quote escaping, empty and trailing fields, CRLF/LF/CR, BOM, and a final line without a newline. It never guesses delimiters, encoding, headers, types, dates, keys, or schema. JSON, Excel, PDF, XML, ZIP, HTML, binary, image, and database formats are unsupported.
+
+The fixed safety ceilings are 5,000,000 characters, 100,000 parsed rows, 200 columns, 100 preview rows, and 500 displayed characters per cell. These conservative limits bound synchronous browser memory and UI work. Exceeding a hard configuration ceiling is rejected; row/column/preview/cell truncation is explicitly recorded and never silently treated as complete data.
+
+The temporary preview reports header metadata, row and column counts, blank and irregular rows, too-few/too-many columns, quote and control-character anomalies, BOM removal, empty and duplicate headers, missing-value candidates, exact duplicate-row candidates, and formula-injection candidates beginning with `=`, `+`, `-`, or `@`. These are warnings only: no value is repaired, converted, supplemented, removed, merged, or excluded.
+
+Preview rows are kept only in a JavaScript in-memory Map. Normalized records and audit history retain IDs, counts, summaries, warnings, and status but not raw text, all parsed rows, all cell values, or the complete preview. The UI builds cells with `textContent`; it never interprets cell values as HTML, scripts, event attributes, formulas, commands, images, or links.
+
+States run from `awaiting_manual_parse_configuration` through explicit configuration validation and manual execution to `preview_generated`, `preview_review_preparation`, discard, or `ready_for_manual_result_preview_review`. Parse success may record its result state, but holding/review preparation, Phase26-11 handoff, retry, and discard each require a new human operation. Discard deletes preview rows from memory, clears current preview-held/created flags, and requires a new manual parse to regenerate.
+
+`resultDataParsed` and `fileContentParsed` remain true after preview discard as historical facts that parsing occurred; `resultPreviewCreated` and `temporaryPreviewHeld` return to false because no preview remains. Read/access/temporary-source flags inherited from Phase26-9 remain true while the source is held. Formal storage, import, application, learning, preview readiness, upload, external transmission, automation, and external connection remain false.
+
+Nothing is written to localStorage, IndexedDB, files, downloads, servers, clouds, external APIs, or a formal data area. Phase26-10 performs no formal import, application, or learning update. Phase26-11 separately handles human preview validation and acceptance.
+
+Run `node tests/phase26ManualResultDataParsePreviewGenerationCore.test.js`.
