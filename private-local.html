@@ -802,6 +802,18 @@
         <div class="phase2612-grid"><article><h3>状態遷移履歴</h3><p>変更者・日時・変更前後・理由を追記。</p></article><article><h3>監査履歴</h3><p>候補、範囲、除外、件数、計画、承認、無効化を追記。</p></article><article><h3>安全フラグ一覧</h3><p>保存・取込・適用・学習・自動候補・自動承認・自動実行はfalse固定。</p></article><article><h3>禁止処理一覧</h3><p>DB・ファイル書込、追加・更新・削除、行自動選択・除外、変換、正式処理、外部送信、ロールバック実行。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2613-panel" id="phase26-13-manual-formal-import-execution" aria-label="Phase26-13 手動正式インポート実行コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-13 / EXPLICIT MANUAL EXECUTION</p><h2>手動正式インポート実行コア</h2></div><span class="pill danger">DANGEROUS MANUAL ACTION</span></div>
+        <p>Phase26-12の<code>ready_for_manual_formal_import_execution</code>候補だけを、人間の二段階確認後にPrivate Local取込先へ実行します。</p>
+        <div class="phase2613-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>自動再試行なし</strong><strong>Public公開なし</strong></div>
+        <p class="phase2613-warning"><strong>正式データを書き込む危険操作です。候補選択や画面表示だけでは開始しません。外部送信、バックグラウンド実行、自動ロールバックはありません。</strong></p>
+        <div class="phase2613-grid"><article><h3>Phase26-12承認済み候補一覧</h3><p>candidateId、承認ID・者・日時、元データ、形式、件数、除外、取込先、整合性、重複、可否・理由。</p></article><article><h3>正式インポート対象詳細</h3><p>対象candidateId・元データ識別子・予定件数・除外範囲・取込先を表示。</p></article><article><h3>現在状態・次状態</h3><p id="phase2613-current-status">ready_for_manual_formal_import_execution</p><p>成功後：ready_for_manual_post_import_verification</p></article></div>
+        <form id="phase2613-execution-form" class="phase2613-form"><fieldset><legend>実行前再確認</legend><label>candidateId再確認<input name="candidateId"></label><label>実行者名またはID<input name="executorName" required></label><label>元データ識別子<input name="sourceDataId"></label><label>元データ名称<input name="sourceDataName"></label><label>元データハッシュ<input name="sourceDataHash"></label><label>確認文入力<input name="confirmationText" placeholder="正式インポートを手動実行します"></label><label><input type="checkbox" name="executionConfirmed">実行対象と正式インポートを確認</label><label><input type="checkbox" name="noAutomaticApplicationConfirmed">自動適用されないことを確認</label><label><input type="checkbox" name="noAutomaticLearningConfirmed">自動学習更新されないことを確認</label><label><input type="checkbox" name="noAutomaticRetryConfirmed">自動再試行されないことを確認</label></fieldset></form>
+        <div class="phase2613-actions"><button type="button" class="danger" disabled>正式インポート内容を再確認</button><button type="button" class="danger" disabled>手動正式インポートを実行</button><button type="button" disabled>実行を中断</button><button type="button" disabled>実行前に取消</button></div>
+        <div class="phase2613-grid"><article><h3>実行中ステータス</h3><p>started / in_progress / succeeded / partially_succeeded / failed / interrupted / cancelled</p></article><article><h3>取込件数表示</h3><p>取込前、予定、除外、試行、成功、失敗、スキップ、取込後件数。</p></article><article><h3>成功・部分成功・失敗・中断・取消</h3><p>部分失敗は即時停止し、正常完了扱いにしません。</p></article><article><h3>二重取込防止結果</h3><p>candidateId、元データID・ハッシュ、recordKey、batchId、取込先で確認。</p></article><article><h3>元データと取込結果の対応一覧</h3><p>sourceRecordId・行番号・hash・destinationRecordId・結果・理由・検証状態。</p></article><article><h3>ロールバック候補表示</h3><p>部分成功・中断時に候補だけを作成。自動実行は禁止。</p></article><article><h3>実行証跡一覧</h3><p>バッチID、承認、実行者、日時、件数、エラー、安全確認、次状態を保持。</p></article></div>
+        <div class="phase2613-actions"><button type="button" disabled>実行証跡を確認</button><button type="button" disabled>元データ対応を確認</button><button type="button" disabled>ロールバック候補を確認</button></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -870,5 +882,6 @@
     <script src="phase26-10-manual-result-data-parse-preview-generation-core.js"></script>
     <script src="phase26-11-manual-result-preview-validation-intake-decision-core.js"></script>
     <script src="phase26-12-formal-import-candidate-pre-import-approval-core.js"></script>
+    <script src="phase26-13-manual-formal-import-execution-core.js"></script>
   </body>
 </html>
