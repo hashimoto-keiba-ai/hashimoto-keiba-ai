@@ -743,6 +743,23 @@
         <div class="phase268-grid"><article><h3>状態遷移履歴</h3><p>変更者・日時・変更前後状態・理由を追記型で保持します。</p></article><article><h3>安全フラグ一覧</h3><p>内容読込・解析・保存・アップロード・外部送信・インポート・適用・学習・自動実行・外部接続はfalse固定。候補選択とメタデータ記録だけが候補記録の存在時にtrueです。</p></article><article><h3>禁止処理一覧</h3><p>FileReader、内容読込、CSV/JSON/Excel/PDF解析、行数・列名実測、ハッシュ、コピー、保存、アップロード、外部送信、正式取込、適用、学習、API、スクレイピング、自動処理。</p></article></div>
       </section>
 
+      <section class="private-section panel phase269-panel" id="phase26-9-manual-result-data-read-temporary-holding" aria-label="Phase26-9 手動結果データ読込・一時保持コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-9 / MANUAL READ / MEMORY ONLY</p><h2>手動結果データ読込・一時保持コア</h2></div><span class="pill">NO PARSE / NO PERSISTENCE</span></div>
+        <p>Phase26-8の<code>ready_for_manual_result_data_read</code>記録だけを対象に、承認メタデータを再確認した単一ファイルを、人間の明示操作で初めて読み込みます。</p>
+        <div class="phase269-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>正式保存なし</strong><strong>正式取込なし</strong><strong>適用・学習なし</strong></div>
+        <p class="phase269-warning"><strong>内容はJavaScript実行中のメモリだけに一時保持します。解析・全文表示・永続保存・外部送信は行いません。</strong></p>
+        <div class="phase269-grid"><article><h3>対象となるPhase26-8記録</h3><p><code>ready_for_manual_result_data_read</code>、有効な承認、完了済みチェックリストを参照。</p></article><article><h3>現在状態</h3><p><code>awaiting_manual_result_data_read</code></p></article><article><h3>Phase26-8承認情報</h3><p>承認ID・判断・条件・承認者を参照。</p></article><article><h3>承認対象ファイルメタデータ</h3><p>ファイル名・サイズ・MIME type・更新日時・拡張子を参照。</p></article></div>
+        <form id="phase269-read-form" class="phase269-form">
+          <fieldset><legend>読込実行記録</legend><label>読込実行記録ID<input name="readExecutionRecordId" required autocomplete="off"></label><label>読込実行者<input name="executedBy" required autocomplete="off"></label><label>読込実行日<input type="date" name="executionDate" required></label><label>読込開始時刻<input type="time" name="readStartTime" required></label><label>読込終了時刻<input type="time" name="readEndTime"></label><label>使用端末<input name="terminal" required autocomplete="off"></label><label>使用画面<input name="screen" required autocomplete="off"></label><label>実行理由<textarea name="executionReason" required></textarea></label><label>実行手順確認結果<input name="procedureConfirmation" required autocomplete="off"></label><label>承認条件確認結果<input name="approvalConditionsConfirmation" required autocomplete="off"></label><label>読込前最終確認者<input name="preReadFinalConfirmedBy" required autocomplete="off"></label><label>読込前最終確認日時<input type="datetime-local" name="preReadFinalConfirmedAt" required></label><label>読込前最終確認理由<textarea name="preReadFinalConfirmationReason" required></textarea></label><label>最大読込サイズ（bytes）<input type="number" name="declaredMaximumReadSize" value="10485760" min="1"></label></fieldset>
+          <fieldset><legend>ファイル選択領域</legend><label>単一ファイルを人間が選択<input id="phase269-file-input" type = "file"></label><p>自動選択、複数選択、フォルダ、ドラッグ＆ドロップ、貼り付けは使用しません。</p></fieldset>
+        </form>
+        <div class="phase269-grid"><article><h3>実際に選択されたファイルメタデータ</h3><p>File.name / size / type / lastModified / 拡張子のみ。</p></article><article><h3>承認メタデータとの比較結果</h3><p>名前・サイズ・更新日時は完全一致必須。MIME type・拡張子差異は人間の理由付き確認が必須。</p></article><article><h3>読込実行者・読込実行日時・使用端末</h3><p>実行者、開始・終了日時、端末、画面を明示記録。</p></article><article><h3>読込前最終確認欄</h3><p>実行者・日時・端末・画面・理由・承認条件・安全手順を確認。</p></article><article><h3>読込サイズ制限</h3><p>既定10 MiB。0バイトおよび上限超過は読込不可。強制overrideなし。</p></article></div>
+        <div class="phase269-actions"><button id="phase269-read-start" type="button" disabled>読込開始（対象・承認・メタデータ確認後）</button><button id="phase269-discard" type="button" disabled>一時保持データを破棄（保持後のみ）</button></div>
+        <div class="phase269-grid"><article><h3>読込中状態</h3><p>readInProgress / cancelRequested / interruptRequested / readCompleted / readFailed / temporaryDataCreated</p></article><article><h3>読込成功・失敗・中断・取消結果</h3><p>自動再試行なし。中断・取消後は一時データを残しません。</p></article><article><h3>読込方式</h3><p><code>File.text()</code>だけを使用。方式の自動切替なし。</p></article><article><h3>読込時間・長さ</h3><p>開始・終了・所要ms・読込バイト長・読込文字数だけを表示。</p></article><article><h3>一時保持データID</h3><p>未作成</p></article><article><h3>一時保持状態</h3><p><code>none</code></p></article></div>
+        <section class="phase269-check-section"><h3>読込後チェックリスト（54項目）</h3><div id="phase269-checklist" class="phase269-checklist"></div></section>
+        <div class="phase269-grid"><article><h3>次工程引渡し確認欄</h3><p>人間の結果確認、引渡し判断、確認者・日時・理由を記録。</p></article><article><h3>状態遷移履歴</h3><p>変更者・日時・変更前後・理由を追記型で保持。</p></article><article><h3>監査履歴</h3><p>選択、比較、読込、失敗・中断・取消、保持・破棄、引渡し確認を追記。</p></article><article><h3>安全フラグ一覧</h3><p>解析・正式保存・正式取込・適用・学習・アップロード・外部送信・自動処理はfalse固定。読込成功履歴と現在の一時保持だけを区別して管理。</p></article><article><h3>禁止処理一覧</h3><p>自動読込、複数・フォルダ読込、外部取得、CSV/JSON/Excel/PDF/XML/ZIP解析、行列分割、推定、ハッシュ、localStorage・IndexedDB・ファイル・サーバー保存、正式処理。</p></article></div>
+      </section>
+
       <section class="private-section panel" aria-label="AI機能リンク">
         <div class="section-heading">
           <div>
@@ -807,5 +824,6 @@
     <script src="phase26-6-manual-execution-record-intake-preparation-core.js"></script>
     <script src="phase26-7-manual-result-preview-pre-intake-validation-core.js"></script>
     <script src="phase26-8-manual-result-data-selection-pre-read-approval-core.js"></script>
+    <script src="phase26-9-manual-result-data-read-temporary-holding-core.js"></script>
   </body>
 </html>

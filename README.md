@@ -4662,3 +4662,23 @@ Content access, parsing, storage, upload, external transmission, import, applica
 The Phase26-8 boundary remains Private Local only, PLAN_ONLY, and protectedMode. It does not save, upload, externally transmit, formally import, apply, or learn from the file. Actual manual content reading belongs to a separately reviewed Phase26-9.
 
 Run `node tests/phase26ManualResultDataSelectionPreReadApprovalCore.test.js`.
+
+## Phase26-9 Manual Result Data Read and Temporary Holding Core
+
+Phase26-9 is the first phase that reads file content. It accepts only a Phase26-8 `ready_for_manual_result_data_read` record with a valid approval, completed required checklist, planned reader, no unresolved issue, and all pre-read content-access flags false. Reading starts only after a human explicitly selects one file, reconfirms approved metadata, and presses the manual read action.
+
+The single read method is `File.text()`. There is no automatic method selection, automatic file selection, initial-load read, reread, retry, or state progression. The file name, size, last-modified timestamp, MIME type, and extension are compared immediately before reading. Name, size, and last-modified values must exactly match the approval. A MIME type or extension difference requires an accepted human review with reviewer, time, and reason.
+
+The default maximum read size is 10 MiB (10,485,760 bytes), chosen as a conservative browser-memory boundary for small, manually reviewed racing-result text files. A human may lower or explicitly configure the limit, but Phase26-9 does not permit an over-limit override. Zero-byte files and empty read results fail safely.
+
+Raw text exists only inside an in-memory JavaScript Map and is referenced by an opaque temporary-data ID. It is never included in the normalized record, audit details, state history, UI, localStorage, sessionStorage, IndexedDB, Cache API, service workers, files, downloads, servers, clouds, or external APIs. Page or runtime loss may discard it. Phase26-10 can request the in-memory value through the explicit handoff API; no other workflow receives it directly.
+
+States are `awaiting_manual_result_data_read`, `validating_approved_file_metadata`, `ready_for_manual_read_execution`, `manual_read_in_progress`, `manual_read_succeeded`, `manual_read_failed`, `manual_read_interrupted`, `manual_read_cancelled`, `temporary_data_held`, `temporary_data_discarded`, and `ready_for_manual_result_data_parse_preview`. Read completion may record success or failure, but holding, discarding, retrying, and Phase26-10 readiness each require a new explicit human operation.
+
+Temporary data can be discarded by a human. Discard removes the raw value from memory, marks the metadata record `discarded`, records actor/time/reason, clears current `temporaryDataHeld`, and blocks parse-preview readiness. `resultDataRead` and `fileContentAccessed` remain true after discard as historical facts that a successful read occurred; they do not mean content remains accessible.
+
+Phase26-9 performs no CSV, JSON, Excel, PDF, XML, or ZIP parsing. It does not split rows or columns, detect headers or delimiters, infer encoding or types, count records, create hashes, or generate content previews. It does not formally store, import, apply, or learn from data, and it never modifies the source file. The UI displays only metadata, outcome, byte and character lengths, temporary ID/status, and handoff eligibility—not content.
+
+All parsing, storage, import, application, learning, preview, upload, external-transmission, automation, and external-connection flags remain false. `resultDataRead` and `fileContentAccessed` become true only after a successful non-empty read. `temporaryDataHeld` is true only while an in-memory value is held. Phase26-10 separately handles human-controlled parsing and preview generation.
+
+Run `node tests/phase26ManualResultDataReadTemporaryHoldingCore.test.js`.
