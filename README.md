@@ -4908,3 +4908,17 @@ Only a fully consistent acceptance becomes `manual_post_registration_acceptance_
 Phase26-23 performs no automatic acceptance, approval, finalization, operation reflection, correction, deletion, re-registration, retry, rollback, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
 
 Run `node tests/phase26ManualPostRegistrationAcceptanceCore.test.js`.
+
+## Phase26-24 Manual Conditional Post-Registration Acceptance Management Core
+
+Phase26-24 manages only Phase26-22 `conditionally_accepted` decisions in `ready_for_manual_post_registration_conditional_acceptance`. It is separate from Phase26-23 normal acceptance. Every condition must have a unique ID, responsible person, due date, reason, and required human action, with complete references through Phase26-13 and Phase26-16 through Phase26-22.
+
+An identified human starts management and may assign conditions, record limited non-mutating actions, submit evidence, manually review evidence, request and approve due-date extensions, record observations, and confirm condition resolution. Evidence submission never resolves a condition; completed action, sufficient human-reviewed evidence, responsibility, resolution reason, and resolution reference are mandatory.
+
+Allowed action records are limited to confirmation, communication, document submission, evidence registration, and manual completion reports. Correction, rollback, registration modification, deletion, recreation, and automatic action flags remain false. Extensions require separate human request and approval with a reason and new date.
+
+The summary derives all condition-state counts and completion rate from individual conditions. Partial resolution never advances. Only all human-resolved conditions with confirmed evidence and no failed, abnormal, or overdue condition may explicitly proceed to `ready_for_manual_conditional_post_registration_acceptance_resolution_verification`.
+
+Phase26-24 performs no automatic management, assignment, condition resolution, evidence approval, deadline extension, normal-acceptance promotion, acceptance, finalization, correction, deletion, re-registration, retry, rollback, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
+
+Run `node tests/phase26ManualConditionalPostRegistrationAcceptanceManagementCore.test.js`.
