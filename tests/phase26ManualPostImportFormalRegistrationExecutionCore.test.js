@@ -1,0 +1,86 @@
+"use strict";
+const assert = require("assert"), fs = require("fs"), path = require("path");
+const phase2619 = require("../phase26-19-manual-post-import-formal-registration-execution-approval-core.js");
+const core = require("../phase26-20-manual-post-import-formal-registration-execution-core.js");
+const root = path.resolve(__dirname, ".."), clock = { now: () => new Date("2026-08-21T01:02:03Z") }, op = { performedBy: "owner", reason: "manual formal registration", explicitConfirmation: true };
+const target = { phase2619ApprovalRecordExists: true, status: "ready_for_manual_post_import_formal_registration_execution", executionApproved: true, approvalDecision: "approved", formalRegistrationExecutionApprovalRecordId: "execution-approval-1", formalRegistrationPreparationRecordId: "preparation-1", acceptanceApprovalRecordId: "acceptance-approval-1", acceptanceRecordId: "acceptance-1", importRecordId: "import-1", sourceRecordId: "source-1", approverId: "approver-1", approverName: "owner", approvalCompletedAt: "2026-08-21T00:00:00Z", executionApprovalReason: "approved", phase2618PreparationValid: true, phase2616AcceptanceReferenceValid: true, phase2617AcceptanceApprovalReferenceValid: true, phase2613ImportReferenceValid: true, protectedMode: true, planOnly: true };
+const input = { operatorId: "operator-1", operatorName: "owner", executionRequestedAt: "2026-08-21T01:00:00Z", executionReason: "human execution", sourceRecordId: target.sourceRecordId, phase26_19ApprovalRecordId: target.formalRegistrationExecutionApprovalRecordId, phase26_18PreparationRecordId: target.formalRegistrationPreparationRecordId, acceptanceApprovalRecordId: target.acceptanceApprovalRecordId, acceptanceRecordId: target.acceptanceRecordId, importRecordId: target.importRecordId, expectedRegistrationCount: 2, executionConfirmation: true, protectedModeAcknowledgement: true, planOnlyAcknowledgement: true, manualExecutionAcknowledgement: true, evidenceReferences: ["approval-evidence"] };
+const withId = (value, suffix) => ({ ...value, formalRegistrationExecutionApprovalRecordId: `${value.formalRegistrationExecutionApprovalRecordId}-${suffix}`, formalRegistrationPreparationRecordId: `${value.formalRegistrationPreparationRecordId}-${suffix}`, sourceRecordId: `${value.sourceRecordId}-${suffix}` });
+const create = (value = target, changed = {}) => core.createManualPostImportFormalRegistrationExecution(value, { ...input, sourceRecordId: value.sourceRecordId, phase26_19ApprovalRecordId: value.formalRegistrationExecutionApprovalRecordId, phase26_18PreparationRecordId: value.formalRegistrationPreparationRecordId, ...changed }, op, clock);
+const successItem = (n) => ({ itemId: `item-${n}`, sourceItemId: `source-item-${n}`, targetRegistrationId: `target-${n}`, registrationStatus: "registered", success: true, createdRecordReference: `created-${n}`, beforeSnapshotReference: `before-${n}`, afterSnapshotReference: `after-${n}`, evidenceReferences: [`evidence-${n}`] });
+
+core.resetRegistry();
+assert.strictEqual(core.PHASE2619_REFERENCE, phase2619);
+assert(core.validateFormalRegistrationExecutionEligibility(target).valid);
+assert(!core.validateFormalRegistrationExecutionEligibility({ ...target, executionApproved: false }).valid);
+assert(!core.validateFormalRegistrationExecutionEligibility({ ...target, status: "rejected" }).valid);
+assert(!core.validateFormalRegistrationExecutionEligibility({ ...target, phase2618PreparationValid: false }).valid);
+for (const [name, changed] of [["operator", { operatorName: "" }], ["confirm", { executionConfirmation: false }], ["count", { expectedRegistrationCount: -1 }], ["automatic", { automaticExecutionRequested: true }]]) assert(!create(withId(target, name), changed).created, name);
+
+core.resetRegistry();
+const created = create();
+assert(created.created);
+assert(/^manual-formal-registration-execution-20260821010203-\d{5}$/.test(created.record.executionId));
+const started = core.startManualFormalRegistrationExecution(created.record, op, clock);
+assert(started.started);
+assert.equal(started.record.executionStatus, "manual_formal_registration_execution_in_progress");
+assert(!core.startManualFormalRegistrationExecution(created.record, op, clock).started);
+let normal = core.recordFormalRegistrationItemResult(started.record, successItem(1), op, clock);
+assert(normal.recorded);
+normal = core.recordFormalRegistrationItemResult(normal.record, successItem(2), op, clock);
+assert(normal.recorded);
+assert(!core.recordFormalRegistrationItemResult(normal.record, successItem(2), op, clock).recorded);
+assert.equal(core.summarizeCounts(normal.record).successfulRegistrationCount, 2);
+assert.equal(core.summarizeCounts(normal.record).countConsistencyStatus, "consistent");
+const completed = core.completeManualFormalRegistrationExecution(normal.record, op, clock);
+assert(completed.completed && completed.success);
+assert.equal(completed.record.executionStatus, "ready_for_manual_post_registration_verification");
+assert.equal(completed.record.countSummary.successfulRegistrationCount, 2);
+assert.equal(completed.record.rollbackCandidates.length, 0);
+assert(!core.startManualFormalRegistrationExecution(created.record, op, clock).started);
+
+core.resetRegistry();
+const partialTarget = withId(target, "partial"), partialCreated = create(partialTarget), partialStarted = core.startManualFormalRegistrationExecution(partialCreated.record, op, clock);
+let partial = core.recordFormalRegistrationItemResult(partialStarted.record, { ...successItem(3), targetRegistrationId: "partial-success", rollbackCandidate: true, rollbackCandidateReason: "partial failure" }, op, clock).record;
+partial = core.recordFormalRegistrationItemResult(partial, { itemId: "item-4", sourceItemId: "source-item-4", targetRegistrationId: "partial-fail", registrationStatus: "failed", success: false, failureCode: "WRITE_FAILED", failureReason: "write failed", beforeSnapshotReference: "before-4", afterSnapshotReference: "after-4", evidenceReferences: ["evidence-4"] }, op, clock).record;
+const partialDone = core.completeManualFormalRegistrationExecution(partial, op, clock);
+assert(partialDone.partial && !partialDone.success);
+assert.equal(partialDone.record.executionStatus, "manual_formal_registration_execution_partially_failed");
+assert(partialDone.record.rollbackCandidates.length > 0);
+assert(partialDone.record.rollbackCandidates.every(candidate => candidate.rollbackExecuted === false && candidate.rollbackApprovalRequired));
+assert(partialDone.record.humanReviewRequired && partialDone.record.rollbackPlanningRequired && partialDone.record.automaticRollbackProhibited);
+
+core.resetRegistry();
+const failTarget = withId(target, "fail"), failStarted = core.startManualFormalRegistrationExecution(create(failTarget).record, op, clock);
+let failed = core.recordFormalRegistrationItemResult(failStarted.record, { itemId: "item-f", sourceItemId: "source-f", targetRegistrationId: "target-f", registrationStatus: "failed", success: false, failureCode: "FAIL", failureReason: "failed", evidenceReferences: ["failure-evidence"] }, op, clock).record;
+failed = core.recordFormalRegistrationItemResult(failed, { itemId: "item-s", sourceItemId: "source-s", targetRegistrationId: "target-s", registrationStatus: "skipped", success: false, skippedReason: "not attempted", evidenceReferences: ["skip-evidence"] }, op, clock).record;
+const failedDone = core.completeManualFormalRegistrationExecution(failed, op, clock);
+assert(!failedDone.success);
+assert.notEqual(failedDone.record.executionStatus, "ready_for_manual_post_registration_verification");
+
+core.resetRegistry();
+const duplicateTarget = withId(target, "duplicate"), duplicateStarted = core.startManualFormalRegistrationExecution(create(duplicateTarget).record, op, clock);
+const duplicate = core.recordFormalRegistrationItemResult(duplicateStarted.record, { itemId: "dup", sourceItemId: "dup-source", targetRegistrationId: "dup-target", registrationStatus: "duplicate_rejected", success: false, duplicateDetected: true, duplicateReferenceId: "existing-1", skippedReason: "duplicate", evidenceReferences: ["dup-evidence"] }, op, clock);
+assert(duplicate.recorded && duplicate.record.itemResults[0].duplicateDetected);
+
+core.resetRegistry();
+const interruptTarget = withId(target, "interrupt"), interruptStarted = core.startManualFormalRegistrationExecution(create(interruptTarget).record, op, clock);
+const interrupted = core.interruptManualFormalRegistrationExecution(interruptStarted.record, "human interruption", op, clock);
+assert(interrupted.recorded && interrupted.record.executionInterruptedAt);
+core.resetRegistry();
+const cancelTarget = withId(target, "cancel"), cancelled = core.cancelManualFormalRegistrationExecution(create(cancelTarget).record, "human cancellation", op, clock);
+assert(cancelled.recorded && cancelled.record.executionCancelledAt);
+core.resetRegistry();
+const abnormalTarget = withId(target, "abnormal"), abnormalStarted = core.startManualFormalRegistrationExecution(create(abnormalTarget).record, op, clock);
+const abnormal = core.detectFormalRegistrationExecutionAbnormality(abnormalStarted.record, ["件数矛盾", "証跡欠落"], op, clock);
+assert(abnormal.detected && abnormal.record.executionStatus === "manual_formal_registration_execution_abnormality_detected");
+assert(!core.transition({ executionStatus: "manual_formal_registration_execution_failed", stateTransitionHistory: [] }, "ready_for_manual_post_registration_verification", op, clock).transitioned);
+assert(!core.transitionToPostRegistrationVerification({ executionStatus: "manual_formal_registration_execution_failed" }, op, clock).transitioned);
+for (const [key, value] of Object.entries(core.SAFETY)) assert.strictEqual(core.getManualFormalRegistrationExecutionSafetyStatus()[key], value, key);
+
+const source = fs.readFileSync(path.join(root, "phase26-20-manual-post-import-formal-registration-execution-core.js"), "utf8"), html = fs.readFileSync(path.join(root, "private-local.html"), "utf8"), css = fs.readFileSync(path.join(root, "dashboard.css"), "utf8"), readme = fs.readFileSync(path.join(root, "README.md"), "utf8");
+for (const pattern of [/fetch\s*\(/, /XMLHttpRequest/, /WebSocket\s*\(/, /setInterval\s*\(/, /automaticPurchasePerformed:\s*true/, /automaticFormalRegistrationStartPerformed:\s*true/, /automaticReexecutionPerformed:\s*true/, /automaticRollbackPerformed:\s*true/, /automaticApplicationPerformed:\s*true/, /automaticLearningUpdatePerformed:\s*true/]) assert(!pattern.test(source), String(pattern));
+for (const marker of ['id="phase26-20-manual-post-import-formal-registration-execution"', "正式登録実行状態", "実行対象件数", "成功件数", "失敗件数", "スキップ件数", "重複検出件数", "中断・取消状態", "部分失敗状態", "ロールバック候補件数", "人間確認必須", "自動実行禁止", "自動ロールバック禁止", "protectedMode", "PLAN_ONLY", "次段階は手動の登録後検証"]) assert(html.includes(marker), marker);
+assert(css.includes(".phase2620-panel"));
+assert(readme.includes("Phase26-20 Manual Formal Registration Execution Core"));
+console.log("phase26ManualPostImportFormalRegistrationExecutionCore.test.js: PASS");
