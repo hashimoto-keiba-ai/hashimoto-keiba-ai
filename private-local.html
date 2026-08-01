@@ -1034,6 +1034,17 @@
         <div class="phase2626-grid"><article><h3>ロールバック候補件数</h3><p>Phase26-22候補。</p></article><article><h3>ロールバック対象件数</h3><p>正式登録対象ID。</p></article><article><h3>ロールバック手順数</h3><p>planned/review_requiredのみ。</p></article><article><h3>影響対象件数</h3><p>直接・間接影響。</p></article><article><h3>未確認影響件数</h3><p>人間確認必須。</p></article><article><h3>依存関係件数</h3><p>関連記録を集計。</p></article><article><h3>未解決重大依存関係件数</h3><p>0件必須。</p></article><article><h3>リスク件数</h3><p>人間レビュー。</p></article><article><h3>未確認重大リスク件数</h3><p>0件必須。</p></article><article><h3>復旧方針有無</h3><p>計画のみ。復旧未実行。</p></article><article><h3>検証計画有無</h3><p>rollback後検証計画。</p></article><article><h3>バックアップ確認状態</h3><p>自動作成なし。</p></article><article><h3>スナップショット確認状態</h3><p>完全性とrestore point。</p></article><article><h3>観察事項件数</h3><p>自動解消なし。</p></article><article><h3>責任者</h3><p>計画ごとに必須。</p></article><article><h3>計画開始日時</h3><p>候補日時。</p></article><article><h3>計画完了予定日時</h3><p>開始との整合必須。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2627-panel" id="phase26-27-manual-post-registration-correction-plan-approval" aria-label="Phase26-27 手動正式登録後修正計画承認コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-27 / HUMAN PLAN APPROVAL</p><h2>手動正式登録後修正計画承認コア</h2></div><span class="pill danger">APPROVAL RECORD ONLY</span></div>
+        <p>Phase26-25で完成した修正計画だけを、人間が審査して承認、条件付き承認、差戻し、却下として記録します。</p>
+        <div class="phase2627-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>人間確認必須</strong><strong>自動承認禁止</strong><strong>自動条件解消禁止</strong><strong>自動修正禁止</strong><strong>自動ロールバック禁止</strong></div>
+        <p class="phase2627-warning"><strong>承認証跡専用です。修正、削除、再登録、再実行、検証、rollbackは実行しません。</strong></p>
+        <div class="phase2627-grid"><article><h3>Phase26-25計画状態</h3><p>completed / completed_with_observations。</p></article><article><h3>修正計画承認状態</h3><p id="phase2627-current-status">ready_for_manual_post_registration_correction_plan_approval</p></article><article><h3>次状態</h3><p>次段階は手動修正実行承認または計画改訂です。</p></article></div>
+        <form class="phase2627-form"><fieldset><legend>承認開始前確認</legend><label>Phase26-25計画記録ID<input></label><label>承認者<input required></label><label>承認理由<input></label><label>承認範囲<input></label><label><input type="checkbox">計画と手順を確認</label><label><input type="checkbox">影響・依存・riskを確認</label><label><input type="checkbox">検証・rollback候補を確認</label><label><input type="checkbox">protectedModeを確認</label><label><input type="checkbox">PLAN_ONLYを確認</label></fieldset></form>
+        <div class="phase2627-actions"><button disabled>承認審査を開始</button><button disabled>承認</button><button disabled>条件付き承認</button><button disabled>差戻し</button><button disabled>却下</button></div>
+        <div class="phase2627-grid"><article><h3>修正候補件数</h3><p>計画対象候補。</p></article><article><h3>修正手順数</h3><p>planned手順。</p></article><article><h3>影響確認状態</h3><p>reviewed必須。</p></article><article><h3>依存関係確認状態</h3><p>人間確認済み。</p></article><article><h3>未解決重大依存関係件数</h3><p>0件必須。</p></article><article><h3>リスク確認状態</h3><p>重大riskレビュー。</p></article><article><h3>未確認重大リスク件数</h3><p>0件必須。</p></article><article><h3>修正後検証計画有無</h3><p>必須。</p></article><article><h3>ロールバック候補件数</h3><p>実行なし。</p></article><article><h3>観察事項件数</h3><p>追加人間確認。</p></article><article><h3>承認結果</h3><p>approved / conditionally_approved / returned_for_revision / rejected</p></article><article><h3>条件件数</h3><p>条件付き承認時は1件以上。</p></article><article><h3>差戻し項目数</h3><p>改訂対象を明示。</p></article><article><h3>承認者</h3><p>名前またはID。</p></article><article><h3>承認日時</h3><p>監査記録。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1067,5 +1078,6 @@
     <script src="phase26-24-manual-conditional-post-registration-acceptance-management-core.js"></script>
     <script src="phase26-25-manual-post-registration-correction-planning-core.js"></script>
     <script src="phase26-26-manual-post-registration-rollback-planning-core.js"></script>
+    <script src="phase26-27-manual-post-registration-correction-plan-approval-core.js"></script>
   </body>
 </html>
