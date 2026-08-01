@@ -4880,3 +4880,17 @@ Only fully consistent items produce `manual_post_registration_verification_compl
 Observations are unresolved by default. Correction and rollback candidates are documentation only, with `correctionExecuted` and `rollbackExecuted` fixed false. Phase26-21 performs no automatic verification, decision, acceptance, correction, deletion, re-registration, retry, rollback, approval, application, learning update, purchase, external transmission, scheduling, background execution, GitHub Pages deployment, or public publication.
 
 Run `node tests/phase26ManualPostRegistrationVerificationCore.test.js`.
+
+## Phase26-22 Manual Post-Registration Verification Decision Core
+
+Phase26-22 records a human decision only for completed Phase26-21 records in `ready_for_manual_post_registration_verification_decision`. All item results, count verification, evidence, result snapshot, and references through Phase26-13 and Phase26-16 through Phase26-21 must be complete and consistent.
+
+An identified human explicitly reviews the verification result, observations, correction and rollback candidates, abnormalities, evidence, and safety boundaries before starting. A registry blocks duplicate decisions for the same verification record or decision ID. Interrupted, cancelled, abnormal, or completed decisions never restart automatically.
+
+Accepted decisions require consistent counts, zero unverified items, and no unresolved observations, correction candidates, rollback candidates, or abnormalities. Conditional acceptance is limited to minor observations and requires at least one unresolved human-managed condition with an owner, due date, reason, and action. Conditions are never automatically resolved.
+
+Correction and rollback results create planning requests only when corresponding candidates exist. The requests explicitly prohibit execution and require later human approval. Rejection records preserve reason, category, impact, unresolved issues, recommended action, and prohibit automatic retry or resubmission without new approval.
+
+Completed results may explicitly transition to manual acceptance, conditional acceptance, correction planning, rollback planning, or rejection according to the recorded result. Phase26-22 performs no automatic decision, approval, acceptance, condition resolution, correction, deletion, re-registration, retry, rollback, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
+
+Run `node tests/phase26ManualPostRegistrationVerificationDecisionCore.test.js`.
