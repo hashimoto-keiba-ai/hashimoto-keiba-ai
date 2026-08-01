@@ -965,6 +965,18 @@
         <div class="phase2620-grid"><article><h3>個別登録結果</h3><p>source/target ID、結果、時刻、失敗・skip理由、検証待ち状態を記録。</p></article><article><h3>件数整合性</h3><p>対象＝成功＋失敗＋skip、全件成功を正常完了条件とする。</p></article><article><h3>異常検出</h3><p>件数不一致、重複、識別子欠落、承認条件違反を検出したら停止。</p></article><article><h3>監査証跡</h3><p>開始者、日時、承認・準備参照、状態履歴、安全フラグを保持。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2621-panel" id="phase26-21-manual-post-registration-verification" aria-label="Phase26-21 手動正式登録後検証コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-21 / MANUAL POST-REGISTRATION VERIFICATION</p><h2>手動正式登録後検証コア</h2></div><span class="pill danger">HUMAN VERIFICATION ONLY</span></div>
+        <p>Phase26-20で正常完了し、<code>ready_for_manual_post_registration_verification</code>となった正式登録記録だけを人間が検証します。</p>
+        <div class="phase2621-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>人間確認必須</strong><strong>自動検証禁止</strong><strong>自動修正禁止</strong><strong>自動ロールバック禁止</strong><strong>自動受入・承認なし</strong><strong>自動適用・学習更新なし</strong><strong>Public公開なし</strong></div>
+        <p class="phase2621-warning"><strong>検証結果と候補の記録専用です。不整合があっても修正、削除、再登録、ロールバックを実行しません。</strong></p>
+        <div class="phase2621-grid"><article><h3>Phase26-20検証対象</h3><p>正常完了、未解決異常なし、Phase26-13・16～20の参照整合性を確認。</p></article><article><h3>登録後検証状態</h3><p id="phase2621-current-status">ready_for_manual_post_registration_verification</p></article><article><h3>次状態</h3><p>完了後の次段階は手動の登録後検証判定です。</p></article></div>
+        <form id="phase2621-verification-form" class="phase2621-form"><fieldset><legend>検証開始前確認</legend><label>Phase26-20実行記録ID<input name="executionRecordId"></label><label>検証者<input name="verifierName" required></label><label>検証理由<input name="verificationReason"></label><label>検証範囲<input name="verificationScope"></label><label><input type="checkbox" name="manualVerificationConfirmed">手動検証開始を確認</label><label><input type="checkbox" name="protectedModeConfirmed">protectedModeを確認</label><label><input type="checkbox" name="planOnlyConfirmed">PLAN_ONLYを確認</label><label><input type="checkbox" name="noAutomaticCorrectionConfirmed">自動修正なしを確認</label><label><input type="checkbox" name="noAutomaticRollbackConfirmed">自動ロールバックなしを確認</label></fieldset></form>
+        <div class="phase2621-actions"><button type="button" disabled>検証対象を確認</button><button type="button" class="danger" disabled>手動検証を開始</button><button type="button" disabled>検証を中断</button><button type="button" disabled>検証を取消</button></div>
+        <div class="phase2621-grid"><article><h3>検証対象件数</h3><p>承認済み登録範囲を表示。</p></article><article><h3>検証済み件数</h3><p>確定した個別結果を集計。</p></article><article><h3>未検証件数</h3><p>0件になるまで完了不可。</p></article><article><h3>登録予定件数</h3><p>Phase26-20予定件数。</p></article><article><h3>実登録件数</h3><p>人間が確認した実数。</p></article><article><h3>作成レコード件数</h3><p>登録証跡との一致を確認。</p></article><article><h3>件数整合性</h3><p>予定・成功・実登録・作成件数を比較。</p></article><article><h3>欠落件数</h3><p>登録済みレコード欠落を集計。</p></article><article><h3>重複件数</h3><p>source・targetの重複を集計。</p></article></div>
+        <div class="phase2621-grid"><article><h3>内容不一致件数</h3><p>登録内容の差異候補。</p></article><article><h3>参照不一致件数</h3><p>上下流IDの参照差異。</p></article><article><h3>証跡不足件数</h3><p>snapshot・evidence不足。</p></article><article><h3>観察事項件数</h3><p>未解消で人間判断必須。</p></article><article><h3>修正候補件数</h3><p>候補のみ。修正は未実行。</p></article><article><h3>ロールバック候補件数</h3><p>候補のみ。ロールバックは未実行。</p></article><article><h3>個別検証結果</h3><p>参照、内容、snapshot、証跡、重複、欠落を項目別記録。</p></article><article><h3>監査証跡</h3><p>検証者、日時、状態履歴、入力・実行・検証結果snapshotを保持。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -992,5 +1004,6 @@
     <script src="phase26-18-manual-post-import-formal-registration-preparation-core.js"></script>
     <script src="phase26-19-manual-post-import-formal-registration-execution-approval-core.js"></script>
     <script src="phase26-20-manual-post-import-formal-registration-execution-core.js"></script>
+    <script src="phase26-21-manual-post-registration-verification-core.js"></script>
   </body>
 </html>

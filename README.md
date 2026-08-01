@@ -4866,3 +4866,17 @@ Partial failure, failure, interruption, cancellation, duplicates, missing identi
 Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-20 performs no automatic operation reflection, correction, deletion, reimport, retry, re-execution, rollback, application, learning update, scheduling, notification, external transmission, background execution, GitHub Pages deployment, or public publication. Post-registration verification is a separate manual next phase.
 
 Run `node tests/phase26ManualPostImportFormalRegistrationExecutionCore.test.js`.
+
+## Phase26-21 Manual Post-Registration Verification Core
+
+Phase26-21 manually verifies only Phase26-20 formal-registration records in `ready_for_manual_post_registration_verification`. Normal Phase26-20 completion, no unresolved abnormality or partial failure, complete references to Phase26-13 and Phase26-16 through Phase26-20, result snapshots, PLAN_ONLY, and protectedMode are mandatory.
+
+An identified human must reconfirm all upstream record IDs, the expected count, verification scope, and manual-only safety boundaries. Start creates a unique verification ID. The same Phase26-20 execution record cannot be verified twice, and interrupted, failed, cancelled, or completed verification never restarts automatically.
+
+Verification records expected, attempted, successful, actual, created, failed, skipped, duplicate, missing, unexpected, target, verified, and unverified counts. Individual results preserve source and target IDs, created-record reference, content/reference/snapshot/evidence checks, observations, timestamps, and correction or rollback candidacy. Counts must reconcile with both individual results and Phase26-20 evidence.
+
+Only fully consistent items produce `manual_post_registration_verification_completed`. Minor documented observations produce `manual_post_registration_verification_completed_with_observations` and require a later human decision. Missing, duplicate, content/reference/snapshot mismatch, evidence shortage, and count inconsistency fail or stop as abnormal. Only completed results may explicitly move to `ready_for_manual_post_registration_verification_decision`.
+
+Observations are unresolved by default. Correction and rollback candidates are documentation only, with `correctionExecuted` and `rollbackExecuted` fixed false. Phase26-21 performs no automatic verification, decision, acceptance, correction, deletion, re-registration, retry, rollback, approval, application, learning update, purchase, external transmission, scheduling, background execution, GitHub Pages deployment, or public publication.
+
+Run `node tests/phase26ManualPostRegistrationVerificationCore.test.js`.
