@@ -4922,3 +4922,17 @@ The summary derives all condition-state counts and completion rate from individu
 Phase26-24 performs no automatic management, assignment, condition resolution, evidence approval, deadline extension, normal-acceptance promotion, acceptance, finalization, correction, deletion, re-registration, retry, rollback, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
 
 Run `node tests/phase26ManualConditionalPostRegistrationAcceptanceManagementCore.test.js`.
+
+## Phase26-25 Manual Post-Registration Correction Planning Core
+
+Phase26-25 plans corrections only for Phase26-22 `correction_plan_required` decisions in `ready_for_manual_post_registration_correction_planning`. A valid correction-planning request, one or more unique candidates and target registration IDs, explicit execution prohibitions, and complete upstream references are required.
+
+An identified human records candidate differences, plan scope and method, ordered planned-only steps, responsibility and timing, impact assessment, dependency reviews, risks, post-correction verification planning, evidence, observations, and rollback-review candidates. Executed or completed step states are prohibited.
+
+Completion requires every candidate in the plan, consistent targets, at least one valid step, a responsible person, valid dates, human-reviewed impact, no unresolved major dependency or unreviewed major risk, a verification plan, and evidence. Plans with observations require explicit later human review.
+
+Rollback candidates remain documentation only with `rollbackExecuted` false. Only completed plans may explicitly proceed to `ready_for_manual_post_registration_correction_plan_approval`.
+
+Phase26-25 performs no automatic planning, approval, correction, deletion, re-registration, retry, rollback, verification, acceptance, finalization, operation reflection, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
+
+Run `node tests/phase26ManualPostRegistrationCorrectionPlanningCore.test.js`.
