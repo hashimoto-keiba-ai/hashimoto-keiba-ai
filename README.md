@@ -4960,3 +4960,15 @@ Approved and conditionally approved records may explicitly proceed to manual cor
 Phase26-27 performs no automatic approval, condition resolution, resubmission, correction, deletion, re-registration, retry, rollback, verification, acceptance, finalization, operation reflection, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
 
 Run `node tests/phase26ManualPostRegistrationCorrectionPlanApprovalCore.test.js`.
+
+## Phase26-28 Manual Correction Execution Approval Core
+
+Phase26-28 reviews only Phase26-27 correction-plan approvals that are `approved` or `conditionally_approved` and have explicitly reached `ready_for_manual_post_registration_correction_execution_approval`. The completed Phase26-25 plan, candidates, ordered steps, responsibility, schedule, reviewed impact and dependencies, major-risk review, post-correction verification plan, evidence, safety prohibitions, and references through Phase26-18 to Phase26-22 must remain complete and consistent.
+
+An identified human explicitly starts the review and records approved, conditionally approved, returned for revision, or rejected. Conditional approval requires one or more unresolved human-managed execution conditions with reason, action, owner, and due date. Returns preserve reasons and revision items; rejection preserves its reason, impact and recommended human action. Duplicate approval for the same Phase26-27 record and restart of completed or stopped approvals are prohibited.
+
+Approved and conditionally approved records may explicitly proceed to `ready_for_manual_post_registration_correction_execution`; conditional records remain subject to human condition management. Returned records proceed only to execution-approval revision, while rejected records remain rejected. Interrupted, cancelled, and abnormal records never advance automatically.
+
+Phase26-28 records execution approval only. It performs no correction, deletion, re-registration, re-execution, rollback, verification, acceptance, finalization, operation reflection, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
+
+Run `node tests/phase26ManualPostRegistrationCorrectionExecutionApprovalCore.test.js`.
