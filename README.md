@@ -4852,3 +4852,17 @@ Execution approval and conditional execution approval proceed only to `ready_for
 Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-19 performs no formal registration or start, operation reflection, correction, deletion, reimport, retry, rollback, application, learning update, scheduling, notification, external transmission, background execution, GitHub Pages deployment, or public publication.
 
 Run `node tests/phase26ManualPostImportFormalRegistrationExecutionApprovalCore.test.js`.
+
+## Phase26-20 Manual Formal Registration Execution Core
+
+Phase26-20 executes formal registration only for Phase26-19 records in `ready_for_manual_post_import_formal_registration_execution`. The execution approval, preparation and upstream IDs, approved registration scope and counts, destination, executor authority, conditions, PLAN_ONLY, and protectedMode are mandatory.
+
+An identified human must explicitly reconfirm approval and batch IDs, scope, counts, destination, authority, manual start, and all no-automatic-action boundaries. Starting creates a unique manual execution record. Approval, page display, selection, and candidate scheduling never start registration by themselves.
+
+Each target records an individual succeeded, failed, or skipped result with source and destination identifiers, timestamps, reasons, and verification-pending status. Registries prevent duplicate approval execution, execution IDs, source IDs, and destination IDs. Counts must reconcile as target equals succeeded plus failed plus skipped; only an all-success result proceeds to `ready_for_manual_post_registration_verification`.
+
+Partial failure, failure, interruption, cancellation, duplicates, missing identifiers, and other abnormalities never become normal completion and never trigger automatic retry or restart. Successfully registered items may be listed as rollback-review candidates, but rollback is never executed by this phase.
+
+Private Local only, PLAN_ONLY, and protectedMode remain enabled. Phase26-20 performs no automatic operation reflection, correction, deletion, reimport, retry, re-execution, rollback, application, learning update, scheduling, notification, external transmission, background execution, GitHub Pages deployment, or public publication. Post-registration verification is a separate manual next phase.
+
+Run `node tests/phase26ManualPostImportFormalRegistrationExecutionCore.test.js`.
