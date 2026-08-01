@@ -1023,6 +1023,17 @@
         <div class="phase2625-grid"><article><h3>修正候補件数</h3><p>Phase26-22候補。</p></article><article><h3>修正対象件数</h3><p>正式登録対象ID。</p></article><article><h3>修正手順数</h3><p>planned/review_requiredのみ。</p></article><article><h3>影響対象件数</h3><p>直接・間接影響。</p></article><article><h3>未確認影響件数</h3><p>人間確認前は完了不可。</p></article><article><h3>依存関係件数</h3><p>関連記録を集計。</p></article><article><h3>未解決重大依存関係件数</h3><p>0件必須。</p></article><article><h3>リスク件数</h3><p>人間レビュー。</p></article><article><h3>未確認重大リスク件数</h3><p>0件必須。</p></article><article><h3>検証計画有無</h3><p>計画のみ。検証未実行。</p></article><article><h3>ロールバック候補件数</h3><p>rollbackExecuted=false。</p></article><article><h3>観察事項件数</h3><p>自動解消なし。</p></article><article><h3>責任者</h3><p>計画ごとに必須。</p></article><article><h3>計画開始日時</h3><p>候補日時。</p></article><article><h3>計画完了予定日時</h3><p>開始との整合必須。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2626-panel" id="phase26-26-manual-post-registration-rollback-planning" aria-label="Phase26-26 手動正式登録後ロールバック計画作成コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-26 / ROLLBACK PLAN ONLY</p><h2>手動正式登録後ロールバック計画作成コア</h2></div><span class="pill danger">NO ROLLBACK EXECUTION</span></div>
+        <p>Phase26-22でrollback_plan_requiredとなった記録だけを対象に、人間がrollback・復旧・検証計画を記録します。</p>
+        <div class="phase2626-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>人間確認必須</strong><strong>自動ロールバック禁止</strong><strong>自動削除禁止</strong><strong>自動復旧禁止</strong><strong>自動再登録禁止</strong><strong>自動修正禁止</strong></div>
+        <p class="phase2626-warning"><strong>計画証跡専用です。削除、取消、復元、再登録、修正、rollback、運用反映を実行しません。</strong></p>
+        <div class="phase2626-grid"><article><h3>Phase26-22判定結果</h3><p>rollback_plan_requiredのみ。</p></article><article><h3>ロールバック計画状態</h3><p id="phase2626-current-status">ready_for_manual_post_registration_rollback_planning</p></article><article><h3>次状態</h3><p>完成後の次段階は手動ロールバック計画承認です。</p></article></div>
+        <form class="phase2626-form"><fieldset><legend>計画開始前確認</legend><label>判定記録ID<input></label><label>計画者<input required></label><label>計画理由<input></label><label>計画範囲<input></label><label><input type="checkbox">候補と対象を確認</label><label><input type="checkbox">影響と依存を確認</label><label><input type="checkbox">rollback未実行を確認</label><label><input type="checkbox">protectedModeを確認</label><label><input type="checkbox">PLAN_ONLYを確認</label></fieldset></form>
+        <div class="phase2626-actions"><button disabled>rollback計画を開始</button><button disabled>候補を確認</button><button disabled>手順を追加</button><button disabled>影響・依存・riskを記録</button><button disabled>復旧方針を作成</button><button disabled>backup・snapshotを確認</button></div>
+        <div class="phase2626-grid"><article><h3>ロールバック候補件数</h3><p>Phase26-22候補。</p></article><article><h3>ロールバック対象件数</h3><p>正式登録対象ID。</p></article><article><h3>ロールバック手順数</h3><p>planned/review_requiredのみ。</p></article><article><h3>影響対象件数</h3><p>直接・間接影響。</p></article><article><h3>未確認影響件数</h3><p>人間確認必須。</p></article><article><h3>依存関係件数</h3><p>関連記録を集計。</p></article><article><h3>未解決重大依存関係件数</h3><p>0件必須。</p></article><article><h3>リスク件数</h3><p>人間レビュー。</p></article><article><h3>未確認重大リスク件数</h3><p>0件必須。</p></article><article><h3>復旧方針有無</h3><p>計画のみ。復旧未実行。</p></article><article><h3>検証計画有無</h3><p>rollback後検証計画。</p></article><article><h3>バックアップ確認状態</h3><p>自動作成なし。</p></article><article><h3>スナップショット確認状態</h3><p>完全性とrestore point。</p></article><article><h3>観察事項件数</h3><p>自動解消なし。</p></article><article><h3>責任者</h3><p>計画ごとに必須。</p></article><article><h3>計画開始日時</h3><p>候補日時。</p></article><article><h3>計画完了予定日時</h3><p>開始との整合必須。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1055,5 +1066,6 @@
     <script src="phase26-23-manual-post-registration-acceptance-core.js"></script>
     <script src="phase26-24-manual-conditional-post-registration-acceptance-management-core.js"></script>
     <script src="phase26-25-manual-post-registration-correction-planning-core.js"></script>
+    <script src="phase26-26-manual-post-registration-rollback-planning-core.js"></script>
   </body>
 </html>

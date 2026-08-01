@@ -4936,3 +4936,15 @@ Rollback candidates remain documentation only with `rollbackExecuted` false. Onl
 Phase26-25 performs no automatic planning, approval, correction, deletion, re-registration, retry, rollback, verification, acceptance, finalization, operation reflection, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
 
 Run `node tests/phase26ManualPostRegistrationCorrectionPlanningCore.test.js`.
+
+## Phase26-26 Manual Post-Registration Rollback Planning Core
+
+Phase26-26 plans rollback only for Phase26-22 `rollback_plan_required` decisions in `ready_for_manual_post_registration_rollback_planning`. A valid rollback-planning request, candidates, affected registration IDs, explicit execution prohibitions, and complete upstream references are mandatory.
+
+An identified human records rollback targets, planned-only ordered steps, impact, dependency reviews, risks, recovery strategy, post-rollback verification, backup integrity, snapshots, restore point, evidence, and observations. Executed, completed, or rolled-back step states are prohibited.
+
+Completion requires every candidate in the plan, consistent targets and dates, at least one step, responsibility, reviewed impact, no unresolved major dependency or unreviewed major risk, recovery and verification plans, and human-confirmed backup, complete snapshots, restore point, and evidence. Plans with observations require explicit later human review.
+
+Only completed plans may explicitly proceed to `ready_for_manual_post_registration_rollback_plan_approval`. Phase26-26 performs no automatic planning, approval, rollback, deletion, recovery, re-registration, retry, correction, verification, acceptance, finalization, operation reflection, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
+
+Run `node tests/phase26ManualPostRegistrationRollbackPlanningCore.test.js`.
