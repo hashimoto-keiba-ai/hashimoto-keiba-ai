@@ -4894,3 +4894,17 @@ Correction and rollback results create planning requests only when corresponding
 Completed results may explicitly transition to manual acceptance, conditional acceptance, correction planning, rollback planning, or rejection according to the recorded result. Phase26-22 performs no automatic decision, approval, acceptance, condition resolution, correction, deletion, re-registration, retry, rollback, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
 
 Run `node tests/phase26ManualPostRegistrationVerificationDecisionCore.test.js`.
+
+## Phase26-23 Manual Post-Registration Acceptance Core
+
+Phase26-23 records human acceptance only for Phase26-22 `accepted` decisions in `ready_for_manual_post_registration_acceptance`. The decision must be normally completed with a decision maker, timestamp, reason, consistent counts, complete formal-registration references and evidence, and no unresolved observations, abnormalities, correction candidates, or rollback candidates.
+
+An identified human explicitly reconfirms every Phase26-16 through Phase26-22 reference, the import reference, scope, accepted count, decision and verification results, evidence, and safety boundaries. The same decision record and acceptance ID cannot start twice; stopped or completed acceptance never restarts automatically.
+
+Each item records source, target, created-record, verification and decision references, record/content/evidence checks, inclusion in counts, snapshots, and human identity. Accepted target IDs must be unique and match the formally registered scope. Exclusions require explicit reasons. All items and expected, actual, created, target, accepted, excluded, and unconfirmed counts must reconcile before completion.
+
+Only a fully consistent acceptance becomes `manual_post_registration_acceptance_completed` and may explicitly proceed to `ready_for_manual_post_registration_finalization`. Rejected acceptance records reason, impact, unresolved issues, recommended action, need for a new decision, and automatic-retry prohibition. Rejected, interrupted, cancelled, and abnormal records never proceed.
+
+Phase26-23 performs no automatic acceptance, approval, finalization, operation reflection, correction, deletion, re-registration, retry, rollback, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
+
+Run `node tests/phase26ManualPostRegistrationAcceptanceCore.test.js`.
