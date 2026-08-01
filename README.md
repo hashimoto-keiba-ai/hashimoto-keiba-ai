@@ -4948,3 +4948,15 @@ Completion requires every candidate in the plan, consistent targets and dates, a
 Only completed plans may explicitly proceed to `ready_for_manual_post_registration_rollback_plan_approval`. Phase26-26 performs no automatic planning, approval, rollback, deletion, recovery, re-registration, retry, correction, verification, acceptance, finalization, operation reflection, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
 
 Run `node tests/phase26ManualPostRegistrationRollbackPlanningCore.test.js`.
+
+## Phase26-27 Manual Correction Plan Approval Core
+
+Phase26-27 reviews only completed Phase26-25 correction plans in `ready_for_manual_post_registration_correction_plan_approval`. Candidates, planned steps, reviewed impact and dependencies, no unresolved major dependency or risk, a post-correction verification plan, evidence, and all execution-prohibition flags are mandatory.
+
+An identified human explicitly reviews the plan and records approved, conditionally approved, returned for revision, or rejected. Conditional approval requires unresolved human-managed conditions with owner, due date, reason, and action. Returns require a reason and revision items; rejection requires a reason. No result executes correction or rollback.
+
+Approved and conditionally approved records may explicitly proceed to manual correction-execution approval, with conditional management clearly required for conditional approval. Returned plans proceed only to manual plan revision, and rejected plans remain rejected.
+
+Phase26-27 performs no automatic approval, condition resolution, resubmission, correction, deletion, re-registration, retry, rollback, verification, acceptance, finalization, operation reflection, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
+
+Run `node tests/phase26ManualPostRegistrationCorrectionPlanApprovalCore.test.js`.
