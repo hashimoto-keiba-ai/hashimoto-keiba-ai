@@ -4972,3 +4972,15 @@ Approved and conditionally approved records may explicitly proceed to `ready_for
 Phase26-28 records execution approval only. It performs no correction, deletion, re-registration, re-execution, rollback, verification, acceptance, finalization, operation reflection, application, learning update, purchase, external transmission, GitHub Pages deployment, or public publication. Private Local only, PLAN_ONLY, and protectedMode remain enabled.
 
 Run `node tests/phase26ManualPostRegistrationCorrectionExecutionApprovalCore.test.js`.
+
+## Phase26-29 Manual Post-Registration Correction Execution Core
+
+Phase26-29 is the Private Local record core for correction work separately performed by a human after Phase26-28 manual execution approval. It accepts only valid, unexpired `approved` records with `manual_execution_allowed`, complete correction-plan and target traceability, matching target hash and version, and no prior active execution for the same approval or target/version combination.
+
+The record preserves approval, plan and target snapshot hashes; before and after snapshots; field-level differences; execution method, operator, times, procedure, checklist and evidence; plan and approval-scope checks; abnormalities, interruptions and partial work; rollback records; and an append-only audit trail. Completed records cannot be directly overwritten. Dedicated localStorage schema handling restores valid Phase26-29 data and safely rejects malformed or old-schema data without affecting existing Phase data.
+
+All execution-state changes require an explicit identified human action. Only a complete, in-scope record with matching snapshots, completed checklist, no unexpected changes or unresolved abnormalities, and intact safety flags can explicitly become a manual post-correction verification candidate. The next phase is never started automatically.
+
+This core does not execute the real correction, overwrite or delete formally registered data, run rollback, automatically apply results, update learning, affect prediction logic, purchase bets, connect to external APIs, or transmit data. Private Local only, PLAN_ONLY and protectedMode remain enabled. GitHub Pages and Public publication remain disabled.
+
+Run `node tests/phase26ManualPostRegistrationCorrectionExecutionCore.test.js`.
