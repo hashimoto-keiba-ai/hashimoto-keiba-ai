@@ -977,6 +977,18 @@
         <div class="phase2621-grid"><article><h3>内容不一致件数</h3><p>登録内容の差異候補。</p></article><article><h3>参照不一致件数</h3><p>上下流IDの参照差異。</p></article><article><h3>証跡不足件数</h3><p>snapshot・evidence不足。</p></article><article><h3>観察事項件数</h3><p>未解消で人間判断必須。</p></article><article><h3>修正候補件数</h3><p>候補のみ。修正は未実行。</p></article><article><h3>ロールバック候補件数</h3><p>候補のみ。ロールバックは未実行。</p></article><article><h3>個別検証結果</h3><p>参照、内容、snapshot、証跡、重複、欠落を項目別記録。</p></article><article><h3>監査証跡</h3><p>検証者、日時、状態履歴、入力・実行・検証結果snapshotを保持。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2622-panel" id="phase26-22-manual-post-registration-verification-decision" aria-label="Phase26-22 手動正式登録後検証判定コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-22 / HUMAN DECISION RECORD ONLY</p><h2>手動正式登録後検証判定コア</h2></div><span class="pill danger">NO AUTOMATIC ACCEPTANCE</span></div>
+        <p>Phase26-21で<code>ready_for_manual_post_registration_verification_decision</code>となった完了済み検証だけを、人間が確認して対応方針を記録します。</p>
+        <div class="phase2622-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>人間確認必須</strong><strong>自動判定禁止</strong><strong>自動受入禁止</strong><strong>自動修正禁止</strong><strong>自動ロールバック禁止</strong><strong>自動適用・学習更新なし</strong><strong>Public公開なし</strong></div>
+        <p class="phase2622-warning"><strong>判定証跡の記録専用です。受入確定、修正、削除、再登録、ロールバック、運用反映は実行しません。</strong></p>
+        <div class="phase2622-grid"><article><h3>Phase26-21判定対象</h3><p>完了結果、全項目確定、件数、証跡、Phase26-13・16～21参照を確認。</p></article><article><h3>登録後検証判定状態</h3><p id="phase2622-current-status">ready_for_manual_post_registration_verification_decision</p></article><article><h3>次状態</h3><p>次段階は判定結果に応じた手動処理です。</p></article></div>
+        <form id="phase2622-decision-form" class="phase2622-form"><fieldset><legend>判定開始前確認</legend><label>Phase26-21検証記録ID<input name="verificationRecordId"></label><label>判定者<input name="decisionMakerName" required></label><label>判定理由<input name="decisionReason"></label><label>判定範囲<input name="decisionScope"></label><label><input type="checkbox" name="manualDecisionConfirmed">手動判定開始を確認</label><label><input type="checkbox" name="verificationResultConfirmed">検証結果を確認</label><label><input type="checkbox" name="candidatesConfirmed">修正・rollback候補を確認</label><label><input type="checkbox" name="protectedModeConfirmed">protectedModeを確認</label><label><input type="checkbox" name="planOnlyConfirmed">PLAN_ONLYを確認</label></fieldset></form>
+        <div class="phase2622-actions"><button type="button" disabled>判定材料を確認</button><button type="button" class="danger" disabled>手動判定を開始</button><button type="button" disabled>判定を中断</button><button type="button" disabled>判定を取消</button></div>
+        <div class="phase2622-grid"><article><h3>検証結果</h3><p>正常完了または観察事項付き完了。</p></article><article><h3>件数整合性</h3><p>予定・実登録・作成・検証済み件数。</p></article><article><h3>観察事項件数</h3><p>Phase26-21から引継ぎ。</p></article><article><h3>未解決観察事項件数</h3><p>自動解消なし。</p></article><article><h3>修正候補件数</h3><p>候補があれば通常受入不可。</p></article><article><h3>ロールバック候補件数</h3><p>候補があれば通常受入不可。</p></article><article><h3>異常件数</h3><p>未解決重大異常を区別。</p></article><article><h3>条件件数</h3><p>条件付き受入時は1件以上必須。</p></article></div>
+        <div class="phase2622-grid"><article><h3>判定結果</h3><p>accepted / conditionally_accepted / correction_plan_required / rollback_plan_required / rejected</p></article><article><h3>受入可</h3><p>全件整合・未解決事項なしの場合のみ。</p></article><article><h3>条件付き受入</h3><p>条件、期限、責任者、人間対応を記録。</p></article><article><h3>修正計画要求</h3><p>要求記録のみ。修正実行なし。</p></article><article><h3>ロールバック計画要求</h3><p>要求記録のみ。rollback実行なし。</p></article><article><h3>却下</h3><p>理由、影響、推奨対応を記録し通常受入禁止。</p></article><article><h3>判定者</h3><p>名前またはIDを必須記録。</p></article><article><h3>判定日時</h3><p>開始・完了・中断・取消日時を監査記録。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1005,5 +1017,6 @@
     <script src="phase26-19-manual-post-import-formal-registration-execution-approval-core.js"></script>
     <script src="phase26-20-manual-post-import-formal-registration-execution-core.js"></script>
     <script src="phase26-21-manual-post-registration-verification-core.js"></script>
+    <script src="phase26-22-manual-post-registration-verification-decision-core.js"></script>
   </body>
 </html>
