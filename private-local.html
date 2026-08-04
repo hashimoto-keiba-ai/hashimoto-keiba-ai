@@ -1100,6 +1100,17 @@
         <div class="phase2632-grid"><article><h3>差分結果</h3><p>期待変更と予定外変更。</p></article><article><h3>整合性結果</h3><p>必須・型・形式・値域・関連。</p></article><article><h3>証跡</h3><p>実行・検証・判定証跡。</p></article><article><h3>監査証跡</h3><p>追記専用。</p></article><article><h3>ロールバック状態</h3><p>失敗時は正常受入不可。</p></article><article><h3>異常・警告</h3><p>未解決時は移行不可。</p></article><article><h3>受入条件</h3><p>条件付き受入の管理条件。</p></article><article><h3>未完了項目</h3><p>重要度・期限・担当者を記録。</p></article><article><h3>次アクション</h3><p>人間が指定。</p></article><article><h3>次工程移行可否</h3><p>正常または管理可能な条件付き受入のみ。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2633-panel" id="phase26-33-manual-post-registration-post-correction-acceptance-management" aria-label="Phase26-33 手動正式登録後修正後受入管理コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-33 / MANUAL ACCEPTANCE MANAGEMENT</p><h2>手動正式登録後修正後受入管理コア</h2></div><span class="pill danger">NO AUTOMATIC COMPLETION</span></div>
+        <p>Phase26-32の正常・条件付き受入について、条件、未完了項目、期限、担当者、証跡、フォローアップと再処理要否を人間が継続管理します。</p>
+        <div class="phase2633-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動条件完了なし</strong><strong>自動管理完了なし</strong><strong>自動反映なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div>
+        <p class="phase2633-warning"><strong>この画面は管理記録専用です。実データや過去Phaseを変更せず、条件解除、rollback、差戻し、次工程を自動実行しません。</strong></p>
+        <div class="phase2633-grid"><article><h3>対象受入記録</h3><p>Phase26-32管理候補。</p></article><article><h3>対象判定記録</h3><p>Phase26-31参照。</p></article><article><h3>対象検証記録</h3><p>Phase26-30参照。</p></article><article><h3>対象修正実行記録</h3><p>Phase26-29参照。</p></article><article><h3>対象正式登録記録</h3><p>IDと対象キーを追跡。</p></article><article><h3>管理状態</h3><p id="phase2633-current-status">awaiting_manual_management</p></article></div>
+        <form class="phase2633-form"><fieldset><legend>人間による受入後管理</legend><label>管理者<input required></label><label>管理開始日<input type="datetime-local"></label><label>管理更新日<input type="datetime-local"></label><label>管理完了日<input type="datetime-local"></label><label>管理方法<input></label><label>受入結果<input></label><label>対象レコード<input></label><label>対象キー<input></label><label>受入条件<textarea></textarea></label><label>条件一覧<textarea></textarea></label><label>条件完了率<input></label><label>条件担当者<input></label><label>条件確認者<input></label><label>条件期限<input type="datetime-local"></label><label>未完了項目<textarea></textarea></label><label>未完了項目数<input></label><label>未完了項目の重要度<input></label><label>フォローアップ内容<textarea></textarea></label><label>フォローアップ担当者<input></label><label>フォローアップ期限<input type="datetime-local"></label><label>次回確認日<input type="datetime-local"></label><label>hash結果<input></label><label>version結果<input></label><label>証跡・監査証跡<textarea></textarea></label><label>異常・警告<textarea></textarea></label><label>再検証・再判定・再修正要否<input></label><label>ロールバック要否<input></label><label>追加証跡・追加レビュー要否<input></label><label>次アクション<input></label><label>備考<textarea></textarea></label><label><input type="checkbox">人間の明示操作</label></fieldset></form>
+        <div class="phase2633-actions"><button disabled>手動管理開始</button><button disabled>条件項目追加・更新</button><button disabled>条件証跡確認</button><button disabled>未完了項目解消</button><button disabled>期限延長要求・承認</button><button disabled>フォローアップ記録</button><button disabled>再処理要求</button><button disabled>管理完了</button></div>
+        <div class="phase2633-grid"><article><h3>条件完了率</h3><p>人間が確認した件数から表示。</p></article><article><h3>条件期限</h3><p>超過時も自動完了しない。</p></article><article><h3>未完了項目</h3><p>期限・担当・重要度を管理。</p></article><article><h3>フォローアップ状態</h3><p>開始と完了を明示記録。</p></article><article><h3>証跡</h3><p>条件・未完了項目の証跡。</p></article><article><h3>監査証跡</h3><p>変更履歴を追記保存。</p></article><article><h3>異常・警告</h3><p>未解決時は完了不可。</p></article><article><h3>再検証・再判定・再修正要否</h3><p>人間が要求を記録。</p></article><article><h3>ロールバック要否</h3><p>自動実行なし。</p></article><article><h3>追加証跡・追加レビュー要否</h3><p>理由と期限を記録。</p></article><article><h3>次工程移行可否</h3><p>管理完了時だけクローズ候補。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1139,5 +1150,6 @@
     <script src="phase26-30-manual-post-registration-post-correction-verification-core.js"></script>
     <script src="phase26-31-manual-post-registration-post-correction-verification-decision-core.js"></script>
     <script src="phase26-32-manual-post-registration-post-correction-acceptance-core.js"></script>
+    <script src="phase26-33-manual-post-registration-post-correction-acceptance-management-core.js"></script>
   </body>
 </html>
