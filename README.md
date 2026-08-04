@@ -5015,6 +5015,12 @@ Phase26-35 is the Private Local, PLAN_ONLY and protectedMode core for a human to
 
 This phase never automatically approves closure, closes, reflects or applies data, changes real data or earlier Phase records, updates learning or predictions, executes rollback, starts the next phase, publishes publicly, uses GitHub Pages, or transmits externally. Only an unexpired human-selected `approve_for_manual_closure_execution` can become `ready_for_manual_post_correction_closure_execution`; expiry never triggers automatic approval or cancellation. Dedicated localStorage schema validation safely excludes malformed or old-schema Phase26-35 data without damaging earlier Phase data.
 
+## Phase26-36 Manual Post-Correction Closure Execution Record Core
+
+Phase26-36 is the Private Local, PLAN_ONLY and protectedMode record core for a human to record a closure operation performed separately under an unexpired Phase26-35 approval. It records operator, times, method, approved and executed scope, exclusions, checklist, evidence, hashes, versions, outcome, findings, rollback records and an append-only audit trail. It does not perform closure or rollback itself. Completed records are immutable.
+
+Only a manually recorded `completed` outcome with matching scope, completed checklist, evidence, valid hashes and versions, and no unresolved findings can become `ready_for_phase26_integrity_audit`. Rollback completion remains a separate result and is never treated as successful closure. The core never changes real data or earlier Phase records, reflects or applies changes, updates learning or predictions, starts the next phase, publishes publicly, uses GitHub Pages, or transmits externally.
+
 All execution-state changes require an explicit identified human action. Only a complete, in-scope record with matching snapshots, completed checklist, no unexpected changes or unresolved abnormalities, and intact safety flags can explicitly become a manual post-correction verification candidate. The next phase is never started automatically.
 
 This core does not execute the real correction, overwrite or delete formally registered data, run rollback, automatically apply results, update learning, affect prediction logic, purchase bets, connect to external APIs, or transmit data. Private Local only, PLAN_ONLY and protectedMode remain enabled. GitHub Pages and Public publication remain disabled.

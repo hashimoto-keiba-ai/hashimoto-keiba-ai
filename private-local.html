@@ -1133,6 +1133,17 @@
         <div class="phase2635-grid"><article><h3>条件・未完了項目</h3><p>全解決必須。</p></article><article><h3>フォローアップ・期限</h3><p>承認期限内だけ候補化。</p></article><article><h3>証跡・監査証跡</h3><p>保持を人間が確認。</p></article><article><h3>再処理要否</h3><p>未解決要求は承認不可。</p></article><article><h3>異常・警告</h3><p>未解決時は承認不可。</p></article><article><h3>承認理由</h3><p>すべての結果で必須。</p></article><article><h3>次工程移行可否</h3><p>正常かつ期限内の承認のみ。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2636-panel" id="phase26-36-manual-post-registration-post-correction-closure-execution-record" aria-label="Phase26-36 手動正式登録後修正後クローズ実行記録コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-36 / MANUAL CLOSURE EXECUTION RECORD</p><h2>手動正式登録後修正後クローズ実行記録コア</h2></div><span class="pill danger">NO AUTOMATIC EXECUTION</span></div>
+        <p>Phase26-35の期限内承認について、人間が別途実施したクローズ操作の事実、範囲、結果、証跡、異常とrollback要否だけを記録します。</p>
+        <div class="phase2636-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動クローズ実行なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div>
+        <p class="phase2636-warning"><strong>この画面は実行結果の記録専用です。クローズ、rollback、実データ変更、次工程を自動実行しません。</strong></p>
+        <div class="phase2636-grid"><article><h3>対象クローズ承認記録</h3><p>Phase26-35期限内承認。</p></article><article><h3>対象クローズ確認記録</h3><p>Phase26-34参照。</p></article><article><h3>対象受入管理記録</h3><p>Phase26-33参照。</p></article><article><h3>対象受入記録</h3><p>Phase26-32参照。</p></article><article><h3>対象修正実行記録</h3><p>Phase26-29参照。</p></article><article><h3>対象正式登録記録</h3><p>IDと対象キーを追跡。</p></article><article><h3>実行状態</h3><p id="phase2636-current-status">awaiting_manual_closure_execution</p></article></div>
+        <form class="phase2636-form"><fieldset><legend>人間が別途実施したクローズの記録</legend><label>操作者<input required></label><label>実行日時<input type="datetime-local"></label><label>開始・終了時刻<input></label><label>承認期限<input></label><label>実行方法・環境<input></label><label>対象レコード・対象キー<input></label><label>承認範囲<textarea></textarea></label><label>実施範囲<textarea></textarea></label><label>除外項目<textarea></textarea></label><label>チェックリスト<textarea></textarea></label><label>hash・version結果<input></label><label>実行証跡・外部作業参照<textarea></textarea></label><label>異常・警告<textarea></textarea></label><label>実行結果<select><option>completed</option><option>partially_completed</option><option>failed</option><option>cancelled</option><option>stopped</option><option>rollback_required</option><option>rolled_back</option><option>post_execution_verification_required</option><option>additional_evidence_required</option><option>additional_review_required</option><option>follow_up_required</option></select></label><label>実行理由<textarea required></textarea></label><label>rollback・実行後検証・追加要求要否<input></label><label>未完了項目<textarea></textarea></label><label>次アクション<input required></label><label>備考<textarea></textarea></label><label><input type="checkbox">人間が別途実施済み</label></fieldset></form>
+        <div class="phase2636-actions"><button disabled>手動実行開始を記録</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗</button><button disabled>完了を記録</button><button disabled>rollback記録</button></div>
+        <div class="phase2636-grid"><article><h3>承認範囲と実施範囲</h3><p>不一致は正常完了不可。</p></article><article><h3>チェックリスト</h3><p>全項目完了必須。</p></article><article><h3>実行証跡</h3><p>人間の作業証跡。</p></article><article><h3>異常・警告</h3><p>未解決時は監査候補不可。</p></article><article><h3>ロールバック記録</h3><p>別途実施した結果だけを記録。</p></article><article><h3>次工程移行可否</h3><p>正常completedだけが整合性監査候補。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1175,5 +1186,6 @@
     <script src="phase26-33-manual-post-registration-post-correction-acceptance-management-core.js"></script>
     <script src="phase26-34-manual-post-registration-post-correction-closure-check-core.js"></script>
     <script src="phase26-35-manual-post-registration-post-correction-closure-approval-core.js"></script>
+    <script src="phase26-36-manual-post-registration-post-correction-closure-execution-record-core.js"></script>
   </body>
 </html>
