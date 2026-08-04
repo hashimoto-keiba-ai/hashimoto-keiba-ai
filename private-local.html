@@ -1122,6 +1122,17 @@
         <div class="phase2634-grid"><article><h3>条件完了状況</h3><p>条件付き受入は100%必須。</p></article><article><h3>未完了項目数</h3><p>0件必須。</p></article><article><h3>フォローアップ状況</h3><p>必要時completed必須。</p></article><article><h3>期限解消状況</h3><p>超過未解決はブロック。</p></article><article><h3>証跡・監査証跡</h3><p>保持を人間が確認。</p></article><article><h3>再処理要否</h3><p>未解決要求は差戻し。</p></article><article><h3>異常・警告</h3><p>未解決時は承認候補不可。</p></article><article><h3>確認理由</h3><p>すべての結果で必須。</p></article><article><h3>次工程移行可否</h3><p>正常確認だけがクローズ承認候補。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2635-panel" id="phase26-35-manual-post-registration-post-correction-closure-approval" aria-label="Phase26-35 手動正式登録後修正後クローズ承認コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-35 / MANUAL CLOSURE APPROVAL</p><h2>手動正式登録後修正後クローズ承認コア</h2></div><span class="pill danger">NO AUTOMATIC APPROVAL</span></div>
+        <p>Phase26-34の正常確認記録について、関連記録、hash、version、条件、証跡、再処理要求、安全フラグを人間が確認し、クローズ実行可否を承認記録に残します。</p>
+        <div class="phase2635-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動クローズ承認なし</strong><strong>自動クローズなし</strong><strong>自動反映なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div>
+        <p class="phase2635-warning"><strong>この画面は承認記録専用です。実データや過去Phaseを変更せず、クローズ実行や次工程を自動開始しません。</strong></p>
+        <div class="phase2635-grid"><article><h3>対象クローズ確認記録</h3><p>Phase26-34正常確認。</p></article><article><h3>対象受入管理記録</h3><p>Phase26-33参照。</p></article><article><h3>対象受入記録</h3><p>Phase26-32参照。</p></article><article><h3>対象判定記録</h3><p>Phase26-31参照。</p></article><article><h3>対象検証記録</h3><p>Phase26-30参照。</p></article><article><h3>対象修正実行記録</h3><p>Phase26-29参照。</p></article><article><h3>対象正式登録記録</h3><p>IDと対象キーを追跡。</p></article><article><h3>承認状態</h3><p id="phase2635-current-status">awaiting_manual_closure_approval</p></article></div>
+        <form class="phase2635-form"><fieldset><legend>人間によるクローズ承認</legend><label>承認者<input required></label><label>承認日時<input type="datetime-local"></label><label>承認期限<input type="datetime-local" required></label><label>開始・終了時刻<input></label><label>承認方法<input></label><label>クローズ確認結果<input></label><label>管理結果・受入結果<input></label><label>対象レコード・対象キー<input></label><label>hash・version結果<input></label><label>条件完了・未完了項目<input></label><label>フォローアップ・期限解消<input></label><label>証跡・監査証跡<textarea></textarea></label><label>再検証・再判定・再修正要否<input></label><label>ロールバック・追加要求要否<input></label><label>異常・警告<textarea></textarea></label><label>承認結果<select><option>approve_for_manual_closure_execution</option><option>reject</option><option>return_for_closure_check</option><option>return_for_acceptance_management</option><option>return_for_reverification</option><option>return_for_redecision</option><option>return_for_correction</option><option>rollback_required</option><option>additional_evidence_required</option><option>additional_review_required</option><option>hold</option><option>blocked</option></select></label><label>承認理由<textarea required></textarea></label><label>次アクション<input required></label><label>備考<textarea></textarea></label><label><input type="checkbox">警告確認済み</label><label><input type="checkbox">人間の明示操作</label></fieldset></form>
+        <div class="phase2635-actions"><button disabled>手動承認開始</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗</button><button disabled>承認完了を記録</button></div>
+        <div class="phase2635-grid"><article><h3>条件・未完了項目</h3><p>全解決必須。</p></article><article><h3>フォローアップ・期限</h3><p>承認期限内だけ候補化。</p></article><article><h3>証跡・監査証跡</h3><p>保持を人間が確認。</p></article><article><h3>再処理要否</h3><p>未解決要求は承認不可。</p></article><article><h3>異常・警告</h3><p>未解決時は承認不可。</p></article><article><h3>承認理由</h3><p>すべての結果で必須。</p></article><article><h3>次工程移行可否</h3><p>正常かつ期限内の承認のみ。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1163,5 +1174,6 @@
     <script src="phase26-32-manual-post-registration-post-correction-acceptance-core.js"></script>
     <script src="phase26-33-manual-post-registration-post-correction-acceptance-management-core.js"></script>
     <script src="phase26-34-manual-post-registration-post-correction-closure-check-core.js"></script>
+    <script src="phase26-35-manual-post-registration-post-correction-closure-approval-core.js"></script>
   </body>
 </html>

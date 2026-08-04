@@ -5009,6 +5009,12 @@ Phase26-34 is the Private Local, PLAN_ONLY and protectedMode core for a human to
 
 This phase never automatically closes, approves closure, reflects or applies data, changes real data or earlier Phase records, updates learning or predictions, executes rollback, starts the next phase, publishes publicly, uses GitHub Pages, or transmits externally. Only the human-selected `ready_for_manual_closure_approval` result satisfying every gate can become `ready_for_manual_post_correction_closure_approval`. Dedicated localStorage schema validation safely excludes malformed or old-schema Phase26-34 data without damaging earlier Phase data.
 
+## Phase26-35 Manual Post-Correction Closure Approval Core
+
+Phase26-35 is the Private Local, PLAN_ONLY and protectedMode core for a human to manually approve or route a valid Phase26-34 closure check. It preserves every upstream snapshot, hash and version, approval result and reason, approval expiry, routing information, findings and append-only audit history. Explicit states cover start, progress, pause, resume, stop, cancel, failure, approval, rejection, returns, rollback, evidence and review requests, hold and block. Completed records are immutable.
+
+This phase never automatically approves closure, closes, reflects or applies data, changes real data or earlier Phase records, updates learning or predictions, executes rollback, starts the next phase, publishes publicly, uses GitHub Pages, or transmits externally. Only an unexpired human-selected `approve_for_manual_closure_execution` can become `ready_for_manual_post_correction_closure_execution`; expiry never triggers automatic approval or cancellation. Dedicated localStorage schema validation safely excludes malformed or old-schema Phase26-35 data without damaging earlier Phase data.
+
 All execution-state changes require an explicit identified human action. Only a complete, in-scope record with matching snapshots, completed checklist, no unexpected changes or unresolved abnormalities, and intact safety flags can explicitly become a manual post-correction verification candidate. The next phase is never started automatically.
 
 This core does not execute the real correction, overwrite or delete formally registered data, run rollback, automatically apply results, update learning, affect prediction logic, purchase bets, connect to external APIs, or transmit data. Private Local only, PLAN_ONLY and protectedMode remain enabled. GitHub Pages and Public publication remain disabled.
