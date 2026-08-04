@@ -1089,6 +1089,17 @@
         <div class="phase2631-grid"><article><h3>差分結果</h3><p>期待変更と予定外変更。</p></article><article><h3>整合性結果</h3><p>必須・型・形式・値域・関連。</p></article><article><h3>証跡</h3><p>検証証跡を確認。</p></article><article><h3>監査証跡</h3><p>追記専用。</p></article><article><h3>ロールバック状態</h3><p>失敗時は承認不可。</p></article><article><h3>異常</h3><p>未解決時は移行不可。</p></article><article><h3>警告</h3><p>人間の確認必須。</p></article><article><h3>判定理由</h3><p>全結果で必須。</p></article><article><h3>次アクション</h3><p>人間が指定。</p></article><article><h3>次工程移行可否</h3><p>承認判定だけが受入候補。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2632-panel" id="phase26-32-manual-post-registration-post-correction-acceptance" aria-label="Phase26-32 手動正式登録後修正後受入コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-32 / MANUAL POST-CORRECTION ACCEPTANCE</p><h2>手動正式登録後修正後受入コア</h2></div><span class="pill danger">NO AUTOMATIC ACCEPTANCE</span></div>
+        <p>Phase26-31の承認判定を基に、判定・検証・修正実行・hash・version・証跡・rollbackを人間が最終確認し、受入結果を記録します。</p>
+        <div class="phase2632-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動受入なし</strong><strong>自動反映なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div>
+        <p class="phase2632-warning"><strong>この画面は受入記録専用です。実データ、正式登録、予想・学習を変更せず、rollbackや次工程を自動開始しません。</strong></p>
+        <div class="phase2632-grid"><article><h3>対象判定記録</h3><p>Phase26-31承認判定。</p></article><article><h3>対象修正後検証記録</h3><p>Phase26-30参照。</p></article><article><h3>対象修正実行記録</h3><p>Phase26-29参照。</p></article><article><h3>対象正式登録記録</h3><p>IDと対象キーを追跡。</p></article><article><h3>受入状態</h3><p id="phase2632-current-status">awaiting_manual_acceptance</p></article></div>
+        <form class="phase2632-form"><fieldset><legend>人間による受入記録</legend><label>受入者<input required></label><label>受入日時<input type="datetime-local"></label><label>開始時刻<input type="datetime-local"></label><label>終了時刻<input type="datetime-local"></label><label>受入方法<input></label><label>判定結果<input></label><label>検証結果<input></label><label>修正実行結果<input></label><label>対象レコード<input></label><label>対象キー<input></label><label>hash結果<input></label><label>version結果<input></label><label>修正差分<textarea></textarea></label><label>計画・承認範囲との一致<textarea></textarea></label><label>必須・型・形式・値域<input></label><label>関連整合性・重複<input></label><label>証跡・監査証跡<input></label><label>ロールバック状態<input></label><label>異常・警告<textarea></textarea></label><label>受入結果<select><option>accept</option><option>conditionally_accept</option><option>reject</option><option>return_for_reverification</option><option>return_for_correction</option><option>return_for_redecision</option><option>hold</option><option>rollback_required</option><option>additional_evidence_required</option><option>additional_review_required</option></select></label><label>受入理由<textarea required></textarea></label><label>受入条件<textarea></textarea></label><label>未完了項目<textarea></textarea></label><label>次アクション<input required></label><label>備考<textarea></textarea></label><label><input type="checkbox">警告確認済み</label><label><input type="checkbox">人間の明示操作</label></fieldset></form>
+        <div class="phase2632-actions"><button disabled>手動受入開始を記録</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗</button><button disabled>受入完了を記録</button></div>
+        <div class="phase2632-grid"><article><h3>差分結果</h3><p>期待変更と予定外変更。</p></article><article><h3>整合性結果</h3><p>必須・型・形式・値域・関連。</p></article><article><h3>証跡</h3><p>実行・検証・判定証跡。</p></article><article><h3>監査証跡</h3><p>追記専用。</p></article><article><h3>ロールバック状態</h3><p>失敗時は正常受入不可。</p></article><article><h3>異常・警告</h3><p>未解決時は移行不可。</p></article><article><h3>受入条件</h3><p>条件付き受入の管理条件。</p></article><article><h3>未完了項目</h3><p>重要度・期限・担当者を記録。</p></article><article><h3>次アクション</h3><p>人間が指定。</p></article><article><h3>次工程移行可否</h3><p>正常または管理可能な条件付き受入のみ。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1127,5 +1138,6 @@
     <script src="phase26-29-manual-post-registration-correction-execution-core.js"></script>
     <script src="phase26-30-manual-post-registration-post-correction-verification-core.js"></script>
     <script src="phase26-31-manual-post-registration-post-correction-verification-decision-core.js"></script>
+    <script src="phase26-32-manual-post-registration-post-correction-acceptance-core.js"></script>
   </body>
 </html>
