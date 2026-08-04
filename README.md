@@ -4979,6 +4979,12 @@ Phase26-29 is the Private Local record core for correction work separately perfo
 
 The record preserves approval, plan and target snapshot hashes; before and after snapshots; field-level differences; execution method, operator, times, procedure, checklist and evidence; plan and approval-scope checks; abnormalities, interruptions and partial work; rollback records; and an append-only audit trail. Completed records cannot be directly overwritten. Dedicated localStorage schema handling restores valid Phase26-29 data and safely rejects malformed or old-schema data without affecting existing Phase data.
 
+## Phase26-30 Manual Post-Registration Post-Correction Verification Core
+
+Phase26-30 is the Private Local, PLAN_ONLY and protectedMode core for a human to manually verify a Phase26-29 post-registration correction execution. It preserves Phase26-26 through Phase26-29 traceability, before/expected/actual/current snapshots, hash and version checks, classified differences, required/type/format/range/relation checks, evidence, audit history and rollback verification. Explicit state transitions control start, progress, pause, resume, stop, cancel, failure, completion, rollback verification and creation of a manual decision candidate. Completed records are immutable; re-verification creates a new linked record.
+
+This phase does not automatically verify, decide, approve, correct, execute, apply, roll back, update learning or predictions, start the next phase, mutate registered or source data, publish publicly, use GitHub Pages, or transmit externally. Only a fully completed manual record without unresolved abnormalities can become a `ready_for_manual_post_correction_verification_decision` candidate. Dedicated localStorage schema validation safely excludes malformed or old-schema Phase26-30 data without damaging earlier Phase data.
+
 All execution-state changes require an explicit identified human action. Only a complete, in-scope record with matching snapshots, completed checklist, no unexpected changes or unresolved abnormalities, and intact safety flags can explicitly become a manual post-correction verification candidate. The next phase is never started automatically.
 
 This core does not execute the real correction, overwrite or delete formally registered data, run rollback, automatically apply results, update learning, affect prediction logic, purchase bets, connect to external APIs, or transmit data. Private Local only, PLAN_ONLY and protectedMode remain enabled. GitHub Pages and Public publication remain disabled.
