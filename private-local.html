@@ -1067,6 +1067,17 @@
         <div class="phase2629-grid"><article><h3>実行者</h3><p>氏名またはID。</p></article><article><h3>実行日時</h3><p>開始・終了日時。</p></article><article><h3>計画との一致状況</h3><p>対象・項目・手順を照合。</p></article><article><h3>承認範囲との一致状況</h3><p>範囲外変更は異常。</p></article><article><h3>異常</h3><p>未解決時は移行不可。</p></article><article><h3>警告</h3><p>人間が確認。</p></article><article><h3>中断</h3><p>明示操作だけを記録。</p></article><article><h3>停止</h3><p>自動再開なし。</p></article><article><h3>取消</h3><p>終端記録。</p></article><article><h3>ロールバック状況</h3><p>人間が別途実施した結果のみ。</p></article><article><h3>次工程移行可否</h3><p>正常完了時だけ手動修正後検証候補。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2630-panel" id="phase26-30-manual-post-registration-post-correction-verification" aria-label="Phase26-30 手動正式登録後修正後検証コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-30 / MANUAL POST-CORRECTION VERIFICATION</p><h2>手動正式登録後修正後検証コア</h2></div><span class="pill danger">NO AUTOMATIC VERIFICATION</span></div>
+        <p>Phase26-29の手動修正実行結果を、人間が修正計画・承認範囲・前後スナップショット・現在値と照合して記録します。</p>
+        <div class="phase2630-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動検証なし</strong><strong>自動判定なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div>
+        <p class="phase2630-warning"><strong>この画面は検証記録専用です。実データ、正式登録記録、予想・学習を変更せず、次工程も自動開始しません。</strong></p>
+        <div class="phase2630-grid"><article><h3>対象修正実行記録</h3><p>Phase26-29正常完了記録。</p></article><article><h3>対象正式登録記録</h3><p>IDと対象キーを一意追跡。</p></article><article><h3>修正計画</h3><p>Phase26-26参照。</p></article><article><h3>実行承認</h3><p>Phase26-28参照。</p></article><article><h3>検証状態</h3><p id="phase2630-current-status">awaiting_manual_verification</p></article></div>
+        <form class="phase2630-form"><fieldset><legend>人間による検証記録</legend><label>検証者<input required></label><label>検証日時<input type="datetime-local"></label><label>検証環境<input></label><label>検証方法<input></label><label>対象レコード<input></label><label>対象キー<input></label><label>修正前値<textarea></textarea></label><label>予定修正後値<textarea></textarea></label><label>実際の修正後値<textarea></textarea></label><label>現在値<textarea></textarea></label><label>実際の差分<textarea></textarea></label><label>hash / version<input></label><label>証跡<input></label><label>異常・警告・備考<textarea></textarea></label><label><input type="checkbox">計画どおり</label><label><input type="checkbox">承認範囲内</label><label><input type="checkbox">必須・型・形式・値域確認</label><label><input type="checkbox">関連整合性・重複確認</label><label><input type="checkbox">人間の明示操作</label></fieldset></form>
+        <div class="phase2630-actions"><button disabled>手動検証開始を記録</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗</button><button disabled>検証完了を記録</button><button disabled>rollback検証を記録</button></div>
+        <div class="phase2630-grid"><article><h3>差分分類</h3><p>期待変更・未変更・予定外変更を表示。</p></article><article><h3>hash一致状況</h3><p>前後・現在値を確認。</p></article><article><h3>version一致状況</h3><p>遷移と現在版を確認。</p></article><article><h3>必須項目確認</h3><p>欠損を異常扱い。</p></article><article><h3>型・形式・値域確認</h3><p>人間が確認。</p></article><article><h3>関連整合性</h3><p>参照破損を確認。</p></article><article><h3>重複確認</h3><p>同一実行の有効記録は原則1件。</p></article><article><h3>証跡確認</h3><p>実行証跡を保持。</p></article><article><h3>監査証跡確認</h3><p>追記専用。</p></article><article><h3>ロールバック検証</h3><p>人間が実施済み結果だけを検証。</p></article><article><h3>異常・警告</h3><p>未解決時は移行不可。</p></article><article><h3>次工程移行可否</h3><p>正常完了時だけ判定候補。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1103,5 +1114,6 @@
     <script src="phase26-27-manual-post-registration-correction-plan-approval-core.js"></script>
     <script src="phase26-28-manual-post-registration-correction-execution-approval-core.js"></script>
     <script src="phase26-29-manual-post-registration-correction-execution-core.js"></script>
+    <script src="phase26-30-manual-post-registration-post-correction-verification-core.js"></script>
   </body>
 </html>
