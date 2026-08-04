@@ -1111,6 +1111,17 @@
         <div class="phase2633-grid"><article><h3>条件完了率</h3><p>人間が確認した件数から表示。</p></article><article><h3>条件期限</h3><p>超過時も自動完了しない。</p></article><article><h3>未完了項目</h3><p>期限・担当・重要度を管理。</p></article><article><h3>フォローアップ状態</h3><p>開始と完了を明示記録。</p></article><article><h3>証跡</h3><p>条件・未完了項目の証跡。</p></article><article><h3>監査証跡</h3><p>変更履歴を追記保存。</p></article><article><h3>異常・警告</h3><p>未解決時は完了不可。</p></article><article><h3>再検証・再判定・再修正要否</h3><p>人間が要求を記録。</p></article><article><h3>ロールバック要否</h3><p>自動実行なし。</p></article><article><h3>追加証跡・追加レビュー要否</h3><p>理由と期限を記録。</p></article><article><h3>次工程移行可否</h3><p>管理完了時だけクローズ候補。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2634-panel" id="phase26-34-manual-post-registration-post-correction-closure-check" aria-label="Phase26-34 手動正式登録後修正後クローズ確認コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-34 / MANUAL CLOSURE CHECK</p><h2>手動正式登録後修正後クローズ確認コア</h2></div><span class="pill danger">NO AUTOMATIC CLOSURE</span></div>
+        <p>Phase26-33の管理完了記録について、条件、未完了項目、フォローアップ、hash、version、証跡、再処理要求、安全フラグを人間が最終確認します。</p>
+        <div class="phase2634-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動クローズなし</strong><strong>自動承認なし</strong><strong>自動反映なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div>
+        <p class="phase2634-warning"><strong>この画面はクローズ前確認記録専用です。実データや過去Phaseを変更せず、クローズ承認・実行や次工程を自動開始しません。</strong></p>
+        <div class="phase2634-grid"><article><h3>対象受入管理記録</h3><p>Phase26-33管理完了記録。</p></article><article><h3>対象受入記録</h3><p>Phase26-32参照。</p></article><article><h3>対象判定記録</h3><p>Phase26-31参照。</p></article><article><h3>対象検証記録</h3><p>Phase26-30参照。</p></article><article><h3>対象修正実行記録</h3><p>Phase26-29参照。</p></article><article><h3>対象正式登録記録</h3><p>IDと対象キーを追跡。</p></article><article><h3>確認状態</h3><p id="phase2634-current-status">awaiting_manual_closure_check</p></article></div>
+        <form class="phase2634-form"><fieldset><legend>人間によるクローズ前確認</legend><label>確認者<input required></label><label>確認日時<input type="datetime-local"></label><label>開始時刻<input type="datetime-local"></label><label>終了時刻<input type="datetime-local"></label><label>確認方法<input></label><label>管理結果<input></label><label>受入結果<input></label><label>対象レコード<input></label><label>対象キー<input></label><label>hash結果<input></label><label>version結果<input></label><label>条件完了状況<input></label><label>未完了項目数<input></label><label>フォローアップ状況<input></label><label>期限解消状況<input></label><label>証跡・監査証跡<textarea></textarea></label><label>再検証・再判定・再修正要否<input></label><label>ロールバック要否<input></label><label>追加証跡・追加レビュー要否<input></label><label>異常・警告<textarea></textarea></label><label>クローズ可否<select><option>ready_for_manual_closure_approval</option><option>return_for_acceptance_management</option><option>return_for_reverification</option><option>return_for_redecision</option><option>return_for_correction</option><option>rollback_required</option><option>additional_evidence_required</option><option>additional_review_required</option><option>hold</option><option>blocked</option></select></label><label>確認理由<textarea required></textarea></label><label>次アクション<input required></label><label>備考<textarea></textarea></label><label><input type="checkbox">警告確認済み</label><label><input type="checkbox">人間の明示操作</label></fieldset></form>
+        <div class="phase2634-actions"><button disabled>手動確認開始</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗</button><button disabled>確認完了を記録</button></div>
+        <div class="phase2634-grid"><article><h3>条件完了状況</h3><p>条件付き受入は100%必須。</p></article><article><h3>未完了項目数</h3><p>0件必須。</p></article><article><h3>フォローアップ状況</h3><p>必要時completed必須。</p></article><article><h3>期限解消状況</h3><p>超過未解決はブロック。</p></article><article><h3>証跡・監査証跡</h3><p>保持を人間が確認。</p></article><article><h3>再処理要否</h3><p>未解決要求は差戻し。</p></article><article><h3>異常・警告</h3><p>未解決時は承認候補不可。</p></article><article><h3>確認理由</h3><p>すべての結果で必須。</p></article><article><h3>次工程移行可否</h3><p>正常確認だけがクローズ承認候補。</p></article></div>
+      </section>
+
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1151,5 +1162,6 @@
     <script src="phase26-31-manual-post-registration-post-correction-verification-decision-core.js"></script>
     <script src="phase26-32-manual-post-registration-post-correction-acceptance-core.js"></script>
     <script src="phase26-33-manual-post-registration-post-correction-acceptance-management-core.js"></script>
+    <script src="phase26-34-manual-post-registration-post-correction-closure-check-core.js"></script>
   </body>
 </html>
