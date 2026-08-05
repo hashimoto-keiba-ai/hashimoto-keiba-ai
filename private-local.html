@@ -8,6 +8,7 @@
     <link rel="apple-touch-icon" href="icon.svg">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="phase26-37.css">
     <style>
       .private-layout {
         max-width: 1180px;
@@ -1144,6 +1145,16 @@
         <div class="phase2636-grid"><article><h3>承認範囲と実施範囲</h3><p>不一致は正常完了不可。</p></article><article><h3>チェックリスト</h3><p>全項目完了必須。</p></article><article><h3>実行証跡</h3><p>人間の作業証跡。</p></article><article><h3>異常・警告</h3><p>未解決時は監査候補不可。</p></article><article><h3>ロールバック記録</h3><p>別途実施した結果だけを記録。</p></article><article><h3>次工程移行可否</h3><p>正常completedだけが整合性監査候補。</p></article></div>
       </section>
 
+      <section class="private-section panel phase2637-panel" id="phase26-37-phase26-integrity-audit-check" aria-label="Phase26-37 Phase26全体整合性・監査確認コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-37 / HUMAN INTEGRITY AUDIT</p><h2>Phase26全体整合性・監査確認コア</h2></div><span class="pill danger">MANUAL AUDIT RECORD ONLY</span></div>
+        <p>条件を満たすPhase26-36クローズ実行記録を起点に、Phase26-1からPhase26-36までの記録を人間が手動監査します。</p>
+        <div class="phase2637-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動監査完了なし</strong><strong>自動修正なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div>
+        <p class="phase2637-warning"><strong>監査記録専用です。既存記録や実データを変更せず、危険な状態変更や次工程を自動実行しません。</strong></p>
+        <div class="phase2637-grid"><article><h3>監査対象クローズ実行記録</h3><p>ready_for_phase26_integrity_audit / completed。</p></article><article><h3>Phase26-1からPhase26-36までの記録一覧</h3><p>無効化・supersededを区別して参照。</p></article><article><h3>監査状態</h3><p id="phase2637-current-status">awaiting_manual_integrity_audit</p></article><article><h3>監査対象範囲</h3><p>Phase26-1〜Phase26-36。</p></article></div>
+        <form class="phase2637-form"><fieldset><legend>手動監査記録</legend><label>監査者<input required></label><label>監査日時<input type="datetime-local"></label><label>開始時刻<input type="datetime-local"></label><label>終了時刻<input type="datetime-local"></label><label>監査方法<input></label><label>対象レコード<input></label><label>対象キー<input></label><label>raceId<input></label><label>監査理由<textarea></textarea></label><label>監査所見<textarea></textarea></label><label>次アクション<input></label><label>備考<textarea></textarea></label></fieldset></form>
+        <div class="phase2637-actions"><button disabled>手動監査開始を記録</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗を記録</button><button disabled>監査結果を記録</button></div>
+        <div class="phase2637-grid"><article><h3>期待Phase数</h3><p>36。</p></article><article><h3>検出Phase数</h3><p>手動監査で記録。</p></article><article><h3>期待記録数</h3><p>対象範囲から記録。</p></article><article><h3>検出記録数</h3><p>監査対象一覧から記録。</p></article><article><h3>欠損記録</h3><p>必須Phase・必須記録。</p></article><article><h3>重複記録</h3><p>ID・複合キー・有効記録。</p></article><article><h3>孤立記録</h3><p>親子参照なし。</p></article><article><h3>不正参照</h3><p>親子・循環・対象不一致。</p></article><article><h3>不正状態遷移</h3><p>許可された状態遷移を確認。</p></article><article><h3>対象整合性</h3><p>対象・対象キー・raceId。</p></article><article><h3>hash結果</h3><p>欠損・不一致・予期しない変更。</p></article><article><h3>version結果</h3><p>欠損・不一致・連鎖。</p></article><article><h3>証跡</h3><p>必須証跡と参照。</p></article><article><h3>監査証跡</h3><p>イベント順序と不変性。</p></article><article><h3>上書き違反</h3><p>完了記録の直接更新を禁止。</p></article><article><h3>rollback整合性</h3><p>状態と結果を確認。</p></article><article><h3>自動処理検出</h3><p>自動取得・取込・登録・修正・判定・承認・受入・クローズ・適用なし。</p></article><article><h3>Public公開検出</h3><p>GitHub Pagesを含め公開なし。</p></article><article><h3>外部送信検出</h3><p>外部API接続なし。</p></article><article><h3>異常</h3><p>未解決なら移行不可。</p></article><article><h3>警告</h3><p>人間がレビュー。</p></article><article><h3>監査結果</h3><p>pass / fail / blocked / hold / 要追加対応。</p></article><article><h3>監査理由</h3><p>人間が明示。</p></article><article><h3>次工程移行可否</h3><p>pass時のみPhase26完了判定候補。</p></article></div>
+      </section>
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1187,5 +1198,6 @@
     <script src="phase26-34-manual-post-registration-post-correction-closure-check-core.js"></script>
     <script src="phase26-35-manual-post-registration-post-correction-closure-approval-core.js"></script>
     <script src="phase26-36-manual-post-registration-post-correction-closure-execution-record-core.js"></script>
+    <script src="phase26-37-phase26-integrity-audit-check-core.js"></script>
   </body>
 </html>

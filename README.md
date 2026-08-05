@@ -5026,3 +5026,13 @@ All execution-state changes require an explicit identified human action. Only a 
 This core does not execute the real correction, overwrite or delete formally registered data, run rollback, automatically apply results, update learning, affect prediction logic, purchase bets, connect to external APIs, or transmit data. Private Local only, PLAN_ONLY and protectedMode remain enabled. GitHub Pages and Public publication remain disabled.
 
 Run `node tests/phase26ManualPostRegistrationCorrectionExecutionCore.test.js`.
+
+## Phase26-37 Phase26 Integrity Audit Check Core
+
+Phase26-37 is the Private Local, PLAN_ONLY and protectedMode integrity-audit record core for Phase26-1 through Phase26-36. A human explicitly starts and records the audit only from a valid Phase26-36 closure execution in `ready_for_phase26_integrity_audit`. It checks phase continuity, required records, parent and child references, state transitions, target identity and keys, raceId, hashes, versions, evidence, audit trails, duplicate, missing and orphan records, overwrite violations, rollback consistency and safety boundaries.
+
+The audit never repairs, supplements or overwrites existing records, changes real data, completes itself, performs correction or verification, decides or approves, accepts or closes, executes rollback, starts the completion decision, applies results, updates learning or predictions, purchases bets, publishes publicly, uses GitHub Pages, calls external APIs or transmits externally. Invalid schemas are safely excluded through a dedicated localStorage key without affecting earlier Phase data. A repeated audit is a new linked record rather than an overwrite.
+
+Only a human-selected `pass` after every required check succeeds, with auditor, time and reason recorded and no unresolved abnormality, critical issue or rollback requirement, can reach `ready_for_phase26_completion_decision`. Every abnormal result remains blocked and records its findings, evidence and next human action. The next phase is never started automatically.
+
+Run `node tests/phase26IntegrityAuditCheckCore.test.js`.
