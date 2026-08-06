@@ -9,6 +9,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="phase26-37.css">
+    <link rel="stylesheet" href="phase26-38.css">
     <style>
       .private-layout {
         max-width: 1180px;
@@ -1155,6 +1156,16 @@
         <div class="phase2637-actions"><button disabled>手動監査開始を記録</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗を記録</button><button disabled>監査結果を記録</button></div>
         <div class="phase2637-grid"><article><h3>期待Phase数</h3><p>36。</p></article><article><h3>検出Phase数</h3><p>手動監査で記録。</p></article><article><h3>期待記録数</h3><p>対象範囲から記録。</p></article><article><h3>検出記録数</h3><p>監査対象一覧から記録。</p></article><article><h3>欠損記録</h3><p>必須Phase・必須記録。</p></article><article><h3>重複記録</h3><p>ID・複合キー・有効記録。</p></article><article><h3>孤立記録</h3><p>親子参照なし。</p></article><article><h3>不正参照</h3><p>親子・循環・対象不一致。</p></article><article><h3>不正状態遷移</h3><p>許可された状態遷移を確認。</p></article><article><h3>対象整合性</h3><p>対象・対象キー・raceId。</p></article><article><h3>hash結果</h3><p>欠損・不一致・予期しない変更。</p></article><article><h3>version結果</h3><p>欠損・不一致・連鎖。</p></article><article><h3>証跡</h3><p>必須証跡と参照。</p></article><article><h3>監査証跡</h3><p>イベント順序と不変性。</p></article><article><h3>上書き違反</h3><p>完了記録の直接更新を禁止。</p></article><article><h3>rollback整合性</h3><p>状態と結果を確認。</p></article><article><h3>自動処理検出</h3><p>自動取得・取込・登録・修正・判定・承認・受入・クローズ・適用なし。</p></article><article><h3>Public公開検出</h3><p>GitHub Pagesを含め公開なし。</p></article><article><h3>外部送信検出</h3><p>外部API接続なし。</p></article><article><h3>異常</h3><p>未解決なら移行不可。</p></article><article><h3>警告</h3><p>人間がレビュー。</p></article><article><h3>監査結果</h3><p>pass / fail / blocked / hold / 要追加対応。</p></article><article><h3>監査理由</h3><p>人間が明示。</p></article><article><h3>次工程移行可否</h3><p>pass時のみPhase26完了判定候補。</p></article></div>
       </section>
+      <section class="private-section panel phase2638-panel" id="phase26-38-phase26-completion-decision" aria-label="Phase26-38 Phase26完了判定コア">
+        <div class="section-heading"><div><p class="eyebrow">Phase26-38 / HUMAN COMPLETION DECISION</p><h2>Phase26完了判定コア</h2></div><span class="pill danger">MANUAL DECISION RECORD ONLY</span></div>
+        <p>合格済みのPhase26-37監査記録について、人間がPhase26を完了扱いにできるかを最終確認して記録します。</p>
+        <div class="phase2638-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動完了判定なし</strong><strong>自動承認なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div>
+        <p class="phase2638-warning"><strong>判定記録専用です。監査・既存記録・実データを変更せず、完了承認や次工程を自動開始しません。</strong></p>
+        <div class="phase2638-grid"><article><h3>対象監査記録</h3><p>Phase26-37 pass / integrity confirmed。</p></article><article><h3>対象クローズ実行記録</h3><p>Phase26-36参照。</p></article><article><h3>対象正式登録記録</h3><p>ID・対象キー・raceIdを維持。</p></article><article><h3>完了判定状態</h3><p id="phase2638-current-status">awaiting_manual_phase26_completion_decision</p></article></div>
+        <form class="phase2638-form"><fieldset><legend>手動完了判定記録</legend><label>判定者<input required></label><label>判定日時<input type="datetime-local"></label><label>開始時刻<input type="datetime-local"></label><label>終了時刻<input type="datetime-local"></label><label>判定期限<input type="datetime-local"></label><label>判定方法<input></label><label>監査結果<input></label><label>判定結果<select><option>approve_for_manual_phase26_completion_approval</option><option>reject</option><option>return_for_integrity_audit</option><option>return_for_correction</option><option>return_for_reverification</option><option>return_for_redecision</option><option>rollback_required</option><option>additional_evidence_required</option><option>additional_review_required</option><option>manual_investigation_required</option><option>hold</option><option>blocked</option></select></label><label>判定理由<textarea></textarea></label><label>次アクション<input></label><label>備考<textarea></textarea></label></fieldset></form>
+        <div class="phase2638-actions"><button disabled>手動判定開始を記録</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗を記録</button><button disabled>完了判定を記録</button></div>
+        <div class="phase2638-grid"><article><h3>判定者</h3><p>人間の氏名またはID。</p></article><article><h3>判定日時</h3><p>開始・完了を記録。</p></article><article><h3>判定期限</h3><p>期限切れは承認候補不可。</p></article><article><h3>監査結果</h3><p>passのみ対象。</p></article><article><h3>Phase連続性</h3><p>Phase26-1〜36。</p></article><article><h3>参照整合性</h3><p>親子・前後・連鎖。</p></article><article><h3>状態遷移整合性</h3><p>不正遷移なし。</p></article><article><h3>対象整合性</h3><p>対象キー・raceId。</p></article><article><h3>hash結果</h3><p>欠損・不一致なし。</p></article><article><h3>version結果</h3><p>欠損・不一致なし。</p></article><article><h3>証跡</h3><p>必須証跡を確認。</p></article><article><h3>監査証跡</h3><p>順序・完全性・不変性。</p></article><article><h3>重複</h3><p>有効判定は原則1件。</p></article><article><h3>欠落</h3><p>必須記録欠落なし。</p></article><article><h3>孤立</h3><p>孤立記録なし。</p></article><article><h3>上書き違反</h3><p>完了記録は不変。</p></article><article><h3>rollback整合性</h3><p>要求・状態を確認。</p></article><article><h3>自動処理検知</h3><p>自動処理なし。</p></article><article><h3>Public公開検知</h3><p>公開なし。</p></article><article><h3>外部送信検知</h3><p>送信なし。</p></article><article><h3>異常</h3><p>未解決時は承認不可。</p></article><article><h3>警告</h3><p>人間が確認。</p></article><article><h3>判定結果</h3><p>承認候補・拒否・差戻し・保留・ブロック。</p></article><article><h3>判定理由</h3><p>明示入力必須。</p></article><article><h3>次アクション</h3><p>人間対応を記録。</p></article><article><h3>次工程移行可否</h3><p>期限内の正常判定だけ。</p></article></div>
+      </section>
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1199,5 +1210,6 @@
     <script src="phase26-35-manual-post-registration-post-correction-closure-approval-core.js"></script>
     <script src="phase26-36-manual-post-registration-post-correction-closure-execution-record-core.js"></script>
     <script src="phase26-37-phase26-integrity-audit-check-core.js"></script>
+    <script src="phase26-38-phase26-completion-decision-core.js"></script>
   </body>
 </html>

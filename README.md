@@ -5036,3 +5036,13 @@ The audit never repairs, supplements or overwrites existing records, changes rea
 Only a human-selected `pass` after every required check succeeds, with auditor, time and reason recorded and no unresolved abnormality, critical issue or rollback requirement, can reach `ready_for_phase26_completion_decision`. Every abnormal result remains blocked and records its findings, evidence and next human action. The next phase is never started automatically.
 
 Run `node tests/phase26IntegrityAuditCheckCore.test.js`.
+
+## Phase26-38 Phase26 Completion Decision Core
+
+Phase26-38 is the Private Local, PLAN_ONLY and protectedMode completion-decision record core. A human may manually decide only a valid Phase26-37 `pass` audit in `ready_for_phase26_completion_decision`, after reconfirming Phase continuity, references, state transitions, target identity, hashes, versions, evidence, audit trails, duplicate, missing and orphan absence, immutability, rollback state, findings and every safety boundary.
+
+Explicit states cover start, progress, pause, resume, stop, cancel, failure, approval, rejection, returns to audit/correction/reverification/redecision, rollback, evidence/review/investigation requests, hold and block. Every non-approval retains its owner, deadline, evidence requirements, reason and next action. `decisionExpiresAt` is mandatory; expiry neither approves nor cancels automatically, and re-decision creates a linked new record instead of overwriting the completed record.
+
+Only an unexpired human-selected `approve_for_manual_phase26_completion_approval` satisfying every gate may become `ready_for_manual_phase26_completion_approval`. The core does not automatically decide or approve completion, change real data, reflect or apply results, update learning or predictions, perform correction, verification, acceptance, closure or rollback, start the next phase, publish publicly, use GitHub Pages or transmit externally.
+
+Run `node tests/phase26CompletionDecisionCore.test.js`.
