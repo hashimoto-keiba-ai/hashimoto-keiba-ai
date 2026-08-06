@@ -5046,3 +5046,13 @@ Explicit states cover start, progress, pause, resume, stop, cancel, failure, app
 Only an unexpired human-selected `approve_for_manual_phase26_completion_approval` satisfying every gate may become `ready_for_manual_phase26_completion_approval`. The core does not automatically decide or approve completion, change real data, reflect or apply results, update learning or predictions, perform correction, verification, acceptance, closure or rollback, start the next phase, publish publicly, use GitHub Pages or transmit externally.
 
 Run `node tests/phase26CompletionDecisionCore.test.js`.
+
+## Phase26-39 Phase26 Completion Approval Core
+
+Phase26-39 is the Private Local, PLAN_ONLY and protectedMode completion-approval record core. A human may manually approve only an unexpired Phase26-38 decision in `ready_for_manual_phase26_completion_approval` with `approve_for_manual_phase26_completion_approval`, after reconfirming its passed integrity audit, Phase continuity, references, states, target, hashes, versions, evidence, audit trails, record uniqueness, immutability, rollback state, findings and safety boundaries.
+
+Explicit states cover start, progress, pause, resume, stop, cancel, failure, approval, rejection, returns to decision/audit/correction/reverification/redecision, rollback, evidence/review/investigation requests, hold and block. Non-approval results retain the reason, owner, deadline, required evidence and next action. Decision and approval expiry are checked independently; expiry never approves, cancels or completes automatically, and re-approval creates a linked new record.
+
+Only an unexpired human-selected `approve_for_manual_phase26_completion_record` satisfying every gate may become `ready_for_manual_phase26_completion_record`. The core never automatically approves or creates a completion record, changes real data, reflects or applies results, updates learning or predictions, executes any earlier workflow, starts the next phase, publishes publicly, uses GitHub Pages or transmits externally.
+
+Run `node tests/phase26CompletionApprovalCore.test.js`.
