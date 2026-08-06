@@ -5097,6 +5097,16 @@ Run `node tests/phase26PostCompletionAcceptanceCore.test.js`.
 
 Normal flow: Phase26-43 normal acceptance → Phase26-44 manual final closure → `approve_phase26_final_closure` → `phase26_closed`. The closed state records human closure only; it never creates or starts Phase27, starts another phase, migrates or mutates data, applies results, updates learning, publishes publicly or transmits externally.
 
+## Phase26-45 Phase26 completion review and Phase27 preparation core
+
+Phase26-45 lets a human verify the complete Phase26-1 through Phase26-44 record chain and then record the planning, constraints, evidence, risks, rollback conditions and handover information needed before a separate Phase27 start review.
+
+Normal flow: Phase26-44 `phase26_closed` → manual Phase26 completion review → `confirm_phase26_completion_review` → `ready_for_manual_phase27_preparation` → manual Phase27 preparation → `prepare_for_manual_phase27_start_review` → `ready_for_manual_phase27_start_review`.
+
+The safety boundary remains Private Local, `PLAN_ONLY` and `protectedMode`. Completion review, preparation, Phase27 creation, branch creation, Phase27 start, next-phase start, migration, application, learning, correction, rollback, public release and external transmission are never automatic. `ready_for_manual_phase27_start_review` only means the preparation record can enter a separate human review; it does not create or start Phase27.
+
+Run the dedicated test with `node tests/phase26CompletionReviewPhase27PreparationCore.test.js`. Run Phase26 regression tests with `Get-ChildItem tests\phase26*.test.js | Sort-Object Name | ForEach-Object { node $_.FullName; if ($LASTEXITCODE -ne 0) { throw "FAILED: $($_.Name)" } }`.
+
 The gate requires all Phase26-1 through Phase26-43 records, no pending condition, correction or rollback, complete references and evidence, intact hashes and versions, no findings, and Private Local only, PLAN_ONLY and protectedMode safety controls.
 
 Run `node tests/phase26FinalClosureCore.test.js`.
