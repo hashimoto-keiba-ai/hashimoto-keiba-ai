@@ -5084,3 +5084,11 @@ Phase26-42 manually decides whether an unexpired, successful Phase26-41 verifica
 Private Local only, PLAN_ONLY and protectedMode remain enabled. The core performs no automatic decision, acceptance, application, learning update, data mutation, public publication, GitHub Pages deployment, external transmission or next-phase start.
 
 Run `node tests/phase26PostCompletionDecisionCore.test.js`.
+
+## Phase26-43 Phase26 Post-Completion Acceptance Core
+
+Normal flow: Phase26-42 normal approval → Phase26-43 manual acceptance → `accept_phase26_post_completion` → `ready_for_manual_phase26_final_closure`. Final closure and Phase27 never start automatically.
+
+Conditional acceptance requires conditions, reason, owner, reviewer, expiry, verification method, release criteria, failure action and evidence, and remains in `phase26_post_completion_conditionally_accepted`. Private Local only, PLAN_ONLY and protectedMode remain enabled; no automatic acceptance, condition release, rollback, application, learning, publication, GitHub Pages or external transmission occurs.
+
+Run `node tests/phase26PostCompletionAcceptanceCore.test.js`.
