@@ -5056,3 +5056,13 @@ Explicit states cover start, progress, pause, resume, stop, cancel, failure, app
 Only an unexpired human-selected `approve_for_manual_phase26_completion_record` satisfying every gate may become `ready_for_manual_phase26_completion_record`. The core never automatically approves or creates a completion record, changes real data, reflects or applies results, updates learning or predictions, executes any earlier workflow, starts the next phase, publishes publicly, uses GitHub Pages or transmits externally.
 
 Run `node tests/phase26CompletionApprovalCore.test.js`.
+
+## Phase26-40 Phase26 Completion Record Core
+
+Phase26-40 is the Private Local, PLAN_ONLY and protectedMode Phase26 completion-record core. A human may manually record completion only from an unexpired Phase26-39 approval in `ready_for_manual_phase26_completion_record`, after reconfirming its decision and integrity-audit snapshots, Phase continuity, references, states, target, hashes, versions, evidence, audit trails, uniqueness, immutability, rollback state and safety boundaries.
+
+Explicit states cover start, progress, pause, resume, stop, cancel, failure, completion, rejection, returns, rollback, evidence/review/investigation requests, hold and block. `completionEffectiveAt` and `completionRecordExpiresAt` are mandatory. Expiry never cancels, invalidates or recreates automatically; re-recording creates a linked new record rather than overwriting a completed record.
+
+Only an unexpired human-selected `complete_phase26` satisfying every gate sets `phase26Completed` and reaches `ready_for_manual_phase26_post_completion_verification`. The core never automatically creates a completion record or performs post-completion verification, changes real data, reflects or applies results, updates learning or predictions, starts the next phase, publishes publicly, uses GitHub Pages or transmits externally.
+
+Run `node tests/phase26CompletionRecordCore.test.js`.
