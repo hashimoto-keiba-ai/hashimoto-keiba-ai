@@ -5076,3 +5076,11 @@ Only `verify_for_manual_phase26_post_completion_decision` may reach `ready_for_m
 This core performs no automatic post-completion verification or decision, data mutation, reflection, application, learning update, public publication, GitHub Pages deployment, external transmission or next-phase start.
 
 Run `node tests/phase26PostCompletionVerificationCore.test.js`.
+
+## Phase26-42 Phase26 Post-Completion Decision Core
+
+Phase26-42 manually decides whether an unexpired, successful Phase26-41 verification may proceed to post-completion acceptance. It preserves every snapshot, hash, version, expiry and audit event. Only `approve_for_manual_phase26_post_completion_acceptance` reaches `ready_for_manual_phase26_post_completion_acceptance`; all returns, rollback, evidence/review/investigation, hold and block routes remain human-controlled.
+
+Private Local only, PLAN_ONLY and protectedMode remain enabled. The core performs no automatic decision, acceptance, application, learning update, data mutation, public publication, GitHub Pages deployment, external transmission or next-phase start.
+
+Run `node tests/phase26PostCompletionDecisionCore.test.js`.
