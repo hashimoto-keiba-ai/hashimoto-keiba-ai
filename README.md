@@ -5092,3 +5092,11 @@ Normal flow: Phase26-42 normal approval → Phase26-43 manual acceptance → `ac
 Conditional acceptance requires conditions, reason, owner, reviewer, expiry, verification method, release criteria, failure action and evidence, and remains in `phase26_post_completion_conditionally_accepted`. Private Local only, PLAN_ONLY and protectedMode remain enabled; no automatic acceptance, condition release, rollback, application, learning, publication, GitHub Pages or external transmission occurs.
 
 Run `node tests/phase26PostCompletionAcceptanceCore.test.js`.
+
+## Phase26-44 Phase26 Final Closure Core
+
+Normal flow: Phase26-43 normal acceptance → Phase26-44 manual final closure → `approve_phase26_final_closure` → `phase26_closed`. The closed state records human closure only; it never creates or starts Phase27, starts another phase, migrates or mutates data, applies results, updates learning, publishes publicly or transmits externally.
+
+The gate requires all Phase26-1 through Phase26-43 records, no pending condition, correction or rollback, complete references and evidence, intact hashes and versions, no findings, and Private Local only, PLAN_ONLY and protectedMode safety controls.
+
+Run `node tests/phase26FinalClosureCore.test.js`.

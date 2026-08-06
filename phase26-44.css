@@ -1,0 +1,1 @@
+.phase2644-panel{border-left:5px solid #10b981}.phase2644-boundary,.phase2644-actions{display:flex;flex-wrap:wrap;gap:.6rem}.phase2644-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.75rem}.phase2644-grid article{padding:1rem;border:1px solid #10b981;border-radius:.5rem}.phase2644-actions button:disabled{opacity:.55}
