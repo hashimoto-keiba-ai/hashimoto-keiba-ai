@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="phase26-38.css">
     <link rel="stylesheet" href="phase26-39.css">
     <link rel="stylesheet" href="phase26-40.css">
+    <link rel="stylesheet" href="phase26-41.css">
     <style>
       .private-layout {
         max-width: 1180px;
@@ -1188,6 +1189,12 @@
         <div class="phase2640-actions"><button disabled>手動記録開始</button><button disabled>進捗を記録</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗を記録</button><button disabled>完了結果を記録</button></div>
         <div class="phase2640-grid"><article><h3>完了承認結果</h3><p>正常承認のみ。</p></article><article><h3>完了判定結果</h3><p>正常判定のみ。</p></article><article><h3>監査結果</h3><p>pass。</p></article><article><h3>Phase連続性</h3><p>Phase26-1〜36。</p></article><article><h3>参照整合性</h3><p>正常。</p></article><article><h3>状態遷移整合性</h3><p>正常。</p></article><article><h3>対象整合性</h3><p>key・raceId。</p></article><article><h3>hash結果</h3><p>一致。</p></article><article><h3>version結果</h3><p>一致。</p></article><article><h3>証跡</h3><p>十分。</p></article><article><h3>監査証跡</h3><p>不変。</p></article><article><h3>重複・欠落・孤立</h3><p>なし。</p></article><article><h3>上書き違反</h3><p>なし。</p></article><article><h3>rollback整合性</h3><p>正常。</p></article><article><h3>自動処理検知</h3><p>なし。</p></article><article><h3>Public公開検知</h3><p>なし。</p></article><article><h3>外部送信検知</h3><p>なし。</p></article><article><h3>異常・警告</h3><p>人間が確認。</p></article><article><h3>Phase26完了表示</h3><p>正常完了時のみtrue。</p></article><article><h3>次工程移行可否</h3><p>期限内の正常記録だけ。</p></article></div>
       </section>
+      <section class="private-section panel phase2641-panel" id="phase26-41-phase26-post-completion-verification"><div class="section-heading"><div><p class="eyebrow">Phase26-41 / HUMAN POST-COMPLETION VERIFICATION</p><h2>Phase26完了後確認コア</h2></div></div>
+        <div class="phase2641-boundary"><strong>Private Local only</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>自動完了後確認なし</strong><strong>自動完了後判定なし</strong><strong>自動適用なし</strong><strong>自動学習更新なし</strong><strong>Public公開なし</strong><strong>外部送信なし</strong></div><p class="phase2641-warning">既存記録・実データを変更せず、次工程を自動開始しません。</p>
+        <div class="phase2641-grid"><article><h3>対象完了記録</h3><p>Phase26-40 complete。</p></article><article><h3>対象完了承認記録</h3></article><article><h3>対象完了判定記録</h3></article><article><h3>対象監査記録</h3></article><article><h3>対象正式登録記録</h3></article><article><h3>完了後確認状態</h3><p id="phase2641-current-status">awaiting_manual_phase26_post_completion_verification</p></article></div>
+        <form class="phase2641-form"><fieldset><legend>手動完了後確認</legend><label>確認者<input required></label><label>確認日時<input type="datetime-local"></label><label>完了記録期限<input></label><label>承認期限<input></label><label>判定期限<input></label><label>確認期限<input></label><label>確認結果<select><option>verify_for_manual_phase26_post_completion_decision</option><option>reject</option><option>return_for_completion_record</option><option>rollback_required</option><option>hold</option><option>blocked</option></select></label><label>確認理由<textarea></textarea></label><label>次アクション<input></label></fieldset></form>
+        <div class="phase2641-actions"><button disabled>手動確認開始</button><button disabled>進捗</button><button disabled>一時停止</button><button disabled>再開</button><button disabled>停止</button><button disabled>取消</button><button disabled>失敗</button><button disabled>確認結果を記録</button></div>
+        <div class="phase2641-grid"><article><h3>Phase26完了状態</h3></article><article><h3>Phase連続性</h3></article><article><h3>参照整合性</h3></article><article><h3>状態遷移整合性</h3></article><article><h3>対象整合性</h3></article><article><h3>hash結果</h3></article><article><h3>version結果</h3></article><article><h3>証跡・監査証跡</h3></article><article><h3>重複・欠落・孤立</h3></article><article><h3>上書き違反</h3></article><article><h3>rollback整合性</h3></article><article><h3>完了後変更</h3></article><article><h3>自動処理検知</h3></article><article><h3>Public公開検知</h3></article><article><h3>外部送信検知</h3></article><article><h3>異常・警告</h3></article><article><h3>次工程移行可否</h3></article></div></section>
     </main>
     <script src="self-expansion-page.js"></script>
     <script src="auto-development-page.js"></script>
@@ -1235,5 +1242,6 @@
     <script src="phase26-38-phase26-completion-decision-core.js"></script>
     <script src="phase26-39-phase26-completion-approval-core.js"></script>
     <script src="phase26-40-phase26-completion-record-core.js"></script>
+    <script src="phase26-41-phase26-post-completion-verification-core.js"></script>
   </body>
 </html>

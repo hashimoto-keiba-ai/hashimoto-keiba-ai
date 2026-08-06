@@ -5066,3 +5066,13 @@ Explicit states cover start, progress, pause, resume, stop, cancel, failure, com
 Only an unexpired human-selected `complete_phase26` satisfying every gate sets `phase26Completed` and reaches `ready_for_manual_phase26_post_completion_verification`. The core never automatically creates a completion record or performs post-completion verification, changes real data, reflects or applies results, updates learning or predictions, starts the next phase, publishes publicly, uses GitHub Pages or transmits externally.
 
 Run `node tests/phase26CompletionRecordCore.test.js`.
+
+## Phase26-41 Phase26 Post-Completion Verification Core
+
+Phase26-41 is the Private Local, PLAN_ONLY and protectedMode post-completion verification core. A human manually verifies only an unexpired, safely completed Phase26-40 record and reconfirms its approval, decision and audit chain, integrity checks, evidence, immutability, rollback state and absence of post-completion mutation.
+
+Only `verify_for_manual_phase26_post_completion_decision` may reach `ready_for_manual_phase26_post_completion_decision`. Rejection, returns, rollback, evidence/review/investigation requests, hold and block retain their human owner, deadline, evidence and next action. Verification expiry never changes state automatically and re-verification creates a linked record.
+
+This core performs no automatic post-completion verification or decision, data mutation, reflection, application, learning update, public publication, GitHub Pages deployment, external transmission or next-phase start.
+
+Run `node tests/phase26PostCompletionVerificationCore.test.js`.
