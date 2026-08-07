@@ -5115,6 +5115,12 @@ Normal flow: Phase26-45 `ready_for_manual_phase27_start_review` → manual Phase
 
 The core remains `PLAN_ONLY`, `protectedMode` and Private Local. It does not approve the Phase27 start, create Phase27 or a branch, start Phase27 or another phase, migrate data, mutate Phase26/Phase26-45 records, communicate externally, or publish. Run `node tests/phase27StartReviewCore.test.js` for the dedicated test.
 
+## Phase27-2 Phase27 start approval core
+
+Phase27-2 accepts only valid Phase27-1 records in `ready_for_manual_phase27_start_approval` with the normal review result. A human separately records the Phase27 start approval. Normal flow is manual creation → start → review in progress → completion → `approve_phase27_start` → `phase27_start_approved` → a separate explicit human transition to `ready_for_manual_phase27_creation_preparation`.
+
+That final state only hands an immutable approval record to the next manual preparation stage. Phase27 and its Git branch are not created, and Phase27 is not started. Conditional approval remains conditional and cannot advance. Private Local, `PLAN_ONLY`, `protectedMode`, no automation, no data migration, no external transmission and no Public release remain fixed. Run `node tests/phase27StartApprovalCore.test.js` for the dedicated test.
+
 The gate requires all Phase26-1 through Phase26-43 records, no pending condition, correction or rollback, complete references and evidence, intact hashes and versions, no findings, and Private Local only, PLAN_ONLY and protectedMode safety controls.
 
 Run `node tests/phase26FinalClosureCore.test.js`.
