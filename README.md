@@ -5129,6 +5129,10 @@ This stage only hands an immutable plan to the next manual creation-approval sta
 
 ## Phase27-4 Phase27 creation approval core
 
+## Phase27-5 Phase27 creation execution core
+
+Records human-reported work after `ready_for_manual_phase27_creation_execution`. Manual creation and Git reports remain separate from automatic flags, which stay false. The core performs no creation or Git operation and only hands normal success to `ready_for_manual_phase27_creation_verification`. Run `node tests/phase27CreationExecutionCore.test.js`.
+
 Phase27-4 accepts only normally approved Phase27-3 records in `ready_for_manual_phase27_creation_approval`. A human separately reviews and records authorization to create Phase27. Normal approval reaches `phase27_creation_approved`; another explicit human operation may then record `ready_for_manual_phase27_creation_execution`.
 
 The final state only hands an immutable approval record to a later manual execution stage. Phase27, files, directories and a Git branch remain uncreated; commit, push, PR, merge and Phase27 start remain unexecuted. Private Local, `PLAN_ONLY`, `protectedMode`, no automation, no migration, no external transmission and no Public release remain fixed. Run `node tests/phase27CreationApprovalCore.test.js` for the dedicated test.
