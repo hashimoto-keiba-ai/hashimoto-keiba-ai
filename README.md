@@ -5135,6 +5135,10 @@ This stage only hands an immutable plan to the next manual creation-approval sta
 
 ## Phase27-7 Phase27 post-creation verification decision core
 
+## Phase27-8 Phase27 post-creation acceptance core
+
+Records separate human acceptance for `ready_for_manual_phase27_post_creation_acceptance`. It performs no automatic acceptance, condition release, correction, rollback, Git operation or Phase27 start. Normal acceptance can only be handed by explicit human action to `ready_for_manual_phase27_start_preparation`. Run `node tests/phase27PostCreationAcceptanceCore.test.js`.
+
 Records a separate human final decision for `ready_for_manual_phase27_post_creation_verification_decision`. It performs no automatic decision, acceptance, correction, rollback, Git operation or Phase27 start. Normal approval can only be handed by explicit human action to `ready_for_manual_phase27_post_creation_acceptance`. Run `node tests/phase27PostCreationVerificationDecisionCore.test.js`.
 
 Records human verification of `ready_for_manual_phase27_creation_verification` results. The core changes no file, directory, Git state or data and performs no correction, rollback or Phase27 start. A pass may be handed by explicit human action to `ready_for_manual_phase27_post_creation_verification_decision`. Run `node tests/phase27PostCreationVerificationCore.test.js`.
