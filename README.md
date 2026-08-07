@@ -5131,6 +5131,10 @@ This stage only hands an immutable plan to the next manual creation-approval sta
 
 ## Phase27-5 Phase27 creation execution core
 
+## Phase27-6 Phase27 post-creation verification core
+
+Records human verification of `ready_for_manual_phase27_creation_verification` results. The core changes no file, directory, Git state or data and performs no correction, rollback or Phase27 start. A pass may be handed by explicit human action to `ready_for_manual_phase27_post_creation_verification_decision`. Run `node tests/phase27PostCreationVerificationCore.test.js`.
+
 Records human-reported work after `ready_for_manual_phase27_creation_execution`. Manual creation and Git reports remain separate from automatic flags, which stay false. The core performs no creation or Git operation and only hands normal success to `ready_for_manual_phase27_creation_verification`. Run `node tests/phase27CreationExecutionCore.test.js`.
 
 Phase27-4 accepts only normally approved Phase27-3 records in `ready_for_manual_phase27_creation_approval`. A human separately reviews and records authorization to create Phase27. Normal approval reaches `phase27_creation_approved`; another explicit human operation may then record `ready_for_manual_phase27_creation_execution`.
