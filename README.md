@@ -5107,6 +5107,14 @@ The safety boundary remains Private Local, `PLAN_ONLY` and `protectedMode`. Comp
 
 Run the dedicated test with `node tests/phase26CompletionReviewPhase27PreparationCore.test.js`. Run Phase26 regression tests with `Get-ChildItem tests\phase26*.test.js | Sort-Object Name | ForEach-Object { node $_.FullName; if ($LASTEXITCODE -ne 0) { throw "FAILED: $($_.Name)" } }`.
 
+## Phase27-1 Phase27 start review core
+
+Phase27-1 lets a human review a valid, unexpired Phase26-45 preparation record before a separate manual Phase27 start approval. Candidates require `ready_for_manual_phase27_start_review`, `prepare_for_manual_phase27_start_review`, complete preparation fields and evidence, consistent references and snapshots, no blocking questions or pending work, and intact Private Local safety settings.
+
+Normal flow: Phase26-45 `ready_for_manual_phase27_start_review` → manual Phase27 start review → `approve_for_manual_phase27_start_approval` → `ready_for_manual_phase27_start_approval`. A conditional approval remains `phase27_start_review_conditionally_approved`; it records conditions, owners, deadlines, verification and failure handling but never advances automatically.
+
+The core remains `PLAN_ONLY`, `protectedMode` and Private Local. It does not approve the Phase27 start, create Phase27 or a branch, start Phase27 or another phase, migrate data, mutate Phase26/Phase26-45 records, communicate externally, or publish. Run `node tests/phase27StartReviewCore.test.js` for the dedicated test.
+
 The gate requires all Phase26-1 through Phase26-43 records, no pending condition, correction or rollback, complete references and evidence, intact hashes and versions, no findings, and Private Local only, PLAN_ONLY and protectedMode safety controls.
 
 Run `node tests/phase26FinalClosureCore.test.js`.
