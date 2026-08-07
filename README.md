@@ -5127,6 +5127,12 @@ Phase27-3 accepts only normally approved Phase27-2 records in `ready_for_manual_
 
 This stage only hands an immutable plan to the next manual creation-approval stage. It does not create Phase27, files, directories or a Git branch, and it does not start Phase27. Private Local, `PLAN_ONLY`, `protectedMode`, no automation, no migration, no external transmission and no Public release remain fixed. Run `node tests/phase27CreationPreparationCore.test.js` for the dedicated test.
 
+## Phase27-4 Phase27 creation approval core
+
+Phase27-4 accepts only normally approved Phase27-3 records in `ready_for_manual_phase27_creation_approval`. A human separately reviews and records authorization to create Phase27. Normal approval reaches `phase27_creation_approved`; another explicit human operation may then record `ready_for_manual_phase27_creation_execution`.
+
+The final state only hands an immutable approval record to a later manual execution stage. Phase27, files, directories and a Git branch remain uncreated; commit, push, PR, merge and Phase27 start remain unexecuted. Private Local, `PLAN_ONLY`, `protectedMode`, no automation, no migration, no external transmission and no Public release remain fixed. Run `node tests/phase27CreationApprovalCore.test.js` for the dedicated test.
+
 The gate requires all Phase26-1 through Phase26-43 records, no pending condition, correction or rollback, complete references and evidence, intact hashes and versions, no findings, and Private Local only, PLAN_ONLY and protectedMode safety controls.
 
 Run `node tests/phase26FinalClosureCore.test.js`.
