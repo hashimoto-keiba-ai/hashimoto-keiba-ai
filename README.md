@@ -5179,6 +5179,14 @@ Only `accept_phase27_start_post_execution` can be handed off, through a separate
 
 Run the dedicated regression test with `node tests/phase27StartPostExecutionAcceptanceCore.test.js`.
 
+## Phase27-15 Phase27 post-start stabilization review core
+
+Phase27-15 accepts only normally accepted Phase27-14 records in `ready_for_manual_phase27_post_start_stabilization_review`. A human reviews the post-start observation period, runtime stability, modules, UI, configuration, Git/test state, snapshots, integrity, safety, and rollback/recovery readiness. The core itself does not automatically review, decide stability, start Phase27 or the next phase, correct, roll back, recover, or perform Git operations.
+
+Only `phase27_post_start_stabilization_review_passed` can be handed off, through a separate explicit human operation, to `ready_for_manual_phase27_post_start_stabilization_decision`. Conditional pass and every abnormal result cannot hand off directly. Private Local, `PLAN_ONLY`, and `protectedMode` remain fixed; external communication and Public release remain disabled.
+
+Run the dedicated regression test with `node tests/phase27PostStartStabilizationReviewCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
