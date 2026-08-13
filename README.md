@@ -5163,6 +5163,14 @@ Only `phase27_start_post_execution_verification_passed` can be handed off, throu
 
 Run the dedicated regression test with `node tests/phase27StartPostExecutionVerificationCore.test.js`.
 
+## Phase27-13 Phase27 start post-execution verification decision core
+
+Phase27-13 accepts only normally passed Phase27-12 records in `ready_for_manual_phase27_start_post_execution_verification_decision`. A human records the final decision using verification, Git, test, state, module, UI, configuration, safety, rollback, and recovery evidence. The core itself does not automatically decide, accept, start Phase27, correct, roll back, or perform Git operations.
+
+Only `phase27_start_post_execution_verification_decision_approved` can be handed off, through a separate explicit human operation, to `ready_for_manual_phase27_start_post_execution_acceptance`. Conditional approval and every abnormal result cannot hand off directly. Private Local, `PLAN_ONLY`, and `protectedMode` remain fixed; external communication and Public release remain disabled.
+
+Run the dedicated regression test with `node tests/phase27StartPostExecutionVerificationDecisionCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
