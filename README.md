@@ -5141,6 +5141,12 @@ This stage only hands an immutable plan to the next manual creation-approval sta
 
 Phase27-9 accepts only Phase27-8 records in `ready_for_manual_phase27_start_preparation` with a normal post-creation acceptance. It records the final human preparation before Phase27 start, including Git state, required tests, safety boundaries, evidence, hashes and versions, and rollback/recovery points.
 
+## Phase27-10 Phase27 start execution approval core
+
+Phase27-10 accepts only normally approved Phase27-9 records in `ready_for_manual_phase27_start_execution_approval`. A human explicitly records the final start target, scope, schedule, execution operator, Git and test state, safety boundary, snapshots, hashes, versions, and rollback/recovery points. Only `approve_phase27_start_execution` may hand off to `ready_for_manual_phase27_start_execution`; it does not start Phase27. Conditional approval remains conditional. The core is Private Local, PLAN_ONLY, protectedMode, performs no Git operation, mutation, automatic correction or rollback, external transmission, or public release.
+
+Run the dedicated regression test with `node tests/phase27StartExecutionApprovalCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
