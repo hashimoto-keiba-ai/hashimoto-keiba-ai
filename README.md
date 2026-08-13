@@ -5227,6 +5227,14 @@ This Private Local, `PLAN_ONLY`, `protectedMode` core performs no automatic prep
 
 Run the dedicated regression test with `node tests/phase27PostStartStabilizationClosureExecutionPreparationCore.test.js`.
 
+## Phase27-21 Phase27 post-start stabilization closure execution approval core
+
+Phase27-21 depends on Phase27-20 and accepts only normally prepared records in `ready_for_manual_phase27_post_start_stabilization_closure_execution_approval`. A human explicitly records `approve_phase27_post_start_stabilization_closure_execution`; only that normal approval can be handed separately to `ready_for_manual_phase27_post_start_stabilization_closure_execution`.
+
+This Private Local, `PLAN_ONLY`, `protectedMode` core performs no automatic approval, closure execution, condition release, correction, rollback, recovery, next-stage or next-phase start, Git operation, data mutation, migration, purchase, prediction or learning application, external transmission, or Public release.
+
+Run the dedicated regression test with `node tests/phase27PostStartStabilizationClosureExecutionApprovalCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
