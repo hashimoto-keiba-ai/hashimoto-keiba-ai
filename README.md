@@ -5147,6 +5147,14 @@ Phase27-10 accepts only normally approved Phase27-9 records in `ready_for_manual
 
 Run the dedicated regression test with `node tests/phase27StartExecutionApprovalCore.test.js`.
 
+## Phase27-11 Phase27 start execution core
+
+Phase27-11 accepts only normally approved Phase27-10 records in `ready_for_manual_phase27_start_execution`. It records the start, progress, completion, result, Git/test snapshots, evidence, and audit trail of Phase27 start work performed manually outside the core. The core itself does not start Phase27 or perform Git operations.
+
+Only `phase27_start_execution_succeeded` can be handed off, by a separate explicit human operation, to `ready_for_manual_phase27_start_post_execution_verification`. Conditional success and all failed, incomplete, held, blocked, correction, and rollback outcomes cannot hand off directly. Private Local, `PLAN_ONLY`, and `protectedMode` remain fixed; automatic correction, rollback, Git operations, external communication, and Public release remain disabled.
+
+Run the dedicated regression test with `node tests/phase27StartExecutionCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
