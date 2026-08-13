@@ -5187,6 +5187,14 @@ Only `phase27_post_start_stabilization_review_passed` can be handed off, through
 
 Run the dedicated regression test with `node tests/phase27PostStartStabilizationReviewCore.test.js`.
 
+## Phase27-16 Phase27 post-start stabilization decision core
+
+Phase27-16 depends on Phase27-15 and accepts only records with status `ready_for_manual_phase27_post_start_stabilization_decision` and result `pass_phase27_post_start_stabilization_review`. It records the human final stabilization decision while preserving snapshots, hashes, versions, audit history, Git/test/state evidence, safety boundaries, and rollback/recovery points.
+
+This is a Private Local, `PLAN_ONLY`, `protectedMode` record-management core. It does not automatically decide stability, start Phase27, start a following stage or phase, release conditions, correct, roll back, recover, perform Git operations, migrate data, communicate externally, publish publicly, purchase, or apply data to prediction or learning. Source and registered data remain unchanged. A separately confirmed normal result may only hand off to `ready_for_manual_phase27_post_start_stabilization_followup`.
+
+Run the dedicated regression test with `node tests/phase27PostStartStabilizationDecisionCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
