@@ -1270,7 +1270,9 @@
     <section class="private-section panel phase277-panel" id="phase27-7-post-creation-verification-decision"><h2>Phase27-7 Phase27作成後検証判定コア</h2><p>Private Local / PLAN_ONLY / protectedMode。人間が検証内容、証跡、テスト、Git情報、安全境界を再確認します。自動判定・自動受入・自動修正・自動ロールバックは行いません。</p></section>
     <script src="phase27-6-phase27-post-creation-verification-core.js"></script>
     <section class="private-section panel phase278-panel" id="phase27-8-post-creation-acceptance"><h2>Phase27-8 Phase27作成後受入コア</h2><p>Private Local / PLAN_ONLY / protectedMode。人間が検証、判定、証跡、テスト、Git情報、安全境界を再確認します。自動受入・条件解除・修正・ロールバックは行いません。</p></section>
+    <section class="private-section panel phase279-panel" id="phase27-9-phase27-start-preparation"><h2>Phase27-9 Phase27開始準備コア</h2><div class="phase279-boundary"><strong>Private Local</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>外部送信なし</strong><strong>Public公開なし</strong></div><p>Phase27-8の正常受入記録を対象に、Phase27開始前の最終準備を人間が確認・記録します。Git状態、テスト、安全境界、rollback / recovery point、snapshot・hash・version・audit trailを確認し、正常準備後も次の手動開始実行承認段階へ渡すだけです。Phase27自動開始、自動開始承認、自動修正、自動ロールバックは行いません。</p></section>
     <script src="phase27-7-phase27-post-creation-verification-decision-core.js"></script>
     <script src="phase27-8-phase27-post-creation-acceptance-core.js"></script>
+    <script src="phase27-9-phase27-start-preparation-core.js"></script>
   </body>
 </html>
