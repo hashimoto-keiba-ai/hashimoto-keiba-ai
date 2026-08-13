@@ -1271,8 +1271,10 @@
     <script src="phase27-6-phase27-post-creation-verification-core.js"></script>
     <section class="private-section panel phase278-panel" id="phase27-8-post-creation-acceptance"><h2>Phase27-8 Phase27作成後受入コア</h2><p>Private Local / PLAN_ONLY / protectedMode。人間が検証、判定、証跡、テスト、Git情報、安全境界を再確認します。自動受入・条件解除・修正・ロールバックは行いません。</p></section>
     <section class="private-section panel phase279-panel" id="phase27-9-phase27-start-preparation"><h2>Phase27-9 Phase27開始準備コア</h2><div class="phase279-boundary"><strong>Private Local</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>外部送信なし</strong><strong>Public公開なし</strong></div><p>Phase27-8の正常受入記録を対象に、Phase27開始前の最終準備を人間が確認・記録します。Git状態、テスト、安全境界、rollback / recovery point、snapshot・hash・version・audit trailを確認し、正常準備後も次の手動開始実行承認段階へ渡すだけです。Phase27自動開始、自動開始承認、自動修正、自動ロールバックは行いません。</p></section>
+    <section class="private-section panel phase2710-panel" id="phase27-10-phase27-start-execution-approval"><h2>Phase27-10 Phase27開始実行承認</h2><div class="phase2710-boundary"><strong>Private Local</strong><strong>PLAN_ONLY</strong><strong>protectedMode</strong><strong>Phase27自動開始なし</strong><strong>自動開始実行承認なし</strong></div><p>Phase27-9の正常準備済み記録だけを対象に、開始対象・範囲・予定日時・実行予定者と、Git状態、必須テスト、rollback / recovery point、safety boundary、snapshot / hash / versionを人間が最終確認して記録します。正常承認後も次の手動開始実行段階へ渡すだけで、Phase27自体は開始しません。</p></section>
     <script src="phase27-7-phase27-post-creation-verification-decision-core.js"></script>
     <script src="phase27-8-phase27-post-creation-acceptance-core.js"></script>
     <script src="phase27-9-phase27-start-preparation-core.js"></script>
+    <script src="phase27-10-phase27-start-execution-approval-core.js"></script>
   </body>
 </html>
