@@ -5195,6 +5195,14 @@ This is a Private Local, `PLAN_ONLY`, `protectedMode` record-management core. It
 
 Run the dedicated regression test with `node tests/phase27PostStartStabilizationDecisionCore.test.js`.
 
+## Phase27-17 Phase27 post-start stabilization followup core
+
+Phase27-17 depends on Phase27-16 and accepts only records with status `ready_for_manual_phase27_post_start_stabilization_followup` and result `confirm_phase27_post_start_stabilization`. It records human followup observations after stabilization confirmation, with Git/test/state evidence, snapshots, integrity, safety, and rollback/recovery points.
+
+This Private Local, `PLAN_ONLY`, `protectedMode` core performs no automatic followup, next-stage or next-phase start, Git operation, correction, rollback, recovery, data mutation, external transmission, prediction or learning application, or purchase. A separately confirmed normal pass may only hand off to `ready_for_manual_phase27_post_start_stabilization_closure_review`.
+
+Run the dedicated regression test with `node tests/phase27PostStartStabilizationFollowupCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
