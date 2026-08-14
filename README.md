@@ -5291,6 +5291,14 @@ Normal `accept_phase27_completion_for_phase28` reaches `phase27_completion_accep
 
 Run the dedicated test with `node tests/phase28Phase27CompletionAcceptanceCore.test.js`.
 
+## Phase28-3 external data category definition core
+
+Phase28-3 depends directly on Phase28-2 and accepts only normally handed-off records in `ready_for_manual_phase28_external_data_category_definition`. It lets a human classify and define ten required categories—`race_entry`, `horse`, `jockey`, `draw`, `track_condition`, `weather`, `odds`, `popularity`, `result`, and `payout`—including purpose, intended and excluded uses, fields, source candidate types, update characteristics, sensitivity, trust, policy and authentication reviews, validation, staging, audit, integrity, rollback, and recovery requirements.
+
+This is definition only: it performs no external acquisition, network communication, scraping, odds or result retrieval, betting, login, automatic application, learning update, or source registration. Normal `external_data_categories_defined` remains separate from the explicit human handoff to `ready_for_manual_phase28_source_candidate_registration`. Private Local, `PLAN_ONLY`, `protectedMode`, and the Phase28-1/2 safety boundary remain intact.
+
+Run the dedicated test with `node tests/phase28ExternalDataCategoryDefinitionCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
