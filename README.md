@@ -5323,6 +5323,14 @@ The review makes no automatic legal decision or utilization approval. `legal_rev
 
 Dedicated test: `node tests/phase28TermsAndPolicyReviewCore.test.js`
 
+## Phase28-7 acquisition method review core
+
+Phase28-7 depends directly on Phase28-6 and lets humans compare and record a future acquisition-method candidate for every policy-reviewed source. Manual entry, manual file, manual-download, official API, official Web, licensed-provider, file-import, and future-automation methods are classifications only. The review records policy compatibility, technical and operational feasibility, safety, fallback, staging, validation, manual-test, authentication, credential, and rate-limit needs from human-provided evidence.
+
+The core performs no actual acquisition, API request, Web access, scraping, download, authentication, credential use, rate-limit probe, polling, betting, or prediction or learning application. It makes no automatic method selection. **Acquisition method accepted ≠ data acquisition approved**, and **Method candidate selected ≠ authentication/rate-limit approved**. Authentication and rate-limit decisions remain the responsibility of the next manual stage, `authentication_and_rate_limit_review`, reached only through a separate human handoff.
+
+Dedicated test: `node tests/phase28AcquisitionMethodReviewCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
