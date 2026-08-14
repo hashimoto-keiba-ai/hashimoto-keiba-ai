@@ -5283,6 +5283,14 @@ Phase28-1 defines the purpose, candidate data and source scope, explicit exclusi
 
 Run the dedicated test with `node tests/phase28PurposeScopeSafetyBoundaryDefinition.test.js`.
 
+## Phase28-2 Phase27 completion acceptance core
+
+Phase28-2 depends directly on Phase28-1, which supplies the Phase27-26 reference and validation chain. It accepts only an intact, normally confirmed Phase27 final closure together with the unchanged Phase28-1 safety boundary. `CURRENT_STAGE` is `phase27_completion_acceptance`, and every creation, transition, result, expiration, invalidation, and handoff requires explicit human-operation metadata.
+
+Normal `accept_phase27_completion_for_phase28` reaches `phase27_completion_accepted_for_phase28`. A separate human operation may then hand it to `ready_for_manual_phase28_external_data_category_definition`. The core does not define that category automatically, start Phase28-3, acquire external data, communicate over a network, retrieve odds or results, bet, log in, apply data, update learning, operate Git, or publish publicly. Private Local, `PLAN_ONLY`, and `protectedMode` remain fixed.
+
+Run the dedicated test with `node tests/phase28Phase27CompletionAcceptanceCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
