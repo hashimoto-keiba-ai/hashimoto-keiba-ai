@@ -5315,6 +5315,14 @@ Phase28-5 depends directly on Phase28-4 and lets humans record trust evidence, r
 
 Run the dedicated test with `node tests/phase28SourceTrustReviewCore.test.js`.
 
+## Phase28-6 terms and policy review core
+
+Phase28-6 depends directly on Phase28-5 and records a human review of terms, license, robots, privacy, redistribution, commercial use, retention, storage, automation, API, web access, authentication, rate-limit, attribution, derivative-use, republication, and jurisdiction constraints for every trust-reviewed source candidate. Evidence is limited to human-provided text and Private Local references; the core never opens an external website or automatically retrieves terms, licenses, robots files, privacy policies, or provider policies.
+
+The review makes no automatic legal decision or utilization approval. `legal_review_required` remains an explicit blocking outcome, and acceptance is neither legal advice nor automatic legal approval. In particular, **Terms/policy accepted ≠ external acquisition approved**: authentication, credentials, data acquisition, betting, and prediction or learning application remain disabled. Normal completion still requires a separate human handoff to `acquisition_method_review`, where acquisition methods are reviewed independently.
+
+Dedicated test: `node tests/phase28TermsAndPolicyReviewCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
