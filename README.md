@@ -5275,6 +5275,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs no automatic
 
 Run the dedicated regression test with `node tests/phase27FinalClosureCore.test.js`.
 
+## Phase28-1 purpose, scope, and safety boundary definition core
+
+Phase27 is complete through its manually confirmed final closure. Phase28 is the safety-design and preparation phase before any external-data integration or operational automation is considered. Phase28-1 depends directly on Phase27-26 and makes its definition available only when an intact Phase27 record has status `phase27_final_closure_confirmed` and result `confirm_phase27_final_closure`.
+
+Phase28-1 defines the purpose, candidate data and source scope, explicit exclusions, 21-stage roadmap, and immutable safety boundary. `CURRENT_STAGE` is `definition`. It implements no external acquisition, network communication, odds or result retrieval, betting, automatic application, learning update, Git automation, or Public release. Private Local only, `PLAN_ONLY`, `protectedMode`, human approval, human start, and human stop control remain mandatory.
+
+Run the dedicated test with `node tests/phase28PurposeScopeSafetyBoundaryDefinition.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
