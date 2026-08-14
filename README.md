@@ -5259,6 +5259,14 @@ This Private Local, `PLAN_ONLY`, `protectedMode` core performs no automatic deci
 
 Run the dedicated regression test with `node tests/phase27PostStartStabilizationClosurePostExecutionVerificationDecisionCore.test.js`.
 
+## Phase27-25 Phase27 post-start stabilization closure acceptance core
+
+Phase27-25 depends directly on Phase27-24 and accepts only normally confirmed records in `ready_for_manual_phase27_post_start_stabilization_closure_acceptance`. A human explicitly records the acceptance target, scope, reason, responsible people, full Phase27-15 through Phase27-24 reference chain, evidence, rollback/recovery points, and snapshot/hash/version integrity. Only `accept_phase27_post_start_stabilization_closure` can be handed separately to `ready_for_manual_phase27_final_closure`; this does not close Phase27 or start another phase.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs no automatic acceptance, closure, condition release, correction, rollback, recovery, Git operation, file or data mutation, prediction or learning application, purchase, external communication, Public release, or next-phase start. Every mutating record operation requires explicit human-operation metadata.
+
+Run the dedicated regression test with `node tests/phase27PostStartStabilizationClosureAcceptanceCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
