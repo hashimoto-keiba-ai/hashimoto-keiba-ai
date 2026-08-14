@@ -5307,6 +5307,14 @@ Registration does not mean that a source is trusted, approved, reachable, or usa
 
 Run the dedicated test with `node tests/phase28SourceCandidateRegistrationCore.test.js`.
 
+## Phase28-5 source trust review core
+
+Phase28-5 depends directly on Phase28-4 and lets humans record trust evidence, risks, verification notes, and a trust classification for every registered source candidate. Supported classifications include trusted or conditionally trusted candidates, manual or multiple-source verification requirements, official-confirmation requirements, insufficient evidence, high risk, untrusted, rejected, and review required. A score may be recorded as a local aid, but it never decides or accepts trust automatically.
+
+`source_trust_review_accepted` means only that the candidates may proceed to further human review. It does not approve external access, use, acquisition, API or Web access, terms, licensing, robots, privacy, authentication, credentials, rate limits, betting, or prediction and learning application. A separate human handoff is required for `ready_for_manual_phase28_terms_and_policy_review`; policy review never starts automatically. Private Local, `PLAN_ONLY`, `protectedMode`, and the inherited safety boundary remain fixed.
+
+Run the dedicated test with `node tests/phase28SourceTrustReviewCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
