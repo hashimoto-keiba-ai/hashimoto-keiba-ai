@@ -5299,6 +5299,14 @@ This is definition only: it performs no external acquisition, network communicat
 
 Run the dedicated test with `node tests/phase28ExternalDataCategoryDefinitionCore.test.js`.
 
+## Phase28-4 source candidate registration core
+
+Phase28-4 depends directly on Phase28-3 and records human-selected source candidates for the ten defined external-data categories. Each candidate records its name, type, provider, official-status candidate, category mappings, intended and excluded uses, URL or endpoint candidate strings, possible acquisition method, and required trust, terms, license, robots, privacy, security, authentication, rate-limit, validation, staging, audit, integrity, rollback, and recovery reviews. One candidate may cover multiple categories, but normal completion requires all ten categories to be mapped.
+
+Registration does not mean that a source is trusted, approved, reachable, or usable. The core performs no connection, API request, scraping, download, authentication, credential storage, acquisition, betting, prediction or learning application. Normal `source_candidates_registered` requires a separate human handoff to `ready_for_manual_phase28_source_trust_review`; source trust review never starts automatically. Private Local, `PLAN_ONLY`, `protectedMode`, and the inherited Phase28 safety boundary remain fixed.
+
+Run the dedicated test with `node tests/phase28SourceCandidateRegistrationCore.test.js`.
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
