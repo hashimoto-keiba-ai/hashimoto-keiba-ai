@@ -5347,6 +5347,14 @@ This is a Private Local-only, `PLAN_ONLY`, `protectedMode` manual review. It acq
 
 Dedicated test: `node tests/phase28DataSchemaReviewCore.test.js`
 
+## Phase28-10 staging design core
+
+Phase28-10 depends directly on Phase28-9 and accepts only normally handed-off records in `ready_for_manual_phase28_staging_design`. Human designers record source-isolated staging candidates, raw and normalized record policies, schema/source identifiers, timestamps and batches, provenance and audit metadata, validation/rejection states, duplicate and idempotency handling, quarantine, retention, cleanup, rollback, recovery, integrity, storage, and security boundaries. Normal acceptance can only be handed separately to `ready_for_manual_phase28_validation_design`.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core records design metadata only. It creates no staging directory, file, table, database, JSON, or CSV; writes or updates no data; applies no schema or validation; performs no mapping, import, migration, duplicate removal, quarantine, or cleanup; and acquires no external data. Every creation, lifecycle operation, decision, invalidation, expiration, and next-stage handoff requires explicit human-operation metadata.
+
+Dedicated test: `node tests/phase28StagingDesignCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
