@@ -1,0 +1,51 @@
+{
+  "phase": "Phase21-36",
+  "checklistName": "Post PR229 Main Sync Phase21-35 Verification Checklist",
+  "status": "PHASE21_36_POST_PR229_MAIN_SYNC_PHASE2135_VERIFICATION_READY",
+  "priorPrNumber": 229,
+  "priorPhase": "Phase21-35",
+  "expectedPriorMergeCommit": "c4fdd4318043ae91b9d74a239da1a5ec023a6b73",
+  "operationMode": "private_local_only",
+  "privateRepository": true,
+  "localFirst": true,
+  "githubPagesRequired": false,
+  "publicDeliveryAllowed": false,
+  "externalApiAllowed": false,
+  "autoExecutionAllowed": false,
+  "mainSyncPolicy": "Sync main after PR #229.",
+  "phasePresencePolicy": "Check Phase21-35 files on main.",
+  "draftPrPolicy": "Use Draft PR first.",
+  "blockedActionPolicy": {
+    "mainDirectPushAllowed": false,
+    "mainDirectCommitAllowed": false,
+    "forcePushAllowed": false,
+    "publicDeliveryAllowed": false,
+    "githubPagesRequired": false,
+    "launcherFileChangeAllowed": false,
+    "batAllowed": false,
+    "ps1Allowed": false,
+    "cmdAllowed": false,
+    "exeAllowed": false
+  },
+  "postMergeMainSyncChecks": [
+    { "id": "P21-36-PR229-MERGED", "label": "Confirm PR #229 is merged.", "command": "GitHub PR #229", "status": "Required" },
+    { "id": "P21-36-PWD", "label": "Confirm current workspace folder.", "command": "pwd", "status": "Required" },
+    { "id": "P21-36-SWITCH-MAIN", "label": "Switch local repository to main.", "command": "git switch main", "status": "Required" },
+    { "id": "P21-36-PULL-MAIN", "label": "Pull latest origin/main.", "command": "git pull origin main", "status": "Required" },
+    { "id": "P21-36-STATUS-CLEAN", "label": "Confirm working tree is clean.", "command": "git status", "status": "Required" },
+    { "id": "P21-36-LOG-MERGE", "label": "Confirm recent log.", "command": "git log --oneline -3", "status": "Required" }
+  ],
+  "phase2135PresenceChecks": [
+    { "id": "P21-36-P21-35-BUILDER", "label": "Confirm Phase21-35 builder exists.", "command": "dir phase21-35-post-pr228-main-sync-phase2134-verification-builder.js", "status": "Required" },
+    { "id": "P21-36-P21-35-DB", "label": "Confirm Phase21-35 DB exists.", "command": "dir phase21-35-post-pr228-main-sync-phase2134-verification-db.json", "status": "Required" },
+    { "id": "P21-36-P21-35-SUMMARY", "label": "Confirm Phase21-35 summary exists.", "command": "dir phase21-35-post-pr228-main-sync-phase2134-verification-summary-db.json", "status": "Required" },
+    { "id": "P21-36-P21-35-TEST", "label": "Confirm Phase21-35 test exists.", "command": "dir tests\\phase21PostPr228MainSyncPhase2134VerificationBuilder.test.js", "status": "Required" }
+  ],
+  "nextDraftGateChecks": [
+    { "id": "P21-36-DRAFT-FIRST", "label": "Next PR starts as Draft.", "status": "Required" }
+  ],
+  "privateLocalRules": [
+    { "id": "P21-36-PRIVATE-LOCAL", "label": "Private repository and local-first operation remain required.", "status": "PrivateLocalPolicy" }
+  ],
+  "nextRecommendedStep": "Sync main, verify clean status and Phase21-35 files, then continue with Draft PR flow."
+}
