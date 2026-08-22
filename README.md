@@ -5427,6 +5427,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs suspension c
 
 Dedicated test: `node tests/phase28SuspendedCore.test.js`
 
+## Phase28-20 rejected core
+
+Phase28-20 depends directly on Phase28-19 and accepts only records handed off by a separate explicit human rejection request to `ready_for_manual_phase28_rejected`. Humans formally confirm and record the rejection reason, category, scope, authority, owners, effective time, post-rejection prohibitions, remaining-disabled controls, risks, restrictions, unresolved issues, closure preparation, evidence, and audit. Rejected is not synonymous with closed, automatic rollback, automation enablement, or external acquisition.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs rejection confirmation only. It starts no automation, acquisition, scheduler, timer, polling, background worker, API or Web access, network communication, authentication, staging, validation, correction, rollback, or recovery. It never automatically releases rejection or moves to closed. A closed-stage handoff requires a separate explicit human request and records status only. Real credential values are never accepted or stored.
+
+Dedicated test: `node tests/phase28RejectedCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
