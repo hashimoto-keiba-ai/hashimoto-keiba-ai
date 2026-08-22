@@ -5371,6 +5371,14 @@ This is a Private Local-only, `PLAN_ONLY`, `protectedMode` plan. It performs no 
 
 Dedicated test: `node tests/phase28ManualAcquisitionTestPlanCore.test.js`
 
+## Phase28-13 manual acquisition test approval core
+
+Phase28-13 depends directly on Phase28-12 and accepts only normally handed-off records in `ready_for_manual_phase28_manual_acquisition_test_approval`. Human approvers explicitly confirm each source plan's acquisition method, manual operation, authentication and credential handling, rate and request limits, test volume and schedule, operators, staging and validation plans, success/warning/abort/stop criteria, incident handling, rollback, recovery, evidence, and audit. Normal acceptance can only be handed separately to `ready_for_manual_phase28_manual_acquisition_test_ready`.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core records approval only. **Approval does not execute the acquisition test.** It performs no external acquisition, network communication, API or Web access, authentication, staging, validation, data write, import, migration, rejection, quarantine, correction, rollback, or recovery. Real credential values are never accepted or stored, and every record operation and readiness handoff requires explicit human-operation metadata.
+
+Dedicated test: `node tests/phase28ManualAcquisitionTestApprovalCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
