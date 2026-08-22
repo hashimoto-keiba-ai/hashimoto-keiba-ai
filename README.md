@@ -5355,6 +5355,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core records design metada
 
 Dedicated test: `node tests/phase28StagingDesignCore.test.js`
 
+## Phase28-11 validation design core
+
+Phase28-11 depends directly on Phase28-10 and accepts only normally handed-off records in `ready_for_manual_phase28_validation_design`. Human designers record source-specific schema, field, type, format, enum, identifier, date/time, timezone, unit, range, precision, duplicate, idempotency, provenance, integrity, batch, source-consistency, and cross-field validation requirements. Individual rule candidates record their target, type, severity, condition, expected form, failure-action candidate, manual-review requirement, evidence, and known issues. Normal acceptance can only be handed separately to `ready_for_manual_phase28_manual_acquisition_test_plan`.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core designs validation but never executes it. It performs no data comparison or schema enforcement, rejection, duplicate removal, quarantine, file movement, data correction or write, import, migration, staging creation, or external acquisition. Every record operation and next-stage handoff requires explicit human-operation metadata.
+
+Dedicated test: `node tests/phase28ValidationDesignCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
