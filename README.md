@@ -5403,6 +5403,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core records human review 
 
 Dedicated test: `node tests/phase28ManualResultReviewCore.test.js`
 
+## Phase28-17 limited external acquisition candidate core
+
+Phase28-17 depends directly on Phase28-16 and accepts only normally handed-off records in `ready_for_manual_phase28_limited_external_acquisition_candidate`. Humans evaluate each source as a bounded limited-external-acquisition candidate using prior manual results, source and policy evidence, scope, request volume, frequency, authentication and credential-handling metadata, rate limits, staging and validation requirements, monitoring, stop and abort conditions, incidents, rollback, recovery, legal restrictions, and operational and data-quality risks. Only an accepted candidate record can be handed separately to `ready_for_manual_phase28_automation_readiness_review`.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs candidate evaluation only. Candidate accepted does not mean acquisition approval, and no actual external acquisition, retry, network communication, API or Web access, authentication, staging, validation, correction, rollback, or recovery is performed. Real credential values are never accepted or stored, and every lifecycle action and handoff requires an explicit human operation.
+
+Dedicated test: `node tests/phase28LimitedExternalAcquisitionCandidateCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
