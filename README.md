@@ -5339,6 +5339,14 @@ This is a Private Local-only, `PLAN_ONLY`, `protectedMode` review. It performs n
 
 Dedicated test: `node tests/phase28AuthenticationAndRateLimitReviewCore.test.js`
 
+## Phase28-9 data schema review core
+
+Phase28-9 depends directly on Phase28-8 and accepts only normally handed-off records in `ready_for_manual_phase28_data_schema_review`. Human reviewers record candidate schema names and versions, documentation and compatibility, and multiple field definitions covering types, required/nullability decisions, identifiers and key candidates, date/time and timezone formats, units, missing-value policies, normalization, validation, encoding, sensitivity metadata, evidence, and known issues. A normally accepted record can only be handed separately to `ready_for_manual_phase28_staging_design`.
+
+This is a Private Local-only, `PLAN_ONLY`, `protectedMode` manual review. It acquires and stores no real external values, retrieves or applies no schema automatically, performs no field mapping, import, or migration, and changes no existing data structure. API/Web access, authentication, credential use, rate-limit probing, external communication, condition release, correction, rollback, recovery, stage advancement, and next-stage execution remain disabled. Proceeding to staging design always requires an explicit human operation.
+
+Dedicated test: `node tests/phase28DataSchemaReviewCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
