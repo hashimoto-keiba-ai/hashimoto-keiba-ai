@@ -5387,6 +5387,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core records readiness onl
 
 Dedicated test: `node tests/phase28ManualAcquisitionTestReadyCore.test.js`
 
+## Phase28-15 manual acquisition test executed core
+
+Phase28-15 depends directly on Phase28-14 and accepts only normally handed-off records in `ready_for_manual_phase28_manual_acquisition_test_executed`. After a human has performed the test externally, the core records the method, operator and actual timestamps, bounded request/result counts, authentication and rate-limit observations, externally performed staging and validation observations, interruptions, incidents, evidence, and correction/rollback/recovery candidates. Creation requires an explicit declaration that the execution was manual and already performed. A normal record can only be handed separately to `ready_for_manual_phase28_manual_result_review`.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core records human-reported execution metadata only. It does not acquire external data itself and performs no network communication, API or Web access, scraping, download, authentication, credential use, rate-limit probing, polling, staging creation, import, migration, validation, rejection, quarantine, correction, rollback, or recovery. Real credential values are never accepted or stored.
+
+Dedicated test: `node tests/phase28ManualAcquisitionTestExecutedCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
