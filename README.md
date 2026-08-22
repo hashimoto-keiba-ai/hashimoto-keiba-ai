@@ -5419,6 +5419,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs readiness re
 
 Dedicated test: `node tests/phase28AutomationReadinessReviewCore.test.js`
 
+## Phase28-19 suspended core
+
+Phase28-19 depends directly on Phase28-18 and accepts only normally handed-off records in `ready_for_manual_phase28_suspended`. Humans place Phase28 in a safe suspended state and record its reason, category, scope, owners, review date, release/rejection/closure authorities, prohibited operations, risks, restrictions, unresolved issues, evidence, and audit. Suspended is not synonymous with rejected or closed, and suspension confirmation is neither automation authorization nor external-acquisition authorization.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs suspension confirmation only. It starts no automation, acquisition, scheduler, timer, polling, background worker, API or Web access, network communication, authentication, staging, validation, correction, rollback, or recovery. It never automatically releases suspension or moves to rejected or closed. A rejected-stage handoff requires a separate explicit human request and records status only. Real credential values are never accepted or stored.
+
+Dedicated test: `node tests/phase28SuspendedCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
