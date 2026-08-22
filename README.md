@@ -5411,6 +5411,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs candidate ev
 
 Dedicated test: `node tests/phase28LimitedExternalAcquisitionCandidateCore.test.js`
 
+## Phase28-18 automation readiness review core
+
+Phase28-18 depends directly on Phase28-17 and accepts only normally handed-off records in `ready_for_manual_phase28_automation_readiness_review`. Humans review automation readiness for each accepted limited-external-acquisition candidate, including scope, method, request volume, frequency and windows, authentication and credential-handling metadata, rate limits, staging, validation, monitoring, logging, alerting, stop and abort controls, incident response, manual override, kill switch, rollback, recovery, legal compatibility, operational ownership, fallback, evidence, and audit. Only an accepted review can be handed separately to the formally defined next stage, `suspended`.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs readiness review only. Readiness accepted does not enable automation. It starts no automatic acquisition, scheduler, timer, polling, background worker, network communication, API or Web access, authentication, staging, validation, correction, rollback, or recovery. Real credential values are never accepted or stored, and every lifecycle action and handoff requires an explicit human operation.
+
+Dedicated test: `node tests/phase28AutomationReadinessReviewCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
