@@ -5331,6 +5331,14 @@ The core performs no actual acquisition, API request, Web access, scraping, down
 
 Dedicated test: `node tests/phase28AcquisitionMethodReviewCore.test.js`
 
+## Phase28-8 authentication and rate limit review core
+
+Phase28-8 depends directly on Phase28-7 and accepts only normally handed-off acquisition-method review records in `ready_for_manual_phase28_authentication_and_rate_limit_review`. Human reviewers record authentication requirements, credential-policy metadata, rate-limit and quota constraints, retry/backoff, polling and concurrency policies, security evidence, risks, and unresolved issues for each reviewed source. The next formal stage is `data_schema_review`, reached only through a separate explicit human handoff.
+
+This is a Private Local-only, `PLAN_ONLY`, `protectedMode` review. It performs no authentication, stores or uses no credential values, makes no API request, opens no Web resource, performs no rate-limit probe or polling, and acquires no external data. Authentication, credential handling, rate limits, condition release, correction, rollback, recovery, stage advancement, and next-stage start are never automated. Actual API keys, tokens, passwords, cookies, secrets, private keys, authorization values, and other credentials must not be entered or stored.
+
+Dedicated test: `node tests/phase28AuthenticationAndRateLimitReviewCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
