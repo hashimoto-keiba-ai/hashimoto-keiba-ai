@@ -5443,6 +5443,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core requires an explicit 
 
 Dedicated test: `node tests/phase28ClosedCore.test.js`
 
+## Phase29-1 purpose, scope and safety-boundary definition core
+
+Phase29-1 depends directly on a valid, integrity-checked Phase28-21 `phase28_closed_confirmed` record. Before any Phase29 work begins, humans define and review Phase29's purpose, scope, in-scope and out-of-scope work, objectives and non-objectives, assumptions, prerequisites, dependencies, constraints, risks, policies, and absolute safety boundaries. Completing this definition does not start Phase29; any later step requires a separate human confirmation.
+
+This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It performs no external communication, Web or API access, automation, authentication, credential storage or use, data mutation or migration, prediction or learning application, betting, Git or GitHub operation, Public release, or GitHub Pages publication. It does not automatically release Phase28 closure or start Phase29 or another phase.
+
+Dedicated test: `node tests/phase29PurposeScopeSafetyBoundaryDefinitionCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
