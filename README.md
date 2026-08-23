@@ -5435,6 +5435,14 @@ This Private Local-only, `PLAN_ONLY`, `protectedMode` core performs rejection co
 
 Dedicated test: `node tests/phase28RejectedCore.test.js`
 
+## Phase28-21 closed core
+
+Phase28-21 is the terminal Phase28 closure-confirmation core. It depends directly on Phase28-20 and accepts only records explicitly handed off by a human in `ready_for_manual_phase28_closed`. A human records the closure reason, category, scope, authority, owners, effective time, finality, prohibitions, risks, archive and post-closure review information, evidence, and audit. `closed` means only that Phase28 was formally confirmed closed; it does not mean Phase29 started.
+
+This Private Local-only, `PLAN_ONLY`, `protectedMode` core requires an explicit human operation for every lifecycle action. It performs no automation or external acquisition; starts no scheduler, polling, timer, or background worker; performs no API, Web, or network communication; and stores no real credential values. It never automatically releases closure, starts Phase29, or executes correction, rollback, or recovery.
+
+Dedicated test: `node tests/phase28ClosedCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
