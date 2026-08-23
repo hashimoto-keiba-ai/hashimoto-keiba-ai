@@ -5459,6 +5459,14 @@ This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It performs n
 
 Dedicated test: `node tests/phase29StartPreparationCore.test.js`
 
+## Phase29-3 Phase29 start-approval core
+
+Phase29-3 is the manual start-approval core. It accepts only a valid, integrity-checked Phase29-2 record in `ready_for_manual_phase29_start_approval`. Humans review the preparation and its Phase29-1 and Phase28-21 source chain, prerequisites, dependencies, safety boundary, prohibited actions, rollback and recovery points, human-recorded Git and test evidence, and outstanding issues. It records approval, conditional approval, rejection, incomplete, or blocked outcomes. Normal approval records only `ready_for_manual_phase29_start_execution`; Phase29 remains not started and execution is a separate manual process.
+
+This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It performs no external communication, automation, authentication or credential use, filesystem or data mutation, validation, correction, rollback, recovery, prediction or learning application, betting, Git or GitHub operation, Public release, or GitHub Pages publication. It does not automatically release Phase29-2 preparation, the Phase29-1 definition, or Phase28 closure.
+
+Dedicated test: `node tests/phase29StartApprovalCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
