@@ -5451,6 +5451,14 @@ This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It performs n
 
 Dedicated test: `node tests/phase29PurposeScopeSafetyBoundaryDefinitionCore.test.js`
 
+## Phase29-2 Phase29 start-preparation core
+
+Phase29-2 is a manual preparation-record core used before Phase29 starts. It depends directly on a valid, integrity-checked Phase29-1 record whose purpose, scope, and safety boundary are normally defined. Humans record the intended start target and scope, planned time, responsible roles, start conditions, prerequisite and dependency confirmations, safety-boundary confirmation, rollback and recovery points, and human-reported Git, working-tree, branch-alignment, and required-test evidence. Normal completion records only `ready_for_manual_phase29_start_approval`; Phase29 remains not started and approval remains a separate human process.
+
+This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It performs no external communication, automation, authentication or credential use, filesystem or data mutation, validation, correction, rollback, recovery, prediction or learning application, betting, Git or GitHub operation, Public release, or GitHub Pages publication. It does not automatically release the Phase29-1 definition or Phase28 closure. Any next step requires separate human review and approval.
+
+Dedicated test: `node tests/phase29StartPreparationCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
