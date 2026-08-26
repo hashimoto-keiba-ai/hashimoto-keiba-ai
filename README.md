@@ -5499,6 +5499,14 @@ This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. Automatic ver
 
 Dedicated test: `node tests/phase29PostStartAcceptanceCore.test.js`
 
+## Phase29-8 Phase29 post-start stabilization-review core
+
+Phase29-8 accepts only a valid, integrity-checked Phase29-7 record in `ready_for_manual_phase29_post_start_stabilization_review` with result `accept_phase29_post_start`; Phase29-7 must expose `manual_phase29_post_start_stabilization_review` as its next stage. Humans review a defined observation period and record the start state, operational stability, errors, warnings, performance, data integrity, safety boundary, tests, Git evidence, and issues. Results may be stable, conditionally stable, unstable, incomplete, or blocked. Conditional stability requires explicit conditions and release criteria; instability requires a reason and necessary actions. A stable result records only readiness for a later manual stabilization decision, following the established Phase27 sequence.
+
+This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. Automatic review, decision, correction, rollback, recovery, restart, advance, and next-phase start remain disabled. It performs no external communication, Web/API access, authentication or credential use, scheduler, timer, polling, worker, filesystem or data mutation, prediction or learning application, betting, Git or GitHub operation, Public release, or GitHub Pages publication.
+
+Dedicated test: `node tests/phase29PostStartStabilizationReviewCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
