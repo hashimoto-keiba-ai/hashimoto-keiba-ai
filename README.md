@@ -5507,6 +5507,16 @@ This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. Automatic rev
 
 Dedicated test: `node tests/phase29PostStartStabilizationReviewCore.test.js`
 
+## Phase29-9 Phase29 post-start stabilization-decision core
+
+Phase29-9 accepts only a valid, active, integrity-checked Phase29-8 record in `ready_for_manual_phase29_post_start_stabilization_decision` with result `phase29_post_start_stabilization_stable`; Phase29-8 must expose `manual_phase29_post_start_stabilization_decision` as its next stage. The complete Phase29-8 through Phase28-21 source chain, snapshots, hashes, versions, reference IDs, record version, and audit trail are retained and validated. Conditional, unstable, incomplete, blocked, invalidated, expired, inconsistent, and duplicate-active sources are excluded from normal decision candidates.
+
+Humans explicitly create, begin, update, submit, decide, invalidate, and—only after stable approval—hand the record to `ready_for_manual_phase29_post_start_stabilization_followup`, matching the existing Phase27 stabilization decision-to-follow-up structure. Decisions can record stable approval, conditional approval, unstable, incomplete, or blocked. Conditional approval requires conditions, reason, owner, deadline, verification method, and release criteria; unstable decisions require reason, impact, and required actions.
+
+This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It implements no automatic review, decision, correction, rollback, recovery, Phase29 start or restart, advance, or next-phase start. It performs no external communication, Web/API access, authentication or credential use, scheduler, timer, polling, worker, filesystem or data mutation, prediction or learning application, betting, Git or GitHub operation, Public release, or GitHub Pages publication.
+
+Dedicated test: `node tests/phase29PostStartStabilizationDecisionCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
