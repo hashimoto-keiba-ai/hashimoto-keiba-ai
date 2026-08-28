@@ -5567,6 +5567,16 @@ This core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It performs n
 
 Dedicated test: `node tests/phase29PostStartStabilizationClosureExecutionApprovalCore.test.js`
 
+## Phase29-15 Phase29 post-start stabilization-closure-execution core
+
+Phase29-15 accepts only the active, integrity-checked Phase29-14 normal approval handed to `ready_for_manual_phase29_post_start_stabilization_closure_execution` with result `approve_phase29_post_start_stabilization_closure_execution`. It verifies Phase29-14's published contract and the complete Phase29-14 through Phase28-21 source chain, and retains upstream snapshots, hashes, versions, reference IDs, record version, and audit trail. Conditional approval, rejection, incomplete, blocked, invalidated, expired, inconsistent, and duplicate-active sources are rejected.
+
+Humans explicitly create, start, update, submit for review, complete, invalidate, and hand off execution records. Records cover the execution target, scope, period, executor, confirmer, owner, approval result, procedure, pre-execution checks, start and completion times, before and after snapshots, rollback and recovery points, safety boundary, Git and test evidence, data integrity, execution result, errors, warnings, unresolved matters, critical issues, and blocking conditions. Results are completed, failed, incomplete, or blocked, with all required failure, incomplete, and blocking details enforced. Only normal completion may be handed by a separate explicit human action to `ready_for_manual_phase29_post_start_stabilization_closure_post_execution_verification`, following the established Phase27 execution-to-post-execution-verification structure.
+
+This core is a Private Local only, `PLAN_ONLY`, `protectedMode` manual execution record. It performs no actual filesystem or data mutation, automatic execution, review, decision, completion, advance, Phase29 rerun, next-phase start, correction, rollback, recovery, external communication, Web/API or credential use, scheduler, timer, polling, worker, prediction or learning application, betting, Git or GitHub operation, Public release, or GitHub Pages publication.
+
+Dedicated test: `node tests/phase29PostStartStabilizationClosureExecutionCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
