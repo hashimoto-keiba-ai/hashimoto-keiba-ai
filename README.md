@@ -5637,6 +5637,16 @@ The core is Private Local only, `PLAN_ONLY`, and `protectedMode`. Phase30 remain
 
 Dedicated test: `node tests/phase30StartPreparationCore.test.js`
 
+## Phase30-3 Phase30 start-execution approval core
+
+Phase30-3 directly depends on Phase30-2 and accepts only its normal `ready_for_manual_phase30_start_approval` record. It validates the Phase30-2 contract, snapshot, hash, version, safety, integrity, audit trail, record version, reference IDs, upstream fields, and the Phase30-1 through Phase29-19 source chain. Invalidated, expired, non-normal, inconsistent, issue-bearing, already-started, automatically-started, and duplicate-active sources are rejected.
+
+Humans explicitly create, start the approval review, update, submit for review, decide, and invalidate approval records. Normal approval requires approval and review dates, all required confirmations, and no unresolved, critical, or blocking issues. Conditional approval requires its conditions, reason, owner, deadline, verification method, and release criteria; rejection requires reasons. Only normal approval records `ready_for_manual_phase30_start_execution`.
+
+The core is Private Local only, `PLAN_ONLY`, and `protectedMode`. Phase30 and start execution remain unstarted. It performs no automatic approval, execution, phase advance, source release, correction, rollback, recovery, condition release, external communication, authentication, credential handling, scheduling, polling, background work, filesystem or data mutation, migration, validation, learning, prediction application, betting, Git or GitHub operation, Public release, or GitHub Pages publication.
+
+Dedicated test: `node tests/phase30StartApprovalCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
