@@ -5647,6 +5647,16 @@ The core is Private Local only, `PLAN_ONLY`, and `protectedMode`. Phase30 and st
 
 Dedicated test: `node tests/phase30StartApprovalCore.test.js`
 
+## Phase30-4 Phase30 start-execution core
+
+Phase30-4 directly depends on Phase30-3 and accepts only its normal `ready_for_manual_phase30_start_execution` record. It validates the Phase30-3 contract, snapshot, hash, version, safety, integrity, audit trail, record version, reference IDs, upstream fields, and the complete Phase30-2 through Phase29-19 source chain. Invalidated, expired, non-normal, inconsistent, issue-bearing, already-started, automatically-started, and duplicate-active sources are rejected.
+
+Humans explicitly create, begin, update, submit for review, complete, and invalidate execution records. The core records only the fact and review of a manual start; it performs no external processing or mutation. Normal confirmation requires valid scheduled, actual-start, actual-end, and review dates, execution summary, before and after snapshots, reviewer, confirmations, and no unresolved, critical, or blocking issues. Conditional completion and failure enforce their required details.
+
+Only `phase30_start_execution_confirmed` sets `phase30Started` and `manualPhase30StartCompleted` to true. Conditional, failed, incomplete, and blocked results keep both false. The next stage is `manual_phase30_post_start_verification`. Private Local only, `PLAN_ONLY`, `protectedMode`, and all automation, communication, filesystem, data, learning, prediction, betting, Git, GitHub, and publication prohibitions remain fixed.
+
+Dedicated test: `node tests/phase30StartExecutionCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
