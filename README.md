@@ -5667,6 +5667,16 @@ The core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It performs no
 
 Dedicated test: `node tests/phase30PostStartVerificationCore.test.js`
 
+## Phase30-6 Phase30 post-start verification decision core
+
+Phase30-6 directly depends on Phase30-5 and accepts only active, intact records in `ready_for_manual_phase30_post_start_verification_decision` with result `phase30_post_start_verification_passed`. It validates the Phase30-5 schema, snapshot hash, safety, audit trail, record version, references, upstream fields, issues, and the Phase30-4 through Phase29 terminal source chain.
+
+Humans explicitly create, begin, update, submit for review, decide, and invalidate records. Normal approval requires all confirmations, review evidence, valid decision dates, and no unresolved, critical, or blocking issues, then records `ready_for_manual_phase30_post_start_acceptance`. Conditional approval, rejection, incomplete, and blocked decisions remain non-normal outcomes.
+
+Private Local only, `PLAN_ONLY`, and `protectedMode` remain fixed. The core performs no automatic decision, start, advance, correction, rollback, recovery, condition release, communication, filesystem or data mutation, learning or prediction application, purchase, Git/GitHub operation, or publication.
+
+Dedicated test: `node tests/phase30PostStartVerificationDecisionCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
