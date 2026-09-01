@@ -5657,6 +5657,16 @@ Only `phase30_start_execution_confirmed` sets `phase30Started` and `manualPhase3
 
 Dedicated test: `node tests/phase30StartExecutionCore.test.js`
 
+## Phase30-5 Phase30 post-start verification core
+
+Phase30-5 directly depends on Phase30-4 and accepts only its normal `phase30_start_execution_confirmed` record with `phase30Started` and `manualPhase30StartCompleted` true. It validates the Phase30-4 contract, snapshot, hash, version, safety, integrity, audit trail, record version, reference IDs, upstream fields, and the Phase30-3 through Phase29-19 source chain. Non-normal, invalidated, expired, inconsistent, issue-bearing, automatically-started, automatically-advanced, and duplicate-active sources are rejected.
+
+Humans explicitly create, begin, update, submit for review, complete, and invalidate post-start verification records. Verification covers the execution result and times, target and scope, before and after snapshots, safety boundary and prohibitions, verification items and tests, Git and working-tree state, main/origin alignment, rollback and recovery points, and issues. A normal pass requires verification and review details, valid dates, and no unresolved, critical, or blocking issues, and records `ready_for_manual_phase30_post_start_verification_decision`.
+
+The core is Private Local only, `PLAN_ONLY`, and `protectedMode`. It performs no automatic verification, correction, rollback, recovery, condition release, next-phase start, external communication or transmission, filesystem or data mutation, automatic purchase, prediction or learning application, learning update, Git or GitHub operation, Public release, or GitHub Pages publication.
+
+Dedicated test: `node tests/phase30PostStartVerificationCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
