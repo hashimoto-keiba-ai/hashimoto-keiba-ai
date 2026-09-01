@@ -5627,6 +5627,16 @@ The core remains Private Local only, `PLAN_ONLY`, and `protectedMode`. Phase30 r
 
 Dedicated test: `node tests/phase30PurposeScopeSafetyBoundaryDefinitionCore.test.js`
 
+## Phase30-2 Phase30 start-preparation core
+
+Phase30-2 directly depends on Phase30-1 and accepts only its normal manual handoff: status `ready_for_manual_phase30_start_preparation` with result `phase30_purpose_scope_safety_boundary_defined`. It validates the Phase30-1 contract, snapshot, hash, version, safety, integrity, audit trail, record version, reference IDs, upstream fields, and the Phase29-19 source chain. Invalidated, expired, non-normal, inconsistent, issue-bearing, already-started, automatically-started, and duplicate-active sources are rejected.
+
+Humans explicitly create, start, update, submit for review, complete, and invalidate start-preparation records. Records cover the start target and scope, schedule, operators and owners, start conditions, prerequisite and dependency confirmations, Phase30 definition and safety confirmations, prohibited actions, rollback and recovery points, Git state, working tree, main/origin alignment, required tests, issues, snapshots, hashes, versions, and audit history. Normal completion requires review and no unresolved, critical, or blocking issues and records only `ready_for_manual_phase30_start_approval`.
+
+The core is Private Local only, `PLAN_ONLY`, and `protectedMode`. Phase30 remains unstarted and start approval remains unexecuted. It performs no automatic start or next-phase start, definition release, correction, rollback, recovery, condition release, external communication, authentication, credential handling, scheduling, polling, background work, filesystem or data mutation, migration, validation, learning, prediction application, betting, Git or GitHub operation, Public release, or GitHub Pages publication.
+
+Dedicated test: `node tests/phase30StartPreparationCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
