@@ -5687,6 +5687,16 @@ Private Local only, `PLAN_ONLY`, and `protectedMode` remain fixed. The core perf
 
 Dedicated test: `node tests/phase30PostStartAcceptanceCore.test.js`
 
+## Phase30-8 Phase30 post-start stabilization review core
+
+Phase30-8 directly depends on Phase30-7 and accepts only active, intact records in `ready_for_manual_phase30_post_start_stabilization_review` with result `accept_phase30_post_start`. It validates the Phase30-7 schema, snapshot hash, safety, audit trail, record version, references, upstream fields, issues, and the Phase30-6 through Phase29 terminal source chain.
+
+Humans explicitly create, begin, update, submit, complete, and invalidate stabilization review records. A stable review requires all acceptance, stabilization-period, runtime-state, test, safety, Git, rollback, and recovery confirmations, valid completion evidence, and no errors or unresolved, critical, or blocking issues. It then records `ready_for_manual_phase30_post_start_stabilization_decision`. Conditional stability, instability, incomplete, and blocked outcomes do not enter that normal handoff.
+
+Private Local only, `PLAN_ONLY`, and `protectedMode` remain fixed. The core performs no automatic review, decision, acceptance, start, advance, correction, rollback, recovery, condition release, communication, filesystem or data mutation, learning or prediction application, purchase, Git/GitHub operation, or publication.
+
+Dedicated test: `node tests/phase30PostStartStabilizationReviewCore.test.js`
+
 Normal preparation is handed only by another explicit human action to `ready_for_manual_phase27_start_execution_approval`; the core does not start Phase27 or execute start approval. It performs no automatic preparation, condition release, correction, rollback, Git operation, data migration, external transmission or Public release. Private Local, `PLAN_ONLY` and `protectedMode` remain fixed.
 
 Run `node tests/phase27StartPreparationCore.test.js` for the dedicated test.
