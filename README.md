@@ -5726,3 +5726,19 @@ The final state only hands an immutable approval record to a later manual execut
 The gate requires all Phase26-1 through Phase26-43 records, no pending condition, correction or rollback, complete references and evidence, intact hashes and versions, no findings, and Private Local only, PLAN_ONLY and protectedMode safety controls.
 
 Run `node tests/phase26FinalClosureCore.test.js`.
+
+## Phase30-10 Phase30 post-start stabilization followup core
+
+Phase30-10 directly depends on Phase30-9. Only active records with status `ready_for_manual_phase30_post_start_stabilization_followup` and result `approve_phase30_post_start_stabilization_stable` are eligible. Validation checks schemas, snapshot hashes and body consistency, audit entries, record versions, safety flags, reference IDs, upstream links and the Phase30-8 through Phase29-19 terminal source chain. Errors and unresolved, critical or blocking issues reject the source. Active records for the same decision ID cannot be duplicated.
+
+The API follows Phase29-10: `createStabilizationFollowupRecord` → `beginStabilizationFollowup` → `updateStabilizationFollowup` → `submitStabilizationFollowupReview` → `completeStabilizationFollowup`. Each operation requires performedBy, reason, explicitConfirmation === true and a valid performedAt. Evidence, responsible people, followup items/actions, remaining observations, basis, notes and issue arrays are retained. Successful completion requires all confirmations and no errors or blocking issues. Conditional, failed, incomplete and blocked results remain outside handoff eligibility; conditions are never automatically released.
+
+Normal completion records `phase30_post_start_stabilization_followup_completed`. A separate `handoffToStabilizationClosureReview` operation records `ready_for_manual_phase30_post_start_stabilization_closure_review`; NEXT_STAGE is `manual_phase30_post_start_stabilization_closure_review`, matching Phase29-11 and Phase27-18. Phase30-11 is the intended manual stabilization closure review; no stage is started by this core. `invalidateStabilizationFollowup` invalidates a record by explicit human operation.
+
+Private Local only / PLAN_ONLY / protectedMode are preserved. No automatic followup, decision, review, acceptance, preparation, approval, start, advance, fix, rollback, recovery, condition release, filesystem/data mutation, Git/GitHub operation, purchase, application, learning update, external communication/transmission or public/Pages publication occurs. Persistence helpers use only explicitly supplied local storage. The private-local section is informational.
+
+Dedicated test:
+
+```sh
+node tests/phase30PostStartStabilizationFollowupCore.test.js
+```
