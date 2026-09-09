@@ -5742,3 +5742,21 @@ Dedicated test:
 ```sh
 node tests/phase30PostStartStabilizationFollowupCore.test.js
 ```
+
+## Phase30-11 Phase30 post-start stabilization closure review core
+
+Phase30-11 directly depends on Phase30-10. Only active records with status `ready_for_manual_phase30_post_start_stabilization_closure_review` and result `phase30_post_start_stabilization_followup_completed` are accepted. Validation checks schema/version, snapshot/body/hash consistency, safety, audit continuity and record version, completion evidence and confirmations, reference IDs and upstream fields, and the Phase30-9 through Phase29 terminal source chain. Errors, unresolved issues, critical issues and blocking conditions must be empty arrays. Duplicate active records for the same followup ID are rejected.
+
+Manual API: `createStabilizationClosureReviewRecord` → `beginStabilizationClosureReview` → `updateStabilizationClosureReview` → `submitStabilizationClosureReview` → `completeStabilizationClosureReview`. Every operation requires performedBy, reason, explicitConfirmation === true and a valid performedAt. The record retains the review target/scope/operator, reviewer and responsible person, all requested confirmations and evidence, rollback/recovery points, closure readiness, review items, basis, notes and issue arrays. Protected fields cannot be edited.
+
+Normal completion records `phase30_post_start_stabilization_closure_review_ready_for_closure` only when all mandatory confirmations hold and no errors or unresolved/critical/blocking issues remain. Other results are conditionally_ready, not_ready (failed review), incomplete and blocked, using the Phase29-11 naming pattern. They cannot hand off. Conditions are never automatically released.
+
+A separate `handoffToStabilizationClosureDecision` records `ready_for_manual_phase30_post_start_stabilization_closure_decision`. NEXT_STAGE is `manual_phase30_post_start_stabilization_closure_decision`: the intended Phase30-12 stabilization closure decision, matching Phase29-12 and Phase27-19. No next stage starts. `invalidateStabilizationClosureReview` requires explicit human operation. Local storage helpers accept only caller-supplied storage; invalidated records remain readable for audit.
+
+Private Local only / PLAN_ONLY / protectedMode remain enforced. No automatic closure review, followup, decision, review, acceptance, preparation, approval, start, advance, correction, rollback, recovery, condition release, filesystem/data mutation, Git/GitHub operation, purchase, application, learning update, external communication/transmission or public/Pages publication is performed. The private-local section is informational.
+
+Dedicated test (unit cases plus real Phase30-10 source-chain integration):
+
+```sh
+node tests/phase30PostStartStabilizationClosureReviewCore.test.js
+```
