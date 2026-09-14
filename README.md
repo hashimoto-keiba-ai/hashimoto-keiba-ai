@@ -5848,3 +5848,21 @@ Dedicated test (unit cases and real Phase30-15 source-chain integration):
 ```sh
 node tests/phase30PostStartStabilizationClosurePostExecutionVerificationCore.test.js
 ```
+
+## Phase30-17 Phase30 post-start stabilization closure post-execution verification decision core
+
+Phase30-17 records explicit human decisions about local management-record verification. It directly depends on Phase30-16 and accepts only active sources with status `ready_for_manual_phase30_post_start_stabilization_closure_post_execution_verification_decision` and result `verify_phase30_post_start_stabilization_closure_post_execution`. Checks cover phase/stage/nextStage, schema/version, the complete verificationChecks object, snapshot/body/hash, safety, verification evidence and dates, audit continuity/recordVersion and the actual manual verification/handoff path, reference IDs/upstream fields, execution evidence consistency, the verification-before reference snapshot and the source chain through Phase29 terminal. Unverified, invalidated, expired, tampered, inconsistent, issue/error-bearing and duplicate active decision sources are rejected.
+
+Manual API follows Phase29-17: `createStabilizationClosurePostExecutionVerificationDecisionRecord` → `startStabilizationClosurePostExecutionVerificationDecision` → `beginStabilizationClosurePostExecutionVerificationDecision` → `updateStabilizationClosurePostExecutionVerificationDecision` → `submitStabilizationClosurePostExecutionVerificationDecisionReview` → `decideStabilizationClosurePostExecutionVerification`. Every operation requires nonempty string performedBy/reason, explicitConfirmation === true and valid performedAt. Verification result, execution result, pre/post snapshots, expected/actual results, difference, performance and data integrity must match the source at creation and are protected afterwards. verificationChecks are copied from the validated source and remain protected. Normal approval requires all confirmations (including verificationResultConfirmed and manualDecisionConfirmed), complete decision fields, decisionSummary, decisionAfterSnapshot, valid decisionAt and empty errors/unresolvedIssues/criticalIssues/blockingConditions. Warnings may remain.
+
+Conditional, failed, incomplete and blocked Phase30-16 verification sources are outside the eligible source contract: they are rejected without rewriting their original results or producing acceptance-ready records. For an eligible normal source, a human can explicitly record normal approval, conditional approval, a failed decision, incomplete or blocked. Non-normal decisions require supporting details, retain their distinct decision states and cannot hand off; conditions are never automatically released.
+
+Normal approval records `phase30_post_start_stabilization_closure_post_execution_verification_approved`. Separate `handoffToStabilizationClosureAcceptance` revalidates the record and generates `ready_for_manual_phase30_post_start_stabilization_closure_acceptance`. NEXT_STAGE is `manual_phase30_post_start_stabilization_closure_acceptance`, matching Phase29-17 and reserved for Phase30-18 manual closure acceptance. Approval and handoff do not accept closure or start the next stage. Invalidation is a separate human operation.
+
+Private Local only / PLAN_ONLY / protectedMode remain fixed. The source and nested chain are cloned without modification. No verification rerun, automatic decision/acceptance, next-stage/next-Phase start, correction, rollback, recovery, condition release, Git/GitHub operation, external communication/transmission/execution, data migration, purchase, application, learning update, filesystem mutation or publication is implemented. Persistence uses explicitly supplied local storage only, with no automatic saving. The private-local section is informational. Existing Phase30-1 through Phase30-16 cores are unchanged.
+
+Dedicated test (unit cases and real Phase30-16 source-chain integration):
+
+```sh
+node tests/phase30PostStartStabilizationClosurePostExecutionVerificationDecisionCore.test.js
+```
