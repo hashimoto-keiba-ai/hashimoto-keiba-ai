@@ -5866,3 +5866,19 @@ Dedicated test (unit cases and real Phase30-16 source-chain integration):
 ```sh
 node tests/phase30PostStartStabilizationClosurePostExecutionVerificationDecisionCore.test.js
 ```
+
+## Phase30-18 Phase30 post-start stabilization closure acceptance core
+
+Phase30-18 directly depends on Phase30-17 and records explicit human acceptance of local management records. Only normal approved sources with status `ready_for_manual_phase30_post_start_stabilization_closure_acceptance` are eligible. It validates phase/stage/nextStage, decision result, schema/version, snapshot/body/hash consistency, safety flags, decision evidence, audit/history/recordVersion, references and the upstream chain through the Phase29 terminal. Unfinished, conditional, rejected, failed, incomplete, blocked, invalidated, expired, inconsistent, tampered and issue-bearing sources are rejected. Duplicate acceptance records for the same source, including invalidated or expired records, are refused.
+
+Manual API: `createStabilizationClosureAcceptanceRecord` → `startStabilizationClosureAcceptance` → `beginStabilizationClosureAcceptance` → optional `updateStabilizationClosureAcceptance` → `submitStabilizationClosureAcceptanceReview` → `decideStabilizationClosureAcceptance`. Each operation requires nonempty string performedBy/reason, explicitConfirmation === true and valid performedAt. Decision result and execution evidence must match the source and remain protected. Normal acceptance requires all confirmations, acceptanceSummary, acceptanceAfterSnapshot, valid acceptedAt and empty errors/unresolvedIssues/criticalIssues/blockingConditions. Conditional acceptance, rejection, incomplete and blocked outcomes require their supporting details and cannot hand off.
+
+Normal acceptance records `phase30_post_start_stabilization_closure_accepted`. Separate `handoffToPhase30FinalClosure` produces `ready_for_manual_phase30_final_closure`; NEXT_STAGE is `manual_phase30_final_closure`, following Phase29-18. Invalidation is also a separate human operation. Neither acceptance nor handoff executes final closure.
+
+Private Local only / PLAN_ONLY / protectedMode remain fixed. Source records are cloned without modification or decision rerun. No automatic acceptance, final closure, next-stage/next-Phase start, repair, rollback, recovery, condition release, Git/GitHub operation, external communication/transmission/execution, migration, purchase, application or learning update occurs. Persistence requires explicitly supplied local storage and is never automatic. The private-local section is informational. Existing Phase30-1 through Phase30-17 cores are unchanged.
+
+Dedicated test (unit cases and real Phase30-17 source-chain integration):
+
+```sh
+node tests/phase30PostStartStabilizationClosureAcceptanceCore.test.js
+```
