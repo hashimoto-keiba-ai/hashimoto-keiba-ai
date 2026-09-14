@@ -5830,3 +5830,21 @@ Dedicated test (unit cases and real Phase30-14 source-chain integration):
 ```sh
 node tests/phase30PostStartStabilizationClosureExecutionCore.test.js
 ```
+
+## Phase30-16 Phase30 post-start stabilization closure post-execution verification core
+
+Phase30-16 verifies local management records only and directly depends on Phase30-15. Eligible sources have phase/stage/nextStage matching Phase30-15, status `ready_for_manual_phase30_post_start_stabilization_closure_post_execution_verification`, result `complete_phase30_post_start_stabilization_closure_execution` and manualExecutionRecorded === true. Validation covers schema/version, snapshot/body/hash, safety flags, execution evidence and ordered timestamps, audit continuity/recordVersion, the actual manual completion/handoff path, reference IDs/upstream fields, the chain through Phase29 terminal, manual approval evidence and the execution-before reference snapshot. Unexecuted, invalidated, expired, tampered, issue/error-bearing, inconsistent or out-of-scope sources and duplicate active verifications for the same execution ID are rejected.
+
+Manual API follows Phase29-16: `createStabilizationClosurePostExecutionVerificationRecord` → `startStabilizationClosurePostExecutionVerification` → `beginStabilizationClosurePostExecutionVerification` → `updateStabilizationClosurePostExecutionVerification` → `submitStabilizationClosurePostExecutionVerificationReview` → `completeStabilizationClosurePostExecutionVerification`. Every operation requires performedBy, reason, explicitConfirmation === true and valid performedAt. Source executionResult and pre/post-execution snapshots must match at creation and are protected thereafter. Verification fields retain target/scope, expected/actual results, difference, performance, data integrity, evidence and timestamps. Normal verification requires all confirmations (including executionRecordConfirmed and verificationBoundaryConfirmed), complete evidence, valid ordered verification timestamps and empty errors/unresolvedIssues/criticalIssues/blockingConditions. Warnings may remain.
+
+Normal completion generates protected `verificationChecks`: executionRecordPresent, planOnlyMaintained, protectedModeMaintained, privateLocalOnlyMaintained, noExternalCommunication, noExternalTransmission, noExternalExecution, auditHistoryContinuous, referenceChainContinuous and sourceUnchanged are all true. These findings concern the supplied management record and the verification operation; the core does not inspect or operate external systems. Other outcomes retain null checks and require conditional/failure/incomplete/blocked details. The source and its nested chain are cloned without modification; no execution is repeated.
+
+Normal completion records `phase30_post_start_stabilization_closure_post_execution_verified`. Separate `handoffToStabilizationClosurePostExecutionVerificationDecision` revalidates the record and generates `ready_for_manual_phase30_post_start_stabilization_closure_post_execution_verification_decision`. NEXT_STAGE is `manual_phase30_post_start_stabilization_closure_post_execution_verification_decision`, matching Phase29-16 and reserved for Phase30-17 manual verification decision. Conditional, failed, incomplete and blocked results cannot hand off. Invalidation is a separate human operation.
+
+Private Local only / PLAN_ONLY / protectedMode remain fixed. No external execution, communication, transmission, purchase, application, learning update, Git/GitHub operation, data migration, filesystem change, correction, rollback, recovery, condition release, publication or automatic next-stage/next-Phase start is implemented. Source mutation and execution rerun flags remain false. Persistence uses only explicitly supplied local storage, with no automatic saving. The private-local section is informational. Existing Phase30-1 through Phase30-15 cores are unchanged.
+
+Dedicated test (unit cases and real Phase30-15 source-chain integration):
+
+```sh
+node tests/phase30PostStartStabilizationClosurePostExecutionVerificationCore.test.js
+```
