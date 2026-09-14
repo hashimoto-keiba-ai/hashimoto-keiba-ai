@@ -5796,3 +5796,19 @@ Dedicated test (unit cases and real Phase30-12 source-chain integration):
 ```sh
 node tests/phase30PostStartStabilizationClosureExecutionPreparationCore.test.js
 ```
+
+## Phase30-14 Phase30 post-start stabilization closure execution approval core
+
+Directly depends on Phase30-13. Only active, normally prepared records with status `ready_for_manual_phase30_post_start_stabilization_closure_execution_approval` and result `ready_phase30_post_start_stabilization_closure_execution_preparation` are accepted. Checks cover the phase/stage contract (including conflicting optional metadata), schema/version, snapshot/body/hash, safety, human audit continuity and recordVersion, completion evidence and confirmations, reference IDs/upstream fields and the source chain through Phase29 terminal. Invalidated, expired, incomplete, inconsistent or issue/error-bearing sources and duplicate active approvals for the same preparation ID are rejected.
+
+Manual API: `createStabilizationClosureExecutionApprovalRecord` → `startStabilizationClosureExecutionApproval` → `beginStabilizationClosureExecutionApproval` → `updateStabilizationClosureExecutionApproval` → `submitStabilizationClosureExecutionApprovalReview` → `decideStabilizationClosureExecutionApproval`. Each operation requires performedBy, reason, explicitConfirmation === true and valid performedAt. Approval fields follow Phase29-14, with Phase30-13 confirmation flags plus executionPreparationConfirmed and manualExecutionBoundaryConfirmed. Normal approval requires complete evidence, approvalSummary, approvalAfterSnapshot, decisionBy, valid decisionAt and empty errors/unresolvedIssues/criticalIssues/blockingConditions. Warnings may remain. Conditional approval, rejection, incomplete and blocked outcomes require supporting details and cannot hand off.
+
+Normal approval records `phase30_post_start_stabilization_closure_execution_approved`. Separate `handoffToStabilizationClosureExecution` revalidates the record and records `ready_for_manual_phase30_post_start_stabilization_closure_execution`. NEXT_STAGE is `manual_phase30_post_start_stabilization_closure_execution`, matching Phase29-14 and Phase27-21 and reserved for Phase30-15 manual closure execution. Approval and handoff do not execute closure. Invalidation is a separate human operation.
+
+Private Local only / PLAN_ONLY / protectedMode remain fixed. No automatic approval, execution, next-stage start, correction, rollback, recovery, condition release, filesystem operation, Git/GitHub operation, migration, purchase, application, learning update, external communication/transmission or publication is implemented. Protected fields cannot be edited. Persistence only uses explicitly supplied local storage; no automatic saving or migration occurs. The private-local section is informational. Existing Phase30-1 through Phase30-13 cores are unchanged.
+
+Dedicated test (unit cases and real Phase30-13 source-chain integration):
+
+```sh
+node tests/phase30PostStartStabilizationClosureExecutionApprovalCore.test.js
+```
