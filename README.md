@@ -5778,3 +5778,21 @@ Dedicated test (unit cases and real Phase30-11 source-chain integration):
 ```sh
 node tests/phase30PostStartStabilizationClosureDecisionCore.test.js
 ```
+
+## Phase30-13 Phase30 post-start stabilization closure execution preparation core
+
+Phase30-13 directly depends on Phase30-12. Only active records in `ready_for_manual_phase30_post_start_stabilization_closure_execution_preparation` with result `approve_phase30_post_start_stabilization_closure` are eligible. It validates schema/version, snapshot/body/hash consistency, safety flags, audit continuity and record version, mandatory decision confirmations and approval evidence, reference IDs/upstream fields, and the Phase30-11 through Phase29 terminal source chain. Errors, unresolved issues, critical issues and blocking conditions must be empty arrays. Duplicate active preparations for the same closure decision ID are rejected.
+
+Manual API follows Phase29-13: `createStabilizationClosureExecutionPreparationRecord` → `startStabilizationClosureExecutionPreparation` → `beginStabilizationClosureExecutionPreparation` → `updateStabilizationClosureExecutionPreparation` → `submitStabilizationClosureExecutionPreparationReview` → `completeStabilizationClosureExecutionPreparation`. Every operation requires performedBy, reason, explicitConfirmation === true and valid performedAt. Records retain the preparation target/scope/operator, reviewer/responsible person, decision/readiness/evidence/runtime/test/safety/prohibition confirmations, Git/working-tree/alignment evidence, rollback/recovery points, preparation items, basis, notes and issue arrays. Protected fields cannot be edited.
+
+Normal completion requires all confirmations (explicit false preparation inputs are rejected), preparationSummary, preparationAfterSnapshot, completedBy and valid completedAt, with no errors or unresolved/critical/blocking issues. It records `phase30_post_start_stabilization_closure_execution_preparation_ready` with result `ready_phase30_post_start_stabilization_closure_execution_preparation`. Conditional, failed, incomplete and blocked results require supporting details and cannot hand off. Warnings may remain. Conditions are never automatically released.
+
+A separate `handoffToStabilizationClosureExecutionApproval` records `ready_for_manual_phase30_post_start_stabilization_closure_execution_approval`, rechecking confirmations and issues. NEXT_STAGE is `manual_phase30_post_start_stabilization_closure_execution_approval`: the intended Phase30-14 closure execution approval, matching Phase29-14 and Phase27-21. No approval or execution is started. `invalidateStabilizationClosureExecutionPreparation` is manual. Expired sources/records are rejected without a clock-driven mutation API.
+
+Private Local only / PLAN_ONLY / protectedMode are maintained. No automatic preparation/decision/review/followup/acceptance/start/approval/advance/handoff, correction, rollback, recovery, condition release, filesystem/data mutation, Git/GitHub operation, purchase, application, learning update, external communication/transmission or public/Pages publication occurs. Persistence helpers use caller-supplied local storage. The compact snapshot follows Phase29-13 by omitting the nested source; source chain and reference equality are independently revalidated on operations and loading. Invalidated records remain readable for audit. The private-local section is informational. Existing Phase30-1 through Phase30-12 cores are unchanged.
+
+Dedicated test (unit cases and real Phase30-12 source-chain integration):
+
+```sh
+node tests/phase30PostStartStabilizationClosureExecutionPreparationCore.test.js
+```
