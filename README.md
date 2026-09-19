@@ -5882,3 +5882,15 @@ Dedicated test (unit cases and real Phase30-17 source-chain integration):
 ```sh
 node tests/phase30PostStartStabilizationClosureAcceptanceCore.test.js
 ```
+
+## Phase30-19 Phase30 final closure core
+
+`phase30-19-phase30-final-closure-core.js` accepts only normal Phase30-18 acceptance records explicitly handed off as `ready_for_manual_phase30_final_closure`. It reuses Phase30-18 record validation and checks acceptance evidence, phase/stage/status/result, safety, snapshot/body/hash, audit/history, before-snapshot references and the recursive upstream chain. Conditional, rejected, failed, incomplete, blocked, inactive, tampered and inconsistent sources cannot close Phase30.
+
+Call `createPhase30FinalClosureRecord(source, input, operation, options, existing)` with string `closureSummary`, `completionCriteria`, `finalConfirmations`, and an explicit human operation (`performedBy`, `reason`, valid `performedAt`, `explicitConfirmation: true`). `existing` must contain the complete local closure ledger, including completed, invalidated and expired records; any prior closure for the acceptance ID blocks another closure. Candidate extraction and validation never close anything. The single manual creation returns a frozen management record with `phase30FinalClosureStatus: phase30_final_closed`, `phase30Status: closed`, `phase30Completed: true`, `terminalStage: true` and `NEXT_STAGE` / `nextStage: null`. There is no onward transition API.
+
+Private Local only / PLAN_ONLY / protectedMode remain fixed. Sources and their audit/reference chains are copied without modification. This core has no persistence, filesystem, network, Git/GitHub, external execution or next-Phase start operations, and performs no automatic closure, correction, rollback, recovery, condition release, migration, purchase, application or learning update. Snapshot hashes follow the existing consistency-check convention; they are not cryptographic authentication. The private-local section is informational. Phase30-1 through Phase30-18 are unchanged.
+
+```sh
+node tests/phase30FinalClosureCore.test.js
+```
