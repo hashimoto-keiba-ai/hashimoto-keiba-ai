@@ -5894,3 +5894,19 @@ Private Local only / PLAN_ONLY / protectedMode remain fixed. Sources and their a
 ```sh
 node tests/phase30FinalClosureCore.test.js
 ```
+
+## Phase31-1 purpose, scope, and safety-boundary definition core
+
+`phase31-1-purpose-scope-safety-boundary-definition-core.js` defines the next phase only after explicit confirmation of a normal Phase30-19 `phase30_final_closed` record. It supports CommonJS and `HashimotoPhase311PurposeScopeSafetyBoundaryDefinition` in the browser, and reports a missing Phase30-19 dependency clearly. Eligibility validates closed/completed terminal status, result, active lifetime, source/body/hash/version, safety, audit history and the recursive Phase30-18-and-earlier reference chain. Phase30 remains closed with no next stage; it is never reopened or changed.
+
+The manual API follows Phase30-1: `createDefinition` → `startDefinition` (definition work only) → optional `updateDefinition` → `submitDefinitionForReview` → `completeDefinition`. Each write requires string `performedBy` / `reason`, valid `performedAt`, and `explicitConfirmation: true`. Definitions record purpose, scope, exclusions, objectives, prerequisites, start/stop conditions, prohibitions, rollback/recovery points and policies, ownership, audit/traceability requirements and issues. `SAFETY_BOUNDARY` specifies the required structured prohibition flags; `LIST_FIELDS` and `CONTENT_FIELDS` describe the input schema. Creation requires `phase30CompletionConfirmed`, `manualReviewRequired`, `humanApprovalRequired` and all safety confirmations. Supply the complete existing definition ledger explicitly; duplicate closure IDs, including invalidated definitions, are refused.
+
+Unresolved, critical or blocking issues may be recorded for manual investigation but prevent normal completion. A human may update the working definition; nothing clears conditions automatically. Normal completion requires `reviewedBy`, `reviewedAt`, `approvedBy`, `approvedAt`, `humanApprovalConfirmed: true`, and empty issue lists. It records the defined result and then `ready_for_manual_phase31_start_preparation` under the same explicit operation, matching Phase30-1. Rejected, incomplete and blocked results require their respective reason and never hand off. `NEXT_STAGE` is `manual_phase31_start_preparation`, while `phase31Started` and all automatic-start flags remain false. No Phase31-2 API is invoked or exposed.
+
+Private Local only / PLAN_ONLY / protectedMode stay fixed. Source records and their audit/reference chains are copied without mutation. No persistence, filesystem, external communication/transmission/execution, Git/GitHub, public/Pages publishing, automatic approval/correction/rollback/recovery/condition release, migration, purchase, application or learning update is implemented. `render(record)` reports status without starting any work; the private-local panel is informational. Existing Phase29/Phase30 cores and dashboard styles are unchanged.
+
+```sh
+node tests/phase31PurposeScopeSafetyBoundaryDefinitionCore.test.js
+```
+
+The full test runs the unchanged Phase30-19 regression and reuses its real final-closure fixture for Phase31-1 integration. `--unit-only` runs the focused contract, transition, safety and browser cases without the large recursive integration fixture.
