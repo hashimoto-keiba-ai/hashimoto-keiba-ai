@@ -5910,3 +5910,13 @@ node tests/phase31PurposeScopeSafetyBoundaryDefinitionCore.test.js
 ```
 
 The full test runs the unchanged Phase30-19 regression and reuses its real final-closure fixture for Phase31-1 integration. `--unit-only` runs the focused contract, transition, safety and browser cases without the large recursive integration fixture.
+
+## Phase31-2 Phase31 start preparation core
+
+`phase31-2-phase31-start-preparation-core.js` is the Phase31 開始前の手動準備段階: it records preparation only, without automatic start or approval. CommonJS and browser global `HashimotoPhase312StartPreparation` require Phase31-1. Only its active, intact `ready_for_manual_phase31_start_preparation` handoff is eligible, with the completed Phase30 final closure and recursive safety, audit, hash, version and reference chain verified. Sources are cloned and never changed.
+
+Explicit human operations create, start, update, submit, complete or invalidate the preparation record. Target, scope, schedule, owners, conditions, prerequisites, rollback/recovery points, safety boundary, issues and correction/rollback requirements are recorded. Git and test evidence are manual statements, never commands: each evidence object requires `confirmed: true`, `confirmedBy`, and `confirmedAt`; Git requires `branch` and `headCommit`, working tree requires `status` and boolean `clean`, alignment requires `mainCommit`, `originMainCommit` and consistent boolean `aligned`, tests require `summary` and boolean `passed`.
+
+Normal completion requires a manual review (`reviewedBy`, `reviewedAt`), empty issue lists, no correction/rollback requirement, clean working tree, aligned commits and passing tests. Both status and result become `ready_for_manual_phase31_start_approval`; `NEXT_STAGE` is `manual_phase31_start_approval`, matching Phase29-2/Phase30-2 naming. Rejected, incomplete and blocked results require reasons. The next-stage label is a manual destination, not authorization or execution. Private Local only, PLAN_ONLY, protectedMode, manual review and human approval requirements remain enforced. Phase31 is unstarted; no Phase31-3, Git/GitHub, network, filesystem, automatic correction/rollback/recovery or publishing operation is performed.
+
+Dedicated test: `node tests/phase31StartPreparationCore.test.js`. It includes the unchanged Phase31-1 and Phase30-19 regressions and a real recursive integration; `--unit-only` runs focused contract and browser cases.
