@@ -5960,3 +5960,26 @@ Records are deterministic for the same inputs and clock, deeply frozen, and vali
 Private Local only, PLAN_ONLY, protectedMode and all inherited safety boundaries remain enforced. Historical `phase31Started` and `manualPhase31StartCompleted` stay true to describe the source's human-recorded start; execution/automatic-verification/automatic-decision flags remain false. No automatic start, approval, correction, rollback, condition release, migration, Git/GitHub, filesystem change, external communication/transmission, Public/Pages publishing or next-phase operation occurs.
 
 Dedicated test: `node tests/phase31PostStartVerificationCore.test.js`. It runs unchanged Phase31-4/31-3/31-2/31-1 regression bodies and a real recursive Phase30 chain. `--unit-only` covers required fields, source eligibility, identities, tampering, explicit manual results, deterministic generation, storage, browser dependency and absence of side effects.
+
+## Phase31-6 Phase31 post-start verification decision record core
+
+`phase31-6-phase31-post-start-verification-decision-core.js` is the Phase31開始後検証判定記録コア. CommonJS and browser global `HashimotoPhase316PostStartVerificationDecision` require Phase31-5, with an explicit missing-dependency error. Only an active, intact source with status `ready_for_manual_phase31_post_start_verification_decision`, result `phase31_post_start_verification_passed`, and the human's positive handoff choice is eligible. Phase31-5 through Phase31-1 and the upstream chain, including identities, snapshot/hash/version, safety boundary and legal audit history, are checked without changing source records.
+
+The create, begin, update, submit, decide and invalidate APIs require explicit human identity, timestamp, reason and confirmation. Decision target/scope, operator, reviewer, responsible person, result/evidence confirmations, decision basis and notes follow Phase30-6 naming. Git/working-tree/main alignment and required test evidence use the existing structured human-confirmation format. Rollback/recovery points must match Phase31-5. New issues and boolean correction/rollback requirements can be recorded during decision review.
+
+Every decision requires an explicit `result`, `canProceedToNextStage`, `nextStageCandidate`, `decisionSummary`, `decisionReason`, `decidedBy`, `decidedAt`, `reviewedBy` and `reviewedAt`. The core validates consistency and never selects a decision from evidence. Phase30-6 result/status names are retained with Phase31 prefixes:
+
+| Human intent | Explicit result | Next-stage candidate | Requirements |
+| --- | --- | --- | --- |
+| Proceed | `approve_phase31_post_start_verification` | `manual_phase31_post_start_acceptance` | Positive handoff choice, no issues or correction/rollback need, clean tree, aligned commits and passing tests |
+| Hold | `phase31_post_start_verification_decision_incomplete` or `phase31_post_start_verification_decision_blocked` | `manual_hold` | Negative handoff choice and human reason |
+| Return for correction | `reject_phase31_post_start_verification` | `rework_required` | Negative handoff choice, `correctionRequired: true`, nonempty string-array `rejectionReasons` |
+| Consider rollback | `reject_phase31_post_start_verification` or `phase31_post_start_verification_decision_blocked` | `rollback_review_required` | Negative handoff choice, `rollbackRequired: true`; rejection additionally requires reasons |
+
+Conditional approval uses `conditionally_approve_phase31_post_start_verification` with `manual_hold`, a negative handoff choice, and conditions/reason/owner/deadline/verification method/release criteria. Conditions are never automatically released. Rejection can also remain on manual hold. Normal status is `ready_for_manual_phase31_post_start_acceptance` and `NEXT_STAGE` is `manual_phase31_post_start_acceptance`; neither starts the next stage. The generic `decision`, result, status, next-stage choice and audit event must agree.
+
+Inputs remain unchanged; generated records are deeply frozen and deterministic for identical inputs and clock. Timestamps default to the human's `performedAt`; optional `options.now` supplies explicit expiry context. Expiry-bearing sources are excluded without clock context. Duplicate sources remain blocked after invalidation/expiry. Historical own invalidated/expired records may be retained for audit, preserving recorded decisions and choices, but cannot transition. Save/load uses only explicitly supplied storage and does not persist automatically.
+
+Private Local only, PLAN_ONLY, protectedMode and inherited safety boundaries remain enforced. Manual-start flags describe the existing human-recorded start. No automatic decision, approval, start, correction, rollback, recovery, condition release, data migration, Git/GitHub operation, filesystem change, external communication/transmission, Public/Pages publication or next-phase execution occurs.
+
+Dedicated test: `node tests/phase31PostStartVerificationDecisionCore.test.js`. It runs unchanged Phase31-5/31-4/31-3/31-2/31-1 regression bodies and the real recursive Phase30 chain. `--unit-only` covers contracts, all manual outcomes, required inputs, source identity and safety checks, tampering, expiry, immutability, deterministic generation, storage, browser dependency and absence of prohibited side effects.
