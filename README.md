@@ -6136,3 +6136,59 @@ Windows / Node.js validation:
 - Default invocation runs both. Integration runs sequential isolated foreground workers with progress, the real Phase30-19 anchor, unchanged Phase31-1 through 16 unit tests and the real Phase31-1 through 17 chain. Temporary fixtures are removed after completion. `--checkpoint-dir <directory>` enables explicit code/fixture-hash checked resumption. For stages 12 through 17, the new harness caches successful real upstream integrity checks by SHA-256 of the exact source JSON and explicit clock. Changed bytes or clocks trigger real validation again; the unchanged unit suites execute before this cache is installed. This avoids repeating identical expensive recursive checks within a worker. Only the test harness uses processes or temporary files; the product core does not.
 
 The Private Local page loads this core immediately after Phase31-16, without starting a decision automatically.
+
+## Phase31-18 Post-Start Stabilization Closure Acceptance Core
+
+Phase31-18 accepts a Phase31-17 record with result
+`approve_phase31_post_start_stabilization_closure_post_execution_verification`,
+status `ready_for_manual_phase31_post_start_stabilization_closure_acceptance`,
+and an explicit audited human handoff. It delegates integrity checks to the real
+Phase31-17 validator, including the Phase31-16 and earlier references. Normal
+acceptance requires clean Git evidence consistent with the source, passing test
+evidence, matching rollback and recovery points, clear issue lists, and explicit
+confirmation that no unauthorized operations occurred.
+
+The human operations are create, begin, update, submit for review, decide,
+invalidate, and hand off. Every transition records `performedBy`, `performedAt`,
+`reason`, and `explicitConfirmation=true`. The five outcomes are normal acceptance,
+conditional acceptance, rejection, incomplete acceptance, and blocked acceptance.
+Conditional acceptance records the condition, reason, owner, future deadline,
+verification method, and release criteria. Rejection, incomplete acceptance, and
+blocked acceptance retain the reason, impact, actions, and response owner.
+
+Normal acceptance sets status `phase31_post_start_stabilization_closure_accepted`
+with `canProceedToNextStage=false`. A separate
+`handoffToPhase31FinalClosure` operation revalidates the record and sets
+`ready_for_manual_phase31_final_closure` with `canProceedToNextStage=true`.
+The next stage is Phase31-19 **Phase31 Final Closure**, identified by
+`manual_phase31_final_closure`. Its entry requires a valid normal acceptance
+with this explicit handoff and a fresh check of the reference chain, audit,
+safety, issues, and record validity. Handoff only records eligibility.
+
+The local storage key is
+`hashimoto.phase31.18.postStartStabilizationClosureAcceptanceRecords`
+with schema `31.18.1`. Save and load validate the records and return frozen
+results. Save uses an explicit synchronous local storage adapter. An existing
+record must be retained unchanged or replaced by exactly one legal next revision.
+Save each operation in order once the record has been persisted. Callers should
+serialize writers sharing an adapter because localStorage has no atomic
+compare-and-swap across browser contexts. Time comes from the human operation
+or a supplied clock. Text timestamps use ISO 8601 with an explicit offset.
+Date-only values are UTC.
+
+Phase31-18 inherits all Phase31-17 safety settings, including Private Local,
+`planOnly=true`, `protectedMode=true`, and `privateLocalOnly=true`. Its
+acceptance and handoff are local management records. Git and test evidence
+reflect human reports. FNV hashes check record consistency and provide no
+cryptographic proof of authenticity.
+
+Run on Windows with Node.js:
+
+- `node tests/phase31PostStartStabilizationClosurePostExecutionVerificationDecisionAcceptanceCore.test.js`
+- Add `--unit-only` or `--integration-only` to run either suite separately.
+- For resumable integration use `--integration-only --checkpoint-dir <dedicated-directory>`.
+  Resumption checks the JavaScript code hash and the last fixture hash.
+  Integration reuses the Phase31-17 isolated workers through stage 17 and runs
+  the real Phase31-17 validator in stage 18. Test-only caches reuse successful
+  validation for the same source JSON and explicit clock within a worker.
+  Successful runs remove test fixtures and checkpoint metadata.
