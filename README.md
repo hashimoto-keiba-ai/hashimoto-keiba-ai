@@ -6192,3 +6192,55 @@ Run on Windows with Node.js:
   the real Phase31-17 validator in stage 18. Test-only caches reuse successful
   validation for the same source JSON and explicit clock within a worker.
   Successful runs remove test fixtures and checkpoint metadata.
+
+## Phase31-19 Phase31 Final Closure Core
+
+Phase31-19 is the terminal management stage of Phase31. It accepts a Phase31-18
+record with result `accept_phase31_post_start_stabilization_closure`, status
+`ready_for_manual_phase31_final_closure`, and an explicit audited human handoff.
+The actual Phase31-18 validator verifies the upstream snapshots, references,
+chronology, safety, and audit chain. Normal closure requires matching Git and
+rollback/recovery evidence, a clean working tree, main/origin-main alignment,
+passing test evidence, clear issue lists, and confirmation of no unauthorized
+operations.
+
+Create, begin, update, submit for review, decide, and invalidate are explicit
+human operations. Each records `performedBy`, `performedAt`, `reason`, and
+`explicitConfirmation=true`. The five outcomes are normal closure, conditional
+closure, failure, incomplete closure, and blocked closure. Conditional closure
+requires a condition, reason, owner, future deadline, verification method, and
+release criteria. Failure, incomplete closure, and blocked closure require a
+reason, impact, actions, and response owner.
+
+The result `complete_phase31_final_closure` sets status `phase31_final_closed`
+and `phase31Completed=true` after explicit final approval. Every outcome keeps
+`canProceedToNextStage=false`, `nextStage=null`, and `terminalStage=true`.
+Invalidation clears the active completion flag and preserves the historical
+decision and audit trail. `getPhase31FinalClosureResult` provides a frozen
+summary after validating the record.
+
+Private Local, `planOnly=true`, `protectedMode=true`, and `privateLocalOnly=true`
+remain in force. Phase31 completion records a human management decision.
+Phase32, live predictions, and live operation require separate authorization.
+Before live predictions, confirm the approved operational scope, input data
+readiness, test evidence, safety controls, monitoring, stop procedures, and
+recovery responsibility with the human operator. Git and test evidence reflect
+human reports. FNV hashes check consistency and provide no cryptographic proof
+of authenticity.
+
+Storage uses `hashimoto.phase31.19.finalClosureRecords` and schema `31.19.1`.
+The caller supplies a synchronous local storage adapter. Existing records must
+be retained unchanged or saved one valid audited revision at a time. Save
+rejects corrupt stores, stale revisions, skipped revisions, and deletions.
+Shared storage writers must be serialized by the caller because localStorage
+has no atomic compare-and-swap between browser contexts. Time comes from a
+human timestamp or an explicit clock. Text timestamps use ISO 8601 with an
+explicit offset, and date-only values are UTC.
+
+- Run `node tests/phase31FinalClosureCore.test.js` on Windows with Node.js.
+- Add `--unit-only` or `--integration-only` to run either suite separately.
+- Add `--checkpoint-dir <dedicated-directory>` for resumable integration.
+  The runner verifies the code hash and last fixture hash on resume, runs
+  isolated workers with real validators, and removes test fixtures on success.
+  Within a worker, a successful real validation can be reused for identical
+  source JSON and clock values.
