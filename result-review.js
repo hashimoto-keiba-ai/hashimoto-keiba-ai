@@ -1,4 +1,5 @@
 (function (global) {
+  const trial = typeof module !== "undefined" ? require("./prediction-trial-core.js") : global.HashimotoPredictionTrial;
   const COURSES = [
     "京都競馬場",
     "阪神競馬場",
@@ -92,28 +93,15 @@
     return { ...horse, zone: zone.zone, zoneLabel: zone.label };
   }
 
-  function parseResultText(text) {
-    const lines = String(text || "")
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean);
-    if (!lines.length) return [];
+  function parseResultText(text, identity = {}) {
+    return trial.normalizeRows(trial.parseCsv(text, "result"), identity, {result:true}).map(formatResultRow);
+  }
 
-    const first = csvSplit(lines[0]);
-    const hasHeader = first.some((cell) => /着順|馬名|人気|オッズ|騎手|調教師|finish|name/i.test(cell));
-    const headers = hasHeader
-      ? first.map((cell) => cell.trim())
-      : ["finish", "number", "name", "popularity", "odds", "jockey", "trainer", "cornerPosition", "lap", "payout", "trifectaPayout"];
-    const dataLines = hasHeader ? lines.slice(1) : lines;
-
-    return dataLines.map((line) => {
-      const cells = csvSplit(line);
-      const row = {};
-      headers.forEach((header, index) => {
-        row[header] = cells[index] ?? "";
-      });
-      return mapResult(row);
-    });
+  function formatResultRow(row) {
+    const zone = row.popularity == null ? {zone:"U",label:"人気不明"} : getPopularityZone(row.popularity);
+    return {...row, jockey:valueOf(row.jockey), trainer:valueOf(row.trainer),
+      lap:valueOf(row.lap), payout:valueOf(row.payout), trifectaPayout:valueOf(row.trifectaPayout),
+      zone:zone.zone, zoneLabel:zone.label};
   }
 
   function lineList(items, emptyText = "- 未入力") {
@@ -138,20 +126,10 @@
     return top3.map((horse) => horse.zone || "D").join("→") || "--";
   }
 
-  function detectHit(predictionMarkdown, top3) {
-    const text = String(predictionMarkdown || "");
-    if (!text || !top3.length) return "要手動判定";
-    const allTop3Mentioned = top3.every((horse) => text.includes(horse.name));
-    const winnerMentioned = text.includes(top3[0].name);
-    if (allTop3Mentioned && /三連単|フォーメーション/.test(text)) return "的中候補";
-    if (winnerMentioned) return "一部的中";
-    return "不的中";
-  }
-
   function buildRace(input) {
     return {
       date: valueOf(input.date),
-      course: COURSES.includes(input.course) ? input.course : valueOf(input.course, "京都競馬場"),
+      course: trial.courseName(input.course) || "京都競馬場",
       raceNumber: valueOf(input.raceNumber),
       raceName: valueOf(input.raceName),
       condition: valueOf(input.condition),
@@ -168,24 +146,28 @@
     if (mode === "win5") return generateWin5Review(input);
 
     const race = buildRace(input);
-    const results = (input.results || parseResultText(input.resultText)).sort((a, b) => a.finish - b.finish);
-    const top3 = [
-      input.firstHorse ? mapResult({ ...input.firstHorse, finish: 1 }) : results[0],
-      input.secondHorse ? mapResult({ ...input.secondHorse, finish: 2 }) : results[1],
-      input.thirdHorse ? mapResult({ ...input.thirdHorse, finish: 3 }) : results[2]
-    ].filter(Boolean);
+    const identity = trial.raceIdentity({date:input.date,course:input.course,raceNumber:input.raceNumber}, Boolean(input.snapshot));
+    const rows = input.results
+      ? trial.normalizeRows(input.results,identity,{result:true}).map(formatResultRow)
+      : parseResultText(input.resultText,identity);
+    const results = [...rows].sort((a,b) => (a.finish ?? Infinity) - (b.finish ?? Infinity));
+    const top3 = [1,2,3].map((rank,index) => {
+      const manual = [input.firstHorse,input.secondHorse,input.thirdHorse][index];
+      if (manual && !input.snapshot) return mapResult({...manual,finish:rank});
+      return results.find(horse => horse.finish === rank);
+    }).filter(Boolean);
     const structure = buildTrifectaStructure(top3);
-    const hit = detectHit(input.predictionMarkdown, top3);
+    const hit = trial.matchTrifecta(input.snapshot, identity, rows, input.resultStatus);
     const savePath = buildResultFilePath(race, mode);
     const markdown = String(input.predictionMarkdown || "");
 
     const sections = [
       `## ${TEMPLATE_SECTIONS[0]}\n- 開催日: ${race.date}\n- 競馬場: ${race.course}\n- レース番号: ${race.raceNumber}\n- レース名: ${race.raceName}\n- 1着馬: ${top3[0] ? formatHorse(top3[0]) : "未入力"}\n- 2着馬: ${top3[1] ? formatHorse(top3[1]) : "未入力"}\n- 3着馬: ${top3[2] ? formatHorse(top3[2]) : "未入力"}\n- 払戻金: ${valueOf(input.payout || top3[0]?.payout)}\n- 三連単配当: ${valueOf(input.trifectaPayout || top3[0]?.trifectaPayout)}`,
-      `## ${TEMPLATE_SECTIONS[1]}\n- 条件: ${race.condition}\n- コース: ${race.surface}${race.distance}\n- 馬場: ${race.going}\n- 天候: ${race.weather}\n- ペース: ${race.pace}\n- 着順と4角位置:\n${lineList(results.slice(0, 10).map((horse) => `${horse.finish}着 ${formatHorse(horse)} / 4角${horse.cornerPosition}番手 / ラップ ${horse.lap}`))}`,
+      `## ${TEMPLATE_SECTIONS[1]}\n- 条件: ${race.condition}\n- コース: ${race.surface}${race.distance}\n- 馬場: ${race.going}\n- 天候: ${race.weather}\n- ペース: ${race.pace}\n- 着順と4角位置:\n${lineList(results.slice(0, 10).map((horse) => `${horse.finish == null ? ({withdrawn:"取消",excluded:"除外",dnf:"中止・失格"})[horse.status] : horse.finish + "着"} ${formatHorse(horse)} / 4角${horse.cornerPosition ?? "--"}番手 / ラップ ${horse.lap}`))}`,
       `## ${TEMPLATE_SECTIONS[2]}\n- 本命◎: ${extractPredictionItem(markdown, "◎")}\n- 対抗○: ${extractPredictionItem(markdown, "○")}\n- 単穴▲: ${extractPredictionItem(markdown, "▲")}\n- 穴☆: ${extractPredictionItem(markdown, "☆")}\n- 危険人気馬: ${extractPredictionItem(markdown, "危険人気馬")}\n- 神穴候補: ${extractPredictionItem(markdown, "神穴候補")}\n- 🤫観測馬: ${extractPredictionItem(markdown, "🤫観測馬")}\n- 三連単フォーメーション: ${extractPredictionItem(markdown, "三連単フォーメーション")}\n- 想定4角位置: ${extractPredictionItem(markdown, "想定4角位置")}\n- ペース想定: ${extractPredictionItem(markdown, "ペース想定")}`,
       `## ${TEMPLATE_SECTIONS[3]}\n- 判定: ${hit}\n- 人気ゾーン判定: A=1〜3人気 / B=4〜6人気 / C=7〜10人気 / D=11人気以下\n${lineList(top3.map((horse) => `${horse.finish}着 ${horse.zone}ゾーン ${formatHorse(horse)}`))}\n- 三連単構造: ${structure}`,
-      `## ${TEMPLATE_SECTIONS[4]}\n- 勝因: ${top3[0] ? `${formatHorse(top3[0])} が4角${top3[0].cornerPosition}番手から展開に合致。` : "未入力"}\n- 敗因: 事前印、人気ゾーン、4角位置、ペース想定のズレを再確認。\n- 騎手・調教師: ${lineList(top3.map((horse) => `${formatHorse(horse)} / 調教師 ${horse.trainer}`))}`,
-      `## ${TEMPLATE_SECTIONS[5]}\n- 競馬場別OS更新: ${race.course} の ${race.going} 馬場補正を更新。\n- 距離別OS更新: ${race.distance} の勝ち筋を ${structure} 構造で記録。\n- 芝/ダート別OS更新: ${race.surface} の脚質・4角位置傾向を反映。\n- ペース別OS更新: ${race.pace} の前後半バランスを補正。\n- 4角位置補正: 上位馬の4角位置 ${top3.map((horse) => `${horse.cornerPosition}番手`).join(" / ") || "--"} を次回へ反映。\n- 騎手・調教師補正: ${lineList(top3.map((horse) => `${horse.jockey} / ${horse.trainer}`))}\n- 次回予想への反映内容: 人気ゾーン ${structure}、馬場 ${race.going}、ペース ${race.pace} を重みへ追加。`,
+      `## ${TEMPLATE_SECTIONS[4]}\n- 勝因: ${top3[0] ? `${formatHorse(top3[0])} が4角${top3[0].cornerPosition ?? "--"}番手から展開に合致。` : "未入力"}\n- 敗因: 事前印、人気ゾーン、4角位置、ペース想定のズレを再確認。\n- 騎手・調教師: ${lineList(top3.map((horse) => `${formatHorse(horse)} / 調教師 ${horse.trainer}`))}`,
+      `## ${TEMPLATE_SECTIONS[5]}\n- 競馬場別OS更新: ${race.course} の ${race.going} 馬場補正の確認候補。\n- 距離別OS更新: ${race.distance} の比較候補を ${structure} 構造で記録。\n- 芝/ダート別OS更新: ${race.surface} の脚質・4角位置傾向の確認候補。\n- ペース別OS更新: ${race.pace} の前後半バランスの確認候補。\n- 4角位置補正: 上位馬の4角位置 ${top3.map((horse) => `${horse.cornerPosition ?? "--"}番手`).join(" / ") || "--"} を次回確認する候補。\n- 騎手・調教師補正: ${lineList(top3.map((horse) => `${horse.jockey} / ${horse.trainer}`))}\n- 次回予想への反映内容: 人気ゾーン ${structure}、馬場 ${race.going}、ペース ${race.pace} を今後の検証候補として記録。`,
       `## ${TEMPLATE_SECTIONS[6]}\n- 学習内容: ${structure} の三連単構造、${race.course} ${race.distance}、${race.pace} ペースを保存。\n- 保存先: ${savePath}\n- 保存ログ: ${race.date} ${race.course} ${race.raceNumber} ${race.raceName} / 判定 ${hit} / 三連単構造 ${structure}`
     ];
 

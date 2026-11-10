@@ -91,7 +91,7 @@ assert.ok(prediction.markdown.includes("### WIN5候補"), "WIN5候補をMarkdown
 assert.ok(prediction.markdown.includes("### 資金配分表"), "資金配分表をMarkdownに保存する");
 assert.strictEqual(
   prediction.savePath,
-  "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ/事前予想/2026-06-14_11R_AI指数テスト.md",
+  "東京競馬場/事前予想/2026-06-14_11R_AI指数テスト.md",
   "保存先は各競馬場/事前予想/になる"
 );
 
