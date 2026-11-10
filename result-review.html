@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ja">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>橋本競馬AI 結果検証生成</title>
@@ -57,8 +58,11 @@
             <span>CSV未入力時の補助入力</span>
           </div>
           <div class="form-grid">
+            <label>1着馬番<input name="firstHorseNumber" type="number" min="1" max="18"></label>
             <label>1着馬<input name="firstHorseName" placeholder="⑦ダイヤモンドノット"></label>
+            <label>2着馬番<input name="secondHorseNumber" type="number" min="1" max="18"></label>
             <label>2着馬<input name="secondHorseName" placeholder="③サンプルホース"></label>
+            <label>3着馬番<input name="thirdHorseNumber" type="number" min="1" max="18"></label>
             <label>3着馬<input name="thirdHorseName" placeholder="⑪アナホース"></label>
           </div>
 
@@ -66,17 +70,21 @@
             <h3>事前予想Markdown</h3>
             <span>本命◎、対抗○、単穴▲、穴☆、危険人気馬、神穴候補、🤫観測馬を比較</span>
           </div>
+          <label>事前確定予想JSON<input id="confirmed-prediction-file" type="file" accept=".json,application/json"></label>
+          <label>結果状態<select name="resultStatus"><option>未確定</option><option>確定</option><option>不成立</option><option>同着・返還要確認</option></select></label>
+          <p>三連単は確定JSONと馬番の順序で照合します。Markdownは比較メモ用です。</p>
           <textarea name="predictionMarkdown" rows="7" placeholder="事前予想Markdownを貼り付け"></textarea>
 
           <div class="sub-heading">
             <h3 id="result-input-title">結果CSVまたは手入力</h3>
             <span id="result-input-help">着順,馬番,馬名,人気,オッズ,騎手,調教師,4角位置,ラップ,払戻金,三連単配当</span>
           </div>
-          <textarea name="resultText" rows="9" placeholder="着順,馬番,馬名,人気,オッズ,騎手,調教師,4角位置,ラップ,払戻金,三連単配当&#10;1,7,ダイヤモンドノット,2,4.8,横山武,橋本厩舎,3,11.8-11.4-11.9,12,300円,85,400円&#10;2,3,サンプルホース,5,13.2,川田,山田厩舎,6,11.8-11.4-11.9,,&#10;3,11,アナホース,8,28.4,坂井,佐藤厩舎,9,11.8-11.4-11.9,,"></textarea>
+          <textarea name="resultText" rows="9" placeholder="着順,馬番,馬名,人気,オッズ,騎手,調教師,4角位置,ラップ,払戻金,三連単配当&#10;1,7,ダイヤモンドノット,2,4.8,横山武,橋本厩舎,3,11.8-11.4-11.9,&quot;12,300円&quot;,&quot;85,400円&quot;&#10;2,3,サンプルホース,5,13.2,川田,山田厩舎,6,11.8-11.4-11.9,,&#10;3,11,アナホース,8,28.4,坂井,佐藤厩舎,9,11.8-11.4-11.9,,"></textarea>
 
+          <p id="review-status" role="status" aria-live="polite"></p>
           <div class="form-actions">
             <button type="submit">AI結果検証生成</button>
-            <button id="run-self-learning" type="button" disabled>AI自己学習</button>
+            <button id="run-self-learning" type="button" disabled>AI自己学習（試験モードで無効）</button>
             <button id="download-markdown" type="button" disabled>Markdown保存</button>
           </div>
         </form>
@@ -107,23 +115,23 @@
         </div>
         <div class="pre-race-output-meta">
           <span>反映先一覧・更新されたOS・次回事前予想への反映内容</span>
-          <strong id="self-learning-summary">結果検証生成後に実行できます</strong>
+          <strong id="self-learning-summary">試験モードでは無効です</strong>
         </div>
-        <pre id="self-learning-output" class="markdown-output">AI自己学習を実行すると、保存対象JSONと学習ログMarkdownの一覧を表示します。</pre>
+        <pre id="self-learning-output" class="markdown-output">Private Local / PLAN_ONLY / protectedMode。試験結果は学習データに反映しません。</pre>
       </section>
     </main>
 
+    <script src="prediction-trial-core.js"></script>
     <script src="result-review.js"></script>
-    <script src="self-learning.js"></script>
     <script>
       const engine = window.HashimotoResultReview;
-      const learningEngine = window.HashimotoSelfLearning;
+      const trial = window.HashimotoPredictionTrial;
       const params = new URLSearchParams(location.search);
       const initialCourse = params.get("course") || "京都競馬場";
       const forcedWin5 = params.get("mode") === "win5";
       const courseSelect = document.getElementById("course-select");
       let latestReview = null;
-      let latestLearning = null;
+      let snapshot = null;
 
       engine.COURSES.forEach((course) => {
         const option = document.createElement("option");
@@ -148,22 +156,14 @@
 
       function collectForm(form) {
         const data = Object.fromEntries(new FormData(form).entries());
+        if (data.mode === "win5") return data;
+        data.snapshot = snapshot;
         if (!data.resultText.trim()) {
-          data.results = [data.firstHorseName, data.secondHorseName, data.thirdHorseName]
-            .filter(Boolean)
-            .map((name, index) => ({
-              finish: index + 1,
-              number: String(index + 1),
-              name,
-              popularity: 99,
-              odds: 0,
-              jockey: "--",
-              trainer: "--",
-              cornerPosition: 99,
-              lap: "--",
-              payout: data.payout,
-              trifectaPayout: data.trifectaPayout
-            }));
+          data.results = ["first","second","third"].flatMap((position,index) => {
+            const name = data[position+"HorseName"].trim();
+            const number = data[position+"HorseNumber"].trim();
+            return name || number ? [{finish:index+1,number,name}] : [];
+          });
         }
         return data;
       }
@@ -178,55 +178,59 @@
         URL.revokeObjectURL(url);
       }
 
-      function saveLearningToBrowser(pkg) {
-        const key = "hashimotoSelfLearningRecords";
-        const current = JSON.parse(localStorage.getItem(key) || "[]");
-        current.push(pkg.record);
-        localStorage.setItem(key, JSON.stringify(current));
-      }
-
-      function renderLearning(pkg) {
-        document.getElementById("self-learning-status").textContent = pkg.status;
-        document.getElementById("self-learning-summary").textContent = `${pkg.files.length}件へ反映 / ${pkg.updatedOs.join(", ")}`;
-        document.getElementById("self-learning-output").textContent = [
-          `学習完了`,
-          ``,
-          `反映先一覧`,
-          ...pkg.files.map((file) => `- ${file.path}`),
-          ``,
-          `更新されたOS`,
-          ...pkg.updatedOs.map((os) => `- ${os}`),
-          ``,
-          `次回事前予想への反映内容`,
-          `- ${pkg.nextPredictionReflection}`,
-          ``,
-          `エラー`,
-          pkg.errors.length ? pkg.errors.map((error) => `- ${error}`).join("\n") : "- なし"
-        ].join("\n");
-      }
-
       courseSelect.addEventListener("change", refreshMode);
       refreshMode();
 
-      document.getElementById("result-review-form").addEventListener("submit", (event) => {
+      const status = document.getElementById("review-status");
+      const form = document.getElementById("result-review-form");
+      const snapshotFile = document.getElementById("confirmed-prediction-file");
+
+      function clearReview() {
+        latestReview = null;
+        document.getElementById("review-output").textContent = "";
+        document.getElementById("structure-label").textContent = "未判定";
+        document.getElementById("download-markdown").disabled = true;
+      }
+
+      form.addEventListener("input", clearReview);
+      form.addEventListener("change", clearReview);
+      snapshotFile.addEventListener("change", async () => {
+        snapshot = null;
+        clearReview();
+        const file = snapshotFile.files[0];
+        if (!file) { status.textContent = "確定JSONは未選択です。"; return; }
+        try {
+          trial.requirePrivateLocal(location);
+          const json = await file.text();
+          if (snapshotFile.files[0] !== file) return;
+          clearReview();
+          snapshot = trial.readSnapshot(json);
+          status.textContent = "確定JSONを読み込みました: " + snapshot.id + "。結果側のレース情報を照合してください。";
+        } catch (error) {
+          if (snapshotFile.files[0] === file) status.textContent = error.message;
+        }
+      });
+
+      form.addEventListener("submit", event => {
         event.preventDefault();
-        latestReview = engine.generateResultReview(collectForm(event.currentTarget));
-        document.getElementById("review-output").textContent = latestReview.markdown;
-        document.getElementById("save-path-label").textContent = latestReview.savePath;
-        document.getElementById("structure-label").textContent = latestReview.trifectaStructure || latestReview.win5Structure || "生成済み";
-        document.getElementById("download-markdown").disabled = false;
-        document.getElementById("run-self-learning").disabled = false;
+        clearReview();
+        try {
+          trial.requirePrivateLocal(location);
+          const data = collectForm(form);
+          if (data.mode !== "win5" && snapshotFile.files.length && !snapshot) throw Error("確定JSONの読込を確認してください");
+          latestReview = engine.generateResultReview(data);
+          document.getElementById("review-output").textContent = latestReview.markdown;
+          document.getElementById("save-path-label").textContent = latestReview.savePath;
+          document.getElementById("structure-label").textContent = latestReview.trifectaStructure || latestReview.win5Structure || "生成済み";
+          document.getElementById("download-markdown").disabled = false;
+          status.textContent = latestReview.hitJudgment;
+        } catch (error) {
+          status.textContent = error.message;
+        }
       });
 
       document.getElementById("download-markdown").addEventListener("click", () => {
         if (latestReview) downloadMarkdown(latestReview);
-      });
-
-      document.getElementById("run-self-learning").addEventListener("click", () => {
-        if (!latestReview) return;
-        latestLearning = learningEngine.createSelfLearningPackage(latestReview.markdown);
-        saveLearningToBrowser(latestLearning);
-        renderLearning(latestLearning);
       });
     </script>
   </body>

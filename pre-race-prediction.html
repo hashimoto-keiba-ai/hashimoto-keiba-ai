@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ja">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>橋本競馬AI 事前予想</title>
@@ -66,11 +67,26 @@
 
           <textarea name="horseText" rows="12" placeholder="馬番,馬名,人気,オッズ,騎手,調教師,馬体重,馬体重増減,脚質,想定4角位置,前走着順,前走4角位置,上がり順位,距離実績,馬場実績,コース実績,血統,枠番&#10;7,ダイヤモンドハート,2,4.8,横山武,橋本厩舎,492,+4,先行,3,2,4,3,得意,良,東京○,キングマンボ,4&#10;3,サンプルホース,1,3.2,川田,山田厩舎,486,-12,逃げ,1,5,1,8,普通,良,コース不安,サンデー系,2"></textarea>
 
-          <label class="inline-check">
-            <input name="useSelfLearning" type="checkbox" value="1">
-            自己学習DB反映ON
-          </label>
+          <div class="form-grid">
+            <label>登録頭数（取消・除外を含む）<input name="fieldSize" type="number" min="3" max="18" required></label>
+            <label>情報源<input name="sourceName" placeholder="例: JRA公式" required></label>
+            <label>情報源区分<select name="sourceType"><option>公式</option><option>会員情報</option><option>補足情報</option></select></label>
+            <label>入力確認日時（JST）<input name="acquiredAt" type="datetime-local" required></label>
+            <label>予定発走日時（JST）<input name="scheduledStartAt" type="datetime-local" required></label>
+            <label>情報源の備考（任意）<input name="sourceNote" placeholder="認証情報は入力しないでください"></label>
+          </div>
+          <p>馬番・馬名・発走時刻はJRA公式情報と照合してください。取消・除外はCSVの「出走状態」に記入してください。</p>
 
+          <details>
+            <summary>補足情報源を記録する（任意）</summary>
+            <div class="form-grid">
+              <label>補足情報源<input name="supplementalSourceName" placeholder="例: netkeibaマスター"></label>
+              <label>補足情報源区分<select name="supplementalSourceType"><option>補足情報</option><option>会員情報</option><option>公式</option></select></label>
+              <label>補足情報の種類<input name="supplementalDataType" placeholder="例: タイム指数・個別ラップ"></label>
+              <label>補足情報の確認日時（JST）<input name="supplementalAcquiredAt" type="datetime-local"></label>
+            </div>
+            <p>補足値をCSVへ追加した場合も、Z指数へ自動加算しません。</p>
+          </details>
           <div class="self-learning-paths" aria-label="自己学習DB参照先">
             <span>参照先:</span>
             <code>data/self-learning/</code>
@@ -83,11 +99,16 @@
 
           <div class="form-actions">
             <button type="submit">AI事前予想生成</button>
-            <button id="full-auto-mode" type="button">Ver4.0 完全自動運転モード</button>
+            <button id="full-auto-mode" type="button">Ver4.0 AI試験予想・シミュレーション</button>
             <button id="download-markdown" type="button" disabled>Markdown保存</button>
             <button id="download-ai-csv" type="button" disabled>AI指数CSV保存</button>
           </div>
         </form>
+        <p>Private Local / PLAN_ONLY / protectedMode。自己学習DB反映は試験予想では停止しています。</p>
+        <p>確定JSONには通常の三連単候補を保存します。ゾーン別候補はシミュレーション表示用です。</p>
+        <label><input id="confirm-before-race" type="checkbox">情報源・出馬表を確認し、レース結果を見る前に確定します</label>
+        <button id="download-snapshot" type="button" disabled>発走前予想を確定・JSON保存</button>
+        <p id="trial-status" role="status" aria-live="polite"></p>
       </section>
 
       <section class="panel" aria-label="AI指数表">
@@ -101,20 +122,20 @@
         <div id="ai-index-table-output" class="ai-index-empty">CSVまたは手入力データからAI指数を計算します。</div>
       </section>
 
-      <section class="panel" aria-label="Ver4.0 完全自動運転モード">
+      <section class="panel" aria-label="Ver4.0 AI試験予想・シミュレーション">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Ver4.0 Auto Pilot</p>
-            <h2>完全自動運転モード</h2>
+            <h2>AI試験予想・シミュレーション</h2>
           </div>
           <span class="pill" id="full-auto-status-label">未実行</span>
         </div>
         <div class="ver4-summary" id="full-auto-summary">
-          <article><span>的中率</span><strong>--</strong></article>
-          <article><span>万馬券率</span><strong>--</strong></article>
+          <article><span>模擬本命上位率</span><strong>--</strong></article>
+          <article><span>模擬7番人気以下の3着以内出現率</span><strong>--</strong></article>
           <article><span>荒れ度</span><strong>--</strong></article>
         </div>
-        <div id="full-auto-output" class="ai-index-empty">AI指数計算後、完全自動運転モードを実行します。</div>
+        <div id="full-auto-output" class="ai-index-empty">AI指数計算後、AI試験予想・シミュレーションを実行します。</div>
       </section>
 
       <section class="panel" aria-label="生成結果">
@@ -133,11 +154,14 @@
       </section>
     </main>
 
+    <!-- 旧名称: Ver4.0 完全自動運転モード -->
+    <script src="prediction-trial-core.js"></script>
     <script src="pre-race-prediction.js"></script>
     <script>
       const engine = window.HashimotoPreRacePrediction;
+      const trial = window.HashimotoPredictionTrial;
       const params = new URLSearchParams(location.search);
-      const initialCourse = params.get("course") || "莠ｬ驛ｽ遶ｶ鬥ｬ蝣ｴ";
+      const initialCourse = trial.courseName(params.get("course")) || "京都競馬場";
       const courseSelect = document.getElementById("course-select");
       let latestPrediction = null;
 
@@ -156,15 +180,7 @@
       }
 
       function collectForm(form) {
-        const data = Object.fromEntries(new FormData(form).entries());
-        data.useSelfLearning = Boolean(data.useSelfLearning);
-        data.learningRecords = data.useSelfLearning
-          ? JSON.parse(localStorage.getItem("hashimotoSelfLearningRecords") || "[]")
-          : [];
-        data.selfLearningDb = data.useSelfLearning
-          ? JSON.parse(localStorage.getItem("hashimotoAiIndexSelfLearningDb") || "{}")
-          : {};
-        return data;
+        return {...Object.fromEntries(new FormData(form).entries()), strictTrial:true, useSelfLearning:false};
       }
 
       function downloadText(text, filename, type) {
@@ -186,17 +202,17 @@
         downloadText(prediction.aiIndexCsv, csvPath.split("/").pop(), "text/csv;charset=utf-8");
       }
 
-      function renderPrediction(prediction, autoFocus = false) {
+      function renderPrediction(prediction) {
         document.getElementById("prediction-output").textContent = prediction.markdown;
         document.getElementById("save-path-label").textContent = prediction.savePath;
-        document.getElementById("trifecta-point-label").textContent = `三連単 ${prediction.trifectaPointCount}点`;
+        document.getElementById("trifecta-point-label").textContent = `三連単 ${prediction.trifectaTickets.length}/${prediction.trifectaPointCount}点（不足${prediction.trifectaPointCount-prediction.trifectaTickets.length}点）`;
         document.getElementById("ai-index-count-label").textContent = `${prediction.horses.length}頭`;
         document.getElementById("ai-index-table-output").innerHTML = prediction.aiIndexHtml;
-        document.getElementById("full-auto-status-label").textContent = autoFocus ? "実行済み" : "自動生成済み";
+        document.getElementById("full-auto-status-label").textContent = "模擬値（実績ではありません）";
         document.getElementById("full-auto-output").innerHTML = prediction.fullAuto.html;
         document.getElementById("full-auto-summary").innerHTML = [
-          `<article><span>的中率</span><strong>${prediction.fullAuto.simulation.hitRate}%</strong></article>`,
-          `<article><span>万馬券率</span><strong>${prediction.fullAuto.simulation.longshotRate}%</strong></article>`,
+          `<article><span>模擬本命上位率</span><strong>${prediction.fullAuto.simulation.hitRate}%</strong></article>`,
+          `<article><span>模擬7番人気以下の3着以内出現率</span><strong>${prediction.fullAuto.simulation.longshotRate}%</strong></article>`,
           `<article><span>荒れ度</span><strong>${prediction.fullAuto.simulation.roughnessRank}</strong></article>`
         ].join("");
         document.getElementById("download-markdown").disabled = false;
@@ -208,21 +224,78 @@
 
       document.getElementById("entry-csv-file").addEventListener("change", async (event) => {
         const file = event.currentTarget.files[0];
+        clearPreview();
         if (!file) return;
-        const text = await file.text();
+        try { trial.requirePrivateLocal(location); } catch (error) {
+          status.textContent = error.message;
+          return;
+        }
+        document.querySelector("[name='horseText']").value = "";
+        const input = event.currentTarget;
+        const text = await file.text().catch(() => null);
+        if (input.files[0] !== file) return;
+        if (text === null) { status.textContent = "CSVを読み込めませんでした。"; return; }
+        clearPreview();
         document.querySelector("[name='horseText']").value = text;
         document.querySelector("[name='entryMode'][value='file']").checked = true;
       });
 
-      document.getElementById("pre-race-form").addEventListener("submit", (event) => {
-        event.preventDefault();
-        latestPrediction = engine.generatePreRacePrediction(collectForm(event.currentTarget));
-        renderPrediction(latestPrediction);
-      });
+      function clearPreview() {
+        latestPrediction = null;
+        for (const id of ["download-snapshot","download-markdown","download-ai-csv"]) {
+          document.getElementById(id).disabled = true;
+        }
+        document.getElementById("confirm-before-race").checked = false;
+        document.getElementById("prediction-output").textContent = "";
+        document.getElementById("ai-index-table-output").textContent = "";
+        document.getElementById("full-auto-output").textContent = "";
+        document.getElementById("full-auto-summary").textContent = "";
+        document.getElementById("trial-status").textContent = "未確定です。入力を確認して予想を生成してください。";
+      }
 
-      document.getElementById("full-auto-mode").addEventListener("click", () => {
-        latestPrediction = engine.generatePreRacePrediction(collectForm(document.getElementById("pre-race-form")));
-        renderPrediction(latestPrediction, true);
+      const form = document.getElementById("pre-race-form");
+      const status = document.getElementById("trial-status");
+      form.addEventListener("input", clearPreview);
+      form.addEventListener("change", clearPreview);
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        clearPreview();
+        try {
+          trial.requirePrivateLocal(location);
+          latestPrediction = engine.generatePreRacePrediction(collectForm(form));
+          renderPrediction(latestPrediction);
+          document.getElementById("download-snapshot").disabled = false;
+          status.textContent = "予想を生成しました。入力と不足項目を確認してください。";
+        } catch (error) {
+          status.textContent = error.message;
+        }
+      });
+      document.getElementById("full-auto-mode").addEventListener("click", () => form.requestSubmit());
+
+      document.getElementById("download-snapshot").addEventListener("click", () => {
+        if (!latestPrediction) return;
+        try {
+          trial.requirePrivateLocal(location);
+          const data = collectForm(form);
+          const jst = value => value ? value + "+09:00" : "";
+          const importMethod = ({file:"CSV",paste:"貼り付け",manual:"手入力"})[data.entryMode];
+          const supplementalSources = data.supplementalSourceName?.trim() ? [{
+            sourceName:data.supplementalSourceName, sourceType:data.supplementalSourceType,
+            dataType:data.supplementalDataType || "補足評価", acquiredAt:jst(data.supplementalAcquiredAt), importMethod
+          }] : [];
+          const record = trial.createSnapshot(latestPrediction, {
+            ...data, acquiredAt:jst(data.acquiredAt), scheduledStartAt:jst(data.scheduledStartAt),
+            importMethod, supplementalSources,
+            explicitConfirmation:document.getElementById("confirm-before-race").checked
+          }, new Date().toISOString());
+          const filename = latestPrediction.savePath.split("/").pop().replace(/\.md$/, "");
+          downloadText(JSON.stringify(record, null, 2), filename + "_" + record.confirmedAt.replace(/[:.]/g,"-") + ".json", "application/json;charset=utf-8");
+          status.textContent = "確定JSONのダウンロードを開始しました。保存先でファイルを確認してください。";
+          document.getElementById("download-snapshot").disabled = true;
+          document.getElementById("confirm-before-race").checked = false;
+        } catch (error) {
+          status.textContent = error.message;
+        }
       });
 
       document.getElementById("download-markdown").addEventListener("click", () => {
