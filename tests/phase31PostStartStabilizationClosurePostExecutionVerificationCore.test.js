@@ -221,9 +221,8 @@ function runIntegrationWorker(){
  const stage=Number(process.argv[process.argv.indexOf('--integration-worker')+1]),inputPath=process.argv[process.argv.indexOf('--integration-worker')+2],outputPath=process.argv[process.argv.indexOf('--integration-worker')+3];
  assert(Number.isInteger(stage)&&stage>=0&&stage<=16);
  if(stage===0){
-  const file=require.resolve('./phase30FinalClosureCore.test.js'),box={require:createRequire(file),__dirname:path.dirname(file),console};
-  vm.runInNewContext(fs.readFileSync(file,'utf8')+'\nglobalThis.anchor=final.record;',box);
-  fs.writeFileSync(outputPath,JSON.stringify(box.anchor));console.log('Real Phase30-19 anchor: PASS');return;
+  const anchor=require("./phase30-final-closure-fixture").buildRealClosure();
+  fs.writeFileSync(outputPath,JSON.stringify(anchor));console.log('Real Phase30-19 anchor: PASS');return;
  }
  const tests=['phase31PurposeScopeSafetyBoundaryDefinitionCore.test.js','phase31StartPreparationCore.test.js','phase31StartApprovalCore.test.js','phase31StartExecutionCore.test.js','phase31PostStartVerificationCore.test.js','phase31PostStartVerificationDecisionCore.test.js','phase31PostStartVerificationAcceptanceCore.test.js','phase31PostStartStabilizationReviewCore.test.js','phase31PostStartStabilizationDecisionCore.test.js','phase31PostStartStabilizationFollowupCore.test.js','phase31PostStartStabilizationClosureReviewCore.test.js','phase31PostStartStabilizationClosureDecisionCore.test.js','phase31PostStartStabilizationClosureExecutionPreparationCore.test.js','phase31PostStartStabilizationClosureExecutionApprovalCore.test.js','phase31PostStartStabilizationClosureExecutionCore.test.js','phase31PostStartStabilizationClosurePostExecutionVerificationCore.test.js'];
  const actions=[

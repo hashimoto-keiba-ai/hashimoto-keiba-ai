@@ -2,13 +2,10 @@
 const assert=require("assert"),fs=require("fs"),vm=require("vm"),path=require("path"),{createRequire}=require("module");
 const real=require("../phase31-1-purpose-scope-safety-boundary-definition-core.js");
 const coreCode=fs.readFileSync(require.resolve("../phase31-1-purpose-scope-safety-boundary-definition-core.js"),"utf8");
-const previousPath=require.resolve("./phase30FinalClosureCore.test.js"),previous=fs.readFileSync(previousPath,"utf8");
+const {buildClosure,buildRealClosure}=require("./phase30-final-closure-fixture");
 const copy=v=>JSON.parse(JSON.stringify(v));
 const NOW="2027-02-01T00:00:00Z",options={now:()=>NOW},human={performedBy:"human",reason:"manual Phase31 definition",explicitConfirmation:true,performedAt:NOW};
-// The unit fixture keeps real Phase30-19 and Phase30-18 contracts, isolating only
-// the older validator already isolated in their existing unit tests.
-const fixture={require:createRequire(previousPath),__dirname:path.dirname(previousPath),console:{log:()=>{}}};
-vm.runInNewContext(previous.split("// Real recursive validators")[0]+"\nglobalThis.closureApi=core;globalThis.closureRecord=record;",fixture);
+const fixture=buildClosure();
 let forbiddenCalls=0;
 const forbidden=()=>{forbiddenCalls++;throw Error("external or automatic operation forbidden")};
 function load(dependency=fixture.closureApi){
@@ -94,11 +91,7 @@ assert.throws(()=>load(null),/Phase30-19/);
 console.log("Phase31-1 unit and browser cases: PASS");
 
 if(!process.argv.includes("--unit-only")){
- // Run the unchanged Phase30-19 regression in full, then reuse its real final
- // closure for this integration. All recursive upstream validators remain real.
- const integration={require:createRequire(previousPath),__dirname:path.dirname(previousPath),console};
- vm.runInNewContext(previous+"\nglobalThis.finalClosure=final.record;",integration);
- const actual=integration.finalClosure,before=JSON.stringify(actual);
+ const actual=buildRealClosure(),before=JSON.stringify(actual);
  assert(real.validatePhase3019Eligibility(actual).valid);
  let r=real.createDefinition(actual,input(),human,options,[]);assert(r.created,r.reasons.join());
  r=real.startDefinition(r.record,human,options);assert(r.transitioned);
