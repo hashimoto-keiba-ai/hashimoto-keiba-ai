@@ -123,6 +123,8 @@
 
     <script src="prediction-trial-core.js"></script>
     <script src="result-review.js"></script>
+    <script src="result-review-database.js"></script>
+    <script src="result-review-indexeddb.js"></script>
     <script>
       const engine = window.HashimotoResultReview;
       const trial = window.HashimotoPredictionTrial;
@@ -219,6 +221,7 @@
           const data = collectForm(form);
           if (data.mode !== "win5" && snapshotFile.files.length && !snapshot) throw Error("確定JSONの読込を確認してください");
           latestReview = engine.generateResultReview(data);
+          if (data.mode !== "win5") { const record = { id: window.HashimotoResultReviewDatabase.raceKey(latestReview.race), race: latestReview.race, snapshot: snapshot || null, results: latestReview.results, hitJudgment: latestReview.hitJudgment, markdown: latestReview.markdown, savedAt: new Date().toISOString() }; window.HashimotoResultReviewIndexedDB.saveRecord(record).then(() => { status.textContent = latestReview.hitJudgment + " / IndexedDB保存完了"; }).catch(error => { status.textContent = latestReview.hitJudgment + " / 保存失敗: " + error.message; }); }
           document.getElementById("review-output").textContent = latestReview.markdown;
           document.getElementById("save-path-label").textContent = latestReview.savePath;
           document.getElementById("structure-label").textContent = latestReview.trifectaStructure || latestReview.win5Structure || "生成済み";

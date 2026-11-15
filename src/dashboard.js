@@ -2061,7 +2061,10 @@
 
   const updateRaceDatabaseResult = ({ payload = {}, validationReport = null } = {}, storage = window.localStorage) => {
     if (!storage?.setItem || !payload?.race) return null;
-    const record = buildRaceDatabaseRecord({ payload, validationReport });
+    const race = normalizeRace(payload.race);
+    const raceId = payload.id || `production:${race.date}:${race.course}:${race.raceNumber}`;
+    const existing = loadRaceDatabase(storage).find((entry) => entry.id === raceId);
+    const record = buildRaceDatabaseRecord({ payload: existing?.predictionPayload || payload, validationReport });
     saveRaceDatabaseRecord(record, storage);
     return record;
   };
