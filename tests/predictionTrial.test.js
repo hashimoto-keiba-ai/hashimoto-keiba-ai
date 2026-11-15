@@ -150,7 +150,7 @@ console.log("P0 structured result match, pending cases, snapshot immutability: P
 function page(htmlPath, scripts, location) {
   const root = path.join(__dirname,"..");
   const reject = () => { throw Error("禁止された副作用"); };
-  const elements = new Map(), blobs = new Map(), downloads = [];
+  const elements = new Map(), blobs = new Map(), downloads = [], localStore = new Map();
   function get(id) {
     if (!elements.has(id)) elements.set(id,{
       value:"", files:[], events:{}, appendChild(option){if(option.selected || !this.value) this.value=option.value;},
@@ -163,12 +163,13 @@ function page(htmlPath, scripts, location) {
     location, URLSearchParams, Blob,
     URL:{createObjectURL(blob){const id="blob:"+blobs.size;blobs.set(id,blob);return id;},revokeObjectURL(id){blobs.delete(id);}},
     FormData:class { constructor(form){this.form=form;} entries(){return Object.entries(this.form.fields);} },
-    localStorage:{getItem:reject,setItem:reject,removeItem:reject}, fetch:reject,
+    localStorage:{getItem:key=>localStore.has(key)?localStore.get(key):null,setItem:(key,value)=>localStore.set(key,String(value)),removeItem:key=>localStore.delete(key)}, fetch:reject,
     XMLHttpRequest:reject, WebSocket:reject, navigator:{sendBeacon:reject},
     document:{getElementById:get,querySelector:get,createElement(tag){
       return tag === "a" ? {click(){downloads.push({name:this.download,blob:blobs.get(this.href)});}} : {};
     }}
   };
+  context.HashimotoResultReviewIndexedDB = { saveRecord: async record => record, loadRecord: async () => null };
   context.window=context;
   vm.createContext(context);
   for (const script of scripts) vm.runInContext(fs.readFileSync(path.join(root,script),"utf8"),context);
@@ -201,7 +202,7 @@ async function testUi() {
   try {
     fs.writeFileSync(filename,await ui.downloads[0].blob.text(),{flag:"wx"});
     const saved=trial.readSnapshot(fs.readFileSync(filename,"utf8"));
-    const output=page("result-review.html",["prediction-trial-core.js","result-review.js"],location);
+    const output=page("result-review.html",["prediction-trial-core.js","result-review.js","result-review-database.js"],location);
     const snapshotFile=output.get("confirmed-prediction-file");
     snapshotFile.files=[{text:async()=>fs.readFileSync(filename,"utf8")}];
     await snapshotFile.events.change();

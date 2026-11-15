@@ -37,7 +37,7 @@
     number:["no","horse_number","馬番","番号"], name:["horse","horse_name","馬名","出走馬"],
     popularity:["人気"], odds:["オッズ","単勝オッズ"], jockey:["騎手"], trainer:["調教師"],
     weight:["馬体重","body_weight"], weightDiff:["馬体重増減","増減","body_weight_diff"],
-    runningStyle:["脚質"], cornerPosition:["expected_corner4","corner4_position","想定4角位置","4角位置","4角","四角"],
+    runningStyle:["脚質"], corner1:["1角位置"], corner2:["2角位置"], corner3:["3角位置"], cornerPosition:["expected_corner4","corner4_position","想定4角位置","4角位置","4角","四角"],
     previousFinish:["前走着順"], previousCorner:["前走4角位置"], closingRank:["上がり順位"],
     distanceRecord:["距離実績","距離適性"], goingRecord:["馬場実績","馬場適性"], courseRecord:["コース実績"],
     pedigree:["bloodline","血統"], gate:["枠番","枠順"], finish:["finish_position","着順"],
@@ -163,7 +163,7 @@
         ...row, ...actual, line, number, name, status, popularity, odds,
         cornerPosition:numeric(row.cornerPosition,"4角位置",line,1,18)
       };
-      if (options.result) {
+      if (options.result) { for (const field of ["corner1","corner2","corner3"]) result[field] = numeric(row[field],field,line,1,18); result.last3f = numeric(row.last3f,"上がり3F",line,1,120,false);
         result.finish = status === "active" ? numeric(row.finish,"着順",line,1,18,true,true) : null;
       } else {
         for (const [field,label,max] of [["previousFinish","前走着順",18],["previousCorner","前走4角位置",18],["closingRank","上がり順位",18],["gate","枠番",8]]) {
