@@ -77,11 +77,11 @@
   }
 
   function hasPositiveRecord(value) {
-    return /◎|○|得意|良|好|有|勝|連|複|[2-9]-[1-9]-[1-9]/.test(String(value || ""));
+    return /◎|○|得意|好走|好成績|勝|連対|複勝|[1-9]\d*-[0-9]+-[0-9]+/.test(String(value || ""));
   }
 
   function hasNegativeRecord(value) {
-    return /×|苦手|不安|なし|無|未|0-0-0|凡走/.test(String(value || ""));
+    return /×|苦手|不安|なし|実績無|実績なし|凡走|0-0-0(?:-\d+)?/.test(String(value || "")) && !/未取得|未確認|未入力/.test(String(value || ""));
   }
 
   function isFrontStyle(style) {
