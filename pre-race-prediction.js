@@ -12,7 +12,7 @@
     "①-7 印",
     "①-8 危険人気馬",
     "①-9 神穴候補",
-    "①-10 🤫観測馬",
+    "①-10 観測馬",
     "①-11 買い目構造",
     "①-12 三連単フォーメーション",
     "①-13 押さえ候補",
@@ -430,7 +430,7 @@
       { mark: "▲", role: "単穴", horse: horses[2], reason: "上位逆転候補" },
       { mark: "△", role: "連下", horse: horses[3], reason: "相手候補" },
       { mark: "☆", role: "神穴", horse: god, reason: "神穴指数・EV期待値を加味" },
-      { mark: "🤫", role: "観測馬", horse: observation, reason: "直前気配とオッズ観測対象" }
+      { mark: "観測", role: "観測馬", horse: observation, reason: "直前気配とオッズ観測対象" }
     ].filter((row) => row.horse);
   }
 
@@ -658,6 +658,19 @@
         .filter(([field]) => horse[field] == null || horse[field] === "--").map(([,label]) => label);
       return missing.length ? [prefix + "データ不足（" + missing.join("、") + "）"] : [];
     });
+    const dataQuality = (() => {
+      const fields = ["runningStyle","cornerPosition","previousFinish","previousCorner","closingRank","distanceRecord","goingRecord","courseRecord"];
+      const rank = rate => rate >= 80 ? "高" : rate >= 50 ? "中" : "低";
+      const perHorse = runners.map(horse => {
+        const filled = fields.filter(field => horse[field] != null && horse[field] !== "" && horse[field] !== "--").length;
+        const rate = Math.round(filled / fields.length * 100);
+        return {number:horse.number, name:horse.name, filled, total:fields.length, rate, rank:rank(rate)};
+      });
+      const filled = perHorse.reduce((sum, horse) => sum + horse.filled, 0);
+      const total = perHorse.length * fields.length;
+      const rate = total ? Math.round(filled / total * 100) : 0;
+      return {filled, total, rate, rank:rank(rate), perHorse};
+    })();
     const learningMatches = useSelfLearning ? matchSelfLearningRecords(race, learningRecords) : [];
     const top = horses[0];
     const second = horses[1];
@@ -686,7 +699,7 @@
       `## ${TEMPLATE_SECTIONS[6]}\n${lineList(fullAuto.markRows.map((row) => `${row.mark} ${row.role}: ${formatHorse(row.horse)} / ${row.reason}`))}`,
       `## ${TEMPLATE_SECTIONS[7]}\n${risky ? `- ${formatHorse(risky)}: ${risky.dangerReasons.join(" / ")}` : "- 該当なし"}`,
       `## ${TEMPLATE_SECTIONS[8]}\n${lineList(longshots.map((horse) => `${formatHorse(horse)}: ${horse.godLongshotReasons.join(" / ")}`))}`,
-      `## ${TEMPLATE_SECTIONS[9]}\n${lineList(fullAuto.markRows.filter((row) => row.mark === "🤫").map((row) => `${formatHorse(row.horse)}: ${row.reason}`)).replace("- 該当なし", lineList(observation.map((horse) => `${formatHorse(horse)}: ${horse.evLabel} / 神穴 ${horse.godLongshotLabel} / 危険 ${horse.dangerPopularLabel}`)))}`,
+      `## ${TEMPLATE_SECTIONS[9]}\n${lineList(fullAuto.markRows.filter((row) => row.mark === "観測").map((row) => `${formatHorse(row.horse)}: ${row.reason}`)).replace("- 該当なし", lineList(observation.map((horse) => `${formatHorse(horse)}: ${horse.evLabel} / 神穴 ${horse.godLongshotLabel} / 危険 ${horse.dangerPopularLabel}`)))}`,
       `## ${TEMPLATE_SECTIONS[10]}\n- 三連単構造: A→B→C / B→C→A / B→C→C\n- 本線: ${autoMark("◎") ? formatHorse(autoMark("◎").horse) : "未入力"} → ${fullAuto.markRows.filter((row) => ["○", "▲", "△", "☆"].includes(row.mark)).map((row) => formatHorse(row.horse)).join(" / ")}\n- 高配当狙い: ${autoHighPayoutLines.join(" / ") || "該当なし"}\n- 危険人気は相手下げ: ${risky ? formatHorse(risky) : "該当なし"}`,
       `## ${TEMPLATE_SECTIONS[11]}\n- 出走頭数: ${horses.length}頭\n- 自動点数: ${targetCount}点\n${lineList(autoTrifectaLines, "- 3頭以上の出走馬を入力してください")}`,
       `## ${TEMPLATE_SECTIONS[12]}\n${lineList(autoReserveLines.concat(horses.slice(5, 9).map((horse) => `${formatHorse(horse)}: 総合 ${horse.totalScore} / EV ${horse.evLabel}`)))}`,
@@ -696,13 +709,13 @@
       `## ${TEMPLATE_SECTIONS[16]}\n- Z指数とZ'指数の差分が競馬場補正として妥当か確認\n- 危険人気: ${risky ? formatHorse(risky) : "該当なし"}\n- 神穴: ${longshots.map(formatHorse).join(" / ") || "該当なし"}`,
       `## ${TEMPLATE_SECTIONS[17]}\n- 最終結論: ${autoMark("◎") ? formatHorse(autoMark("◎").horse) : top ? formatHorse(top) : "未入力"}中心 / ${tickets.length}点（上限${targetCount}点）\n- 荒れ度: ${fullAuto.simulation.roughnessRank}\n- WIN5候補: ${fullAuto.win5Candidates.slice(0, 4).map((row) => `${row.category} ${formatHorse(row.horse)}`).join(" / ")}\n- Markdown保存先: ${savePath}\n- CSV保存先: ${savePath.replace(/\.md$/, "_ai-index.csv")}\n- 保存ログ: ${race.date} ${race.course} ${race.raceNumber} ${race.raceName} / ${horses.length}頭`
     ];
-    sections.push(`## 入力確認\n${lineList(inputWarnings, "- 不足項目なし")}\n- 通常候補: ${tickets.length}/${targetCount}点（不足${targetCount-tickets.length}点）\n- ゾーン別候補: ${fullAuto.trifectaCandidates.length}/${targetCount}点（不足${targetCount-fullAuto.trifectaCandidates.length}点）`, fullAuto.markdown);
+    sections.push(`## 入力確認\n- データ充足率: ${dataQuality.rate}%（${dataQuality.filled}/${dataQuality.total}項目）\n- データ品質: ${dataQuality.rank} ※的中確率ではありません\n${lineList(inputWarnings, "- 不足項目なし")}\n- 通常候補: ${tickets.length}/${targetCount}点（不足${targetCount-tickets.length}点）\n- ゾーン別候補: ${fullAuto.trifectaCandidates.length}/${targetCount}点（不足${targetCount-fullAuto.trifectaCandidates.length}点）`, fullAuto.markdown);
 
     return {
       race,
       horses,
       sections: TEMPLATE_SECTIONS,
-      entries, inputWarnings, trialValidated: Boolean(input.strictTrial),
+      entries, inputWarnings, dataQuality, trialValidated: Boolean(input.strictTrial),
       trifectaPointCount: targetCount,
       trifectaTickets: tickets,
       savePath,

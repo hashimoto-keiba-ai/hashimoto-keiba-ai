@@ -30,7 +30,7 @@ assert.strictEqual(parsed[1].gate, 4, "枠番を解析できる");
 
 const prediction = engine.generatePreRacePrediction({
   date: "2026-06-14",
-  course: "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ",
+  course: "東京競馬場",
   raceNumber: "11R",
   raceName: "AI指数テスト",
   condition: "3歳以上",
@@ -70,7 +70,7 @@ assert.ok(prediction.aiIndexCsv.includes("馬番") && prediction.aiIndexCsv.incl
   "①-7 印",
   "①-8 危険人気馬",
   "①-9 神穴候補",
-  "①-10 🤫観測馬",
+  "①-10 観測馬",
   "①-11 買い目構造",
   "①-12 三連単フォーメーション",
   "①-13 押さえ候補",
@@ -97,7 +97,7 @@ assert.strictEqual(
 
 const corrected = engine.generatePreRacePrediction({
   date: "2026-06-14",
-  course: "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ",
+  course: "東京競馬場",
   raceNumber: "11R",
   raceName: "AI指数テスト",
   condition: "3歳以上",
@@ -110,8 +110,8 @@ const corrected = engine.generatePreRacePrediction({
   horseText: csv,
   useSelfLearning: true,
   selfLearningDb: {
-    "data/self-learning/": [{ horseName: "神穴スター", course: "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ", zPrimeCorrection: 6, jockeyTrainerCorrection: 3 }],
-    "data/racecourse-os/": [{ course: "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ", zPrimeCorrection: 1 }],
+    "data/self-learning/": [{ horseName: "神穴スター", course: "東京競馬場", zPrimeCorrection: 6, jockeyTrainerCorrection: 3 }],
+    "data/racecourse-os/": [{ course: "東京競馬場", zPrimeCorrection: 1 }],
     "data/distance-os/": [{ distance: "1600m", zPrimeCorrection: 1 }],
     "data/pace-os/": [{ pace: "H", zPrimeCorrection: 1 }],
     "data/corner-position-db/": [{ horseName: "神穴スター", zPrimeCorrection: 1 }],
@@ -149,23 +149,23 @@ const makeHorse = (index) => ({
   gate: (index % 8) + 1
 });
 assert.strictEqual(
-  engine.generatePreRacePrediction({ date: "2026-06-14", course: "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ", raceNumber: "1R", raceName: "10頭", horses: Array.from({ length: 10 }, (_, index) => makeHorse(index)) }).fullAuto.targetCount,
+  engine.generatePreRacePrediction({ date: "2026-06-14", course: "東京競馬場", raceNumber: "1R", raceName: "10頭", horses: Array.from({ length: 10 }, (_, index) => makeHorse(index)) }).fullAuto.targetCount,
   8,
   "完全自動運転の三連単点数は10頭以下で8点"
 );
 assert.strictEqual(
-  engine.generatePreRacePrediction({ date: "2026-06-14", course: "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ", raceNumber: "1R", raceName: "12頭", horses: Array.from({ length: 12 }, (_, index) => makeHorse(index)) }).fullAuto.targetCount,
+  engine.generatePreRacePrediction({ date: "2026-06-14", course: "東京競馬場", raceNumber: "1R", raceName: "12頭", horses: Array.from({ length: 12 }, (_, index) => makeHorse(index)) }).fullAuto.targetCount,
   12,
   "完全自動運転の三連単点数は11-14頭で12点"
 );
 assert.strictEqual(
-  engine.generatePreRacePrediction({ date: "2026-06-14", course: "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ", raceNumber: "1R", raceName: "16頭", horses: Array.from({ length: 16 }, (_, index) => makeHorse(index)) }).fullAuto.targetCount,
+  engine.generatePreRacePrediction({ date: "2026-06-14", course: "東京競馬場", raceNumber: "1R", raceName: "16頭", horses: Array.from({ length: 16 }, (_, index) => makeHorse(index)) }).fullAuto.targetCount,
   16,
   "完全自動運転の三連単点数は15-18頭で16点"
 );
 
 const dataFilesBefore = fs.readdirSync(path.join(root, "data")).sort().join("\n");
-engine.generatePreRacePrediction({ date: "2026-06-14", course: "譚ｱ莠ｬ遶ｶ鬥ｬ蝣ｴ", raceNumber: "1R", raceName: "削除確認", horseText: csv });
+engine.generatePreRacePrediction({ date: "2026-06-14", course: "東京競馬場", raceNumber: "1R", raceName: "削除確認", horseText: csv });
 const dataFilesAfter = fs.readdirSync(path.join(root, "data")).sort().join("\n");
 assert.strictEqual(dataFilesAfter, dataFilesBefore, "既存データが削除されない");
 
